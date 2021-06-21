@@ -5,6 +5,7 @@ from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.regression.feature_engineer import _FeatureEngineer
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
 from covsirphy.regression.param_lightgbm import _ParamLightGBMRegressor
@@ -25,7 +26,6 @@ class RegressionHandler(Term):
                 - the number of cases
                 - indicators
         model (covsirphy.ModelBase): ODE model
-        delay (int or tuple(int, int)): exact (or value range of) delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
     Note:
@@ -36,27 +36,80 @@ class RegressionHandler(Term):
         test_size=0.2, random_state=0, shuffle=False.
     """
 
-    def __init__(self, data, model, delay, **kwargs):
-        # Dataset
-        self._data = self._ensure_dataframe(data, name="data", time_index=True)
+    def __init__(self, data, model, **kwargs):
         # ODE parameter values
         self._ensure_subclass(model, ModelBase, name="model")
         self._parameters = model.PARAMETERS[:]
-        # Delay period
-        if isinstance(delay, tuple):
-            delay_min, delay_max = delay
-            self._ensure_natural_int(delay_min, name="delay[0]")
-            self._ensure_natural_int(delay_max, name="delay[1]")
-            self._delay_candidates = list(range(delay_min, delay_max + 1))
-        else:
-            delay = self._ensure_natural_int(delay, name="delay")
-            self._delay_candidates = [delay]
+        # Set datasets (create _FeatureEngineer instance)
+        self._ensure_dataframe(data, name="data", columns=self._parameters, time_index=True)
+        df = data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
+        X = df.drop(self._parameters, axis=1)
+        Y = df.loc[:, self._parameters]
+        self._engineer = _FeatureEngineer(X, Y)
         # Keyword arguments
         self._kwargs = kwargs.copy()
         # All regressors {name: RegressorBase}
         self._reg_dict = {}
         # The best regressor name and determined delay period
         self._best = None
+        # Delay period
+        self._delay_candidates = []
+        # Backward compatibility, version < 2.21.0-alpha
+        if "delay" in kwargs:
+            self.feature_engineering(tools=["delay"], delay=kwargs["delay"])
+
+    def _convert_delay_value(self, delay):
+        """
+        Convert delay value to candidate list of delay periods.
+
+        Args:
+            delay (int or tuple(int, int) or None): exact (or value range of) delay period [days]
+
+        Raises:
+            ValueError: @delay is None
+
+        Returns:
+            list[int]: candidates of delay periods
+        """
+        # Delay period
+        if delay is None:
+            raise ValueError(
+                "@delay must be integer or tuple(int, int) when @tools is None or includes 'delay'.")
+        if isinstance(delay, tuple):
+            delay_min, delay_max = delay
+            self._ensure_natural_int(delay_min, name="delay[0]")
+            self._ensure_natural_int(delay_max, name="delay[1]")
+            return list(range(delay_min, delay_max + 1))
+        return [self._ensure_natural_int(delay, name="delay")]
+
+    def feature_engineering(self, tools=None, delay=None):
+        """
+        Perform feature engineering of X dataset.
+
+        Args:
+            tools (list[str]): list of the feature engineering tools or None (all tools)
+            delay (int or tuple(int, int) or None): exact (or value range of) delay period [days]
+
+        Raises:
+            ValueError: @delay is None when @tools is None or 'delay' is included in @tools
+
+        Note:
+            All tools and names are
+            - "delay": add delayed (lagged) variables with @delay (must not be None)
+        """
+        # Delay period
+        if tools is None or "delay" in tools:
+            self._delay_candidates = self._convert_delay_value(delay)
+        # Tools of feature engineering
+        tool_dict = {
+            "delay": (self._engineer.apply_delay, {"delay_values": self._delay_candidates}),
+        }
+        all_tools = list(tool_dict.keys())
+        selected_tools = self._ensure_list(tools or all_tools, candidates=all_tools, name="tools")
+        # Perform feature engineering
+        for name in selected_tools:
+            method, arg_dict = tool_dict[name]
+            method(**arg_dict)
 
     def fit(self, metric, regressors=None):
         """
@@ -79,11 +132,7 @@ class RegressionHandler(Term):
             - "lgbm": Indicators -> Parameters with Light Gradient Boosting Machine Regressor
             - "svr": Indicators -> Parameters with Epsilon-Support Vector Regressor
         """
-        # Get X/y dataset
-        df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
-        self._ensure_dataframe(df, name="data", columns=self._parameters)
-        X = df.drop(self._parameters, axis=1)
-        y = df.loc[:, self._parameters]
+        data_dict = self._engineer.split(**self._kwargs)
         # Select regressors
         all_reg_dict = {
             "en": _ParamElasticNetRegressor,
@@ -93,8 +142,7 @@ class RegressionHandler(Term):
         }
         sel_regressors = [
             reg for (name, reg) in all_reg_dict.items() if regressors is None or name in regressors]
-        approach_dict = {
-            reg.DESC: reg(X, y, self._delay_candidates, **self._kwargs) for reg in sel_regressors}
+        approach_dict = {reg.DESC: reg(**data_dict) for reg in sel_regressors}
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
@@ -132,6 +180,7 @@ class RegressionHandler(Term):
         """
         fit_dict = {"best": self._best}
         fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
+        fit_dict["delay"] = self._delay_candidates
         return fit_dict
 
     def predict(self):

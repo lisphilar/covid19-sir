@@ -17,25 +17,11 @@ class _ParamLightGBMRegressor(_RegressorBase):
     Predict parameter values of ODE models with light gradient boosting machine regressor.
 
     Args:
-        X (pandas.DataFrame):
-            Index
-                Date (pandas.Timestamp): observation date
-            Columns
-                (int/float): indicators
-        y (pandas.DataFrame):
-            Index
-                Date (pandas.Timestamp): observation date
-            Columns
-                (int/float) target values
-        delay_values (list[int]): list of delay period [days]
-        kwargs: keyword arguments of sklearn.model_selection.train_test_split()
-
-    Note:
-        If @seed is included in kwargs, this will be converted to @random_state.
-
-    Note:
-        default values regarding sklearn.model_selection.train_test_split() are
-        test_size=0.2, random_state=0, shuffle=False.
+        - X_train (pandas.DataFrame): X for training with time index
+        - X_test (pandas.DataFrame): X for test with time index
+        - Y_train (pandas.DataFrame): Y for training with time index
+        - Y_test (pandas.DataFrame): Y for test with time index
+        - X_target (pandas.DataFrame): X for prediction with time index
     """
     # Description of regressor
     DESC = "Indicators -> Parameters with Light Gradient Boosting Machine Regressor"
@@ -59,7 +45,7 @@ class _ParamLightGBMRegressor(_RegressorBase):
         ]
         tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
         pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv)
-        pipeline.fit(self._X_train, self._y_train)
+        pipeline.fit(self._X_train, self._Y_train)
         # Update regressor
         self._pipeline = pipeline
         # Update param
