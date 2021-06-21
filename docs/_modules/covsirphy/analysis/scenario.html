@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0
+                2.21.0-alpha
               </div>
             
           
@@ -1429,7 +1429,11 @@
 <span class="sd">                - None: Scenario.estimate_delay() calculate automatically</span>
 <span class="sd">            removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)</span>
 <span class="sd">            metric (str): metric name</span>
-<span class="sd">            kwargs: keyword arguments of sklearn.model_selection.train_test_split(), RegressorHandler.fit() and Scenario.fit_accuracy()</span>
+<span class="sd">            kwargs: keyword arguments of</span>
+<span class="sd">                - sklearn.model_selection.train_test_split(),</span>
+<span class="sd">                - RegressionHandler.feature_engineering(),</span>
+<span class="sd">                - RegressorHandler.fit() and</span>
+<span class="sd">                - Scenario.fit_accuracy()</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
@@ -1485,7 +1489,9 @@
             <span class="c1"># Use specified delay value</span>
             <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delay&quot;</span><span class="p">)</span>
         <span class="c1"># Fit regression models</span>
-        <span class="n">handler</span> <span class="o">=</span> <span class="n">RegressionHandler</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">RegressionHandler</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">feature_engineering</span><span class="p">(</span>
+            <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">RegressionHandler</span><span class="o">.</span><span class="n">feature_engineering</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="n">handler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">RegressionHandler</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reghandler_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span>
         <span class="c1"># Accuracy</span>

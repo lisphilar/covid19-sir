@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0
+                2.21.0-alpha
               </div>
             
           
@@ -6586,7 +6586,7 @@ When &#64;country is a country name, province level data in the selected country
 
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.RegressionHandler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RegressionHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.RegressionHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RegressionHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.RegressionHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Handle regressors to predict parameter values of ODE models.
 With .fit() method, the best regressor will be selected based on the scores with test dataset.</p>
@@ -6605,7 +6605,6 @@ With .fit() method, the best regressor will be selected based on the scores with
 </dl>
 </p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
-<li><p><strong>delay</strong> (<em>int</em><em> or </em><em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – exact (or value range of) delay period [days]</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split()</p></li>
 </ul>
 </dd>
@@ -6619,6 +6618,28 @@ With .fit() method, the best regressor will be selected based on the scores with
 <p>default values regarding sklearn.model_selection.train_test_split() are
 test_size=0.2, random_state=0, shuffle=False.</p>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.RegressionHandler.feature_engineering">
+<span class="sig-name descname"><span class="pre">feature_engineering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler.feature_engineering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.RegressionHandler.feature_engineering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform feature engineering of X dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tools</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of the feature engineering tools or None (all tools)</p></li>
+<li><p><strong>delay</strong> (<em>int</em><em> or </em><em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>) or </em><em>None</em>) – exact (or value range of) delay period [days]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – &#64;delay is None when &#64;tools is None or ‘delay’ is included in &#64;tools</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All tools and names are
+- “delay”: add delayed (lagged) variables with &#64;delay (must not be None)</p>
+</div>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.RegressionHandler.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.RegressionHandler.fit" title="Permalink to this definition">¶</a></dt>
@@ -8162,7 +8183,11 @@ Please refer to covsirphy.RegressionHander class.</p>
 </p></li>
 <li><p><strong>removed_cols</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to remove from X dataset or None (indicators used to estimate delay period)</p></li>
 <li><p><strong>metric</strong> (<em>str</em>) – metric name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split(), RegressorHandler.fit() and Scenario.fit_accuracy()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of
+- sklearn.model_selection.train_test_split(),
+- RegressionHandler.feature_engineering(),
+- RegressorHandler.fit() and
+- Scenario.fit_accuracy()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -10171,6 +10196,7 @@ Index</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.regression.html">covsirphy.regression package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.feature_engineer">covsirphy.regression.feature_engineer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_decision_tree">covsirphy.regression.param_decision_tree module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_elastic_net">covsirphy.regression.param_elastic_net module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_lightgbm">covsirphy.regression.param_lightgbm module</a></li>
