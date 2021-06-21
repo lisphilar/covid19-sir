@@ -17,25 +17,11 @@ class _ParamSVRegressor(_RegressorBase):
     Predict parameter values of ODE models with epsilon-support vector regressor.
 
     Args:
-        X (pandas.DataFrame):
-            Index
-                Date (pandas.Timestamp): observation date
-            Columns
-                (int/float): indicators
-        y (pandas.DataFrame):
-            Index
-                Date (pandas.Timestamp): observation date
-            Columns
-                (int/float) target values
-        delay_values (list[int]): list of delay period [days]
-        kwargs: keyword arguments of sklearn.model_selection.train_test_split()
-
-    Note:
-        If @seed is included in kwargs, this will be converted to @random_state.
-
-    Note:
-        default values regarding sklearn.model_selection.train_test_split() are
-        test_size=0.2, random_state=0, shuffle=False.
+        - X_train (pandas.DataFrame): X for training with time index
+        - X_test (pandas.DataFrame): X for test with time index
+        - Y_train (pandas.DataFrame): Y for training with time index
+        - Y_test (pandas.DataFrame): Y for test with time index
+        - X_target (pandas.DataFrame): X for prediction with time index
     """
     # Description of regressor
     DESC = "Indicators -> Parameters with Epsilon-Support Vector Regressor"
@@ -61,7 +47,7 @@ class _ParamSVRegressor(_RegressorBase):
         tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
         pipeline = OptunaSearchCV(
             Pipeline(steps=steps), param_grid, cv=tscv, random_state=0, n_trials=10)
-        pipeline.fit(self._X_train, self._y_train)
+        pipeline.fit(self._X_train, self._Y_train)
         # Update regressor
         self._pipeline = pipeline
         # Update param: pipeline.best_estimator_.named_steps.regressor.estimators_
