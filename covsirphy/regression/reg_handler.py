@@ -95,6 +95,7 @@ class RegressionHandler(Term):
 
         Note:
             All tools and names are
+            - "elapsed": alculate elapsed days from the last change point of indicators
             - "delay": add delayed (lagged) variables with @delay (must not be None)
         """
         # Delay period
@@ -102,6 +103,7 @@ class RegressionHandler(Term):
             self._delay_candidates = self._convert_delay_value(delay)
         # Tools of feature engineering
         tool_dict = {
+            "elapsed": (self._engineer.add_elapsed, {}),
             "delay": (self._engineer.apply_delay, {"delay_values": self._delay_candidates}),
         }
         all_tools = list(tool_dict.keys())

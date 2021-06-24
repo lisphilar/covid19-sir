@@ -67,6 +67,15 @@ class _FeatureEngineer(Term):
         data_dict["X_target"] = X.loc[X.index > Y.index.max()]
         return data_dict
 
+    def add_elapsed(self):
+        """
+        Calculate elapsed days from the last change point of indicators and add them as new features.
+        """
+        X, raw = self._X.copy(), self._X_raw.copy()
+        for (name, col) in raw.iteritems():
+            X[f"{name}_elapsed"] = col.groupby((col != col.shift()).cumsum()).cumcount() + 1
+        self._X = X.copy()
+
     def apply_delay(self, delay_values):
         """
         Add delayed indicator values to X.
