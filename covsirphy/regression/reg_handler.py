@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import UnExpectedReturnValueError
+from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -82,30 +82,39 @@ class RegressionHandler(Term):
             return list(range(delay_min, delay_max + 1))
         return [self._ensure_natural_int(delay, name="delay")]
 
-    def feature_engineering(self, tools=None, delay=None):
+    def feature_engineering(self, engineering_tools=None, delay=None):
         """
         Perform feature engineering of X dataset.
 
         Args:
-            tools (list[str]): list of the feature engineering tools or None (all tools)
+            engineering_tools (list[str]): list of the feature engineering tools or None (all tools)
             delay (int or tuple(int, int) or None): exact (or value range of) delay period [days]
 
         Raises:
-            ValueError: @delay is None when @tools is None or 'delay' is included in @tools
+            ValueError: @delay is None when @tools is None or 'delay' is included in @engineering_tools
+            NotIncludedError: @delay was not included in @engineering_tools
 
         Note:
             All tools and names are
+            - "elapsed": alculate elapsed days from the last change point of indicators
             - "delay": add delayed (lagged) variables with @delay (must not be None)
+
+        Note:
+            "delay" must be included in the tools because delay is required to create target X.
         """
         # Delay period
-        if tools is None or "delay" in tools:
+        if engineering_tools is None or "delay" in engineering_tools:
             self._delay_candidates = self._convert_delay_value(delay)
+        else:
+            raise NotIncludedError(name="engineering_tools", value="delay")
         # Tools of feature engineering
         tool_dict = {
+            "elapsed": (self._engineer.add_elapsed, {}),
             "delay": (self._engineer.apply_delay, {"delay_values": self._delay_candidates}),
         }
         all_tools = list(tool_dict.keys())
-        selected_tools = self._ensure_list(tools or all_tools, candidates=all_tools, name="tools")
+        selected_tools = self._ensure_list(
+            engineering_tools or all_tools, candidates=all_tools, name="tools")
         # Perform feature engineering
         for name in selected_tools:
             method, arg_dict = tool_dict[name]

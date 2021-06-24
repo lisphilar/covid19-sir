@@ -230,3 +230,22 @@ class UnExpectedReturnValueError(ValueError):
 
     def __str__(self):
         return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.message}."
+
+
+class NotIncludedError(ValueError):
+    """
+    Error when an expected value was not included.
+
+    Args:
+        name (str): argument name
+        value (object): value user applied or None (will not be shown)
+        message (str or None): the other messages
+    """
+
+    def __init__(self, name, value, message=None):
+        self.name = str(name)
+        self.value = "" if value is None else f" ({value})"
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"Expected value {self.value} was not included in {self.name}. {self.message}."
