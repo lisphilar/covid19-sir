@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-alpha
+                2.21.0-beta
               </div>
             
           
@@ -288,23 +288,31 @@ test_size=0.2, random_state=0, shuffle=False.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.regression.reg_handler.RegressionHandler.feature_engineering">
-<span class="sig-name descname"><span class="pre">feature_engineering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler.feature_engineering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.regression.reg_handler.RegressionHandler.feature_engineering" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">feature_engineering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engineering_tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/regression/reg_handler.html#RegressionHandler.feature_engineering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.regression.reg_handler.RegressionHandler.feature_engineering" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform feature engineering of X dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tools</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of the feature engineering tools or None (all tools)</p></li>
+<li><p><strong>engineering_tools</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of the feature engineering tools or None (all tools)</p></li>
 <li><p><strong>delay</strong> (<em>int</em><em> or </em><em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>) or </em><em>None</em>) – exact (or value range of) delay period [days]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – &#64;delay is None when &#64;tools is None or ‘delay’ is included in &#64;tools</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – &#64;delay is None when &#64;tools is None or ‘delay’ is included in &#64;engineering_tools</p></li>
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.NotIncludedError" title="covsirphy.NotIncludedError"><strong>NotIncludedError</strong></a> – &#64;delay was not included in &#64;engineering_tools</p></li>
+</ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>All tools and names are
+- “elapsed”: alculate elapsed days from the last change point of indicators
 - “delay”: add delayed (lagged) variables with &#64;delay (must not be None)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“delay” must be included in the tools because delay is required to create target X.</p>
 </div>
 </dd></dl>
 
