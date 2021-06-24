@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import UnExpectedReturnValueError
+from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -92,15 +92,21 @@ class RegressionHandler(Term):
 
         Raises:
             ValueError: @delay is None when @tools is None or 'delay' is included in @engineering_tools
+            NotIncludedError: @delay was not included in @engineering_tools
 
         Note:
             All tools and names are
             - "elapsed": alculate elapsed days from the last change point of indicators
             - "delay": add delayed (lagged) variables with @delay (must not be None)
+
+        Note:
+            "delay" must be included in the tools because delay is required to create target X.
         """
         # Delay period
         if engineering_tools is None or "delay" in engineering_tools:
             self._delay_candidates = self._convert_delay_value(delay)
+        else:
+            raise NotIncludedError(name="engineering_tools", value="delay")
         # Tools of feature engineering
         tool_dict = {
             "elapsed": (self._engineer.add_elapsed, {}),
