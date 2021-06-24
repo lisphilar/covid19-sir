@@ -82,16 +82,16 @@ class RegressionHandler(Term):
             return list(range(delay_min, delay_max + 1))
         return [self._ensure_natural_int(delay, name="delay")]
 
-    def feature_engineering(self, tools=None, delay=None):
+    def feature_engineering(self, engineering_tools=None, delay=None):
         """
         Perform feature engineering of X dataset.
 
         Args:
-            tools (list[str]): list of the feature engineering tools or None (all tools)
+            engineering_tools (list[str]): list of the feature engineering tools or None (all tools)
             delay (int or tuple(int, int) or None): exact (or value range of) delay period [days]
 
         Raises:
-            ValueError: @delay is None when @tools is None or 'delay' is included in @tools
+            ValueError: @delay is None when @tools is None or 'delay' is included in @engineering_tools
 
         Note:
             All tools and names are
@@ -99,7 +99,7 @@ class RegressionHandler(Term):
             - "delay": add delayed (lagged) variables with @delay (must not be None)
         """
         # Delay period
-        if tools is None or "delay" in tools:
+        if engineering_tools is None or "delay" in engineering_tools:
             self._delay_candidates = self._convert_delay_value(delay)
         # Tools of feature engineering
         tool_dict = {
@@ -107,7 +107,8 @@ class RegressionHandler(Term):
             "delay": (self._engineer.apply_delay, {"delay_values": self._delay_candidates}),
         }
         all_tools = list(tool_dict.keys())
-        selected_tools = self._ensure_list(tools or all_tools, candidates=all_tools, name="tools")
+        selected_tools = self._ensure_list(
+            engineering_tools or all_tools, candidates=all_tools, name="tools")
         # Perform feature engineering
         for name in selected_tools:
             method, arg_dict = tool_dict[name]
