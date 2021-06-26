@@ -40,10 +40,11 @@ from covsirphy.cleaning.population import PopulationData, Population
 from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
-from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.vaccine_data import VaccineData
-from covsirphy.cleaning.dataloader import DataLoader
+# loading
+from covsirphy.loading.covid19datahub import COVID19DataHub
+from covsirphy.loading.dataloader import DataLoader
 # trend
 from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
@@ -106,9 +107,10 @@ __all__ = [
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # cleaning
-    "CleaningBase", "DataLoader", "COVID19DataHub",
-    "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
+    "CleaningBase", "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
+    # loading
+    "COVID19DataHub", "DataLoader",
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode

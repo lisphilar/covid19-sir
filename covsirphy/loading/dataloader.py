@@ -9,10 +9,10 @@ from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.pyramid import PopulationPyramidData
-from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.loading.covid19datahub import COVID19DataHub
 
 
 class DataLoader(Term):
