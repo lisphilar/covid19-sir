@@ -30,7 +30,7 @@
 - [Numerical simulation of ODE models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html): SIR, SIR-D and SIR-F model
 - [Phase-dependent parameter estimation of ODE models](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 - [Scenario analysis](https://lisphilar.github.io/covid19-sir/usage_quick.html): Simulate the number of cases with user-defined parameter values
-- [Find the relationship of government response and parameter values](https://lisphilar.github.io/covid19-sir/usage_policy.html)
+- [Predict the parameter valuse to forecast the number of cases.](https://lisphilar.github.io/covid19-sir/usage_quick.html#Short-term-prediction-of-parameter-values)
 
 ## Inspiration
 
