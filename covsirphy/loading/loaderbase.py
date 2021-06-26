@@ -83,3 +83,20 @@ class _LoaderBase(Term):
             covsirphy.PopulationPyramidData: dataset regarding population pyramid
         """
         raise NotImplementedError
+
+    def collect(self):
+        """
+        Collect data for scenario analysis and return them as a dictionary.
+
+        Returns:
+            dict(str, object):
+                - jhu_data (covsirphy.JHUData)
+                - extras (list[covsirphy.CleaningBase]):
+                    - covsirphy.OXCGRTData
+                    - covsirphy.PCRData
+                    - covsirphy.VaccineData
+        """
+        return {
+            "jhu_data": self.jhu(),
+            "extras": [self.oxcgrt(), self.pcr(), self.vaccine()]
+        }

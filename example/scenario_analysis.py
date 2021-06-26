@@ -25,7 +25,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
         pronvince (str or None): province name or None (country level)
         file_prefix (str): prefix of the filenames
     """
-    # This script works with version >= 2.20.3-delta
+    print("This script works with version >= 2.21.0-gamma")
     print(cs.get_version())
     # Create output directory in example directory
     code_path = Path(__file__)
@@ -35,12 +35,10 @@ def main(country="Italy", province=None, file_prefix="ita"):
     filer = cs.Filer(output_dir, prefix=file_prefix, numbering="01")
     # Load datasets
     loader = cs.DataLoader(input_dir)
-    jhu_data = loader.jhu()
-    oxcgrt_data = loader.oxcgrt()
-    vaccine_data = loader.vaccine()
-    # Start scenario analysis
+    data_dict = loader.collect()
+    # Start scenario analysis and register datasets
     snl = cs.Scenario(country=country, province=province)
-    snl.register(jhu_data, extras=[oxcgrt_data, vaccine_data])
+    snl.register(**data_dict)
     # Show records
     record_df = snl.records(**filer.png("records"))
     record_df.to_csv(**filer.csv("records", index=False))
