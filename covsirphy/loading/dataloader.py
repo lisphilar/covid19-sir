@@ -3,19 +3,19 @@
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.pyramid import PopulationPyramidData
-from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.loading.loaderbase import _LoaderBase
+from covsirphy.loading.covid19datahub import COVID19DataHub
 
 
-class DataLoader(Term):
+class DataLoader(_LoaderBase):
     """
     Download the dataset and perform data cleaning.
 
@@ -197,7 +197,7 @@ class DataLoader(Term):
 
     def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
-        Load the dataset regarding OxCGRT data using local CSV file or COVID-19 Data Hub.
+        Load the dataset regarding OxCGRT indicators using local CSV file or COVID-19 Data Hub.
 
         Args:
             basename (str or None): basename of the file to save the data
