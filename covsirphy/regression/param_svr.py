@@ -10,6 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVR
 from covsirphy.regression.regbase import _RegressorBase
 from covsirphy.regression.reg_rate_converter import _RateConverter
+from covsirphy.regression.reg_feature_selector import _FeatureSelector
 
 
 class _ParamSVRegressor(_RegressorBase):
@@ -42,6 +43,7 @@ class _ParamSVRegressor(_RegressorBase):
         steps = [
             ("converter", _RateConverter()),
             ("scaler", MinMaxScaler()),
+            ("selector", _FeatureSelector(corr_threshold=0.8)),
             ("regressor", MultiOutputRegressor(SVR())),
         ]
         tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
