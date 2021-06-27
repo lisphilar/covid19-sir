@@ -70,7 +70,7 @@ class CountryData(CleaningBase):
             recovered: self.R
         }
 
-    def _cleaning(self):
+    def _cleaning(self, date_format):
         """
         Perform data cleaning of the raw data.
         This method overwrite super()._cleaning() method.
@@ -87,6 +87,7 @@ class CountryData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            date_format (str or None): the strftime to parse time (e.g. "%d/%m/%Y") or None (automated)
         """
         if not self.var_dict:
             raise UnExecutedError("CountryData.set_variables()")
@@ -112,7 +113,7 @@ class CountryData(CleaningBase):
         df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         # Groupby date and province
-        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
+        df[self.DATE] = pd.to_datetime(df[self.DATE], format=date_format).dt.round("D")
         try:
             df[self.DATE] = df[self.DATE].dt.tz_convert(None)
         except TypeError:
@@ -125,7 +126,7 @@ class CountryData(CleaningBase):
         df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df
 
-    def cleaned(self):
+    def cleaned(self, date_format=None):
         """
         Return the cleaned dataset.
         Cleaning method is defined by CountryData._cleaning() method.
@@ -142,9 +143,16 @@ class CountryData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            date_format (str or None): the strftime to parse time (e.g. "%d/%m/%Y") or None (automated)
+
+        Note:
+            Please specify @date_format if dates are parsed incorrectly.
+
+        Note:
+            Format codes: refer to https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
         """
         if self._cleaned_df.empty:
-            self._cleaned_df = self._cleaning()
+            self._cleaned_df = self._cleaning(date_format=date_format)
         return self._cleaned_df
 
     def total(self):
