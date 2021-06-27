@@ -35,8 +35,8 @@ Functionalities
 -  `Scenario
    analysis <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__:
    Simulate the number of cases with user-defined parameter values
--  `Find the relationship of government response and parameter
-   values <https://lisphilar.github.io/covid19-sir/usage_policy.html>`__
+-  `Predict the parameter valuse to forecast the number of
+   cases. <https://lisphilar.github.io/covid19-sir/usage_quick.html#Short-term-prediction-of-parameter-values>`__
 
 Inspiration
 -----------
