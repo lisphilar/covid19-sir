@@ -178,6 +178,25 @@ country_data.set_variables(
 country_data.cleaned()
 ```
 
+If dates are parsed incorrectly (e.g. the last date of raw dataset was 12Jun2021, but that of cleaned dataset was 06Dec2021), please try the following codes with appropreate date format for a while.
+
+```Python
+import pandas as pd
+# Remove cleaned data with wrong time format
+country_data._cleaned_df = pd.DataFrame()
+# Update raw dataframe with appropreate time format
+country_data.raw["Date"] = pd.to_datetime(country_data.raw["Date"], format="%d/%m/%Y")
+# Data cleaning
+country_data.cleaned()
+```
+
+From development version 2.21.0-delta, we can use the following. This will be implemented at the next stable version 2.22.0.
+
+```Python
+country_data.cleaned(date_format="%d/%m/%Y")
+```
+
+
 ### 3.2. Convert to JHUData instance
 
 Then, convert the `CountryData` instance to a `JHUData` instance.
