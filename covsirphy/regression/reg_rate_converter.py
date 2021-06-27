@@ -30,7 +30,7 @@ class _RateConverter(Term, BaseEstimator, TransformerMixin):
 
     def fit(self, X, y):
         """
-        Return self because ffitting is unnecessary.
+        Return self because fitting is unnecessary.
 
         Args:
             X (pandas.DataFrame): input X samples
