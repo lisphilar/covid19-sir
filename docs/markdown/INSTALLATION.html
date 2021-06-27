@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-gamma
+                2.21.0-delta
               </div>
             
           
@@ -386,6 +386,20 @@ pip install --upgrade covsirphy
 <span class="p">)</span>
 <span class="c1"># Check records</span>
 <span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If dates are parsed incorrectly (e.g. the last date of raw dataset was 12Jun2021, but that of cleaned dataset was 06Dec2021), please try the following codes with appropreate date format for a while.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="c1"># Remove cleaned data with wrong time format</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="c1"># Update raw dataframe with appropreate time format</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
+<span class="c1"># Data cleaning</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>From development version 2.21.0-delta, we can use the following. This will be implemented at the next stable version 2.22.0.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">(</span><span class="n">date_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
