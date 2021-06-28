@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-gamma
+                2.21.0-zeta
               </div>
             
           
@@ -273,10 +273,14 @@
 <span class="sd">        Note:</span>
 <span class="sd">            All tools and names are</span>
 <span class="sd">            - &quot;elapsed&quot;: alculate elapsed days from the last change point of indicators</span>
+<span class="sd">            - &quot;log&quot;: add log-transforemd indeciator values</span>
 <span class="sd">            - &quot;delay&quot;: add delayed (lagged) variables with @delay (must not be None)</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            &quot;delay&quot; must be included in the tools because delay is required to create target X.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            &quot;delay&quot; will be applied to all indicators, including features created by the other tools.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Delay period</span>
         <span class="k">if</span> <span class="n">engineering_tools</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">&quot;delay&quot;</span> <span class="ow">in</span> <span class="n">engineering_tools</span><span class="p">:</span>
@@ -286,6 +290,7 @@
         <span class="c1"># Tools of feature engineering</span>
         <span class="n">tool_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;elapsed&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_engineer</span><span class="o">.</span><span class="n">add_elapsed</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_engineer</span><span class="o">.</span><span class="n">log_transform</span><span class="p">,</span> <span class="p">{}),</span>
             <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_engineer</span><span class="o">.</span><span class="n">apply_delay</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;delay_values&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_candidates</span><span class="p">}),</span>
         <span class="p">}</span>
         <span class="n">all_tools</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tool_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
