@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-zeta
+                2.21.0-eta
               </div>
             
           
@@ -311,25 +311,16 @@ Index</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.COVID19DataHub">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">COVID19DataHub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/covid19datahub.html#COVID19DataHub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.COVID19DataHub" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">COVID19DataHub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/covid19datahub.html#COVID19DataHub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.COVID19DataHub" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Load datasets retrieved from COVID-19 Data Hub.
+<p>Deprecated. Please use DataLoader() class.
+Load datasets retrieved from COVID-19 Data Hub.
 <a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – CSV filename to save records</p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.COVID19DataHub.CITATION">
-<span class="sig-name descname"><span class="pre">CITATION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'(Secondary</span> <span class="pre">source)</span> <span class="pre">Guidotti,</span> <span class="pre">E.,</span> <span class="pre">Ardia,</span> <span class="pre">D.,</span> <span class="pre">(2020),</span> <span class="pre">&quot;COVID-19</span> <span class="pre">Data</span> <span class="pre">Hub&quot;,</span> <span class="pre">Journal</span> <span class="pre">of</span> <span class="pre">Open</span> <span class="pre">Source</span> <span class="pre">Software</span> <span class="pre">5(51):2376,</span> <span class="pre">doi:</span> <span class="pre">10.21105/joss.02376.'</span></em><a class="headerlink" href="#covsirphy.COVID19DataHub.CITATION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.COVID19DataHub.OBJ_DICT">
-<span class="sig-name descname"><span class="pre">OBJ_DICT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'jhu':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.jhu_data.JHUData'&gt;,</span> <span class="pre">'oxcgrt':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.oxcgrt.OxCGRTData'&gt;,</span> <span class="pre">'pcr':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.pcr_data.PCRData'&gt;,</span> <span class="pre">'population':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.population.PopulationData'&gt;}</span></em><a class="headerlink" href="#covsirphy.COVID19DataHub.OBJ_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.COVID19DataHub.load">
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jhu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/covid19datahub.html#COVID19DataHub.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.COVID19DataHub.load" title="Permalink to this definition">¶</a></dt>
@@ -1384,39 +1375,6 @@ does not have ‘Last-Modified’ keys.
 If &#64;update_interval hours have passed since the last update of local datasets,
 updating will be forced when updating is not prevented by the methods.</p>
 </div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Setup</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># JHU data: the number of cases</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
-<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The number of cases in Japan</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpn_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
-<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Population values</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
-<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># OxCGRT: Government responses</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
-<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Citation list of COVID-19 Data Hub</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span><span class="p">)</span>
-<span class="gp">...</span>
-</pre></div>
-</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.DataLoader.GITHUB_URL">
 <span class="sig-name descname"><span class="pre">GITHUB_URL</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'https://raw.githubusercontent.com'</span></em><a class="headerlink" href="#covsirphy.DataLoader.GITHUB_URL" title="Permalink to this definition">¶</a></dt>
@@ -1492,10 +1450,10 @@ Citation of COVID-19 Data Hub will be set as JHUData.citation.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dataset at country level in Japan</p>
+<dd class="field-even"><p>linelist data</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.CountryData" title="covsirphy.CountryData">covsirphy.CountryData</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.LinelistData" title="covsirphy.LinelistData">covsirphy.LinelistData</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -10216,6 +10174,8 @@ Index</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.covid19datahub">covsirphy.loading.covid19datahub module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.dataloader">covsirphy.loading.dataloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_base">covsirphy.loading.db_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_covid19dh">covsirphy.loading.db_covid19dh module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.loaderbase">covsirphy.loading.loaderbase module</a></li>
 </ul>
 </li>

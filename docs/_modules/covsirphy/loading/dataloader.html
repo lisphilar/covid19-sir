@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-zeta
+                2.21.0-eta
               </div>
             
           
@@ -179,6 +179,7 @@
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.japan_data</span> <span class="kn">import</span> <span class="n">JapanData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
@@ -188,7 +189,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.pcr_data</span> <span class="kn">import</span> <span class="n">PCRData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.vaccine_data</span> <span class="kn">import</span> <span class="n">VaccineData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.loading.loaderbase</span> <span class="kn">import</span> <span class="n">_LoaderBase</span>
-<span class="kn">from</span> <span class="nn">covsirphy.loading.covid19datahub</span> <span class="kn">import</span> <span class="n">COVID19DataHub</span>
+<span class="kn">from</span> <span class="nn">covsirphy.loading.db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
 
 
 <div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">_LoaderBase</span><span class="p">):</span>
@@ -204,38 +205,6 @@
 <span class="sd">        does not have &#39;Last-Modified&#39; keys.</span>
 <span class="sd">        If @update_interval hours have passed since the last update of local datasets,</span>
 <span class="sd">        updating will be forced when updating is not prevented by the methods.</span>
-
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; # Setup</span>
-<span class="sd">        &gt;&gt;&gt; import covsirphy as cs</span>
-<span class="sd">        &gt;&gt;&gt; data_loader = cs.DataLoader(&quot;input&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; # JHU data: the number of cases</span>
-<span class="sd">        &gt;&gt;&gt; jhu_data = data_loader.jhu()</span>
-<span class="sd">        &gt;&gt;&gt; print(jhu_data.citation)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; print(type(jhu_data.cleaned()))</span>
-<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # The number of cases in Japan</span>
-<span class="sd">        &gt;&gt;&gt; jpn_data = data_loader.japan()</span>
-<span class="sd">        &gt;&gt;&gt; print(jpn_data.citation)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; print(type(jpn_data.cleaned()))</span>
-<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # Population values</span>
-<span class="sd">        &gt;&gt;&gt; population_data = data_loader.population()</span>
-<span class="sd">        &gt;&gt;&gt; print(population_data.citation)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; print(type(population_data.cleaned()))</span>
-<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # OxCGRT: Government responses</span>
-<span class="sd">        &gt;&gt;&gt; oxcgrt_data = data_loader.oxcgrt()</span>
-<span class="sd">        &gt;&gt;&gt; print(oxcgrt_data.citation)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; print(type(oxcgrt_data.cleaned()))</span>
-<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # Citation list of COVID-19 Data Hub</span>
-<span class="sd">        &gt;&gt;&gt; print(data_loader.covid19dh_citation)</span>
-<span class="sd">        ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">GITHUB_URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com&quot;</span>
 
@@ -244,16 +213,14 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@directory should be a path-like object, but </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@directory should be a path-like object, but </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
             <span class="n">update_interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;update_interval&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Create the directory if not exist</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># COVID-19 Data Hub</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="c1"># Cache instances</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_last_updated_local</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -308,20 +275,28 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.CleaningBase: the dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;jhu&quot;</span><span class="p">:</span> <span class="n">JHUData</span><span class="p">,</span>
+            <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">PopulationData</span><span class="p">,</span>
+            <span class="s2">&quot;oxcgrt&quot;</span><span class="p">:</span> <span class="n">OxCGRTData</span><span class="p">,</span>
+            <span class="s2">&quot;pcr&quot;</span><span class="p">:</span> <span class="n">PCRData</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">filename</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">),</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="o">=</span> <span class="n">COVID19DataHub</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="n">_COVID19dh</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_df</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">CITATION</span>
+        <span class="k">return</span> <span class="n">obj_dict</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">covid19dh_citation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the list of primary sources of COVID-19 Data Hub.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="o">.</span><span class="n">primary</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span>
 
 <div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -419,14 +394,11 @@
 <span class="sd">            verbose (int): level of verbosity</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.CountryData: dataset at country level in Japan</span>
+<span class="sd">            covsirphy.LinelistData: linelist data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
-            <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="o">=</span> <span class="n">LinelistData</span><span class="p">(</span>
-                <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span></div>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LinelistData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataLoader.pcr"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.pcr">[docs]</a>    <span class="k">def</span> <span class="nf">pcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">basename_owid</span><span class="o">=</span><span class="s2">&quot;ourworldindata_pcr.csv&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
