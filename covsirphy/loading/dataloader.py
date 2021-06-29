@@ -3,6 +3,7 @@
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+import pandas as pd
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
@@ -12,7 +13,7 @@ from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.loading.loaderbase import _LoaderBase
-from covsirphy.loading.covid19datahub import COVID19DataHub
+from covsirphy.loading.db_covid19dh import _COVID19dh
 
 
 class DataLoader(_LoaderBase):
@@ -28,38 +29,6 @@ class DataLoader(_LoaderBase):
         does not have 'Last-Modified' keys.
         If @update_interval hours have passed since the last update of local datasets,
         updating will be forced when updating is not prevented by the methods.
-
-    Examples:
-        >>> # Setup
-        >>> import covsirphy as cs
-        >>> data_loader = cs.DataLoader("input")
-        >>> # JHU data: the number of cases
-        >>> jhu_data = data_loader.jhu()
-        >>> print(jhu_data.citation)
-        ...
-        >>> print(type(jhu_data.cleaned()))
-        <class 'pandas.core.frame.DataFrame'>
-        >>> # The number of cases in Japan
-        >>> jpn_data = data_loader.japan()
-        >>> print(jpn_data.citation)
-        ...
-        >>> print(type(jpn_data.cleaned()))
-        <class 'pandas.core.frame.DataFrame'>
-        >>> # Population values
-        >>> population_data = data_loader.population()
-        >>> print(population_data.citation)
-        ...
-        >>> print(type(population_data.cleaned()))
-        <class 'pandas.core.frame.DataFrame'>
-        >>> # OxCGRT: Government responses
-        >>> oxcgrt_data = data_loader.oxcgrt()
-        >>> print(oxcgrt_data.citation)
-        ...
-        >>> print(type(oxcgrt_data.cleaned()))
-        <class 'pandas.core.frame.DataFrame'>
-        >>> # Citation list of COVID-19 Data Hub
-        >>> print(data_loader.covid19dh_citation)
-        ...
     """
     GITHUB_URL = "https://raw.githubusercontent.com"
 
@@ -68,14 +37,14 @@ class DataLoader(_LoaderBase):
         try:
             self.dir_path = Path(directory)
         except TypeError:
-            raise TypeError(
-                f"@directory should be a path-like object, but {directory} was applied.")
+            raise TypeError(f"@directory should be a path-like object, but {directory} was applied.")
         self.update_interval = self._ensure_natural_int(
             update_interval, name="update_interval", include_zero=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
         # COVID-19 Data Hub
-        self.covid19dh = None
+        self._covid19dh_df = pd.DataFrame()
+        self._covid19dh_citation = ""
         # Cache instances
         self._linelist_data = None
 
@@ -132,20 +101,28 @@ class DataLoader(_LoaderBase):
         Returns:
             covsirphy.CleaningBase: the dataset
         """
+        obj_dict = {
+            "jhu": JHUData,
+            "population": PopulationData,
+            "oxcgrt": OxCGRTData,
+            "pcr": PCRData,
+        }
         filename, force = self.dir_path.joinpath(basename), False
-        if self.covid19dh is None:
-            self.covid19dh = COVID19DataHub(filename=filename)
+        if self._covid19dh_df.empty:
             force = self._download_necessity(filename)
-        return self.covid19dh.load(name=name, force=force, verbose=verbose)
+            handler = _COVID19dh(filename)
+            self._covid19dh_df = handler.to_dataframe(force=force, verbose=verbose)
+            self._covid19dh_citation = handler.CITATION
+        return obj_dict[name](data=self._covid19dh_df, citation=self._covid19dh_citation)
 
     @property
     def covid19dh_citation(self):
         """
         Return the list of primary sources of COVID-19 Data Hub.
         """
-        if self.covid19dh is None:
+        if not self._covid19dh_citation:
             self._covid19dh(name="jhu", verbose=0)
-        return self.covid19dh.primary
+        return self._covid19dh_citation
 
     def jhu(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
