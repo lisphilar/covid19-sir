@@ -45,8 +45,6 @@ class DataLoader(_LoaderBase):
         # COVID-19 Data Hub
         self._covid19dh_df = pd.DataFrame()
         self._covid19dh_citation = ""
-        # Cache instances
-        self._linelist_data = None
 
     @staticmethod
     def _last_updated_local(path):
@@ -220,14 +218,11 @@ class DataLoader(_LoaderBase):
             verbose (int): level of verbosity
 
         Returns:
-            covsirphy.CountryData: dataset at country level in Japan
+            covsirphy.LinelistData: linelist data
         """
-        if self._linelist_data is None:
-            filename = self.dir_path.joinpath(basename)
-            force = self._download_necessity(filename=filename)
-            self._linelist_data = LinelistData(
-                filename=filename, force=force, verbose=verbose)
-        return self._linelist_data
+        filename = self.dir_path.joinpath(basename)
+        force = self._download_necessity(filename=filename)
+        return LinelistData(filename=filename, force=force, verbose=verbose)
 
     def pcr(self, basename="covid19dh.csv", local_file=None,
             basename_owid="ourworldindata_pcr.csv", verbose=1):
