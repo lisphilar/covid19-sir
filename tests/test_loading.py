@@ -62,6 +62,7 @@ class TestDataLoader(object):
         snl.register(**data_dict)
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class TestCOVID19DataHub(object):
     def test_covid19dh(self):
         with pytest.raises(TypeError):
