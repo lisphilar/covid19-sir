@@ -48,7 +48,7 @@ class _RemoteDatabase(Term):
                 Index
                     reset index
                 Columns
-                    defined by .COL_DICT
+                    defined by the first values of self.COL_DICT.values()
         """
         # Read local file if available and usable
         if not force and self.filepath.exists():

@@ -60,7 +60,7 @@ class _COVID19dh(_RemoteDatabase):
                 Index
                     reset index
                 Columns
-                    defined by .COL_DICT
+                    defined by the first values of self.COL_DICT.values()
 
         Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
