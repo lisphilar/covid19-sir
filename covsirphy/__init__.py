@@ -17,6 +17,7 @@ from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnE
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
+from covsirphy.util.error import DBLockedError, NotDBLockedError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -102,7 +103,7 @@ __all__ = [
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "UnExpectedReturnValueError", "NotIncludedError",
+    "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
