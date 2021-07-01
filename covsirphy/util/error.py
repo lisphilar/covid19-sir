@@ -249,3 +249,37 @@ class NotIncludedError(ValueError):
 
     def __str__(self):
         return f"Expected value {self.value} was not included in {self.name}. {self.message}."
+
+
+class DBLockedError(ValueError):
+    """
+    Error when a database has been locked not as expected.
+
+    Args:
+        name (str): database name
+        message (str or None): the other messages
+    """
+
+    def __init__(self, name, message=None):
+        self.name = str(name)
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"{self.name} should NOT be locked, but locked. {self.message}."
+
+
+class NotDBLockedError(ValueError):
+    """
+    Error when a database has NOT been locked not as expected.
+
+    Args:
+        name (str): database name
+        message (str or None): the other messages
+    """
+
+    def __init__(self, name, message=None):
+        self.name = str(name)
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"{self.name} should be locked, but NOT locked. {self.message}."

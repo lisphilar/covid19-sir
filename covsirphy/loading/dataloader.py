@@ -4,6 +4,9 @@
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import pandas as pd
+from covsirphy.util.argument import find_args
+from covsirphy.util.error import DBLockedError, NotDBLockedError, UnExpectedValueError
+from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
@@ -12,25 +15,23 @@ from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
-from covsirphy.loading.loaderbase import _LoaderBase
 from covsirphy.loading.db_covid19dh import _COVID19dh
 
 
-class DataLoader(_LoaderBase):
+class DataLoader(Term):
     """
-    Download the dataset and perform data cleaning.
+    Load/download datasets and perform data cleaning.
 
     Args:
-        directory (str or pathlib.Path): directory to save the downloaded datasets
-        update_interval (int): update interval of the local datasets
+        directory (str or pathlib.Path): directory to save downloaded datasets
+        update_interval (int or None): update interval of downloaded datasets or None (only use local files)
 
     Note:
         GitHub datasets will be always updated because headers of GET response
         does not have 'Last-Modified' keys.
-        If @update_interval hours have passed since the last update of local datasets,
+        If @update_interval hours have passed since the last update of downloaded datasets,
         updating will be forced when updating is not prevented by the methods.
     """
-    GITHUB_URL = "https://raw.githubusercontent.com"
 
     def __init__(self, directory="input", update_interval=12):
         # Directory
@@ -39,12 +40,150 @@ class DataLoader(_LoaderBase):
         except TypeError:
             raise TypeError(f"@directory should be a path-like object, but {directory} was applied.")
         self.update_interval = self._ensure_natural_int(
-            update_interval, name="update_interval", include_zero=True)
+            update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
+        # Datasets retrieved from local files
+        self._local_df = pd.DataFrame()
+        self._locked_df = pd.DataFrame()
         # COVID-19 Data Hub
         self._covid19dh_df = pd.DataFrame()
         self._covid19dh_citation = ""
+
+    def _ensure_lock_status(self, lock_expected):
+        """
+        Check whether the local database has been locked or not.
+
+        Args:
+            lock_expected (bool): whether the local database is expected to be locked or not
+
+        Raises:
+            NotDBLockedError: @lock_expected is True, but the database has NOT been locked
+            DBLockedError: @lock_expected is False, but the database has been locked
+        """
+        if lock_expected and self._locked_df.empty:
+            raise NotDBLockedError(name="the local database")
+        if not lock_expected and not self._locked_df.empty:
+            raise DBLockedError(name="the local database")
+
+    def read_csv(self, filename, how_combine="replace", dayfirst=False, **kwargs):
+        """
+        Read dataset saved in a CSV file and include it local database.
+
+        Args:
+            filename (str or pathlib.Path): path/URL of the CSV file
+            how_combine (str): how to combine datasets when we call this method multiple times
+                - 'replace': replace registered dataset with the new data
+                - 'concat': concat datasets with pandas.concat()
+                - 'merge': merge datasets with pandas.DataFrame.merge()
+                - 'update': update the current dataset with pandas.DataFrame.update()
+            dayfirst (bool): whether date format is DD/MM or not
+            kwargs: keyword arguments of pandas.read_csv()
+                and pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update().
+
+        Raises:
+            UnExpectedValueError: un-expected value was applied as @how_combine
+
+        Returns:
+            covsirphy.DataLoader: self
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+            for the keyword arguments of pandas.read_csv().
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.concat.html
+            for the keyword arguments of pandas.concat().
+            Note that we always use 'ignore_index=True' and 'sort=True'.
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
+            for the keyword arguments of pandas.DataFrame.merge().
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
+            for the keyword arguments of pandas.DataFrame.update().
+        """
+        self._ensure_lock_status(lock_expected=False)
+        df = pd.read_csv(filename, dayfirst=dayfirst, **find_args(pd.read_csv, **kwargs))
+        if self._local_df.empty or how_combine == "replace":
+            self._local_df = df.copy()
+        elif how_combine == "concat":
+            self._local_df = pd.concat(
+                [self._local_df, df], ignore_index=True, sort=True, **find_args(pd.concat, **kwargs))
+        elif how_combine == "merge":
+            self._local_df = self._local_df.merge(df, **find_args(pd.merge, **kwargs))
+        elif how_combine == "update":
+            self._local_df.update(df, **find_args(df.update, **kwargs))
+        else:
+            raise UnExpectedValueError(
+                "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
+        return self
+
+    def local(self, locked=False):
+        """
+        Return the local dataset.
+
+        Args:
+            locked (bool): whether the returned dataset is from locked locked database or unlocked
+
+        Returns:
+            pandas.DataFrame: dataset from locked or unlocked local database
+                Index
+                    reset index
+                Columns
+                    If locked,
+                    - Date (pandas.Timestamp): dates
+                    - Country (object): country names
+                    - Province (object): province names
+        """
+        if locked:
+            self._ensure_lock_status(lock_expected=True)
+            return self._locked_df
+        return self._local_df
+
+    def assign(self, **kwargs):
+        """
+        Assgn new columns to the dataset retrieved from local files.
+
+        Args:
+            kwargs: keyword arguments of pandas.DataFrame.assign().
+
+        Returns:
+            covsirphy.DataLoader: self
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
+            for the keyword arguments of pandas.DataFrame.assign().
+        """
+        self._ensure_lock_status(lock_expected=False)
+        self._local_df = self._local_df.assign(**kwargs)
+        return self
+
+    def lock(self, date, country, province):
+        """
+        Lock the local database, specifying columns which has date and area information.
+
+        Args:
+            date (str): column name for dates
+            country (str): column name for country names (top level administration)
+            procvince (str): column name for province names (2nd level administration)
+
+        Returns:
+            covsirphy.DataLoader: self
+
+        Note:
+            Values will be grouped by @date, @country and @province.
+            Total values will be used for each group.
+        """
+        self._ensure_lock_status(lock_expected=False)
+        df = self._local_df.copy()
+        col_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
+        self._ensure_dataframe(df, name="local database", columns=list(col_dict.keys()))
+        df = df.rename(columns=col_dict)
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
+        self._locked_df = df.groupby(list(col_dict.values()), as_index=False).sum()
+        return self
 
     @staticmethod
     def _last_updated_local(path):
@@ -289,3 +428,20 @@ class DataLoader(_LoaderBase):
         """
         filename = self.dir_path.joinpath(basename)
         return PopulationPyramidData(filename=filename, force=False, verbose=verbose)
+
+    def collect(self):
+        """
+        Collect data for scenario analysis and return them as a dictionary.
+
+        Returns:
+            dict(str, object):
+                - jhu_data (covsirphy.JHUData)
+                - extras (list[covsirphy.CleaningBase]):
+                    - covsirphy.OXCGRTData
+                    - covsirphy.PCRData
+                    - covsirphy.VaccineData
+        """
+        return {
+            "jhu_data": self.jhu(),
+            "extras": [self.oxcgrt(), self.pcr(), self.vaccine()]
+        }
