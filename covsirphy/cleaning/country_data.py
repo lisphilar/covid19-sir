@@ -149,7 +149,7 @@ class CountryData(CleaningBase):
             Please specify @date_format if dates are parsed incorrectly.
 
         Note:
-            Format codes: refer to https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+            Date format codes: refer to https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
         """
         if self._cleaned_df.empty:
             self._cleaned_df = self._cleaning(date_format=date_format)
