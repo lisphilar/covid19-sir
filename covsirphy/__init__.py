@@ -109,7 +109,7 @@ __all__ = [
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # cleaning
     "CleaningBase", "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
-    "PopulationPyramidData", "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
+    "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler",
     # loading
     "DataLoader",
     # trend
@@ -123,7 +123,7 @@ __all__ = [
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
-    "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub",
+    "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData",
 ]
 
 # Show exceptions in better format if used from command line
