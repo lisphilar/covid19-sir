@@ -32,11 +32,6 @@ def japan_data(data_loader):
 
 
 @pytest.fixture(scope="session")
-def linelist_data(data_loader):
-    return data_loader.linelist()
-
-
-@pytest.fixture(scope="session")
 def pcr_data(data_loader):
     return data_loader.pcr()
 
@@ -56,7 +51,6 @@ def pyramid_data(data_loader):
     params=[
         "jhu_data", "population_data", "oxcgrt_data", "japan_data",
         "pcr_data", "vaccine_data", "pyramid_data",
-        # "linelist_data",
     ])
 def data(request):
     return request.getfixturevalue(request.param)

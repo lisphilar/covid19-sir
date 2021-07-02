@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from covsirphy import DBLockedError, NotDBLockedError
 from covsirphy import DataLoader, COVID19DataHub
-from covsirphy import LinelistData, JHUData, CountryData, PopulationData
+from covsirphy import JHUData, CountryData, PopulationData
 from covsirphy import OxCGRTData, PCRData, VaccineData, PopulationPyramidData
 from covsirphy import Scenario, Term
 
@@ -18,7 +18,7 @@ class TestDataLoader(object):
             DataLoader(directory=0)
 
     def test_dataloader(self, jhu_data, population_data, oxcgrt_data,
-                        japan_data, linelist_data, pcr_data, vaccine_data, pyramid_data):
+                        japan_data, pcr_data, vaccine_data, pyramid_data):
         # List of primary sources of COVID-19 Data Hub
         data_loader = DataLoader()
         assert data_loader.covid19dh_citation
@@ -27,7 +27,6 @@ class TestDataLoader(object):
         assert isinstance(population_data, PopulationData)
         assert isinstance(oxcgrt_data, OxCGRTData)
         assert isinstance(japan_data, CountryData)
-        assert isinstance(linelist_data, LinelistData)
         assert isinstance(pcr_data, PCRData)
         assert isinstance(vaccine_data, VaccineData)
         assert isinstance(pyramid_data, PopulationPyramidData)
