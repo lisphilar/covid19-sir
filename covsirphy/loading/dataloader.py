@@ -27,10 +27,8 @@ class DataLoader(Term):
         update_interval (int or None): update interval of downloaded datasets or None (only use local files)
 
     Note:
-        GitHub datasets will be always updated because headers of GET response
-        does not have 'Last-Modified' keys.
         If @update_interval hours have passed since the last update of downloaded datasets,
-        updating will be forced when updating is not prevented by the methods.
+        the dawnloaded datasets will be updated automatically.
     """
 
     def __init__(self, directory="input", update_interval=12):
