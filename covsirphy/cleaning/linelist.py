@@ -3,13 +3,13 @@
 
 from pathlib import Path
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
 class LinelistData(CleaningBase):
     """
-    Linelist of case reports.
+    Deprecated. Linelist of case reports.
 
     Args:
         filename (str or pathlib.path): CSV filename to save the raw dataset
@@ -49,6 +49,7 @@ class LinelistData(CleaningBase):
         "date_death_or_discharge": OUTCOME_DATE,
     }
 
+    @deprecate("LinelistData()", version="2.21.0-theta")
     def __init__(self, filename, force=False, verbose=1):
         self._filename = filename
         raw_df = self._read_raw(filename, force, verbose)
