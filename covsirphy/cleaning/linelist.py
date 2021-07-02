@@ -9,7 +9,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 
 class LinelistData(CleaningBase):
     """
-    Linelist of case reports.
+    Deprecated. Linelist of case reports.
 
     Args:
         filename (str or pathlib.path): CSV filename to save the raw dataset
