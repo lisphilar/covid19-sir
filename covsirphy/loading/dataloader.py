@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import pandas as pd
 from covsirphy.util.argument import find_args
-from covsirphy.util.error import DBLockedError, NotDBLockedError, UnExpectedValueError
+from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
@@ -345,6 +345,7 @@ class DataLoader(Term):
         force = self._download_necessity(filename=filename)
         return JapanData(filename=filename, force=force, verbose=verbose)
 
+    @deprecate("DataLoader.linelist()", version="2.21.0-theta")
     def linelist(self, basename="linelist.csv", verbose=1):
         """
         Load linelist of case reports.
