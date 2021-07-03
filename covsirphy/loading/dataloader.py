@@ -356,7 +356,6 @@ class DataLoader(Term):
         Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
-            Citation of COVID-19 Data Hub will be set as PopulationData.citation.
 
         Returns:
             covsirphy.PopulationData: dataset regarding population values
@@ -389,14 +388,25 @@ class DataLoader(Term):
         Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
-            Citation of COVID-19 Data Hub will be set as OxCGRTData.citation.
 
         Returns:
             covsirphy.JHUData: dataset regarding OxCGRT data
         """
         if local_file is not None:
             return OxCGRTData(filename=local_file)
-        return self._covid19dh(name="oxcgrt", basename=basename, verbose=verbose)
+        # Only local data
+        locked_df = self.local(locked=True)
+        if self.update_interval is None:
+            return OxCGRTData(data=locked_df, citation="\n".join(self._local_citations))
+        # Use remote data
+        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        locked_df = locked_df.set_index(self._id_cols)
+        locked_df.update(datahub_df, overwrite=True)
+        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
+        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
+        # Citation
+        citations = [*self._local_citations, self._covid19dh_citation]
+        return OxCGRTData(data=df, citation="\n".join(citations))
 
     def japan(self, basename="covid_japan.csv", local_file=None, verbose=1):
         """
