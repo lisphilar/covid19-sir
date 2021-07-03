@@ -1,0 +1,39 @@
+version: v1.0
+name: Python
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      jobs:
+        - name: Python 3.8
+          commands:
+            - sem-version python 3.8
+            - checkout
+            - python -m pip install --upgrade pip
+            - pip install .
+            - pip install pytest pytest-cov flake8
+            - flake8 covsirphy --ignore=E501
+            - pytest -v --maxfail=1 --cov=covsirphy --cov-report=xml --cov-report=term-missing
+        - name: Python 3.9
+          commands:
+            - sem-version python 3.9
+            - checkout
+            - python -m pip install --upgrade pip
+            - pip install .
+            - pip install pytest pytest-cov flake8
+            - flake8 covsirphy --ignore=E501
+            - pytest -v --maxfail=1 --cov=covsirphy --cov-report=xml --cov-report=term-missing
+      secrets:
+        - name: Test coverage
+      prologue:
+        commands:
+          - 'curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter'
+          - chmod +x ./cc-test-reporter
+          - ./cc-test-reporter before-build
+      epilogue:
+        on_pass:
+          commands:
+            - ./cc-test-reporter after-build --exit-code $?
