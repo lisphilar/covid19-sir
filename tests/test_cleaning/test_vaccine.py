@@ -9,7 +9,7 @@ from covsirphy import SubsetNotFoundError, Term, VaccineData
 class TestVaccineData(object):
     def test_cleaning(self, vaccine_data):
         df = vaccine_data.cleaned()
-        assert set(VaccineData.VAC_COLS).issubset(df.columns)
+        assert set(VaccineData.RAW_COLS).issubset(df.columns)
 
     @pytest.mark.parametrize("country", ["Canada"])
     def test_subset(self, vaccine_data, country):

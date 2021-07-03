@@ -25,7 +25,7 @@ class VaccineData(CleaningBase):
             - Date (pandas.TimeStamp): observation dates
             - Country (pandas.Category): country (or province) names
             - ISO3 (pandas.Category): ISO3 codes
-            - Product (pandas.Category): product names
+            - Product (pandas.Category): vaccine product names
             - Vaccinations (int): cumulative number of vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
@@ -35,7 +35,7 @@ class VaccineData(CleaningBase):
     URL_REC = f"{URL}vaccinations.csv"
     URL_LOC = f"{URL}locations.csv"
     # Columns
-    VAC_COLS = [
+    RAW_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PRODUCT,
         CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
     VAC_SUBSET_COLS = [CleaningBase.DATE, CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
@@ -99,7 +99,7 @@ class VaccineData(CleaningBase):
                 - Date (pandas.TimeStamp): observation dates
                 - Country (pandas.Category): country (or province) names
                 - ISO3 (pandas.Category): ISO3 codes
-                - Product (pandas.Category): product names
+                - Product (pandas.Category): vaccine product names
                 - Vaccinations (int): cumulative number of vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
@@ -129,7 +129,7 @@ class VaccineData(CleaningBase):
                 subset_df = subset_df.loc[keep_index:]
                 df = pd.concat([df, subset_df], axis=0, ignore_index=True)
         df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
-        return df.loc[:, self.VAC_COLS]
+        return df.loc[:, self.RAW_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
         """
@@ -137,7 +137,7 @@ class VaccineData(CleaningBase):
 
         Args:
             country (str or None): country name or ISO3 code
-            product (str or None): product name
+            product (str or None): vaccine product name
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
 

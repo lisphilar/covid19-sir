@@ -82,7 +82,7 @@ class _COVID19dh(_RemoteDatabase):
                 print(self.primary_list)
             else:
                 print("\tPlease set verbose=2 to see the detailed citation list.")
-        return df.loc[:, self.saved_cols]
+        return df
 
     def _download(self):
         """
