@@ -363,7 +363,19 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return PopulationData(filename=local_file)
-        return self._covid19dh(name="population", basename=basename, verbose=verbose)
+        # Only local data
+        locked_df = self.local(locked=True)
+        if self.update_interval is None:
+            return PopulationData(data=locked_df, citation="\n".join(self._local_citations))
+        # Use remote data
+        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        locked_df = locked_df.set_index(self._id_cols)
+        locked_df.update(datahub_df, overwrite=True)
+        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
+        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
+        # Citation
+        citations = [*self._local_citations, self._covid19dh_citation]
+        return PopulationData(data=df, citation="\n".join(citations))
 
     def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
