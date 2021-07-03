@@ -333,17 +333,16 @@ class DataLoader(Term):
             return JHUData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
         datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
-        japan_data = self.japan()
-        japan_df = japan_data.cleaned().set_index(self._id_cols)
-        japan_df[self.ISO3] = "JPN"
-        japan_df.update(datahub_df, overwrite=False)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, japan_df, locked_df], axis=0, sort=True)
+        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
         df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
         # Citation
-        citations = [*self._local_citations, self._covid19dh_citation, japan_data.citation]
-        return JHUData(data=df, citation="\n".join(citations))
+        citations = [*self._local_citations, self._covid19dh_citation]
+        # Create JHUData instance
+        jhu_data = JHUData(data=df, citation="\n".join(citations))
+        jhu_data.replace(self.japan())
+        return jhu_data
 
     def population(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
@@ -473,17 +472,15 @@ class DataLoader(Term):
             return PCRData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
         datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
-        japan_data = self.japan()
-        japan_df = japan_data.cleaned().set_index(self._id_cols)
-        japan_df[self.ISO3] = "JPN"
-        japan_df.update(datahub_df, overwrite=False)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, japan_df, locked_df], axis=0, sort=True)
+        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
         df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
         # Citation
-        citations = [*self._local_citations, self._covid19dh_citation, japan_data.citation]
+        citations = [*self._local_citations, self._covid19dh_citation]
+        # Create PCRData instance
         pcr_data = PCRData(data=df, citation="\n".join(citations))
+        pcr_data.replace(self.japan())
         # Update the values using "Our World In Data" dataset
         owid_filename = self.dir_path.joinpath(basename_owid)
         owid_force = self._download_necessity(filename=owid_filename)
