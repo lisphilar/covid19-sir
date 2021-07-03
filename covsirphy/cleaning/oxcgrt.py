@@ -63,10 +63,6 @@ class OxCGRTData(CleaningBase):
     SUBSET_COLS = [CleaningBase.DATE, *OXCGRT_VARS]
     # Indicators except for Stringency index
     OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
-    # Deprecated
-    OXCGRT_VARIABLES_RAW = [v.lower() for v in OXCGRT_VARS]
-    OXCGRT_COLS = RAW_COLS[:]
-    OXCGRT_COLS_WITHOUT_COUNTRY = SUBSET_COLS[:]
 
     def __init__(self, filename=None, data=None, citation=None):
         # Raw data

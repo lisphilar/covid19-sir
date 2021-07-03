@@ -158,7 +158,7 @@ class DataLoader(Term):
         self._local_df = self._local_df.assign(**kwargs)
         return self
 
-    def lock(self, date, country, province):
+    def lock(self, date, country, province, **kwargs):
         """
         Lock the local database, specifying columns which has date and area information.
 
@@ -166,6 +166,8 @@ class DataLoader(Term):
             date (str): column name for dates
             country (str): column name for country names (top level administration)
             procvince (str): column name for province names (2nd level administration)
+            kwargs: keyword arguments of variable names
+
 
         Returns:
             covsirphy.DataLoader: self
@@ -173,17 +175,43 @@ class DataLoader(Term):
         Note:
             Values will be grouped by @date, @country and @province.
             Total values will be used for each group.
+
+        Note:
+            For keyword names (column names with CovsirPhy terms) of kwargs, upper/lower case insensitive.
+
+        Note:
+        As keywords of kwargs, we ca use
+            "confirmed": the number of confirmed cases,
+            "fatal": the number of fatal cases,
+            "recovered": the number of recovered cases,
+            "population": population values,
+            "tests": the number of tests,
+            "iso3": ISO3 codes,
+            "product": vaccine product names,
+            "vaccinations": cumulative number of vaccinations,
+            "vaccinated_once": cumulative number of people who received at least one vaccine dose,
+            "vaccinated_full": cumulative number of people who received all doses prescrived by the protocol.
         """
         self._ensure_lock_status(lock_expected=False)
         df = self._local_df.copy()
-        col_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
-        self._ensure_dataframe(df, name="local database", columns=list(col_dict.keys()))
-        df = df.rename(columns=col_dict)
+        # Date/Country/Province
+        id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
+        self._ensure_dataframe(df, name="local database", columns=list(id_dict.keys()))
+        df = df.rename(columns=id_dict)
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        self._locked_df = df.groupby(list(col_dict.values()), as_index=False).sum()
+        # Variables
+        variables = [
+            self.C, self.F, self.R, self.N, self.TESTS, self.ISO3,
+            self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
+        ]
+        df = df.rename(
+            columns={v: k.capitalize().replace("Iso3", self.ISO3) for (k, v) in kwargs.items()})
+        # Complete database lock
+        df = df.reindex(columns=[*list(id_dict.values()), *variables])
+        self._locked_df = df.groupby(list(id_dict.values()), as_index=False).sum()
         return self
 
-    @staticmethod
+    @ staticmethod
     def _last_updated_local(path):
         """
         Return the date last updated of local file/directory.
@@ -250,7 +278,7 @@ class DataLoader(Term):
             self._covid19dh_citation = handler.CITATION
         return obj_dict[name](data=self._covid19dh_df, citation=self._covid19dh_citation)
 
-    @property
+    @ property
     def covid19dh_citation(self):
         """
         Return the list of primary sources of COVID-19 Data Hub.
@@ -345,7 +373,7 @@ class DataLoader(Term):
         force = self._download_necessity(filename=filename)
         return JapanData(filename=filename, force=force, verbose=verbose)
 
-    @deprecate("DataLoader.linelist()", version="2.21.0-theta")
+    @ deprecate("DataLoader.linelist()", version="2.21.0-theta")
     def linelist(self, basename="linelist.csv", verbose=1):
         """
         Load linelist of case reports.
