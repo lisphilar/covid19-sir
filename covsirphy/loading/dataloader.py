@@ -41,12 +41,17 @@ class DataLoader(Term):
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
+        # Column names to indentify records
+        self._id_cols = [self.DATE, self.COUNTRY, self.PROVINCE]
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
-        self._locked_df = pd.DataFrame()
+        self._locked_df = pd.DataFrame(columns=self._id_cols)
+        self._local_citations = []
         # COVID-19 Data Hub
         self._covid19dh_df = pd.DataFrame()
         self._covid19dh_citation = ""
+        # COVID-19 dataset in Japan
+        self._japan_data = None
 
     def _ensure_lock_status(self, lock_expected):
         """
@@ -56,26 +61,27 @@ class DataLoader(Term):
             lock_expected (bool): whether the local database is expected to be locked or not
 
         Raises:
-            NotDBLockedError: @lock_expected is True, but the database has NOT been locked
+            NotDBLockedError: @lock_expected is True, but the non-empty database has NOT been locked
             DBLockedError: @lock_expected is False, but the database has been locked
         """
-        if lock_expected and self._locked_df.empty:
+        if lock_expected and (not self._local_df.empty) and self._locked_df.empty:
             raise NotDBLockedError(name="the local database")
         if not lock_expected and not self._locked_df.empty:
             raise DBLockedError(name="the local database")
 
-    def read_csv(self, filename, how_combine="replace", dayfirst=False, **kwargs):
+    def read_csv(self, filename, citation=None, dayfirst=False, how_combine="replace", **kwargs):
         """
         Read dataset saved in a CSV file and include it local database.
 
         Args:
             filename (str or pathlib.Path): path/URL of the CSV file
+            citation (str or None): citation of the CSV file or None (basename of the CSV file)
+            dayfirst (bool): whether date format is DD/MM or not
             how_combine (str): how to combine datasets when we call this method multiple times
                 - 'replace': replace registered dataset with the new data
                 - 'concat': concat datasets with pandas.concat()
                 - 'merge': merge datasets with pandas.DataFrame.merge()
                 - 'update': update the current dataset with pandas.DataFrame.update()
-            dayfirst (bool): whether date format is DD/MM or not
             kwargs: keyword arguments of pandas.read_csv()
                 and pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update().
 
@@ -116,6 +122,7 @@ class DataLoader(Term):
         else:
             raise UnExpectedValueError(
                 "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
+        self._local_citations.append(str(citation or Path(filename).name))
         return self
 
     def local(self, locked=False):
@@ -247,36 +254,50 @@ class DataLoader(Term):
         time_limit = date_local + timedelta(hours=self.update_interval)
         return datetime.now() > time_limit
 
-    def _covid19dh(self, name, basename="covid19dh.csv", verbose=True):
+    def _covid19dh(self, basename, verbose):
         """
-        Return the datasets of COVID-19 Data Hub.
+        Return the datasets of COVID-19 Data Hub as a dataframe.
 
         Args:
-            name (str): name of dataset, "jhu", "population" or "oxcgrt"
             basename (str): basename of CSV file to save records
             verbose (int): level of verbosity
 
         Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
-            Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
 
         Returns:
-            covsirphy.CleaningBase: the dataset
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date: observation date
+                    - Country: country/region name
+                    - Province: province/prefecture/state name
+                    - Confirmed: the number of confirmed cases
+                    - Infected: the number of currently infected cases
+                    - Fatal: the number of fatal cases
+                    - Recovered: the number of recovered cases
+                    - School_closing
+                    - Workplace_closing
+                    - Cancel_events
+                    - Gatherings_restrictions
+                    - Transport_closing
+                    - Stay_home_restrictions
+                    - Internal_movement_restrictions
+                    - International_movement_restrictions
+                    - Information_campaigns
+                    - Testing_policy
+                    - Contact_tracing
+                    - Stringency_index
         """
-        obj_dict = {
-            "jhu": JHUData,
-            "population": PopulationData,
-            "oxcgrt": OxCGRTData,
-            "pcr": PCRData,
-        }
         filename, force = self.dir_path.joinpath(basename), False
         if self._covid19dh_df.empty:
             force = self._download_necessity(filename)
             handler = _COVID19dh(filename)
             self._covid19dh_df = handler.to_dataframe(force=force, verbose=verbose)
             self._covid19dh_citation = handler.CITATION
-        return obj_dict[name](data=self._covid19dh_df, citation=self._covid19dh_citation)
+        return self._covid19dh_df
 
     @ property
     def covid19dh_citation(self):
@@ -284,7 +305,7 @@ class DataLoader(Term):
         Return the list of primary sources of COVID-19 Data Hub.
         """
         if not self._covid19dh_citation:
-            self._covid19dh(name="jhu", verbose=0)
+            self._covid19dh(basename="covid19dh.csv", verbose=0)
         return self._covid19dh_citation
 
     def jhu(self, basename="covid19dh.csv", local_file=None, verbose=1):
@@ -306,13 +327,22 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return JHUData(filename=local_file)
-        # Retrieve JHU data from COVID-19 Data Hub
-        jhu_data = self._covid19dh(
-            name="jhu", basename=basename, verbose=verbose)
-        # Replace Japan dataset with the government-announced data
+        # Only local data
+        locked_df = self.local(locked=True)
+        if self.update_interval is None:
+            return JHUData(data=locked_df, citation="\n".join(self._local_citations))
+        # Use remote data
+        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
         japan_data = self.japan()
-        jhu_data.replace(japan_data)
-        return jhu_data
+        japan_df = japan_data.cleaned().set_index(self._id_cols)
+        japan_df.update(datahub_df, overwrite=False)
+        locked_df = locked_df.set_index(self._id_cols)
+        locked_df.update(datahub_df, overwrite=True)
+        df = pd.concat([datahub_df, japan_df, locked_df], axis=0, sort=True)
+        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
+        # Citation
+        citations = [*self._local_citations, self._covid19dh_citation, japan_data.citation]
+        return JHUData(data=df, citation="\n".join(citations))
 
     def population(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
@@ -370,8 +400,10 @@ class DataLoader(Term):
             covsirphy.CountryData: dataset at country level in Japan
         """
         filename = local_file or self.dir_path.joinpath(basename)
-        force = self._download_necessity(filename=filename)
-        return JapanData(filename=filename, force=force, verbose=verbose)
+        if self._japan_data is None:
+            force = self._download_necessity(filename=filename)
+            self._japan_data = JapanData(filename=filename, force=force, verbose=verbose)
+        return self._japan_data
 
     @ deprecate("DataLoader.linelist()", version="2.21.0-theta")
     def linelist(self, basename="linelist.csv", verbose=1):
