@@ -53,7 +53,9 @@ class TestDataLoader(object):
         # Local database lock
         with pytest.raises(NotDBLockedError):
             loader.local(locked=True)
-        loader.lock(date="Date", country="country", province="area")
+        loader.lock(
+            date="Date", country="country", province="area",
+            confiremd="Positive", tests="Tested", recovered="Discharged")
         with pytest.raises(DBLockedError):
             loader.lock(date="Date", country="country", province="area")
         # Check local database (after database lock)
