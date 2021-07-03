@@ -14,6 +14,7 @@ class TestPCRData(object):
         assert set(df.columns) == set(PCRData.CLEANED_COLS) - set([PCRData.ISO3])
 
     def test_from_dataframe(self, pcr_data):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         df = pcr_data.cleaned()
         assert isinstance(PCRData.from_dataframe(df), PCRData)
 
