@@ -4,7 +4,7 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError
+from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError, deprecate
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
@@ -41,10 +41,6 @@ class PCRData(CleaningBase):
     T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
-    # Deprecated
-    PCR_VALUE_COLUMNS = [CleaningBase.TESTS, CleaningBase.C]
-    PCR_NLOC_COLUMNS = [CleaningBase.DATE, *PCR_VALUE_COLUMNS]
-    PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, *PCR_VALUE_COLUMNS]
 
     def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
         # Raw data
@@ -113,6 +109,7 @@ class PCRData(CleaningBase):
         return df
 
     @classmethod
+    @deprecate("PCRData.from_dataframe()", new="PCRData(data)", version="2.21.0-iota")
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create PCRData instance using a pandas dataframe.
