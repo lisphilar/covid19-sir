@@ -192,12 +192,12 @@ class PCRData(CleaningBase):
         df[self.COUNTRY] = None
         df[self.C] = None
         df.index = df[self.ISO3].str.cat(df[self.DATE], sep="_")
+        df.index.name = None
         series = df.loc[:, self.TESTS]
         hub_df = self._cleaned_df.copy()
         hub_df = hub_df.loc[hub_df[self.PROVINCE] == self.UNKNOWN]
-        hub_df.index = hub_df[self.ISO3].str.cat(
-            hub_df[self.DATE].astype(str), sep="_")
-        df.update(hub_df)
+        hub_df.index = hub_df[self.ISO3].str.cat(hub_df[self.DATE].astype(str), sep="_")
+        df.update(hub_df.groupby(level=0).last())
         df[self.TESTS] = series
         df = df.dropna().reset_index(drop=True)
         # Add "Province" column (Unknown because not)

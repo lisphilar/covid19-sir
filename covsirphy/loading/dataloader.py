@@ -335,6 +335,7 @@ class DataLoader(Term):
         datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
         japan_data = self.japan()
         japan_df = japan_data.cleaned().set_index(self._id_cols)
+        japan_df[self.ISO3] = "JPN"
         japan_df.update(datahub_df, overwrite=False)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
@@ -474,6 +475,7 @@ class DataLoader(Term):
         datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
         japan_data = self.japan()
         japan_df = japan_data.cleaned().set_index(self._id_cols)
+        japan_df[self.ISO3] = "JPN"
         japan_df.update(datahub_df, overwrite=False)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
