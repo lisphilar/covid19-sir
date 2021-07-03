@@ -466,16 +466,26 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return PCRData(filename=local_file)
-        # Retrieve JHU data from COVID-19 Data Hub
-        pcr_data = self._covid19dh(
-            name="pcr", basename=basename, verbose=verbose)
+        # Only local data
+        locked_df = self.local(locked=True)
+        if self.update_interval is None:
+            return PCRData(data=locked_df, citation="\n".join(self._local_citations))
+        # Use remote data
+        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        japan_data = self.japan()
+        japan_df = japan_data.cleaned().set_index(self._id_cols)
+        japan_df.update(datahub_df, overwrite=False)
+        locked_df = locked_df.set_index(self._id_cols)
+        locked_df.update(datahub_df, overwrite=True)
+        df = pd.concat([datahub_df, japan_df, locked_df], axis=0, sort=True)
+        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
+        # Citation
+        citations = [*self._local_citations, self._covid19dh_citation, japan_data.citation]
+        pcr_data = PCRData(data=df, citation="\n".join(citations))
         # Update the values using "Our World In Data" dataset
         owid_filename = self.dir_path.joinpath(basename_owid)
         owid_force = self._download_necessity(filename=owid_filename)
         pcr_data.use_ourworldindata(filename=owid_filename, force=owid_force)
-        # Replace Japan dataset with the government-announced data
-        japan_data = self.japan()
-        pcr_data.replace(japan_data)
         return pcr_data
 
     def vaccine(self, basename="ourworldindata_vaccine.csv", verbose=1):
