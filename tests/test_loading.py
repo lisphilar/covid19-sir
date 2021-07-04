@@ -30,11 +30,6 @@ class TestDataLoader(object):
         assert isinstance(pcr_data, PCRData)
         assert isinstance(vaccine_data, VaccineData)
         assert isinstance(pyramid_data, PopulationPyramidData)
-        # Local file
-        data_loader.jhu(local_file="input/covid19dh.csv")
-        data_loader.population(local_file="input/covid19dh.csv")
-        data_loader.oxcgrt(local_file="input/covid19dh.csv")
-        data_loader.pcr(local_file="input/covid19dh.csv")
 
     def test_local(self):
         loader = DataLoader(directory="input", update_interval=None)
