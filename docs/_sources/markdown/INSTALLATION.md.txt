@@ -91,12 +91,6 @@ Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Sof
 - [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)
 - The number of tests
 
-### [Open COVID-19 Data Working Group](https://github.com/beoutbreakprepared/nCoV2019)
-
-Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 outbreak, real-time case information. Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0
-
-- Linelist of case reports
-
 ### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
 
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)

@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-eta
+                2.21.0-iota-fu1
               </div>
             
           
@@ -214,7 +214,12 @@
 <span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
 <span class="sd">            Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">force</span> <span class="k">else</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">directory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
+            <span class="n">update_interval</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">force</span> <span class="k">else</span> <span class="mi">12</span><span class="p">,</span>
+            <span class="n">basename_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;covid19dh&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="o">.</span><span class="n">name</span><span class="p">},</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -222,7 +227,7 @@
             <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="o">.</span><span class="n">population</span><span class="p">,</span>
             <span class="s2">&quot;oxcgrt&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">,</span>
             <span class="s2">&quot;pcr&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span>
-        <span class="p">}[</span><span class="n">name</span><span class="p">](</span><span class="n">basename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+        <span class="p">}[</span><span class="n">name</span><span class="p">]()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">primary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

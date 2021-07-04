@@ -177,8 +177,8 @@ We can check the citation with the following script.
    :target: https://pepy.tech/project/covsirphy
 .. |PyPI - Python Version| image:: https://img.shields.io/pypi/pyversions/covsirphy
    :target: https://badge.fury.io/py/covsirphy
-.. |Build Status| image:: https://semaphoreci.com/api/v1/lisphilar/covid19-sir/branches/master/shields_badge.svg
-   :target: https://semaphoreci.com/lisphilar/covid19-sir
+.. |Build Status| image:: https://lisphilar.semaphoreci.com/badges/covid19-sir/branches/master.svg?style=shields
+   :target: https://lisphilar.semaphoreci.com/projects/covid19-sir
 .. |GitHub license| image:: https://img.shields.io/github/license/lisphilar/covid19-sir
    :target: https://github.com/lisphilar/covid19-sir/blob/master/LICENSE
 .. |Maintainability| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability

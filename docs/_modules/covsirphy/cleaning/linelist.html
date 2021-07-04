@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-eta
+                2.21.0-iota-fu1
               </div>
             
           
@@ -179,13 +179,13 @@
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">SubsetNotFoundError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
 <div class="viewcode-block" id="LinelistData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData">[docs]</a><span class="k">class</span> <span class="nc">LinelistData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Linelist of case reports.</span>
+<span class="sd">    Deprecated. Linelist of case reports.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename (str or pathlib.path): CSV filename to save the raw dataset</span>
@@ -225,6 +225,7 @@
         <span class="s2">&quot;date_death_or_discharge&quot;</span><span class="p">:</span> <span class="n">OUTCOME_DATE</span><span class="p">,</span>
     <span class="p">}</span>
 
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;LinelistData()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.21.0-theta&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="n">raw_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_raw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
