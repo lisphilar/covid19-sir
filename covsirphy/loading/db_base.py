@@ -93,4 +93,4 @@ class _RemoteDatabase(Term):
         """
         str: the list of primary sources.
         """
-        return self.primary_list
+        return "\n".join(self.primary_list)

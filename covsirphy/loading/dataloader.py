@@ -73,13 +73,29 @@ class DataLoader(Term):
         self._id_cols = [self.DATE, self.COUNTRY, self.PROVINCE]
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
-        self._locked_df = pd.DataFrame(columns=self._id_cols)
         self._local_citations = []
+        # Locked database
+        self._locked_df = pd.DataFrame(columns=self._id_cols)
+        self._locked_citation_dict = {}
         # COVID-19 Data Hub
-        self._covid19dh_df = pd.DataFrame()
-        self._covid19dh_citation = ""
+        self._covid19dh_primary = []
         # COVID-19 dataset in Japan
         self._japan_data = None
+
+    @property
+    def local(self):
+        """
+        pandas.DataFrame: local dataset
+        """
+        return self._local_df
+
+    @property
+    def locked(self):
+        """
+        pandas.DataFrame: locked dataset
+        """
+        self._ensure_lock_status(lock_expected=True)
+        return self._locked_df
 
     def _ensure_lock_status(self, lock_expected):
         """
@@ -89,10 +105,10 @@ class DataLoader(Term):
             lock_expected (bool): whether the local database is expected to be locked or not
 
         Raises:
-            NotDBLockedError: @lock_expected is True, but the non-empty database has NOT been locked
+            NotDBLockedError: @lock_expected is True, but the database has NOT been locked
             DBLockedError: @lock_expected is False, but the database has been locked
         """
-        if lock_expected and (not self._local_df.empty) and self._locked_df.empty:
+        if lock_expected and self._locked_df.empty:
             raise NotDBLockedError(name="the local database")
         if not lock_expected and not self._locked_df.empty:
             raise DBLockedError(name="the local database")
@@ -153,28 +169,6 @@ class DataLoader(Term):
         self._local_citations.append(str(citation or Path(filename).name))
         return self
 
-    def local(self, locked=False):
-        """
-        Return the local dataset.
-
-        Args:
-            locked (bool): whether the returned dataset is from locked locked database or unlocked
-
-        Returns:
-            pandas.DataFrame: dataset from locked or unlocked local database
-                Index
-                    reset index
-                Columns
-                    If locked,
-                    - Date (pandas.Timestamp): dates
-                    - Country (object): country names
-                    - Province (object): province names
-        """
-        if locked:
-            self._ensure_lock_status(lock_expected=True)
-            return self._locked_df
-        return self._local_df
-
     def assign(self, **kwargs):
         """
         Assgn new columns to the dataset retrieved from local files.
@@ -229,24 +223,42 @@ class DataLoader(Term):
         """
         self._ensure_lock_status(lock_expected=False)
         df = self._local_df.copy()
-        # Date/Country/Province
-        id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
-        self._ensure_dataframe(df, name="local database", columns=list(id_dict.keys()))
-        df = df.rename(columns=id_dict)
-        df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Variables
         variables = [
             self.C, self.F, self.R, self.N, self.TESTS, self.ISO3,
             self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
         ]
-        df = df.rename(
-            columns={v: k.capitalize().replace("Iso3", self.ISO3) for (k, v) in kwargs.items()})
+        rename_dict = {v: k.capitalize().replace("Iso3", self.ISO3) for (k, v) in kwargs.items()}
+        self._ensure_list(list(rename_dict.values()), candidates=variables, name="keyword arguments")
+        # Local database
+        id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
+        if df.empty:
+            citation_dict = dict.fromkeys(variables, [])
+        else:
+            self._ensure_dataframe(df, name="local database", columns=list(id_dict.keys()))
+            df = df.rename(columns=id_dict)
+            df[self.DATE] = pd.to_datetime(df[self.DATE])
+            df = df.rename(columns=rename_dict)
+            citation_dict = {v: self._local_citations if v in df else [] for v in variables}
+        df = df.reindex(columns=[*self._id_cols, *variables])
+        df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        df = df.set_index(self._id_cols)
+        # With Remote datasets
+        if self.update_interval is not None:
+            # "COVID19 Data Hub"
+            dh_filename = self._filename_dict["covid19dh"]
+            df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
+            self._covid19dh_primary = dh_handler.primary
         # Complete database lock
-        df = df.reindex(columns=[*list(id_dict.values()), *variables])
-        self._locked_df = df.groupby(list(id_dict.values()), as_index=False).sum()
+        df = df.reset_index().drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
+        df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
+        self._locked_df = df.copy()
+        self._locked_citation_dict = citation_dict.copy()
         return self
 
-    @ staticmethod
+    @staticmethod
     def _last_updated_local(path):
         """
         Return the date last updated of local file/directory.
@@ -282,59 +294,33 @@ class DataLoader(Term):
         time_limit = date_local + timedelta(hours=self.update_interval)
         return datetime.now() > time_limit
 
-    def _covid19dh(self):
+    def _add_remote(self, current_df, remote_handler, filename, citation_dict):
         """
-        Return the datasets of COVID-19 Data Hub as a dataframe.
+        Update null elements of the current database with values in the same date/area in remote dataset.
 
         Args:
-            basename (str): basename of CSV file to save records
-            verbose (int): level of verbosity
-
-        Note:
-            If @verbose is 2, detailed citation list will be shown when downloading.
-            If @verbose is 1, how to show the list will be explained.
+            current_df (pandas.DataFrame): the current database (index: Date, Country, Province)
+            remote_handler (covsirphy.loading.db_base._RemoteDatabase): remote database handler class object
+            filename (str): filename to save the dataframe retrieved from remote server
+            citation_dict (dict[str, list[str]]): dictionary of citation for each variable (column)
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    reset index
-                Columns
-                    - Date: observation date
-                    - Country: country/region name
-                    - Province: province/prefecture/state name
-                    - Confirmed: the number of confirmed cases
-                    - Infected: the number of currently infected cases
-                    - Fatal: the number of fatal cases
-                    - Recovered: the number of recovered cases
-                    - School_closing
-                    - Workplace_closing
-                    - Cancel_events
-                    - Gatherings_restrictions
-                    - Transport_closing
-                    - Stay_home_restrictions
-                    - Internal_movement_restrictions
-                    - International_movement_restrictions
-                    - Information_campaigns
-                    - Testing_policy
-                    - Contact_tracing
-                    - Stringency_index
+            tuple(pandas.DataFrame, list[str], _RemoteDatabase):
+                updated database, citations and the handler
         """
-        filename = self._filename_dict["covid19dh"]
-        if self._covid19dh_df.empty:
-            force = self._download_necessity(filename)
-            handler = _COVID19dh(filename)
-            self._covid19dh_df = handler.to_dataframe(force=force, verbose=self._verbose)
-            self._covid19dh_citation = handler.CITATION
-        return self._covid19dh_df
-
-    @ property
-    def covid19dh_citation(self):
-        """
-        Return the list of primary sources of COVID-19 Data Hub.
-        """
-        if not self._covid19dh_citation:
-            self._covid19dh()
-        return self._covid19dh_citation
+        df = current_df.copy()
+        cite_dict = citation_dict.copy()
+        # Get the remote dataset
+        force = self._download_necessity(filename)
+        handler = remote_handler(filename)
+        remote_df = handler.to_dataframe(force=force, verbose=self._verbose).set_index(self._id_cols)
+        # Update the current database
+        df.update(remote_df, overwrite=False)
+        df = pd.concat([df, remote_df], ignore_index=False, sort=True).reset_index()
+        df = df.drop_duplicates(subset=self._id_cols, keep="first").set_index(self._id_cols)
+        # Update citations
+        cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
+        return (df, cite_dict, handler)
 
     def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
         """
@@ -357,6 +343,29 @@ class DataLoader(Term):
                 "verbose argument was deprecated. Please use DataLoader(verbose).", DeprecationWarning)
             self._verbose = self._ensure_natural_int(verbose, name="verbose")
 
+    def _auto_lock(self):
+        """
+        Automatic database lock before using database.
+
+        Returns:
+            tuple(pandas.DataFrame, dict[str, list[str]]):
+                - locked database
+                - dictionary of citation for each variable (column)
+        """
+        try:
+            self._ensure_lock_status(lock_expected=True)
+        except NotDBLockedError:
+            self.lock(*self._id_cols)
+        return (self._locked_df, self._locked_citation_dict)
+
+    @property
+    def covid19dh_citation(self):
+        """
+        Return the list of primary sources of COVID-19 Data Hub.
+        """
+        self._auto_lock()
+        return self._covid19dh_primary
+
     def jhu(self, **kwargs):
         """
         Load the dataset regarding the number of cases using local CSV file or COVID-19 Data Hub.
@@ -368,22 +377,13 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding the number of cases
         """
         self._read_dep(**kwargs)
-        # Only local data
-        locked_df = self.local(locked=True)
-        if self.update_interval is None:
-            return JHUData(data=locked_df, citation="\n".join(self._local_citations))
-        # Use remote data
-        datahub_df = self._covid19dh().set_index(self._id_cols)
-        locked_df = locked_df.set_index(self._id_cols)
-        locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
-        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
-        # Citation
-        citations = [*self._local_citations, self._covid19dh_citation]
-        # Create JHUData instance
+        df, citation_dict = self._auto_lock()
+        variables = [*JHUData.REQUIRED_COLS, *JHUData.OPTINAL_COLS]
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
         jhu_data = JHUData(data=df, citation="\n".join(citations))
-        jhu_data.replace(self.japan())
-        return jhu_data
+        if self.update_interval is None:
+            return jhu_data
+        return jhu_data.replace(self.japan())
 
     def population(self, **kwargs):
         """
@@ -396,18 +396,9 @@ class DataLoader(Term):
             covsirphy.PopulationData: dataset regarding population values
         """
         self._read_dep(**kwargs)
-        # Only local data
-        locked_df = self.local(locked=True)
-        if self.update_interval is None:
-            return PopulationData(data=locked_df, citation="\n".join(self._local_citations))
-        # Use remote data
-        datahub_df = self._covid19dh().set_index(self._id_cols)
-        locked_df = locked_df.set_index(self._id_cols)
-        locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
-        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
-        # Citation
-        citations = [*self._local_citations, self._covid19dh_citation]
+        df, citation_dict = self._auto_lock()
+        variables = PopulationData.RAW_COLS[:]
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
         return PopulationData(data=df, citation="\n".join(citations))
 
     def oxcgrt(self, **kwargs):
@@ -421,18 +412,9 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding OxCGRT data
         """
         self._read_dep(**kwargs)
-        # Only local data
-        locked_df = self.local(locked=True)
-        if self.update_interval is None:
-            return OxCGRTData(data=locked_df, citation="\n".join(self._local_citations))
-        # Use remote data
-        datahub_df = self._covid19dh().set_index(self._id_cols)
-        locked_df = locked_df.set_index(self._id_cols)
-        locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
-        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
-        # Citation
-        citations = [*self._local_citations, self._covid19dh_citation]
+        df, citation_dict = self._auto_lock()
+        variables = OxCGRTData.RAW_COLS[:]
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
         return OxCGRTData(data=df, citation="\n".join(citations))
 
     def japan(self, **kwargs):
@@ -482,20 +464,13 @@ class DataLoader(Term):
             covsirphy.PCRData: dataset regarding the number of tests and confirmed cases
         """
         self._read_dep(**kwargs)
-        # Only local data
-        locked_df = self.local(locked=True)
-        if self.update_interval is None:
-            return PCRData(data=locked_df, citation="\n".join(self._local_citations))
-        # Use remote data
-        datahub_df = self._covid19dh().set_index(self._id_cols)
-        locked_df = locked_df.set_index(self._id_cols)
-        locked_df.update(datahub_df, overwrite=True)
-        df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
-        df = df.reset_index().drop_duplicates(subset=self._id_cols, keep="last", ignore_index=True)
-        # Citation
-        citations = [*self._local_citations, self._covid19dh_citation]
-        # Create PCRData instance
+        df, citation_dict = self._auto_lock()
+        variables = PCRData.RAW_COLS[:]
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
         pcr_data = PCRData(data=df, citation="\n".join(citations))
+        if self.update_interval is None:
+            return pcr_data
+        # Update with Japan data
         pcr_data.replace(self.japan())
         # Update the values using "Our World In Data" dataset
         owid_filename = self._filename_dict["owid_pcr"]
