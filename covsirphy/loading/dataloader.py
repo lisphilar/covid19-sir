@@ -3,6 +3,7 @@
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+import warnings
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
@@ -24,14 +25,27 @@ class DataLoader(Term):
 
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
-        update_interval (int or None): update interval of downloaded datasets or None (only use local files)
+        update_interval (int or None): update interval of downloaded or None (avoid downloading)
+        basename_dict (dict[str, str]): basename of downloaded CSV files,
+            "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
+            "owid_pcr": Our World In Data (the number of tests, default: ourworldindata_pcr.csv),
+            "owid_vaccine": Our World In Data (vaccination, default: ourworldindata_vaccine.csv),
+            "wbdata": World Bank Open Data (default: wbdata_population_pyramid.csv),
+            "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
+        verbose (int): level of verbosity when downloading
 
     Note:
-        If @update_interval hours have passed since the last update of downloaded datasets,
+        If @update_interval (not None) hours have passed since the last update of downloaded datasets,
         the dawnloaded datasets will be updated automatically.
+        When we do not use datasets of remote servers, set @update_interval as None.
+
+    Note:
+        If @verbose is 0, no discription will be shown.
+        If @verbose is 1 or larger, URL and database name will be shown.
+        If @verbose is 2, detailed citation list will be show, if available.
     """
 
-    def __init__(self, directory="input", update_interval=12):
+    def __init__(self, directory="input", update_interval=12, basename_dict=None, verbose=1):
         # Directory
         try:
             self.dir_path = Path(directory)
@@ -41,6 +55,20 @@ class DataLoader(Term):
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
+        # Dictionary of filenames to save remote datasets
+        filename_dict = {
+            "covid19dh": "covid19dh.csv",
+            "owid_pcr": "ourworldindata_pcr.csv",
+            "owid_vaccine": "ourworldindata_vaccine.csv",
+            "wbdata_pyramid": "wbdata_population_pyramid.csv",
+            "japan": "covid_japan.csv",
+        }
+        filename_dict.update(
+            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in filename_dict.items()}
+        )
+        self._filename_dict = filename_dict.copy()
+        # Verbosity
+        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Column names to indentify records
         self._id_cols = [self.DATE, self.COUNTRY, self.PROVINCE]
         # Datasets retrieved from local files
@@ -254,7 +282,7 @@ class DataLoader(Term):
         time_limit = date_local + timedelta(hours=self.update_interval)
         return datetime.now() > time_limit
 
-    def _covid19dh(self, basename, verbose):
+    def _covid19dh(self):
         """
         Return the datasets of COVID-19 Data Hub as a dataframe.
 
@@ -291,11 +319,11 @@ class DataLoader(Term):
                     - Contact_tracing
                     - Stringency_index
         """
-        filename, force = self.dir_path.joinpath(basename), False
+        filename = self._filename_dict["covid19dh"]
         if self._covid19dh_df.empty:
             force = self._download_necessity(filename)
             handler = _COVID19dh(filename)
-            self._covid19dh_df = handler.to_dataframe(force=force, verbose=verbose)
+            self._covid19dh_df = handler.to_dataframe(force=force, verbose=self._verbose)
             self._covid19dh_citation = handler.CITATION
         return self._covid19dh_df
 
@@ -305,34 +333,47 @@ class DataLoader(Term):
         Return the list of primary sources of COVID-19 Data Hub.
         """
         if not self._covid19dh_citation:
-            self._covid19dh(basename="covid19dh.csv", verbose=0)
+            self._covid19dh()
         return self._covid19dh_citation
 
-    def jhu(self, basename="covid19dh.csv", local_file=None, verbose=1):
+    def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
+        """
+        Read deprecated keyword arguments.
+
+        Args:
+            basename (str or None): basename of the file to save the data
+            basename_owid (str or None): basename of the file to save the data of "Our World In Data"
+            local_file (str or None): if not None, load the data from this file
+            verbose (int): level of verbosity
+        """
+        if basename is not None:
+            raise TypeError("@basename argument was deprecated. Please use DataLoader(bansename_dict)")
+        if basename_owid is not None:
+            raise TypeError("@basename_owid argument was deprecated. Please use DataLoader(bansename_dict)")
+        if local_file is not None:
+            raise TypeError("local_file argument was deprecated. Please use DataLoader.read_csv().")
+        if verbose is not None:
+            warnings.warn(
+                "verbose argument was deprecated. Please use DataLoader(verbose).", DeprecationWarning)
+            self._verbose = self._ensure_natural_int(verbose, name="verbose")
+
+    def jhu(self, **kwargs):
         """
         Load the dataset regarding the number of cases using local CSV file or COVID-19 Data Hub.
 
         Args:
-            basename (str or None): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
-            verbose (int): level of verbosity
-
-        Note:
-            If @verbose is 2, detailed citation list will be shown when downloading.
-            If @verbose is 1, how to show the list will be explained.
-            Citation of COVID-19 Data Hub will be set as JHUData.citation.
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.JHUData: dataset regarding the number of cases
         """
-        if local_file is not None:
-            return JHUData(filename=local_file)
+        self._read_dep(**kwargs)
         # Only local data
         locked_df = self.local(locked=True)
         if self.update_interval is None:
             return JHUData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
-        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        datahub_df = self._covid19dh().set_index(self._id_cols)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
         df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
@@ -344,30 +385,23 @@ class DataLoader(Term):
         jhu_data.replace(self.japan())
         return jhu_data
 
-    def population(self, basename="covid19dh.csv", local_file=None, verbose=1):
+    def population(self, **kwargs):
         """
         Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.
 
         Args:
-            basename (str or None): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
-            verbose (int): level of verbosity
-
-        Note:
-            If @verbose is 2, detailed citation list will be shown when downloading.
-            If @verbose is 1, how to show the list will be explained.
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.PopulationData: dataset regarding population values
         """
-        if local_file is not None:
-            return PopulationData(filename=local_file)
+        self._read_dep(**kwargs)
         # Only local data
         locked_df = self.local(locked=True)
         if self.update_interval is None:
             return PopulationData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
-        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        datahub_df = self._covid19dh().set_index(self._id_cols)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
         df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
@@ -376,30 +410,23 @@ class DataLoader(Term):
         citations = [*self._local_citations, self._covid19dh_citation]
         return PopulationData(data=df, citation="\n".join(citations))
 
-    def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=1):
+    def oxcgrt(self, **kwargs):
         """
         Load the dataset regarding OxCGRT indicators using local CSV file or COVID-19 Data Hub.
 
         Args:
-            basename (str or None): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
-            verbose (int): level of verbosity
-
-        Note:
-            If @verbose is 2, detailed citation list will be shown when downloading.
-            If @verbose is 1, how to show the list will be explained.
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.JHUData: dataset regarding OxCGRT data
         """
-        if local_file is not None:
-            return OxCGRTData(filename=local_file)
+        self._read_dep(**kwargs)
         # Only local data
         locked_df = self.local(locked=True)
         if self.update_interval is None:
             return OxCGRTData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
-        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        datahub_df = self._covid19dh().set_index(self._id_cols)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
         df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
@@ -408,26 +435,25 @@ class DataLoader(Term):
         citations = [*self._local_citations, self._covid19dh_citation]
         return OxCGRTData(data=df, citation="\n".join(citations))
 
-    def japan(self, basename="covid_japan.csv", local_file=None, verbose=1):
+    def japan(self, **kwargs):
         """
         Load the dataset of the number of cases in Japan.
         https://github.com/lisphilar/covid19-sir/tree/master/data
 
         Args:
-            basename (str): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
-            verbose (int): level of verbosity
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.CountryData: dataset at country level in Japan
         """
-        filename = local_file or self.dir_path.joinpath(basename)
+        self._read_dep(**kwargs)
+        filename = self._filename_dict["japan"]
         if self._japan_data is None:
             force = self._download_necessity(filename=filename)
-            self._japan_data = JapanData(filename=filename, force=force, verbose=verbose)
+            self._japan_data = JapanData(filename=filename, force=force, verbose=self._verbose)
         return self._japan_data
 
-    @ deprecate("DataLoader.linelist()", version="2.21.0-theta")
+    @deprecate("DataLoader.linelist()", version="2.21.0-theta")
     def linelist(self, basename="linelist.csv", verbose=1):
         """
         Load linelist of case reports.
@@ -444,34 +470,24 @@ class DataLoader(Term):
         force = self._download_necessity(filename=filename)
         return LinelistData(filename=filename, force=force, verbose=verbose)
 
-    def pcr(self, basename="covid19dh.csv", local_file=None,
-            basename_owid="ourworldindata_pcr.csv", verbose=1):
+    def pcr(self, **kwargs):
         """
         Load the dataset regarding the number of tests and confirmed cases,
         using local CSV file or COVID-19 Data Hub.
 
         Args:
-            basename (str or None): basename of the file to save "COVID-19 Data Hub" data
-            local_file (str or None): if not None, load the data from this file
-            basename_owid (str): basename of the file to save "Our World In Data" data
-            verbose (int): level of verbosity
-
-        Note:
-            If @verbose is 2, detailed citation list will be shown when downloading.
-            If @verbose is 1, how to show the list will be explained.
-            Citation of COVID-19 Data Hub will be set as JHUData.citation.
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.PCRData: dataset regarding the number of tests and confirmed cases
         """
-        if local_file is not None:
-            return PCRData(filename=local_file)
+        self._read_dep(**kwargs)
         # Only local data
         locked_df = self.local(locked=True)
         if self.update_interval is None:
             return PCRData(data=locked_df, citation="\n".join(self._local_citations))
         # Use remote data
-        datahub_df = self._covid19dh(basename=basename, verbose=verbose).set_index(self._id_cols)
+        datahub_df = self._covid19dh().set_index(self._id_cols)
         locked_df = locked_df.set_index(self._id_cols)
         locked_df.update(datahub_df, overwrite=True)
         df = pd.concat([datahub_df, locked_df], axis=0, sort=True)
@@ -482,42 +498,42 @@ class DataLoader(Term):
         pcr_data = PCRData(data=df, citation="\n".join(citations))
         pcr_data.replace(self.japan())
         # Update the values using "Our World In Data" dataset
-        owid_filename = self.dir_path.joinpath(basename_owid)
+        owid_filename = self._filename_dict["owid_pcr"]
         owid_force = self._download_necessity(filename=owid_filename)
         pcr_data.use_ourworldindata(filename=owid_filename, force=owid_force)
         return pcr_data
 
-    def vaccine(self, basename="ourworldindata_vaccine.csv", verbose=1):
+    def vaccine(self, **kwargs):
         """
         Load the dataset regarding vaccination.
         https://github.com/owid/covid-19-data/tree/master/public/data
         https://ourworldindata.org/coronavirus
 
         Args:
-            basename (str): basename of the file to save the data
-            verbose (int): level of verbosity
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.VaccineData: dataset regarding vaccines
         """
-        filename = self.dir_path.joinpath(basename)
+        self._read_dep(**kwargs)
+        filename = self._filename_dict["owid_vaccine"]
         force = self._download_necessity(filename=filename)
-        return VaccineData(filename=filename, force=force, verbose=verbose)
+        return VaccineData(filename=filename, force=force, verbose=self._verbose)
 
-    def pyramid(self, basename="wbdata_population_pyramid.csv", verbose=1):
+    def pyramid(self, **kwargs):
         """
         Load the dataset regarding population pyramid.
         World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
 
         Args:
-            basename (str): basename of the file to save the data
-            verbose (int): level of verbosity
+            kwargs: all keyword arguments will be ignored
 
         Returns:
             covsirphy.PopulationPyramidData: dataset regarding population pyramid
         """
-        filename = self.dir_path.joinpath(basename)
-        return PopulationPyramidData(filename=filename, force=False, verbose=verbose)
+        self._read_dep(**kwargs)
+        filename = self._filename_dict["wbdata_pyramid"]
+        return PopulationPyramidData(filename=filename, force=False, verbose=self._verbose)
 
     def collect(self):
         """
