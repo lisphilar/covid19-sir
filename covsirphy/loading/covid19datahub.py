@@ -38,7 +38,12 @@ class COVID19DataHub(Term):
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
         """
-        loader = DataLoader(directory=self._filepath.parent, update_interval=0 if force else 12)
+        loader = DataLoader(
+            directory=self._filepath.parent,
+            update_interval=0 if force else 12,
+            basename_dict={"covid19dh": self._filepath.name},
+            verbose=verbose
+        )
         if force:
             self._filepath.unlink()
         return {
@@ -46,7 +51,7 @@ class COVID19DataHub(Term):
             "population": loader.population,
             "oxcgrt": loader.oxcgrt,
             "pcr": loader.pcr
-        }[name](basename=self._filepath.name, verbose=verbose)
+        }[name]()
 
     @property
     def primary(self):
