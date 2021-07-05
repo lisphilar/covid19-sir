@@ -11,14 +11,25 @@ from covsirphy.cleaning.cbase import CleaningBase
 
 class VaccineData(CleaningBase):
     """
-    Dataset regarding vaccination retrieved from "Our World In Data".
-    https://github.com/owid/covid-19-data/tree/master/public/data
-    https://ourworldindata.org/coronavirus
+    Data cleaning of vaccination dataset.
 
     Args:
-        filename (str or pathlib.path): CSV filename to save the raw dataset
-        force (bool): if True, always download the dataset from the server
-        verbose (int): level of verbosity
+        filename (str or None): CSV filename of the dataset
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - Country: country/region name
+                - ISO3: ISO 3166-1 alpha-3, like JPN
+                - Product: vaccine product names
+                - Vaccinations: cumulative number of vaccinations
+                - Vaccinated_once: cumulative number of people who received at least one vaccine dose
+                - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
+        citation (str or None): citation or None (empty)
+
+    Note:
+        Either @filename (high priority) or @data must be specified.
 
     Note:
         Columns of VaccineData.cleaned():
@@ -30,62 +41,28 @@ class VaccineData(CleaningBase):
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
-    # URL
-    URL = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/"
-    URL_REC = f"{URL}vaccinations.csv"
-    URL_LOC = f"{URL}locations.csv"
-    # Columns
+    # Columns of self._raw and self._clean_df
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PRODUCT,
         CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
-    VAC_SUBSET_COLS = [CleaningBase.DATE, CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
+    # Columns of self.cleaned()
+    CLEANED_COLS = RAW_COLS[:]
+    # Columns of self.subset()
+    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
 
-    def __init__(self, filename, force=False, verbose=1):
-        Path(filename).parent.mkdir(exist_ok=True, parents=True)
-        if Path(filename).exists() and not force:
-            try:
-                self._raw = self.load(filename)
-            except KeyError:
-                # Error when the local dataset does not have necessary columns
-                # Raised when new CovsirPhy version requires additional columns
-                self._raw = self._retrieve(filename=filename, verbose=verbose)
-        else:
-            self._raw = self._retrieve(filename=filename, verbose=verbose)
-        self._cleaned_df = self._cleaning()
-        self._citation = "Hasell, J., Mathieu, E., Beltekian, D. et al." \
-            " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
-            " https://doi.org/10.1038/s41597-020-00688-8"
+    def __init__(self, filename=None, data=None, citation=None, **kwargs):
+        # Raw data
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Citation
+        self._citation = citation or ""
         # Directory that save the file
-        self._dirpath = Path(filename or "input").resolve().parent
-
-    def _retrieve(self, filename, verbose=1):
-        """
-        Retrieve the dataset from server.
-        Args:
-            filename (str or pathlib.path): CSV filename to save the raw dataset
-            verbose (int): level of verbosity
-        Returns:
-            pd.DataFrame:
-                Index reset index
-                Columns Date, Country, Product, Vaccinations
-        """
-        # Show URL
-        if verbose:
-            print("Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/")
-        # Download datasets and merge them
-        rename_dict = {
-            "date": self.DATE, "location": self.COUNTRY, "iso_code": self.ISO3,
-            "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
-            "people_vaccinated": self.V_ONCE,
-            "people_fully_vaccinated": self.V_FULL,
-        }
-        rec_df = self.load(self.URL_REC, columns=list(set(rename_dict) - set(["vaccines"])))
-        loc_df = self.load(self.URL_LOC, columns=["location", "vaccines"])
-        df = rec_df.merge(loc_df, how="left", on="location")
-        df = df.rename(rename_dict, axis=1)
-        # Save the dataframe as CSV file
-        df.to_csv(filename, index=False)
-        return df
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            self._dirpath = Path(filename).resolve().parent
 
     def _cleaning(self):
         """
@@ -169,7 +146,7 @@ class VaccineData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
-        return df.loc[:, self.VAC_SUBSET_COLS].reset_index(drop=True)
+        return df.loc[:, self.SUBSET_COLS].reset_index(drop=True)
 
     def records(self, country, product=None, start_date=None, end_date=None):
         """

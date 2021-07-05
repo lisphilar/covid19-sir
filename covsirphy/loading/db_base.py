@@ -52,9 +52,14 @@ class _RemoteDatabase(Term):
         """
         # Read local file if available and usable
         if not force and self.filepath.exists():
-            return self._ensure_dataframe(self.read(), columns=self.saved_cols)
+            try:
+                return self._ensure_dataframe(self.read(), columns=self.saved_cols)
+            except Exception:
+                pass
         # Download dataset from server
-        df = self._ensure_dataframe(self.download(verbose=verbose), columns=self.saved_cols)
+        df = self.download(verbose=verbose)
+        df = df.rename(columns=self.col_convert_dict)
+        df = self._ensure_dataframe(df, columns=self.saved_cols)
         df.to_csv(self.filepath, index=False)
         return df
 

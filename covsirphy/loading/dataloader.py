@@ -17,6 +17,7 @@ from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.loading.db_covid19dh import _COVID19dh
+from covsirphy.loading.db_owid import _OWID
 
 
 class DataLoader(Term):
@@ -244,17 +245,21 @@ class DataLoader(Term):
         df = df.set_index(self._id_cols)
         # With Remote datasets
         if self.update_interval is not None:
-            # "COVID19 Data Hub"
+            # COVID19 Data Hub
             dh_filename = self._filename_dict["covid19dh"]
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
             self._covid19dh_primary = dh_handler.primary
+            # Our World In Data
+            owid_filename = self._filename_dict["owid_vaccine"]
+            df, citation_dict, dh_handler = self._add_remote(df, _OWID, owid_filename, citation_dict)
+            self._covid19dh_primary = dh_handler.primary
         # Complete database lock
-        df = df.reset_index().drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        df = df.reset_index()
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
-        self._locked_df = df.copy()
+        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
         self._locked_citation_dict = citation_dict.copy()
         return self
 
@@ -491,9 +496,10 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccines
         """
         self._read_dep(**kwargs)
-        filename = self._filename_dict["owid_vaccine"]
-        force = self._download_necessity(filename=filename)
-        return VaccineData(filename=filename, force=force, verbose=self._verbose)
+        df, citation_dict = self._auto_lock()
+        variables = VaccineData.RAW_COLS[:]
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        return VaccineData(data=df, citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """
