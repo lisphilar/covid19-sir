@@ -56,7 +56,7 @@ class _OWID(_RemoteDatabase):
 
         # Download datasets
         if verbose:
-            print("Retrieving datasets from Our World In Data https://covid19datahub.io/")
+            print("Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/")
         # Vaccination
         v_rec_cols = [
             "date", "location", "iso_code", "total_vaccinations", "people_vaccinated", "people_fully_vaccinated"]
