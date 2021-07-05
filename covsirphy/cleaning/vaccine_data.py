@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import datetime
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -27,6 +27,7 @@ class VaccineData(CleaningBase):
                 - Vaccinated_once: cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
         citation (str or None): citation or None (empty)
+        kwargs: the other arguments will be ignored
 
     Note:
         Either @filename (high priority) or @data must be specified.
@@ -53,6 +54,8 @@ class VaccineData(CleaningBase):
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
         # Raw data
         self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        if self._raw.empty:
+            self._raw = self._retrieve(filename, **kwargs)
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Citation
@@ -63,6 +66,41 @@ class VaccineData(CleaningBase):
         else:
             Path(filename).parent.mkdir(exist_ok=True, parents=True)
             self._dirpath = Path(filename).resolve().parent
+
+    @deprecate(
+        "vaccine_data = cs.VaccineData()",
+        new="vaccine_data = cs.DataLoader().vaccine()", version="2.21.0-iota-fu1")
+    def _retrieve(self, filename, verbose=1, **kwargs):
+        """
+        Retrieve the dataset from server.
+        Args:
+            filename (str or pathlib.path): CSV filename to save the raw dataset
+            verbose (int): level of verbosity
+        Returns:
+            pd.DataFrame:
+                Index reset index
+                Columns Date, Country, Product, Vaccinations
+        """
+        URL = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/"
+        URL_REC = f"{URL}vaccinations.csv"
+        URL_LOC = f"{URL}locations.csv"
+        # Show URL
+        if verbose:
+            print("Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/")
+        # Download datasets and merge them
+        rename_dict = {
+            "date": self.DATE, "location": self.COUNTRY, "iso_code": self.ISO3,
+            "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
+            "people_vaccinated": self.V_ONCE,
+            "people_fully_vaccinated": self.V_FULL,
+        }
+        rec_df = self.load(URL_REC, columns=list(set(rename_dict) - set(["vaccines"])))
+        loc_df = self.load(URL_LOC, columns=["location", "vaccines"])
+        df = rec_df.merge(loc_df, how="left", on="location")
+        df = df.rename(rename_dict, axis=1)
+        # Save the dataframe as CSV file
+        df.to_csv(filename, index=False)
+        return df
 
     def _cleaning(self):
         """
