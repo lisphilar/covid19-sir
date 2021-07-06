@@ -72,7 +72,7 @@ class PopulationData(CleaningBase):
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        df[self.N] = df[self.N].astype(np.int64)
+        df[self.N] = df[self.N].fillna(0).astype(np.int64)
         # Columns to use
         df = df.loc[:, self.CLEANED_COLS]
         # Remove duplicates

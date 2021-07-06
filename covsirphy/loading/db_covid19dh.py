@@ -158,10 +158,9 @@ class _COVID19dh(_RemoteDatabase):
             Data types are not confirmed.
         """
         df = raw.copy()
-        # Replace column names
-        df = df.rename(columns=self.col_convert_dict)
+        c, p = "administrative_area_level_1", "administrative_area_level_2"
         # Country
-        df[self.COUNTRY] = df[self.COUNTRY].replace(
+        df[c] = df[c].replace(
             {
                 # COD
                 "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
@@ -174,5 +173,5 @@ class _COVID19dh(_RemoteDatabase):
         # Set 'Others' as the country name of cruise ships
         ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
         for ship in ships:
-            df.loc[df[self.COUNTRY] == ship, [self.COUNTRY, self.PROVINCE]] = [self.OTHERS, ship]
+            df.loc[df[c] == ship, [c, p]] = [self.OTHERS, ship]
         return df
