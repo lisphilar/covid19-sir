@@ -233,7 +233,7 @@ class VaccineData(CleaningBase):
         df = df.loc[df[self.COUNTRY] == "World"]
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
-        return df.reset_index()
+        return df.reset_index()[self.SUBSET_COLS]
 
     def map(self, country=None, variable="Vaccinations", date=None, **kwargs):
         """
