@@ -54,7 +54,9 @@ class _RemoteDatabase(Term):
         if not force and self.filepath.exists():
             return self._ensure_dataframe(self.read(), columns=self.saved_cols)
         # Download dataset from server
-        df = self._ensure_dataframe(self.download(verbose=verbose), columns=self.saved_cols)
+        df = self.download(verbose=verbose)
+        df = df.rename(columns=self.col_convert_dict)
+        df = self._ensure_dataframe(df, columns=self.saved_cols)
         df.to_csv(self.filepath, index=False)
         return df
 
@@ -69,7 +71,7 @@ class _RemoteDatabase(Term):
                 Columns
                     defined by .COL_DICT
         """
-        kwargs = {"low_memory": False, "dtype": self.dtype_dict, "header": 0, "usecols": self.saved_cols}
+        kwargs = {"low_memory": False, "header": 0, "usecols": self.saved_cols}
         return pd.read_csv(self.filepath, **kwargs)
 
     def download(self, verbose):
