@@ -506,7 +506,7 @@ class DataLoader(Term):
         df, citation_dict = self._auto_lock()
         variables = VaccineData.RAW_COLS[:]
         citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
-        return VaccineData(data=df, citation="\n".join(citations))
+        return VaccineData(data=df.dropna(), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """
