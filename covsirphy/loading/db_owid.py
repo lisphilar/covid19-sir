@@ -64,4 +64,10 @@ class _OWID(_RemoteDatabase):
         v_loc_df = pd.read_csv(self.URL_V_LOC, usecols=["location", "vaccines"])
         v_df = v_rec_df.merge(v_loc_df, how="left", on="location")
         v_df[self.PROVINCE] = self.UNKNOWN
+        v_df["location"] = v_df["location"].replace(
+            {
+                # COG
+                "Congo": "Republic of the Congo",
+            }
+        )
         return v_df
