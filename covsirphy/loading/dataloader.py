@@ -251,8 +251,7 @@ class DataLoader(Term):
             self._covid19dh_primary = dh_handler.primary
             # Our World In Data
             owid_filename = self._filename_dict["owid_vaccine"]
-            df, citation_dict, dh_handler = self._add_remote(df, _OWID, owid_filename, citation_dict)
-            self._covid19dh_primary = dh_handler.primary
+            df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
         # Complete database lock
         df = df.reset_index()
         df[self.DATE] = pd.to_datetime(df[self.DATE])
@@ -313,12 +312,20 @@ class DataLoader(Term):
             tuple(pandas.DataFrame, list[str], _RemoteDatabase):
                 updated database, citations and the handler
         """
-        df = current_df.copy()
+        df = current_df.reset_index()
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
+        df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df = df.set_index(self._id_cols)
         cite_dict = citation_dict.copy()
         # Get the remote dataset
         force = self._download_necessity(filename)
         handler = remote_handler(filename)
-        remote_df = handler.to_dataframe(force=force, verbose=self._verbose).set_index(self._id_cols)
+        remote_df = handler.to_dataframe(force=force, verbose=self._verbose)
+        remote_df[self.DATE] = pd.to_datetime(remote_df[self.DATE])
+        remote_df[self.COUNTRY] = remote_df[self.COUNTRY].fillna(self.UNKNOWN)
+        remote_df[self.PROVINCE] = remote_df[self.PROVINCE].fillna(self.UNKNOWN)
+        remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
         df.update(remote_df, overwrite=False)
         df = pd.concat([df, remote_df], ignore_index=False, sort=True).reset_index()

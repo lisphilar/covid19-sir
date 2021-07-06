@@ -53,7 +53,12 @@ class VaccineData(CleaningBase):
 
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
         # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        if data is not None and self.PROVINCE in data:
+            data_c = data.loc[data[self.PROVINCE] == self.UNKNOWN]
+            self._raw = self._parse_raw(filename, data_c, self.RAW_COLS)
+        else:
+            self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Backward compatibility
         if self._raw.empty:
             self._raw = self._retrieve(filename, **kwargs)
         # Data cleaning
