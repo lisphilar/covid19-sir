@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-iota-fu2
+                2.21.0-iota-fu3
               </div>
             
           
@@ -9771,6 +9771,7 @@ lower x-axis limit will be set to 0.</p>
 <li><p>Date: Observation date</p></li>
 <li><p>Country: country/region name</p></li>
 <li><p>ISO3: ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
 <li><p>Product: vaccine product names</p></li>
 <li><p>Vaccinations: cumulative number of vaccinations</p></li>
 <li><p>Vaccinated_once: cumulative number of people who received at least one vaccine dose</p></li>
@@ -9795,6 +9796,7 @@ lower x-axis limit will be set to 0.</p>
 <li><p>Date (pandas.TimeStamp): observation dates</p></li>
 <li><p>Country (pandas.Category): country (or province) names</p></li>
 <li><p>ISO3 (pandas.Category): ISO3 codes</p></li>
+<li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Product (pandas.Category): vaccine product names</p></li>
 <li><p>Vaccinations (int): cumulative number of vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
@@ -9805,12 +9807,12 @@ lower x-axis limit will be set to 0.</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.VaccineData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.VaccineData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Province',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.VaccineData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.VaccineData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.VaccineData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Province',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.VaccineData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -9872,12 +9874,13 @@ lower x-axis limit will be set to 0.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.VaccineData.subset">
-<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/vaccine_data.html#VaccineData.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.VaccineData.subset" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/vaccine_data.html#VaccineData.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.VaccineData.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return subset of the country/province and start/end date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or ISO3 code</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>product</strong> (<em>str</em><em> or </em><em>None</em>) – vaccine product name</p></li>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
@@ -9889,7 +9892,7 @@ lower x-axis limit will be set to 0.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pandas.TimeStamp): observation date</p></li>
+<li><p>Date (pandas.Timestamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
