@@ -353,27 +353,36 @@ class DataLoader(Term):
                 "verbose argument was deprecated. Please use DataLoader(verbose).", DeprecationWarning)
             self._verbose = self._ensure_natural_int(verbose, name="verbose")
 
-    def _auto_lock(self):
+    def _auto_lock(self, variables):
         """
         Automatic database lock before using database.
+
+        Args:
+            variables (list[str] or None): variables to check citations
 
         Returns:
             tuple(pandas.DataFrame, dict[str, list[str]]):
                 - locked database
-                - dictionary of citation for each variable (column)
+                - citation list of the variables
         """
+        # Database lock
         try:
             self._ensure_lock_status(lock_expected=True)
         except NotDBLockedError:
             self.lock(*self._id_cols)
-        return (self._locked_df, self._locked_citation_dict)
+        # Citation list
+        if variables is None:
+            return (self._locked_df, [])
+        citation_dict = self._locked_citation_dict.copy()
+        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        return (self._locked_df, sorted(set(citations), key=citations.index))
 
     @property
     def covid19dh_citation(self):
         """
         Return the list of primary sources of COVID-19 Data Hub.
         """
-        self._auto_lock()
+        self._auto_lock(variables=None)
         return self._covid19dh_primary
 
     def jhu(self, **kwargs):
@@ -387,9 +396,7 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding the number of cases
         """
         self._read_dep(**kwargs)
-        df, citation_dict = self._auto_lock()
-        variables = [*JHUData.REQUIRED_COLS, *JHUData.OPTINAL_COLS]
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        df, citations = self._auto_lock(variables=[*JHUData.REQUIRED_COLS, *JHUData.OPTINAL_COLS])
         jhu_data = JHUData(data=df, citation="\n".join(citations))
         if self.update_interval is None:
             return jhu_data
@@ -406,9 +413,7 @@ class DataLoader(Term):
             covsirphy.PopulationData: dataset regarding population values
         """
         self._read_dep(**kwargs)
-        df, citation_dict = self._auto_lock()
-        variables = PopulationData.RAW_COLS[:]
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        df, citations = self._auto_lock(variables=PopulationData.RAW_COLS)
         return PopulationData(data=df, citation="\n".join(citations))
 
     def oxcgrt(self, **kwargs):
@@ -422,9 +427,7 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding OxCGRT data
         """
         self._read_dep(**kwargs)
-        df, citation_dict = self._auto_lock()
-        variables = OxCGRTData.RAW_COLS[:]
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        df, citations = self._auto_lock(variables=OxCGRTData.RAW_COLS)
         return OxCGRTData(data=df, citation="\n".join(citations))
 
     def japan(self, **kwargs):
@@ -474,9 +477,7 @@ class DataLoader(Term):
             covsirphy.PCRData: dataset regarding the number of tests and confirmed cases
         """
         self._read_dep(**kwargs)
-        df, citation_dict = self._auto_lock()
-        variables = PCRData.RAW_COLS[:]
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        df, citations = self._auto_lock(variables=PCRData.RAW_COLS)
         pcr_data = PCRData(data=df, citation="\n".join(citations))
         if self.update_interval is None:
             return pcr_data
@@ -501,9 +502,7 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccines
         """
         self._read_dep(**kwargs)
-        df, citation_dict = self._auto_lock()
-        variables = VaccineData.RAW_COLS[:]
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        df, citations = self._auto_lock(variables=VaccineData.RAW_COLS)
         return VaccineData(data=df.dropna(), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
