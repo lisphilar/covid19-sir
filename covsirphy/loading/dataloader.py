@@ -71,7 +71,7 @@ class DataLoader(Term):
         # Verbosity
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Column names to indentify records
-        self._id_cols = [self.DATE, self.COUNTRY, self.PROVINCE]
+        self._id_cols = [self.COUNTRY, self.PROVINCE, self.DATE]
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
         self._local_citations = []
@@ -327,9 +327,7 @@ class DataLoader(Term):
         remote_df[self.PROVINCE] = remote_df[self.PROVINCE].fillna(self.UNKNOWN)
         remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
-        df.update(remote_df, overwrite=False)
-        df = pd.concat([df, remote_df], ignore_index=False, sort=True).reset_index()
-        df = df.drop_duplicates(subset=self._id_cols, keep="first").set_index(self._id_cols)
+        df = df.combine_first(remote_df).reset_index().set_index(self._id_cols)
         # Update citations
         cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
         return (df, cite_dict, handler)
