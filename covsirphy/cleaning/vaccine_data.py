@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from covsirphy.util.error import deprecate, SubsetNotFoundError
+from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -22,6 +23,7 @@ class VaccineData(CleaningBase):
                 - Date: Observation date
                 - Country: country/region name
                 - ISO3: ISO 3166-1 alpha-3, like JPN
+                - Province: province/prefecture/state name
                 - Product: vaccine product names
                 - Vaccinations: cumulative number of vaccinations
                 - Vaccinated_once: cumulative number of people who received at least one vaccine dose
@@ -37,6 +39,7 @@ class VaccineData(CleaningBase):
             - Date (pandas.TimeStamp): observation dates
             - Country (pandas.Category): country (or province) names
             - ISO3 (pandas.Category): ISO3 codes
+            - Province (pandas.Category): province/prefecture/state name
             - Product (pandas.Category): vaccine product names
             - Vaccinations (int): cumulative number of vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
@@ -44,23 +47,21 @@ class VaccineData(CleaningBase):
     """
     # Columns of self._raw and self._clean_df
     RAW_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PRODUCT,
-        CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
+        Term.DATE, Term.COUNTRY, Term.ISO3, Term.PROVINCE, Term.PRODUCT,
+        Term.VAC, Term.V_ONCE, Term.V_FULL]
     # Columns of self.cleaned()
     CLEANED_COLS = RAW_COLS[:]
     # Columns of self.subset()
-    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
+    SUBSET_COLS = [Term.DATE, Term.VAC, Term.V_ONCE, Term.V_FULL]
 
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
         # Raw data
-        if data is not None and self.PROVINCE in data:
-            data_c = data.loc[data[self.PROVINCE] == self.UNKNOWN]
-            self._raw = self._parse_raw(filename, data_c, self.RAW_COLS)
-        else:
-            self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
         # Backward compatibility
         if self._raw.empty:
             self._raw = self._retrieve(filename, **kwargs)
+        if self.PROVINCE not in self._raw:
+            self._raw[self.PROVINCE] = self.UNKNOWN
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Citation
@@ -119,6 +120,7 @@ class VaccineData(CleaningBase):
                 - Date (pandas.TimeStamp): observation dates
                 - Country (pandas.Category): country (or province) names
                 - ISO3 (pandas.Category): ISO3 codes
+                - Province: province/prefecture/state name
                 - Product (pandas.Category): vaccine product names
                 - Vaccinations (int): cumulative number of vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
@@ -127,29 +129,32 @@ class VaccineData(CleaningBase):
         df = self._raw.copy()
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        for col in [self.COUNTRY, self.ISO3, self.PRODUCT]:
-            df[col] = df[col].astype("category")
         # Fill in NA values
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-        today_date = datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
         country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
+        # Extent dates to today
+        today_date = datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
         df = df.pivot_table(
             values=[self.VAC, self.V_ONCE, self.V_FULL],
-            index=self.DATE, columns=[self.COUNTRY], aggfunc="last")
+            index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="last")
         df = df.reindex(pd.date_range(df.index[0], today_date, freq="D"))
         df.index.name = self.DATE
-        df = df.ffill().fillna(0).astype(np.int64).stack().reset_index()
-        df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
+        df = df.ffill().fillna(0).astype(np.int64).stack().stack().reset_index()
+        df.sort_values(by=[self.COUNTRY, self.PROVINCE, self.DATE], ignore_index=True, inplace=True)
         df = df.merge(country_df, on=self.COUNTRY)
+        # Set dtype for category data
+        for col in [self.COUNTRY, self.ISO3, self.PROVINCE, self.PRODUCT]:
+            df[col] = df[col].astype("category")
         return df.loc[:, self.RAW_COLS]
 
-    def subset(self, country, product=None, start_date=None, end_date=None):
+    def subset(self, country, province=None, product=None, start_date=None, end_date=None):
         """
         Return subset of the country/province and start/end date.
 
         Args:
-            country (str or None): country name or ISO3 code
+            country (str): country name or ISO3 code
+            province (str or None): province name
             product (str or None): vaccine product name
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
@@ -159,7 +164,7 @@ class VaccineData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.TimeStamp): observation date
+                    - Date (pandas.Timestamp): observation date
                     - Vaccinations (int): the number of vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
@@ -167,7 +172,7 @@ class VaccineData(CleaningBase):
         df = self._cleaned_df.copy()
         # Subset by country
         country_alias = self.ensure_country_name(country)
-        df = df.loc[df[self.COUNTRY] == country_alias]
+        df = df.loc[(df[self.COUNTRY] == country_alias) & (df[self.PROVINCE] == (province or self.UNKNOWN))]
         # Subset by product name
         if product is not None:
             df = df.loc[df[self.PRODUCT] == product]
