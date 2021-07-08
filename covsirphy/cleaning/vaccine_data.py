@@ -4,7 +4,7 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import datetime
+from datetime import datetime
 from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
@@ -132,23 +132,16 @@ class VaccineData(CleaningBase):
         # Fill in NA values
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-            df[col] = df.groupby(self.ISO3)[col].fillna(method="ffill").fillna(0).astype(np.int64)
-        today_date = datetime.datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
-        for country in df.Country.unique():
-            subset_df = df.loc[df[self.COUNTRY] == country]
-            # Add any missing dates up until today
-            if subset_df[self.DATE].max() < today_date:
-                new_dates = pd.date_range(
-                    subset_df[self.DATE].max() + datetime.timedelta(days=1), today_date)
-                subset_df = subset_df.reset_index(drop=True)
-                keep_index = subset_df[self.VAC].idxmax() + 1
-                new_df = pd.DataFrame(index=new_dates, columns=subset_df.columns)
-                new_df.index.name = self.DATE
-                new_df = new_df.drop(self.DATE, axis=1).reset_index()
-                subset_df = pd.concat([subset_df, new_df], axis=0, ignore_index=True).ffill()
-                subset_df = subset_df.loc[keep_index:]
-                df = pd.concat([df, subset_df], axis=0, ignore_index=True)
+        today_date = datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
+        country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
+        df = df.pivot_table(
+            values=[self.VAC, self.V_ONCE, self.V_FULL],
+            index=self.DATE, columns=[self.COUNTRY], aggfunc="last")
+        df = df.reindex(pd.date_range(df.index[0], today_date, freq="D"))
+        df.index.name = self.DATE
+        df = df.ffill().fillna(0).astype(np.int64).stack().reset_index()
         df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
+        df = df.merge(country_df, on=self.COUNTRY)
         return df.loc[:, self.RAW_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
