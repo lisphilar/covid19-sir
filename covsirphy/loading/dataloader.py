@@ -261,7 +261,7 @@ class DataLoader(Term):
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
             self._covid19dh_primary = dh_handler.primary
             # Our World In Data
-            owid_filename = self._filename_dict["owid_vaccine"]
+            owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
         # Complete database lock
         df = df.reset_index()
