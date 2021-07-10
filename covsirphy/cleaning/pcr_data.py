@@ -138,6 +138,7 @@ class PCRData(CleaningBase):
 
     def _download_ourworldindata(self, filename):
         """
+        Deprecated, but used for self.use_ourworldindata().
         Download the dataset (ISO code/date/the number of tests) from "Our World In Data" site.
         https://github.com/owid/covid-19-data/tree/master/public/data
         https://ourworldindata.org/coronavirus
@@ -172,6 +173,7 @@ class PCRData(CleaningBase):
         df.to_csv(filename, index=False)
         return df
 
+    @deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
     def use_ourworldindata(self, filename, force=False):
         """
         Set the cleaned dataset retrieved from "Our World In Data" site.

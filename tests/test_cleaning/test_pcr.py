@@ -13,15 +13,6 @@ class TestPCRData(object):
         df = pcr_data.cleaned()
         assert set(df.columns) == set(PCRData.CLEANED_COLS) - set([PCRData.ISO3])
 
-    def test_from_dataframe(self, pcr_data):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        df = pcr_data.cleaned()
-        assert isinstance(PCRData.from_dataframe(df), PCRData)
-
-    def test_use_ourworldindata(self, pcr_data):
-        pcr_data.use_ourworldindata(
-            filename="input/ourworldindata_pcr.csv")
-
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, pcr_data, country):
         with pytest.raises(SubsetNotFoundError):

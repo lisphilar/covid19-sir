@@ -20,7 +20,7 @@ class _COVID19dh(_RemoteDatabase):
         ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
         ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.'
     # Column names and data types
-    # {"name in database": ("name defined in Term class", "data type")}
+    # {"name in database": "name defined in Term class"}
     _OXCGRT_COLS_RAW_INT = [
         "school_closing",
         "workplace_closing",
@@ -35,17 +35,17 @@ class _COVID19dh(_RemoteDatabase):
         "contact_tracing",
     ]
     COL_DICT = {
-        "date": (Term.DATE, "object"),
-        "administrative_area_level_1": (Term.COUNTRY, "object"),
-        "administrative_area_level_2": (Term.PROVINCE, "object"),
-        "tests": (Term.TESTS, "int"),
-        "confirmed": (Term.C, "int"),
-        "deaths": (Term.F, "int"),
-        "recovered": (Term.R, "int"),
-        "population": (Term.N, "int"),
-        "iso_alpha_3": (Term.ISO3, "object"),
-        **{v: (v.capitalize(), "float") for v in _OXCGRT_COLS_RAW_INT},
-        "stringency_index": ("Stringency_index", "float"),
+        "date": Term.DATE,
+        "administrative_area_level_1": Term.COUNTRY,
+        "administrative_area_level_2": Term.PROVINCE,
+        "tests": Term.TESTS,
+        "confirmed": Term.C,
+        "deaths": Term.F,
+        "recovered": Term.R,
+        "population": Term.N,
+        "iso_alpha_3": Term.ISO3,
+        **{v: v.capitalize() for v in _OXCGRT_COLS_RAW_INT},
+        "stringency_index": "Stringency_index",
     }
 
     def download(self, verbose):
