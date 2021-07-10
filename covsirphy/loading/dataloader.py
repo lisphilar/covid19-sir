@@ -483,10 +483,6 @@ class DataLoader(Term):
             return pcr_data
         # Update with Japan data
         pcr_data.replace(self.japan())
-        # Update the values using "Our World In Data" dataset
-        owid_filename = self._filename_dict["owid_pcr"]
-        owid_force = self._download_necessity(filename=owid_filename)
-        pcr_data.use_ourworldindata(filename=owid_filename, force=owid_force)
         return pcr_data
 
     def vaccine(self, **kwargs):
