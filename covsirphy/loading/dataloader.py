@@ -29,8 +29,7 @@ class DataLoader(Term):
         update_interval (int or None): update interval of downloaded or None (avoid downloading)
         basename_dict (dict[str, str]): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
-            "owid_pcr": Our World In Data (the number of tests, default: ourworldindata_pcr.csv),
-            "owid_vaccine": Our World In Data (vaccination, default: ourworldindata_vaccine.csv),
+            "owid": Our World In Data (default: ourworldindata.csv),
             "wbdata": World Bank Open Data (default: wbdata_population_pyramid.csv),
             "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
         verbose (int): level of verbosity when downloading
@@ -59,8 +58,7 @@ class DataLoader(Term):
         # Dictionary of filenames to save remote datasets
         filename_dict = {
             "covid19dh": "covid19dh.csv",
-            "owid_pcr": "ourworldindata_pcr.csv",
-            "owid_vaccine": "ourworldindata_vaccine.csv",
+            "owid": "ourworldindata.csv",
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
         }
@@ -82,6 +80,19 @@ class DataLoader(Term):
         self._covid19dh_primary = []
         # COVID-19 dataset in Japan
         self._japan_data = None
+        # Explain changes
+        dep_pcf_file = self.dir_path.joinpath("ourworldindata_pcr.csv")
+        dep_vac_file = self.dir_path.joinpath("ourworldindata_vaccine.csv")
+        for filepath in [dep_pcf_file, dep_vac_file]:
+            if filepath.exists() and filepath not in self._filename_dict.values():
+                warnings.warn(
+                    "The following file might be created with covsirphy.DataLoader, "
+                    "but not used at this version as default. Please delete it.\n"
+                    f"{filepath}"
+                    "\n\nAt this version, ourworldindata.csv will be created.\n\n",
+                    DeprecationWarning,
+                    stacklevel=2
+                )
 
     @property
     def local(self):
@@ -250,7 +261,7 @@ class DataLoader(Term):
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
             self._covid19dh_primary = dh_handler.primary
             # Our World In Data
-            owid_filename = self._filename_dict["owid_vaccine"]
+            owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
         # Complete database lock
         df = df.reset_index()
@@ -327,7 +338,7 @@ class DataLoader(Term):
         remote_df[self.PROVINCE] = remote_df[self.PROVINCE].fillna(self.UNKNOWN)
         remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
-        df = df.combine_first(remote_df).reset_index().set_index(self._id_cols)
+        df = df.replace(0, None).combine_first(remote_df).reset_index().set_index(self._id_cols)
         # Update citations
         cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
         return (df, cite_dict, handler)
@@ -350,7 +361,8 @@ class DataLoader(Term):
             raise TypeError("local_file argument was deprecated. Please use DataLoader.read_csv().")
         if verbose is not None:
             warnings.warn(
-                "verbose argument was deprecated. Please use DataLoader(verbose).", DeprecationWarning)
+                "verbose argument was deprecated. Please use DataLoader(verbose).",
+                DeprecationWarning, stacklevel=2)
             self._verbose = self._ensure_natural_int(verbose, name="verbose")
 
     def _auto_lock(self, variables):
@@ -483,10 +495,6 @@ class DataLoader(Term):
             return pcr_data
         # Update with Japan data
         pcr_data.replace(self.japan())
-        # Update the values using "Our World In Data" dataset
-        owid_filename = self._filename_dict["owid_pcr"]
-        owid_force = self._download_necessity(filename=owid_filename)
-        pcr_data.use_ourworldindata(filename=owid_filename, force=owid_force)
         return pcr_data
 
     def vaccine(self, **kwargs):
