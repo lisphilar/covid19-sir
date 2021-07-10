@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-iota-fu3
+                2.21.0-iota-fu4
               </div>
             
           
@@ -205,8 +205,7 @@
 <span class="sd">        update_interval (int or None): update interval of downloaded or None (avoid downloading)</span>
 <span class="sd">        basename_dict (dict[str, str]): basename of downloaded CSV files,</span>
 <span class="sd">            &quot;covid19dh&quot;: COVID-19 Data Hub (default: covid19dh.csv),</span>
-<span class="sd">            &quot;owid_pcr&quot;: Our World In Data (the number of tests, default: ourworldindata_pcr.csv),</span>
-<span class="sd">            &quot;owid_vaccine&quot;: Our World In Data (vaccination, default: ourworldindata_vaccine.csv),</span>
+<span class="sd">            &quot;owid&quot;: Our World In Data (default: ourworldindata.csv),</span>
 <span class="sd">            &quot;wbdata&quot;: World Bank Open Data (default: wbdata_population_pyramid.csv),</span>
 <span class="sd">            &quot;japan&quot;: COVID-19 Dataset in Japan (default: covid_japan.csv).</span>
 <span class="sd">        verbose (int): level of verbosity when downloading</span>
@@ -235,8 +234,7 @@
         <span class="c1"># Dictionary of filenames to save remote datasets</span>
         <span class="n">filename_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;covid19dh&quot;</span><span class="p">:</span> <span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;owid_pcr&quot;</span><span class="p">:</span> <span class="s2">&quot;ourworldindata_pcr.csv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;owid_vaccine&quot;</span><span class="p">:</span> <span class="s2">&quot;ourworldindata_vaccine.csv&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;owid&quot;</span><span class="p">:</span> <span class="s2">&quot;ourworldindata.csv&quot;</span><span class="p">,</span>
             <span class="s2">&quot;wbdata_pyramid&quot;</span><span class="p">:</span> <span class="s2">&quot;wbdata_population_pyramid.csv&quot;</span><span class="p">,</span>
             <span class="s2">&quot;japan&quot;</span><span class="p">:</span> <span class="s2">&quot;covid_japan.csv&quot;</span><span class="p">,</span>
         <span class="p">}</span>
@@ -258,6 +256,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_primary</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># COVID-19 dataset in Japan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_japan_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Explain changes</span>
+        <span class="n">dep_pcf_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;ourworldindata_pcr.csv&quot;</span><span class="p">)</span>
+        <span class="n">dep_vac_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;ourworldindata_vaccine.csv&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="p">[</span><span class="n">dep_pcf_file</span><span class="p">,</span> <span class="n">dep_vac_file</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">filepath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;The following file might be created with covsirphy.DataLoader, &quot;</span>
+                    <span class="s2">&quot;but not used at this version as default. Please delete it.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">At this version, ourworldindata.csv will be created.</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+                <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -426,7 +437,7 @@
             <span class="n">df</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">,</span> <span class="n">dh_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_remote</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">_COVID19dh</span><span class="p">,</span> <span class="n">dh_filename</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_primary</span> <span class="o">=</span> <span class="n">dh_handler</span><span class="o">.</span><span class="n">primary</span>
             <span class="c1"># Our World In Data</span>
-            <span class="n">owid_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;owid_vaccine&quot;</span><span class="p">]</span>
+            <span class="n">owid_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;owid&quot;</span><span class="p">]</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_remote</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">_OWID</span><span class="p">,</span> <span class="n">owid_filename</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">)</span>
         <span class="c1"># Complete database lock</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
@@ -503,7 +514,7 @@
         <span class="n">remote_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">remote_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
         <span class="n">remote_df</span> <span class="o">=</span> <span class="n">remote_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_cols</span><span class="p">)</span>
         <span class="c1"># Update the current database</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">combine_first</span><span class="p">(</span><span class="n">remote_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_cols</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">combine_first</span><span class="p">(</span><span class="n">remote_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_cols</span><span class="p">)</span>
         <span class="c1"># Update citations</span>
         <span class="n">cite_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">v</span><span class="p">,</span> <span class="n">handler</span><span class="o">.</span><span class="n">CITATION</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">remote_df</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">cite_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cite_dict</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
@@ -526,7 +537,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;local_file argument was deprecated. Please use DataLoader.read_csv().&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;verbose argument was deprecated. Please use DataLoader(verbose).&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                <span class="s2">&quot;verbose argument was deprecated. Please use DataLoader(verbose).&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;verbose&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_auto_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
@@ -659,10 +671,6 @@
             <span class="k">return</span> <span class="n">pcr_data</span>
         <span class="c1"># Update with Japan data</span>
         <span class="n">pcr_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">japan</span><span class="p">())</span>
-        <span class="c1"># Update the values using &quot;Our World In Data&quot; dataset</span>
-        <span class="n">owid_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;owid_pcr&quot;</span><span class="p">]</span>
-        <span class="n">owid_force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">owid_filename</span><span class="p">)</span>
-        <span class="n">pcr_data</span><span class="o">.</span><span class="n">use_ourworldindata</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">owid_filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">owid_force</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pcr_data</span></div>
 
 <div class="viewcode-block" id="DataLoader.vaccine"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.vaccine">[docs]</a>    <span class="k">def</span> <span class="nf">vaccine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
