@@ -51,8 +51,6 @@ class PCRData(CleaningBase):
         self.interval = self._ensure_natural_int(interval, name="interval")
         self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
-        # Cleaned dataset of "Our World In Data"
-        self._cleaned_df_owid = pd.DataFrame()
         # Directory that save the file
         if filename is None:
             self._dirpath = Path("input")
@@ -136,46 +134,10 @@ class PCRData(CleaningBase):
         instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
         return instance
 
-    def _download_ourworldindata(self, filename):
-        """
-        Deprecated, but used for self.use_ourworldindata().
-        Download the dataset (ISO code/date/the number of tests) from "Our World In Data" site.
-        https://github.com/owid/covid-19-data/tree/master/public/data
-        https://ourworldindata.org/coronavirus
-
-        Args:
-            filename (str): CSV filename to save the datasetretrieved from "Our World In Data"
-        """
-        url = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv"
-        col_dict = {
-            "ISO code": self.ISO3,
-            "Date": self.DATE,
-            "Cumulative total": self.TESTS,
-            "Daily change in cumulative total": self.T_DIFF,
-        }
-        # Download the dataset
-        df = self.load(url, columns=list(col_dict))
-        # Data cleaning
-        df = df.rename(col_dict, axis=1)
-        df[self.TESTS] = pd.to_numeric(df[self.TESTS], errors="coerce")
-        df[self.TESTS] = df[self.TESTS].fillna(method="ffill").astype(np.int64)
-        # Calculate cumulative values if necessary
-        df[self.T_DIFF] = df[self.T_DIFF].fillna(0).astype(np.int64)
-        na_last_df = df.loc[(df[self.TESTS].isna()) & (df[self.DATE] == df[self.DATE].max())]
-        re_countries_set = set(na_last_df[self.ISO3].unique())
-        df["cumsum"] = df.groupby(self.ISO3)[self.T_DIFF].cumsum()
-        df[self.TESTS] = df[[self.ISO3, self.TESTS, "cumsum"]].apply(
-            lambda x: x[1] if x[0] in re_countries_set else x[2], axis=1)
-        df = df.drop("cumsum", axis=1)
-        # Drop duplicated records
-        df = df.drop_duplicates(subset=[self.ISO3, self.DATE])
-        # Save as CSV file
-        df.to_csv(filename, index=False)
-        return df
-
     @deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
     def use_ourworldindata(self, filename, force=False):
         """
+        Deprecated and removed.
         Set the cleaned dataset retrieved from "Our World In Data" site.
         https://github.com/owid/covid-19-data/tree/master/public/data
         https://ourworldindata.org/coronavirus
@@ -184,38 +146,7 @@ class PCRData(CleaningBase):
             filename (str): CSV filename to save the datasetretrieved from "Our World In Data"
             force (bool): if True, always download the dataset from "Our World In Data"
         """
-        # Retrieve dataset from "Our World In Data" if necessary
-        Path(filename).parent.mkdir(exist_ok=True, parents=True)
-        if Path(filename).exists() and not force:
-            df = self.load(filename, dtype={self.TESTS: np.int64})
-        else:
-            df = self._download_ourworldindata(filename)
-        # Add "Country" and "Confirmed" column using "COVID-19 Data Hub" dataset
-        df[self.COUNTRY] = None
-        df[self.C] = None
-        df.index = df[self.ISO3].str.cat(df[self.DATE], sep="_")
-        df.index.name = None
-        series = df.loc[:, self.TESTS]
-        hub_df = self._cleaned_df.copy()
-        hub_df = hub_df.loc[hub_df[self.PROVINCE] == self.UNKNOWN]
-        hub_df.index = hub_df[self.ISO3].str.cat(hub_df[self.DATE].astype(str), sep="_")
-        df.update(hub_df.groupby(level=0).last())
-        df[self.TESTS] = series
-        df = df.dropna().reset_index(drop=True)
-        # Add "Province" column (Unknown because not)
-        df[self.PROVINCE] = self.UNKNOWN
-        # Data types
-        df[self.DATE] = pd.to_datetime(df[self.DATE])
-        df[self.COUNTRY] = df[self.COUNTRY].astype("category")
-        df[self.PROVINCE] = df[self.PROVINCE].astype("category")
-        df[self.C] = df[self.C].astype(np.int64)
-        # Save the dataframe as the cleaned dataset
-        self._cleaned_df_owid = df.reset_index(drop=True)
-        # Update citation
-        self._citation += "\nHasell, J., Mathieu, E., Beltekian, D. et al." \
-            " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
-            " https://doi.org/10.1038/s41597-020-00688-8"
-        return self
+        raise NotImplementedError
 
     def replace(self, country_data):
         """
@@ -480,41 +411,28 @@ class PCRData(CleaningBase):
         # Result
         return check_zero and check_missing and check_unique
 
-    def _subset_by_area(self, country, province, dataset="COVID-19 Data Hub"):
+    def _subset_by_area(self, country, province):
         """
-        Return the subset of "Our World In Data".
+        Return the subset for the area.
 
         Args:
             country (str): country name
             province (str): province name or "-"
-            dataset (str): 'COVID-19 Data Hub' or 'Our World In Data'
         """
-        dataset_dict = {
-            "COVID-19 Data Hub": self._cleaned_df,
-            "Our World In Data": self._cleaned_df_owid,
-        }
-        df = dataset_dict[dataset].copy()
+        df = self._cleaned_df.copy()
         return df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
 
     def _subset_select(self, country, province):
         """
-        When only "Our World In Data" has sufficient data, the subset of this dataset will be returned.
-        If not, "COVID-19 Data Hub" will be selected.
+        Return suset if available.
 
         Args:
             country (str): country name
             province (str): province name or "-"
         """
-        # If 'COVID-19 Data Hub' has sufficient data for the area, it will be used
-        hub_df = self._subset_by_area(
-            country, province, dataset="COVID-19 Data Hub")
-        if self._pcr_check_preconditions(hub_df):
-            return hub_df
-        # If 'Our World In Data' has sufficient data for the area, it will be used
-        owid_df = self._subset_by_area(
-            country, province, dataset="Our World In Data")
-        if self._pcr_check_preconditions(owid_df):
-            return owid_df
+        df = self._subset_by_area(country, province)
+        if self._pcr_check_preconditions(df):
+            return df
         # Failed in retrieving sufficient data
         raise PCRIncorrectPreconditionError(
             country=country, province=province, message="Too many missing Tests records")
