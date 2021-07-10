@@ -4,7 +4,7 @@
 import warnings
 import pytest
 import pandas as pd
-from covsirphy import SubsetNotFoundError, PCRIncorrectPreconditionError
+from covsirphy import SubsetNotFoundError
 from covsirphy import PCRData
 
 
@@ -12,15 +12,6 @@ class TestPCRData(object):
     def test_cleaning(self, pcr_data):
         df = pcr_data.cleaned()
         assert set(df.columns) == set(PCRData.CLEANED_COLS) - set([PCRData.ISO3])
-
-    def test_from_dataframe(self, pcr_data):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        df = pcr_data.cleaned()
-        assert isinstance(PCRData.from_dataframe(df), PCRData)
-
-    def test_use_ourworldindata(self, pcr_data):
-        pcr_data.use_ourworldindata(
-            filename="input/ourworldindata_pcr.csv")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, pcr_data, country):
@@ -51,11 +42,6 @@ class TestPCRData(object):
         assert set([PCRData.T_DIFF, PCRData.C_DIFF, PCRData.PCR_RATE]).issubset(df.columns)
         if last_date is not None:
             assert df[pcr_data.DATE].max() <= pd.to_datetime(last_date)
-
-    @pytest.mark.parametrize("country", ["China"])
-    def test_positive_rate_error(self, pcr_data, country):
-        with pytest.raises(PCRIncorrectPreconditionError):
-            pcr_data.positive_rate(country, show_figure=False)
 
     def test_map(self, pcr_data):
         warnings.filterwarnings("ignore", category=UserWarning)
