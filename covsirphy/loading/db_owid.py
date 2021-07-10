@@ -24,16 +24,16 @@ class _OWID(_RemoteDatabase):
         " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
         " https://doi.org/10.1038/s41597-020-00688-8"
     # Column names and data types
-    # {"name in database": ("name defined in Term class", "data type")}
+    # {"name in database": "name defined in Term class"}
     COL_DICT = {
-        "date": (Term.DATE, "object"),
-        "location": (Term.COUNTRY, "object"),
-        Term.PROVINCE: (Term.PROVINCE, "object"),
-        "iso_code": (Term.ISO3, "object"),
-        "vaccines": (Term.PRODUCT, "object"),
-        "total_vaccinations": (Term.VAC, "int"),
-        "people_vaccinated": (Term.V_ONCE, "int"),
-        "people_fully_vaccinated": (Term.V_FULL, "int"),
+        "date": Term.DATE,
+        "location": Term.COUNTRY,
+        Term.PROVINCE: Term.PROVINCE,
+        "iso_code": Term.ISO3,
+        "vaccines": Term.PRODUCT,
+        "total_vaccinations": Term.VAC,
+        "people_vaccinated": Term.V_ONCE,
+        "people_fully_vaccinated": Term.V_FULL,
     }
 
     def download(self, verbose):

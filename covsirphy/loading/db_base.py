@@ -16,7 +16,7 @@ class _RemoteDatabase(Term):
     # Citation
     CITATION = ""
     # Column names and data types
-    # {"name in database": ("name defined in Term class", "data type")}
+    # {"name in database": "name defined in Term class"}
     COL_DICT = {}
 
     def __init__(self, filename):
@@ -28,12 +28,8 @@ class _RemoteDatabase(Term):
         self.filepath.parent.mkdir(exist_ok=True, parents=True)
         # List of primary sources
         self.primary_list = []
-        # {"name in database": "name defined in Term class"}
-        self.col_convert_dict = {k: v[0] for (k, v) in self.COL_DICT.items()}
         # List of column names (defined in Term class)
-        self.saved_cols = [line[0] for line in self.COL_DICT.values()]
-        # Dictionary of data types (defined in Term class)
-        self.dtype_dict = {line[0]: line[1] for line in self.COL_DICT.values()}
+        self.saved_cols = list(self.COL_DICT.values())
 
     def to_dataframe(self, force, verbose):
         """
@@ -55,7 +51,7 @@ class _RemoteDatabase(Term):
             return self._ensure_dataframe(self.read(), columns=self.saved_cols)
         # Download dataset from server
         df = self.download(verbose=verbose)
-        df = df.rename(columns=self.col_convert_dict)
+        df = df.rename(columns=self.COL_DICT)
         df = self._ensure_dataframe(df, columns=self.saved_cols)
         df.to_csv(self.filepath, index=False)
         return df
@@ -69,7 +65,7 @@ class _RemoteDatabase(Term):
                 Index
                     reset index
                 Columns
-                    defined by .COL_DICT
+                    defined by .COL_DICT.values()
         """
         kwargs = {"low_memory": False, "header": 0, "usecols": self.saved_cols}
         return pd.read_csv(self.filepath, **kwargs)
@@ -86,7 +82,7 @@ class _RemoteDatabase(Term):
                 Index
                     reset index
                 Columns
-                    defined by .COL_DICT
+                    defined by .COL_DICT.values()
         """
         raise NotImplementedError
 
