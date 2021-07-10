@@ -77,6 +77,7 @@ class _OWID(_RemoteDatabase):
         # Combine data (vaccinations/tests)
         df = v_df.set_index(["iso_code", "date"])
         df = df.combine_first(pcr_df.set_index(["iso_code", "date"]).loc[:, ["tests"]])
+        df = df.reset_index()
         # Location (country/province)
         df["location"] = df["location"].replace(
             {
@@ -84,7 +85,8 @@ class _OWID(_RemoteDatabase):
                 "Congo": "Republic of the Congo",
             }
         )
-        df["location"] = df["location"].apply(
+        df["location"] = df.groupby("iso_code")["location"].bfill()
+        df.loc[df["location"].isna(), "location"] = df.loc[df["location"].isna(), "iso_code"].apply(
             lambda x: x or coco.convert(x, to="name_short", not_found=None))
         df[self.PROVINCE] = self.UNKNOWN
-        return df.reset_index()
+        return df
