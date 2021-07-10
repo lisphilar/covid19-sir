@@ -338,7 +338,7 @@ class DataLoader(Term):
         remote_df[self.PROVINCE] = remote_df[self.PROVINCE].fillna(self.UNKNOWN)
         remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
-        df = df.combine_first(remote_df).reset_index().set_index(self._id_cols)
+        df = df.replace(0, None).combine_first(remote_df).reset_index().set_index(self._id_cols)
         # Update citations
         cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
         return (df, cite_dict, handler)

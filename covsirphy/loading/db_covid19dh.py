@@ -101,12 +101,12 @@ class _COVID19dh(_RemoteDatabase):
         levels = [f"administrative_area_level_{i}" for i in range(1, 4)]
         # Level 1 (country/region)
         c_raw, c_cite = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
-        c_df = c_raw.groupby(levels[0]).ffill().fillna(0)
+        c_df = c_raw.groupby(levels[0]).ffill()
         for num in range(3):
             c_df.loc[:, levels[num]] = c_raw[levels[num]]
         # Level 2 (province/state)
         p_raw, p_cite = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
-        p_df = p_raw.groupby(levels[:2]).ffill().fillna(0)
+        p_df = p_raw.groupby(levels[:2]).ffill()
         for num in range(3):
             p_df.loc[:, levels[num]] = p_raw[levels[num]]
         # Citation

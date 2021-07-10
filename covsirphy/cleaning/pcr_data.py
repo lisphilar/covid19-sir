@@ -93,15 +93,15 @@ class PCRData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
         """
         df = self._raw.copy()
+        df = df.loc[:, self.CLEANED_COLS].reset_index(drop=True)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         # Values
-        df = df.ffill().fillna(0)
-        df[self.TESTS] = df[self.TESTS].astype(np.int64)
-        df[self.C] = df[self.C].astype(np.int64)
-        df = df.loc[:, self.CLEANED_COLS].reset_index(drop=True)
+        df = df.dropna(subset=[self.TESTS, self.C], how="any")
+        for col in [self.TESTS, self.C]:
+            df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
