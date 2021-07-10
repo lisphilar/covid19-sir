@@ -48,7 +48,11 @@ class _RemoteDatabase(Term):
         """
         # Read local file if available and usable
         if not force and self.filepath.exists():
-            return self._ensure_dataframe(self.read(), columns=self.saved_cols)
+            try:
+                return self._ensure_dataframe(self.read(), columns=self.saved_cols)
+            except ValueError:
+                # ValueError: Usecols do not match columns
+                pass
         # Download dataset from server
         df = self.download(verbose=verbose)
         df = df.rename(columns=self.COL_DICT)
