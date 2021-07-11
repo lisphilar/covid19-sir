@@ -49,6 +49,10 @@ class DataHandler(Term):
         self._area_dict = {"country": str(country), "province": str(province or self.UNKNOWN)}
         # Data {str: instance}
         self._data_dict = dict.fromkeys(self.MAIN_DICT.keys(), None)
+        # Raw data without complement
+        self._subset_df_raw = None
+        # With complement
+        self._subset_df = None
         # Population
         self._population = None
         # Auto complement: manually changed with DataHandler.switch_complement()
@@ -213,20 +217,22 @@ class DataHandler(Term):
                     - Recovered (int): the number of recovered cases ( > 0)
                     - Susceptible (int): the number of susceptible cases
         """
-        jhu_data = self._data_dict[self.__NAME_JHU]
+        if self._subset_df is not None:
+            return self._subset_df
         # Main datasets should be registered
+        jhu_data = self._data_dict[self.__NAME_JHU]
         if jhu_data is None:
             raise NotRegisteredMainError(".register(jhu_data)")
         # Subsetting
-        df, self._complemented = jhu_data.records(
+        self._subset_df, self._complemented = jhu_data.records(
             **self._area_dict,
             start_date=self._first_date, end_date=self._last_date,
             population=self._population,
             **self._complement_dict,
         )
         # Columns which are included in the main dataset except for 'Date'
-        self._main_cols = list(set(df.columns) - set([self.DATE]))
-        return df
+        self._main_cols = list(set(self._subset_df.columns) - set([self.DATE]))
+        return self._subset_df
 
     def switch_complement(self, whether=None, **kwargs):
         """
@@ -244,6 +250,7 @@ class DataHandler(Term):
             comp_dict["auto_complement"] = bool(whether)
         comp_dict.update(kwargs)
         self._complement_dict = comp_dict.copy()
+        self._subset_df = None
 
     def show_complement(self):
         """
@@ -302,6 +309,7 @@ class DataHandler(Term):
             self._ensure_date_order(self._first_date, today, name="today")
             self._ensure_date_order(today, self._last_date, name="today")
             self._today = today
+        self._subset_df = None
 
     def records_extras(self):
         """
