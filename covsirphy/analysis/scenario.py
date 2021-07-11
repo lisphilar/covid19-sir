@@ -474,8 +474,7 @@ class Scenario(Term):
         """
         tracker = self._tracker(name, template=template)
         if include_past:
-            self[name] = PhaseTracker(
-                self._data.records_main(), self._data.first_date, self._data.last_date)
+            self[name] = PhaseTracker(self._data.records_main(), self.today, self._area)
             return self
         df = tracker.summary()
         future_phases = df.loc[df[self.TENSE] == self.FUTURE].index.tolist()
