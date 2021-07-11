@@ -207,29 +207,21 @@ class DataLoader(Term):
 
         Args:
             date (str): column name for dates
-            country (str): column name for country names (top level administration)
-            procvince (str): column name for province names (2nd level administration)
-            iso3 (str): ISO3 codes,
-            confirmed (str): the number of confirmed cases,
-            fatal (str): the number of fatal cases,
-            recovered (str): the number of recovered cases,
-            population (str): population values,
-            tests (str): the number of tests,
-            product (str): vaccine product names,
-            vaccinations (str): cumulative number of vaccinations,
-            vaccinated_once (str): cumulative number of people who received at least one vaccine dose,
-            vaccinated_full (str): cumulative number of people who received all doses prescrived by the protocol.
-
+            country (str): country names (top level administration)
+            procvince (str): province names (2nd level administration)
+            iso3 (str or None): ISO3 codes
+            confirmed (str or None): the number of confirmed cases
+            fatal (str or None): the number of fatal cases
+            recovered (str or None): the number of recovered cases
+            population (str or None): population values
+            tests (str or None): the number of tests
+            product (str or None): vaccine product names
+            vaccinations (str or None): cumulative number of vaccinations
+            vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
+            vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
 
         Returns:
             covsirphy.DataLoader: self
-
-        Note:
-            Values will be grouped by @date, @country and @province.
-            Total values will be used for each group.
-
-        Note:
-            For keyword names (column names with CovsirPhy terms) of kwargs, upper/lower case insensitive.
         """
         self._ensure_lock_status(lock_expected=False)
         variables = [
