@@ -262,10 +262,10 @@ class DBLockedError(ValueError):
 
     def __init__(self, name, message=None):
         self.name = str(name)
-        self.message = "" if message is None else f" {message}"
+        self.message = "" if message is None else f" {message}."
 
     def __str__(self):
-        return f"{self.name} should NOT be locked, but locked. {self.message}."
+        return f"{self.name} should NOT be locked, but locked.{self.message}"
 
 
 class NotDBLockedError(ValueError):
@@ -279,7 +279,7 @@ class NotDBLockedError(ValueError):
 
     def __init__(self, name, message=None):
         self.name = str(name)
-        self.message = "" if message is None else f" {message}"
+        self.message = "" if message is None else f" {message}."
 
     def __str__(self):
-        return f"{self.name} should be locked, but NOT locked. {self.message}."
+        return f"{self.name} should be locked, but NOT locked.{self.message}"

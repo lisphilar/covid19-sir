@@ -447,9 +447,11 @@ class Scenario(Term):
         tracker.define_phase(start, end)
         # Set parameter values
         if None not in set([self._model, self._tau]):
-            param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **pre_param_dict)
-            param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
-            tracker.set_ode(self._model, param_df, self._tau)
+            param_dict = {k: v for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
+            if param_dict:
+                param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
+                param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
+                tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
         self[name] = tracker
         return self
@@ -472,7 +474,7 @@ class Scenario(Term):
         """
         tracker = self._tracker(name, template=template)
         if include_past:
-            self[name] = tracker.remove_phase(self._data.first_date, self._data.last_date)
+            self[name] = PhaseTracker(self._data.records_main(), self.today, self._area)
             return self
         df = tracker.summary()
         future_phases = df.loc[df[self.TENSE] == self.FUTURE].index.tolist()
@@ -1001,7 +1003,8 @@ class Scenario(Term):
         # Add actual records, if necessary
         if with_actual:
             df = self._data.records(extras=False)
-            df.insert(0, self.SERIES, self.ACTUAL)
+            if self.SERIEs not in df:
+                df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
         # Concat dataframes
         track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
