@@ -269,7 +269,11 @@ class DataLoader(Term):
         df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
-        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        df = df.pivot_table(
+            values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
+        df = df.resample("D").first().ffill().bfill()
+        df = df.stack().stack().reset_index()
+        self._locked_df = df.reindex(columns=[*self._id_cols, *variables])
         self._locked_citation_dict = citation_dict.copy()
         return self
 
