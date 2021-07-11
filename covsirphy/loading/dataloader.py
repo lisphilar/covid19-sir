@@ -245,10 +245,11 @@ class DataLoader(Term):
             df[self.DATE] = pd.to_datetime(df[self.DATE])
             citation_dict = {v: self._local_citations if v in df else [] for v in variables}
         df = df.reindex(columns=[*self._id_cols, *variables])
-        df = df.pivot_table(
-            values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
-        df = df.resample("D").first().ffill().bfill()
-        df = df.stack().stack().reset_index()
+        if not df.empty:
+            df = df.pivot_table(
+                values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
+            df = df.resample("D").first().ffill().bfill()
+            df = df.stack().stack().reset_index()
         # With Remote datasets
         if self.update_interval is not None:
             df = df.set_index(self._id_cols)
