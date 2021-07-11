@@ -259,7 +259,6 @@ class DataLoader(Term):
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
             df = df.reset_index()
         # Complete database lock
-        df = df.reindex(columns=[*self._id_cols, *variables])
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
