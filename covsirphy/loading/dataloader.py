@@ -199,63 +199,60 @@ class DataLoader(Term):
         self._local_df = self._local_df.assign(**kwargs)
         return self
 
-    def lock(self, date, country, province, **kwargs):
+    def lock(self, date, country, province, iso3=None,
+             confirmed=None, fatal=None, recovered=None, population=None, tests=None,
+             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None):
         """
         Lock the local database, specifying columns which has date and area information.
 
         Args:
             date (str): column name for dates
-            country (str): column name for country names (top level administration)
-            procvince (str): column name for province names (2nd level administration)
-            kwargs: keyword arguments of variable names
-
+            country (str): country names (top level administration)
+            procvince (str): province names (2nd level administration)
+            iso3 (str or None): ISO3 codes
+            confirmed (str or None): the number of confirmed cases
+            fatal (str or None): the number of fatal cases
+            recovered (str or None): the number of recovered cases
+            population (str or None): population values
+            tests (str or None): the number of tests
+            product (str or None): vaccine product names
+            vaccinations (str or None): cumulative number of vaccinations
+            vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
+            vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
 
         Returns:
             covsirphy.DataLoader: self
-
-        Note:
-            Values will be grouped by @date, @country and @province.
-            Total values will be used for each group.
-
-        Note:
-            For keyword names (column names with CovsirPhy terms) of kwargs, upper/lower case insensitive.
-
-        Note:
-        As keywords of kwargs, we ca use
-            "confirmed": the number of confirmed cases,
-            "fatal": the number of fatal cases,
-            "recovered": the number of recovered cases,
-            "population": population values,
-            "tests": the number of tests,
-            "iso3": ISO3 codes,
-            "product": vaccine product names,
-            "vaccinations": cumulative number of vaccinations,
-            "vaccinated_once": cumulative number of people who received at least one vaccine dose,
-            "vaccinated_full": cumulative number of people who received all doses prescrived by the protocol.
         """
         self._ensure_lock_status(lock_expected=False)
-        df = self._local_df.copy()
         variables = [
-            self.C, self.F, self.R, self.N, self.TESTS, self.ISO3,
+            self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
             self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
         ]
-        rename_dict = {v: k.capitalize().replace("Iso3", self.ISO3) for (k, v) in kwargs.items()}
-        self._ensure_list(list(rename_dict.values()), candidates=variables, name="keyword arguments")
-        # Local database
         id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
+        rename_dict = {
+            **id_dict, iso3: self.ISO3,
+            confirmed: self.C, fatal: self.F, recovered: self.R, population: self.N,
+            tests: self.TESTS, product: self.PRODUCT, vaccinations: self.VAC,
+            vaccinated_once: self.V_ONCE, vaccinated_full: self.V_FULL,
+        }
+        # Local database
+        df = self._local_df.copy()
         if df.empty:
             citation_dict = dict.fromkeys(variables, [])
         else:
             self._ensure_dataframe(df, name="local database", columns=list(id_dict.keys()))
-            df = df.rename(columns=id_dict)
-            df[self.DATE] = pd.to_datetime(df[self.DATE])
             df = df.rename(columns=rename_dict)
+            df[self.DATE] = pd.to_datetime(df[self.DATE])
             citation_dict = {v: self._local_citations if v in df else [] for v in variables}
         df = df.reindex(columns=[*self._id_cols, *variables])
-        df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
-        df = df.set_index(self._id_cols)
+        if not df.empty:
+            df = df.pivot_table(
+                values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
+            df = df.resample("D").first().ffill().bfill()
+            df = df.stack().stack().reset_index()
         # With Remote datasets
         if self.update_interval is not None:
+            df = df.set_index(self._id_cols)
             # COVID19 Data Hub
             dh_filename = self._filename_dict["covid19dh"]
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
@@ -263,13 +260,14 @@ class DataLoader(Term):
             # Our World In Data
             owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
+            df = df.reset_index()
         # Complete database lock
-        df = df.reset_index()
+        df = df.reindex(columns=[*self._id_cols, *variables])
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
-        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        self._locked_df = df.reindex(columns=[*self._id_cols, *variables])
         self._locked_citation_dict = citation_dict.copy()
         return self
 
