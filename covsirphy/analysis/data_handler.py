@@ -249,6 +249,7 @@ class DataHandler(Term):
             comp_dict["auto_complement"] = bool(whether)
         comp_dict.update(kwargs)
         self._complement_dict = comp_dict.copy()
+        self._subset_df = None
 
     def show_complement(self):
         """
