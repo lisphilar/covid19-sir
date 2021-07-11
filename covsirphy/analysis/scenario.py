@@ -1003,7 +1003,7 @@ class Scenario(Term):
         # Add actual records, if necessary
         if with_actual:
             df = self._data.records(extras=False)
-            if self.SERIEs not in df:
+            if self.SERIES not in df:
                 df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
         # Concat dataframes
