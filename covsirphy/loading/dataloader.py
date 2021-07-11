@@ -245,7 +245,10 @@ class DataLoader(Term):
             df[self.DATE] = pd.to_datetime(df[self.DATE])
             citation_dict = {v: self._local_citations if v in df else [] for v in variables}
         df = df.reindex(columns=[*self._id_cols, *variables])
-        df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        df = df.pivot_table(
+            values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
+        df = df.resample("D").first().ffill().bfill()
+        df = df.stack().stack().reset_index()
         # With Remote datasets
         if self.update_interval is not None:
             df = df.set_index(self._id_cols)
@@ -258,14 +261,11 @@ class DataLoader(Term):
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
             df = df.reset_index()
         # Complete database lock
+        df = df.reindex(columns=[*self._id_cols, *variables])
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
-        df = df.pivot_table(
-            values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
-        df = df.resample("D").first().ffill().bfill()
-        df = df.stack().stack().reset_index()
         self._locked_df = df.reindex(columns=[*self._id_cols, *variables])
         self._locked_citation_dict = citation_dict.copy()
         return self
