@@ -263,9 +263,10 @@ class JHUData(CleaningBase):
             return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R]]
         return df.loc[:, self.SUBSET_COLS]
 
-    def subset(self, country, province=None, start_date=None, end_date=None, population=None):
+    def subset(self, country, province=None, start_date=None, end_date=None,
+               population=None, recovered_min=1):
         """
-        Return the subset of dataset with Recovered > 0.
+        Return the subset of dataset.
 
         Args:
             country (str): country name or ISO3 code
@@ -273,6 +274,7 @@ class JHUData(CleaningBase):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             population (int or None): population value
+            recovered_min (int): minimum number of recovered cases records must have
 
         Returns:
             pandas.DataFrame
@@ -300,15 +302,17 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date)
         # Calculate Susceptible
         df = self._calculate_susceptible(subset_df, population)
-        # Select records where Recovered > 0
-        df = df.loc[df[self.R] > 0, :].reset_index(drop=True)
+        # Select records where Recovered >= recovered_min
+        recovered_min = self._ensure_natural_int(recovered_min, name="recovered_min", include_zero=True)
+        df = df.loc[df[self.R] >= recovered_min, :].reset_index(drop=True)
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
+                start_date=start_date, end_date=end_date,
+                message=f"with 'Recovered >= {recovered_min}'") from None
         return df
 
-    @ deprecate("JHUData.to_sr()", version="2.17.0-zeta")
+    @deprecate("JHUData.to_sr()", version="2.17.0-zeta")
     def to_sr(self, country, province=None,
               start_date=None, end_date=None, population=None):
         """
@@ -339,7 +343,7 @@ class JHUData(CleaningBase):
             start_date=start_date, end_date=end_date, population=population)
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
-    @ classmethod
+    @classmethod
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.
