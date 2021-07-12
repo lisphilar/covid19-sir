@@ -137,9 +137,6 @@ class DataHandler(Term):
                 raise e from None
             self._jhu_data = jhu_data
             self.switch_complement(whether=True)
-            self._first_date = self._main_raw[self.DATE].min()
-            self._last_date = self._main_raw[self.DATE].max()
-            self._today = self._last_date
         # Main: PopulationData
         if population_data is not None:
             self._ensure_instance(population_data, PopulationData, name="population_data")
