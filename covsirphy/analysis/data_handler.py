@@ -28,10 +28,6 @@ class DataHandler(Term):
         province (str or None): province name
         kwargs: arguments of DataHandler.register()
     """
-    # {nameof(JHUData): JHUData} does not work with AST magics, including pytest and ipython
-    # Main datasets {str: class}
-    __NAME_JHU = "JHUData"
-    MAIN_DICT = {__NAME_JHU: JHUData}
     # Extra datasets {str: class}
     __NAME_COUNTRY = "CountryData"
     __NAME_OXCGRT = "OxCGRTData"
@@ -47,23 +43,22 @@ class DataHandler(Term):
     def __init__(self, country, province=None, **kwargs):
         # Details of the area name
         self._area_dict = {"country": str(country), "province": str(province or self.UNKNOWN)}
-        # Data {str: instance}
-        self._data_dict = dict.fromkeys(self.MAIN_DICT.keys(), None)
-        # Raw data without complement
-        self._subset_df_raw = None
-        # With complement
-        self._subset_df = None
+        # Main dataset before complement
+        self._main_raw = pd.DataFrame(columns=JHUData.SUBSET_COLS)
+        # Main dataset After complement
+        self._main_df = pd.DataFrame(columns=JHUData.SUBSET_COLS)
+        # Extra dataset
+        self._extra_df = pd.DataFrame(columns=[self.DATE])
         # Population
         self._population = None
-        # Auto complement: manually changed with DataHandler.switch_complement()
-        self._complement_dict = {"auto_complement": True}
+        # Complement
+        self._jhu_data = None
         self._complemented = None
+        self._comp_dict = {}
         # Date
         self._first_date = None
         self._last_date = None
         self._today = None
-        # Columns which is included in the main datasets (updated in .records_main()) except for 'Date'
-        self._main_cols = None
         # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
 
@@ -72,17 +67,17 @@ class DataHandler(Term):
         """
         bool: all main datasets were registered or not
         """
-        return all(self._data_dict[name] for name in self.MAIN_DICT.keys())
+        return not self._main_raw.empty
 
     @property
     def complemented(self):
         """
-        bool or str: whether complemented or not and the details, None when not confirmed
+        bool or str: whether complemented or not and the details
 
         Raises:
             NotRegisteredMainError: no information because JHUData was not registered
         """
-        if self._complemented is None:
+        if not self.main_satisfied:
             raise NotRegisteredMainError(".register(jhu_data)")
         return self._complemented
 
@@ -102,23 +97,23 @@ class DataHandler(Term):
     @property
     def first_date(self):
         """
-        str: the first date of the records
+        str or None: the first date of the records
         """
-        return self._first_date
+        return self._first_date.strftime(self.DATE_FORMAT)
 
     @property
     def last_date(self):
         """
-        str: the last date of the records
+        str or None: the last date of the records
         """
-        return self._last_date
+        return self._last_date.strftime(self.DATE_FORMAT)
 
     @property
     def today(self):
         """
-        str: reference date to determine whether a phase is a past phase or a future phase
+        str or None: reference date to determine whether a phase is a past phase or a future phase
         """
-        return self._today
+        return self._today.strftime(self.DATE_FORMAT)
 
     def register(self, jhu_data=None, population_data=None, extras=None):
         """
@@ -136,20 +131,19 @@ class DataHandler(Term):
         # Main: JHUData
         if jhu_data is not None:
             self._ensure_instance(jhu_data, JHUData, name="jhu_data")
-            self._data_dict[self.__NAME_JHU] = jhu_data
+            try:
+                self._main_raw = jhu_data.subset(**self._area_dict, recovered_min=0)
+            except SubsetNotFoundError as e:
+                raise e from None
+            self._jhu_data = jhu_data
+            self.switch_complement(whether=True)
+            self._first_date = self._main_raw[self.DATE].min()
+            self._last_date = self._main_raw[self.DATE].max()
+            self._today = self._last_date
         # Main: PopulationData
         if population_data is not None:
             self._ensure_instance(population_data, PopulationData, name="population_data")
             self._population = population_data.value(**self._area_dict)
-        # Update date range
-        try:
-            self.timepoints(
-                first_date=self._first_date, last_date=self._last_date, today=self._today)
-        except NotRegisteredMainError:
-            # Some of main datasets were not registered
-            pass
-        except SubsetNotFoundError as e:
-            raise e from None
         # Extra datasets
         if extras is not None:
             self._register_extras(extras)
@@ -177,10 +171,17 @@ class DataHandler(Term):
             raise UnExpectedValueError(
                 name=statement, value=type(extra_data), candidates=list(self.EXTRA_DICT.keys()))
         # Register the datasets
-        extra_iter = itertools.product(extras, self.EXTRA_DICT.items())
-        for (extra_data, (name, data_class)) in extra_iter:
+        extra_df = self._extra_df.set_index(self.DATE)
+        for (extra_data, data_class) in itertools.product(extras, self.EXTRA_DICT.values()):
             if isinstance(extra_data, data_class):
-                self._data_dict[name] = extra_data
+                try:
+                    subset_df = extra_data.subset(**self._area_dict)
+                except TypeError:
+                    subset_df = extra_data.subset(country=self._area_dict["country"])
+                except SubsetNotFoundError:
+                    continue
+                extra_df = extra_df.combine_first(subset_df.set_index(self.DATE))
+        self._extra_df = extra_df.reset_index()
 
     def recovery_period(self):
         """
@@ -190,16 +191,15 @@ class DataHandler(Term):
             NotRegisteredMainError: JHUData was not registered
 
         Returns:
-            int: recovery period [days]
+            int or None: recovery period [days]
         """
-        jhu_data = self._data_dict[self.__NAME_JHU]
-        if jhu_data is None:
+        if self._jhu_data is None:
             raise NotRegisteredMainError(".register(jhu_data)")
-        return jhu_data.recovery_period
+        return self._jhu_data.recovery_period
 
     def records_main(self):
         """
-        Return records of the main datasets as a dataframe.
+        Return records of the main datasets as a dataframe from the first date to the last date.
 
         Raises:
             NotRegisteredMainError: JHUData was not registered
@@ -217,61 +217,49 @@ class DataHandler(Term):
                     - Recovered (int): the number of recovered cases ( > 0)
                     - Susceptible (int): the number of susceptible cases
         """
-        if self._subset_df is not None:
-            return self._subset_df
-        # Main datasets should be registered
-        jhu_data = self._data_dict[self.__NAME_JHU]
-        if jhu_data is None:
+        if self._main_df.empty:
             raise NotRegisteredMainError(".register(jhu_data)")
-        # Subsetting
-        self._subset_df, self._complemented = jhu_data.records(
-            **self._area_dict,
-            start_date=self._first_date, end_date=self._last_date,
-            population=self._population,
-            **self._complement_dict,
-        )
-        # Columns which are included in the main dataset except for 'Date'
-        self._main_cols = list(set(self._subset_df.columns) - set([self.DATE]))
-        return self._subset_df
+        df = self._main_df.copy()
+        df = df.loc[(df[self.DATE] >= self._first_date) & (df[self.DATE] <= self._last_date)]
+        return df.reset_index(drop=True)
 
     def switch_complement(self, whether=None, **kwargs):
         """
-        Switch whether perform auto complement or not. (Default: True)
+        Switch whether perform auto complement or not.
 
         Args:
-            whether (bool or None): if True and necessary, the number of cases will be complemented
+            whether (bool): if True and necessary, the number of cases will be complemented
             kwargs: the other arguments of JHUData.subset_complement()
-
-        Note:
-            When @whether is None, @whether will not be changed.
         """
-        comp_dict = self._complement_dict.copy()
-        if whether is not None:
-            comp_dict["auto_complement"] = bool(whether)
-        comp_dict.update(kwargs)
-        self._complement_dict = comp_dict.copy()
-        self._subset_df = None
+        if not whether:
+            self._main_df = self._main_raw.copy()
+            self._complemented = False
+            return
+        self._comp_dict.update(kwargs)
+        if self._jhu_data is None:
+            return
+        self._main_df, self._complemented = self._jhu_data.records(**self._area_dict, **self._comp_dict)
+        self.timepoints()
 
-    def show_complement(self):
+    def show_complement(self, **kwargs):
         """
         Show the details of complement that was (or will be) performed for the records.
+
+        Args:
+            kwargs: keyword arguments of JHUDataComplementHandler() i.e. control factors of complement
 
         Raises:
             NotRegisteredMainError: JHUData was not registered
 
         Returns:
             pandas.DataFrame: as the same as JHUData.show_complement()
-
-        Note:
-            Keyword arguments of JHUData,subset_complement() can be specified with DataHandler.switch_complement().
         """
-        jhu_data = self._data_dict[self.__NAME_JHU]
-        if jhu_data is None:
+        if self._jhu_data is None:
             raise NotRegisteredMainError(".register(jhu_data)")
-        comp_dict = self._complement_dict.copy()
-        comp_dict.pop("auto_complement")
-        return jhu_data.show_complement(
-            start_date=self._first_date, end_date=self._last_date, **self._area_dict, ** comp_dict)
+        comp_dict = self._comp_dict.copy()
+        comp_dict.update(kwargs)
+        return self._jhu_data.show_complement(
+            start_date=self._first_date, end_date=self._last_date, **self._area_dict, **comp_dict)
 
     def timepoints(self, first_date=None, last_date=None, today=None):
         """
@@ -289,27 +277,19 @@ class DataHandler(Term):
         Note:
             When @today is None, the reference date will be the same as @last_date (or max date).
         """
-        main_df = self.records_main()
-        # The first date
-        if first_date is None:
-            self._first_date = main_df[self.DATE].min().strftime(self.DATE_FORMAT)
-        else:
-            self._ensure_date_order(self._first_date, first_date, name="first_date")
-            self._first_date = first_date
-        # The last date
-        if last_date is None:
-            self._last_date = main_df[self.DATE].max().strftime(self.DATE_FORMAT)
-        else:
-            self._ensure_date_order(last_date, self._last_date, name="last_date")
-            self._last_date = last_date
-        # Today
-        if today is None:
-            self._today = self._last_date
-        else:
-            self._ensure_date_order(self._first_date, today, name="today")
-            self._ensure_date_order(today, self._last_date, name="today")
-            self._today = today
-        self._subset_df = None
+        df = self._main_df.copy()
+        first_date = self._ensure_date(first_date, name="first_date", default=df[self.DATE].min())
+        last_date = self._ensure_date(last_date, name="last_date", default=df[self.DATE].max())
+        today = self._ensure_date(today, name="today", default=last_date)
+        # Check the order of dates
+        self._ensure_date_order(df[self.DATE].min(), first_date, name="first_date")
+        self._ensure_date_order(last_date, df[self.DATE].max(), name="the last date of the records")
+        self._ensure_date_order(first_date, today, name="today")
+        self._ensure_date_order(today, last_date, name="last_date")
+        # Set timepoints
+        self._first_date = first_date
+        self._last_date = last_date
+        self._today = today
 
     def records_extras(self):
         """
@@ -327,32 +307,21 @@ class DataHandler(Term):
                     - Date(pd.Timestamp): Observation date
                     - columns defined in the extra datasets
         """
-        if None in self._data_dict.values():
+        if self._main_df.empty:
             raise NotRegisteredMainError(".register(jhu_data)")
-        if not set(self._data_dict) - set(self.MAIN_DICT):
+        if self._extra_df.empty:
             raise NotRegisteredExtraError(
                 ".register(jhu_data, extras=[...])", message="with extra datasets")
         # Get all subset
-        df = pd.DataFrame(columns=[self.DATE])
-        for (name, data) in self._data_dict.items():
-            if name in self.MAIN_DICT:
-                continue
-            try:
-                subset_df = data.subset(**self._area_dict)
-            except TypeError:
-                subset_df = data.subset(country=self._area_dict["country"])
-            except SubsetNotFoundError:
-                continue
-            new_cols = (set(subset_df) - set(df.columns)) | set([self.DATE])
-            subset_df = subset_df.loc[:, subset_df.columns.isin(new_cols)]
-            df = df.merge(subset_df, how="outer", on=self.DATE)
+        df = self._extra_df.copy()
         # Remove columns which is included in the main datasets
-        df = df.loc[:, ~df.columns.isin(self._main_cols)]
+        unused_set = set(JHUData.SUBSET_COLS) - set([self.DATE])
+        df = df.loc[:, ~df.columns.isin(unused_set)]
         # Data cleaning
         df = df.set_index(self.DATE).resample("D").last()
         df = df.fillna(method="ffill").fillna(0)
         # Subsetting by dates
-        df = df.loc[pd.to_datetime(self._first_date): pd.to_datetime(self._last_date)]
+        df = df.loc[self._first_date: self._last_date]
         # Convert float values to integer if values will not be changed
         for col in df.columns:
             converted2int = df[col].astype(np.int64)
@@ -436,9 +405,9 @@ class DataHandler(Term):
             raise ValueError("Either @past or @future must be True.")
         df = self._records(main=main, extras=extras).set_index(self.DATE)
         if past:
-            return df.loc[:pd.to_datetime(self._today)].reset_index()
+            return df.loc[:self._today].reset_index()
         if future:
-            return df.loc[pd.to_datetime(self._today) + timedelta(days=1):].reset_index()
+            return df.loc[self._today + timedelta(days=1):].reset_index()
 
     def records_all(self):
         """
