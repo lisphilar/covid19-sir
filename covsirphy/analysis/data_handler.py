@@ -278,9 +278,11 @@ class DataHandler(Term):
             When @today is None, the reference date will be the same as @last_date (or max date).
         """
         df = self._main_df.copy()
-        first_date = self._ensure_date(first_date, name="first_date", default=df[self.DATE].min())
-        last_date = self._ensure_date(last_date, name="last_date", default=df[self.DATE].max())
-        today = self._ensure_date(today, name="today", default=last_date)
+        first_date = self._ensure_date(
+            first_date, name="first_date", default=self._first_date or df[self.DATE].min())
+        last_date = self._ensure_date(
+            last_date, name="last_date", default=self._last_date or df[self.DATE].max())
+        today = self._ensure_date(today, name="today", default=self._today or last_date)
         # Check the order of dates
         self._ensure_date_order(df[self.DATE].min(), first_date, name="first_date")
         self._ensure_date_order(last_date, df[self.DATE].max(), name="the last date before changing")
