@@ -282,8 +282,10 @@ class DataHandler(Term):
         last_date = self._ensure_date(last_date, name="last_date", default=df[self.DATE].max())
         today = self._ensure_date(today, name="today", default=last_date)
         # Check the order of dates
-        self._ensure_date_order(first_date, today, name="first_date")
-        self._ensure_date_order(today, last_date, name="today")
+        self._ensure_date_order(df[self.DATE].min(), first_date, name="first_date")
+        self._ensure_date_order(last_date, df[self.DATE].max(), name="the last date of the records")
+        self._ensure_date_order(first_date, today, name="today")
+        self._ensure_date_order(today, last_date, name="last_date")
         # Set timepoints
         self._first_date = first_date
         self._last_date = last_date
