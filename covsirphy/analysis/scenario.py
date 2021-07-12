@@ -242,8 +242,7 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame: as the same as JHUData.show_complement()
         """
-        self._data.switch_complement(whether=None, **kwargs)
-        return self._data.show_complement()
+        return self._data.show_complement(**kwargs)
 
     def _convert_variables(self, abbr, candidates):
         """
