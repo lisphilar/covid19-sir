@@ -254,7 +254,6 @@ class DataLoader(Term):
             # COVID-19 Dataset in Japan
             japan_filename = self._filename_dict["japan"]
             df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
-            df = df.reset_index()
             # COVID19 Data Hub
             dh_filename = self._filename_dict["covid19dh"]
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
