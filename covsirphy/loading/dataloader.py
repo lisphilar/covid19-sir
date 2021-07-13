@@ -504,7 +504,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=VaccineData.RAW_COLS)
-        return VaccineData(data=df.dropna(), citation="\n".join(citations))
+        return VaccineData(data=df.dropna(subset=VaccineData.RAW_COLS), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """
