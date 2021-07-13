@@ -16,6 +16,7 @@ from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.loading.db_cs_japan import _CSJapan
 from covsirphy.loading.db_covid19dh import _COVID19dh
 from covsirphy.loading.db_owid import _OWID
 
@@ -250,6 +251,9 @@ class DataLoader(Term):
         # With Remote datasets
         if self.update_interval is not None:
             df = df.set_index(self._id_cols)
+            # COVID-19 Dataset in Japan
+            japan_filename = self._filename_dict["japan"]
+            df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
             # COVID19 Data Hub
             dh_filename = self._filename_dict["covid19dh"]
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
@@ -257,6 +261,7 @@ class DataLoader(Term):
             # Our World In Data
             owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
+            # Reset index
             df = df.reset_index()
         # Complete database lock
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
@@ -405,10 +410,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=[*JHUData.REQUIRED_COLS, *JHUData.OPTINAL_COLS])
-        jhu_data = JHUData(data=df, citation="\n".join(citations))
-        if self.update_interval is None:
-            return jhu_data
-        return jhu_data.replace(self.japan())
+        return JHUData(data=df, citation="\n".join(citations))
 
     def population(self, **kwargs):
         """
@@ -486,12 +488,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=PCRData.RAW_COLS)
-        pcr_data = PCRData(data=df, citation="\n".join(citations))
-        if self.update_interval is None:
-            return pcr_data
-        # Update with Japan data
-        pcr_data.replace(self.japan())
-        return pcr_data
+        return PCRData(data=df, citation="\n".join(citations))
 
     def vaccine(self, **kwargs):
         """
@@ -507,7 +504,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=VaccineData.RAW_COLS)
-        return VaccineData(data=df.dropna(), citation="\n".join(citations))
+        return VaccineData(data=df.dropna(subset=VaccineData.RAW_COLS), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """
