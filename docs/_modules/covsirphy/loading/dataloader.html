@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-kappa-fu3
+                2.21.0-kappa-fu4
               </div>
             
           
@@ -192,6 +192,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.linelist</span> <span class="kn">import</span> <span class="n">LinelistData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.pcr_data</span> <span class="kn">import</span> <span class="n">PCRData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.vaccine_data</span> <span class="kn">import</span> <span class="n">VaccineData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.loading.db_cs_japan</span> <span class="kn">import</span> <span class="n">_CSJapan</span>
 <span class="kn">from</span> <span class="nn">covsirphy.loading.db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
 <span class="kn">from</span> <span class="nn">covsirphy.loading.db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
 
@@ -426,6 +427,9 @@
         <span class="c1"># With Remote datasets</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_cols</span><span class="p">)</span>
+            <span class="c1"># COVID-19 Dataset in Japan</span>
+            <span class="n">japan_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_remote</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">_CSJapan</span><span class="p">,</span> <span class="n">japan_filename</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">)</span>
             <span class="c1"># COVID19 Data Hub</span>
             <span class="n">dh_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;covid19dh&quot;</span><span class="p">]</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">,</span> <span class="n">dh_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_remote</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">_COVID19dh</span><span class="p">,</span> <span class="n">dh_filename</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">)</span>
@@ -433,6 +437,7 @@
             <span class="c1"># Our World In Data</span>
             <span class="n">owid_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;owid&quot;</span><span class="p">]</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_remote</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">_OWID</span><span class="p">,</span> <span class="n">owid_filename</span><span class="p">,</span> <span class="n">citation_dict</span><span class="p">)</span>
+            <span class="c1"># Reset index</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="c1"># Complete database lock</span>
         <span class="n">all_cols</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">variables</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
@@ -581,10 +586,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_dep</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">citations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_lock</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">JHUData</span><span class="o">.</span><span class="n">REQUIRED_COLS</span><span class="p">,</span> <span class="o">*</span><span class="n">JHUData</span><span class="o">.</span><span class="n">OPTINAL_COLS</span><span class="p">])</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">JHUData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">jhu_data</span>
-        <span class="k">return</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">japan</span><span class="p">())</span></div>
+        <span class="k">return</span> <span class="n">JHUData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DataLoader.population"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.population">[docs]</a>    <span class="k">def</span> <span class="nf">population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -662,12 +664,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_dep</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">citations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_lock</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">PCRData</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">)</span>
-        <span class="n">pcr_data</span> <span class="o">=</span> <span class="n">PCRData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pcr_data</span>
-        <span class="c1"># Update with Japan data</span>
-        <span class="n">pcr_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">japan</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">pcr_data</span></div>
+        <span class="k">return</span> <span class="n">PCRData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DataLoader.vaccine"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.vaccine">[docs]</a>    <span class="k">def</span> <span class="nf">vaccine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -683,7 +680,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_dep</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">citations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_lock</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">VaccineData</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">VaccineData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">VaccineData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">VaccineData</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">),</span> <span class="n">citation</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DataLoader.pyramid"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.pyramid">[docs]</a>    <span class="k">def</span> <span class="nf">pyramid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
