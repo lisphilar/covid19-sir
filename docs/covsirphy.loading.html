@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-iota-fu4
+                2.21.0-kappa-fu3
               </div>
             
           
@@ -95,7 +95,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
@@ -427,15 +427,24 @@ for the keyword arguments of pandas.DataFrame.assign().</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.loading.dataloader.DataLoader.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.loading.dataloader.DataLoader.lock" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confirmed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fatal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recovered</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vaccinations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vaccinated_once</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vaccinated_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.loading.dataloader.DataLoader.lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lock the local database, specifying columns which has date and area information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<em>str</em>) – column name for dates</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – column name for country names (top level administration)</p></li>
-<li><p><strong>procvince</strong> (<em>str</em>) – column name for province names (2nd level administration)</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of variable names</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country names (top level administration)</p></li>
+<li><p><strong>procvince</strong> (<em>str</em>) – province names (2nd level administration)</p></li>
+<li><p><strong>iso3</strong> (<em>str</em><em> or </em><em>None</em>) – ISO3 codes</p></li>
+<li><p><strong>confirmed</strong> (<em>str</em><em> or </em><em>None</em>) – the number of confirmed cases</p></li>
+<li><p><strong>fatal</strong> (<em>str</em><em> or </em><em>None</em>) – the number of fatal cases</p></li>
+<li><p><strong>recovered</strong> (<em>str</em><em> or </em><em>None</em>) – the number of recovered cases</p></li>
+<li><p><strong>population</strong> (<em>str</em><em> or </em><em>None</em>) – population values</p></li>
+<li><p><strong>tests</strong> (<em>str</em><em> or </em><em>None</em>) – the number of tests</p></li>
+<li><p><strong>product</strong> (<em>str</em><em> or </em><em>None</em>) – vaccine product names</p></li>
+<li><p><strong>vaccinations</strong> (<em>str</em><em> or </em><em>None</em>) – cumulative number of vaccinations</p></li>
+<li><p><strong>vaccinated_once</strong> (<em>str</em><em> or </em><em>None</em>) – cumulative number of people who received at least one vaccine dose</p></li>
+<li><p><strong>vaccinated_full</strong> (<em>str</em><em> or </em><em>None</em>) – cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -445,29 +454,6 @@ for the keyword arguments of pandas.DataFrame.assign().</p>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.DataLoader" title="covsirphy.DataLoader">covsirphy.DataLoader</a></p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Values will be grouped by &#64;date, &#64;country and &#64;province.
-Total values will be used for each group.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For keyword names (column names with CovsirPhy terms) of kwargs, upper/lower case insensitive.</p>
-</div>
-<p>Note:
-As keywords of kwargs, we ca use</p>
-<blockquote>
-<div><p>“confirmed”: the number of confirmed cases,
-“fatal”: the number of fatal cases,
-“recovered”: the number of recovered cases,
-“population”: population values,
-“tests”: the number of tests,
-“iso3”: ISO3 codes,
-“product”: vaccine product names,
-“vaccinations”: cumulative number of vaccinations,
-“vaccinated_once”: cumulative number of people who received at least one vaccine dose,
-“vaccinated_full”: cumulative number of people who received all doses prescrived by the protocol.</p>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py property">

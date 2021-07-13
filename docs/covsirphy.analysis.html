@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-iota-fu4
+                2.21.0-kappa-fu3
               </div>
             
           
@@ -95,7 +95,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
@@ -254,15 +254,10 @@
 <span class="sig-name descname"><span class="pre">EXTRA_DICT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'CountryData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.country_data.CountryData'&gt;,</span> <span class="pre">'OxCGRTData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.oxcgrt.OxCGRTData'&gt;,</span> <span class="pre">'PCRData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.pcr_data.PCRData'&gt;,</span> <span class="pre">'VaccineData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.vaccine_data.VaccineData'&gt;}</span></em><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.EXTRA_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.analysis.data_handler.DataHandler.MAIN_DICT">
-<span class="sig-name descname"><span class="pre">MAIN_DICT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'JHUData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.jhu_data.JHUData'&gt;}</span></em><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.MAIN_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.analysis.data_handler.DataHandler.complemented">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">complemented</span></span><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.complemented" title="Permalink to this definition">¶</a></dt>
-<dd><p>whether complemented or not and the details, None when not confirmed</p>
+<dd><p>whether complemented or not and the details</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.NotRegisteredMainError" title="covsirphy.NotRegisteredMainError"><strong>NotRegisteredMainError</strong></a> – no information because JHUData was not registered</p>
@@ -329,7 +324,7 @@ All results will be returned with a dataframe.</p>
 <dd><p>the first date of the records</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>str or None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,7 +335,7 @@ All results will be returned with a dataframe.</p>
 <dd><p>the last date of the records</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>str or None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -483,7 +478,7 @@ All results will be returned with a dataframe.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.analysis.data_handler.DataHandler.records_main">
 <span class="sig-name descname"><span class="pre">records_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return records of the main datasets as a dataframe.</p>
+<dd><p>Return records of the main datasets as a dataframe from the first date to the last date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><ul class="simple">
@@ -525,7 +520,7 @@ All results will be returned with a dataframe.</p>
 <dd class="field-even"><p>recovery period [days]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p>int or None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -553,41 +548,36 @@ All results will be returned with a dataframe.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.analysis.data_handler.DataHandler.show_complement">
-<span class="sig-name descname"><span class="pre">show_complement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.show_complement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.show_complement" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show_complement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.show_complement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.show_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the details of complement that was (or will be) performed for the records.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.NotRegisteredMainError" title="covsirphy.NotRegisteredMainError"><strong>NotRegisteredMainError</strong></a> – JHUData was not registered</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler() i.e. control factors of complement</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>as the same as JHUData.show_complement()</p>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.NotRegisteredMainError" title="covsirphy.NotRegisteredMainError"><strong>NotRegisteredMainError</strong></a> – JHUData was not registered</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>as the same as JHUData.show_complement()</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Keyword arguments of JHUData,subset_complement() can be specified with DataHandler.switch_complement().</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.analysis.data_handler.DataHandler.switch_complement">
 <span class="sig-name descname"><span class="pre">switch_complement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">whether</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.switch_complement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.switch_complement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Switch whether perform auto complement or not. (Default: True)</p>
+<dd><p>Switch whether perform auto complement or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>whether</strong> (<em>bool</em><em> or </em><em>None</em>) – if True and necessary, the number of cases will be complemented</p></li>
+<li><p><strong>whether</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
 <li><p><strong>kwargs</strong> – the other arguments of JHUData.subset_complement()</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When &#64;whether is None, &#64;whether will not be changed.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -621,7 +611,7 @@ All results will be returned with a dataframe.</p>
 <dd><p>reference date to determine whether a phase is a past phase or a future phase</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>str or None</p>
 </dd>
 </dl>
 </dd></dl>
