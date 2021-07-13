@@ -24,6 +24,8 @@ class Term(object):
     E = "Exposed"
     W = "Waiting"
     TESTS = "Tests"
+    MODERATE = "Moderate"
+    SEVERE = "Severe"
     # Vaccination
     VAC = "Vaccinations"
     V = "Vaccinated"

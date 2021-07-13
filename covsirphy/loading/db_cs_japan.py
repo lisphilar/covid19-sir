@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import pandas as pd
+from covsirphy.util.term import Term
+from covsirphy.loading.db_base import _RemoteDatabase
+
+
+class _CSJapan(_RemoteDatabase):
+    """
+    Access "COVID-19 Dataset in Japan.
+    https://github.com/lisphilar/covid19-sir/tree/master/data
+
+    Args:
+        filename (str): CSV filename to save records
+    """
+    # URL
+    GITHUB_URL = "https://raw.githubusercontent.com"
+    URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
+    URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
+    # Citation
+    CITATION = "Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, " \
+        "https://github.com/lisphilar/covid19-sir/data/japan"
+    # Column names and data types
+    # {"name in database": "name defined in Term class"}
+    COL_DICT = {
+        "Date": Term.DATE,
+        Term.COUNTRY: Term.COUNTRY,
+        "Area": Term.PROVINCE,
+        Term.ISO3: Term.ISO3,
+        "Positive": Term.C,
+        "Fatal": Term.F,
+        "Discharged": Term.R,
+        Term.MODERATE: Term.MODERATE,
+        "Hosp_severe": Term.SEVERE,
+        "Tested": Term.TESTS,
+        Term.VAC: Term.VAC,
+        "Vaccinated_1st": Term.V_ONCE,
+        "Vaccinated_2nd": Term.V_FULL,
+        "Hosp_require": "Hosp_require",
+    }
+
+    def download(self, verbose):
+        """
+        Download the dataset from the server and set the list of primary sources.
+
+        Args:
+            verbose (int): level of verbosity
+
+        Returns:
+            pandas.DataFrame
+                Index
+                    reset index
+                Columns
+                    defined by the first values of self.COL_DICT.values()
+
+        Note:
+            If @verbose is equal to or over 1, how to show the list will be explained.
+        """
+
+        # Download datasets
+        if verbose:
+            print("Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan")
+        # Domestic/Airport/Returnee
+        dar_value_cols = ["Positive", "Tested", "Discharged", "Fatal", "Hosp_require", "Hosp_severe"]
+        dar_cols = [*dar_value_cols, "Date", "Location", "Vaccinated_1st", "Vaccinated_2nd"]
+        dar_df = pd.read_csv(self.URL_C, usecols=dar_cols)
+        dar_df = dar_df.rename(columns={"Location": "Area"}).set_index("Date")
+        # Country level data
+        c_df = dar_df.groupby("Date").sum().reset_index()
+        c_df["Area"] = self.UNKNOWN
+        # Entering (= Airport + Returnee)
+        e_df = dar_df.loc[dar_df["Area"].isin(["Airport", "Returnee"])].groupby("Date").sum().reset_index()
+        e_df["Area"] = "Entering"
+        # Province level data
+        p_cols = [*dar_value_cols, "Date", "Prefecture"]
+        p_df = pd.read_csv(self.URL_P, usecols=p_cols)
+        p_df = p_df.rename(columns={"Prefecture": "Area"})
+        # Combine
+        df = pd.concat([c_df, e_df, p_df], axis=0, ignore_index=True, sort=True)
+        # Set additional columns
+        df[self.COUNTRY] = "Japan"
+        df[self.ISO3] = "JPN"
+        df[self.MODERATE] = df["Hosp_require"] - df["Hosp_severe"]
+        df[self.VAC] = df["Vaccinated_1st"] + df["Vaccinated_2nd"]
+        return df
