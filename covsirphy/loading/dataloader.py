@@ -261,6 +261,7 @@ class DataLoader(Term):
             # Our World In Data
             owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
+            # Reset index
             df = df.reset_index()
         # Complete database lock
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
