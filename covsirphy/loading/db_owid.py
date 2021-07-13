@@ -86,7 +86,8 @@ class _OWID(_RemoteDatabase):
             }
         )
         df["location"] = df.groupby("iso_code")["location"].bfill()
+        df.loc[df["location"] == df["iso_code"], "location"] = None
         df.loc[df["location"].isna(), "location"] = df.loc[df["location"].isna(), "iso_code"].apply(
-            lambda x: x or coco.convert(x, to="name_short", not_found=None))
+            lambda x: coco.convert(x, to="name_short", not_found=None))
         df[self.PROVINCE] = self.UNKNOWN
         return df

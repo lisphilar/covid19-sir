@@ -73,7 +73,7 @@ class JapanData(CountryData):
             self._raw = self._retrieve(filename=filename, verbose=verbose)
         self._cleaned_df = self._cleaning()
         self._country = "Japan"
-        self._citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
+        self._citation = "Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
         self.dir_path = Path(filename).parent
         self.verbose = verbose
@@ -118,18 +118,18 @@ class JapanData(CountryData):
         """
         df = self._raw.copy()
         # Rename columns
-        df = df.rename(
-            {
-                "Area": self.PROVINCE,
-                "Date": self.DATE,
-                "Positive": self.C,
-                "Fatal": self.F,
-                "Discharged": self.R,
-                "Hosp_severe": self.SEVERE,
-                "Tested": self.TESTS
-            },
-            axis=1
-        )
+        rename_dict = {
+            "Area": self.PROVINCE,
+            "Date": self.DATE,
+            "Positive": self.C,
+            "Fatal": self.F,
+            "Discharged": self.R,
+            "Hosp_severe": self.SEVERE,
+            "Tested": self.TESTS,
+            "Vaccinated_1st": self.V_ONCE,
+            "Vaccinated_2nd": self.V_FULL,
+        }
+        df = df.rename(rename_dict, axis=1)
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Fill NA values
@@ -142,14 +142,14 @@ class JapanData(CountryData):
         # Moderate
         df[self.MODERATE] = df["Hosp_require"] - df[self.SEVERE]
         # Vaccinations
-        v_raw_cols = ["Vaccinated_1st", "Vaccinated_2nd"]
-        v_df = self._raw.loc[:, ["Area", "Date", *v_raw_cols]].rename(
-            columns={"Area": self.PROVINCE, "Date": self.DATE})
+        v_raw_cols = [self.V_ONCE, self.V_FULL]
+        v_df = self._raw.rename(rename_dict, axis=1)
+        v_df = v_df.loc[:, [self.PROVINCE, self.DATE, *v_raw_cols]]
         v_df[self.DATE] = pd.to_datetime(v_df[self.DATE])
         for col in v_raw_cols:
             v_df[col] = pd.to_numeric(v_df[col], errors="coerce").fillna(0)
-        v_1st = v_df.groupby(self.PROVINCE)["Vaccinated_1st"].cumsum().fillna(0)
-        v_2nd = v_df.groupby(self.PROVINCE)["Vaccinated_2nd"].cumsum().fillna(0)
+        v_1st = v_df.groupby(self.PROVINCE)[self.V_ONCE].cumsum().fillna(0)
+        v_2nd = v_df.groupby(self.PROVINCE)[self.V_FULL].cumsum().fillna(0)
         v_sum_df = pd.DataFrame(
             {
                 self.PROVINCE: v_df[self.PROVINCE],
@@ -159,7 +159,7 @@ class JapanData(CountryData):
                 self.V_FULL: v_2nd,
             }
         )
-        df = df.drop(v_raw_cols, axis=1).merge(
+        df = df.drop([*v_raw_cols, self.VAC], axis=1, errors="ignore").merge(
             v_sum_df, how="left", on=[self.PROVINCE, self.DATE]).reset_index(drop=True)
         # Records at country level (Domestic/Airport/Returnee) and entering Japan (Airport/Returnee)
         e_cols = ["Airport", "Returnee"]
@@ -177,7 +177,7 @@ class JapanData(CountryData):
             ignore_index=True, sort=True)
         # Value columns
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        df[self.JAPAN_VALUE_COLS] = df[self.JAPAN_VALUE_COLS].astype(np.int64)
+        df[self.JAPAN_VALUE_COLS] = df[self.JAPAN_VALUE_COLS].fillna(0).astype(np.int64)
         # Country
         df[self.COUNTRY] = "Japan"
         # Update data types to reduce memory
