@@ -409,7 +409,7 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding the number of cases
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=[*JHUData.REQUIRED_COLS, *JHUData.OPTINAL_COLS])
+        df, citations = self._auto_lock(variables=JHUData.RAW_COLS)
         return JHUData(data=df, citation="\n".join(citations))
 
     def population(self, **kwargs):
