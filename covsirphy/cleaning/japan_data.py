@@ -66,7 +66,7 @@ class JapanData(CountryData):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
             try:
-                self._raw = self._parse_raw(filename, None, self.JAPAN_COLS)
+                self._raw = self._parse_raw(filename, None, [*self.JAPAN_COLS, "Hosp_require"])
             except KeyError:
                 self._raw = self._retrieve(filename=filename, verbose=verbose)
         else:
