@@ -66,7 +66,7 @@ class JapanData(CountryData):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
             try:
-                self._raw = self.load(filename)
+                self._raw = self._parse_raw(filename, None, [*self.JAPAN_COLS, "Hosp_require"])
             except KeyError:
                 self._raw = self._retrieve(filename=filename, verbose=verbose)
         else:
@@ -100,9 +100,9 @@ class JapanData(CountryData):
             "Tested", "Discharged", "Fatal", "Hosp_require", "Hosp_severe",
         ]
         cols_v = ["Vaccinated_1st", "Vaccinated_2nd"]
-        c_df = self.load(self.URL_C, header=0).rename({"Location": "Area"}, axis=1)[cols + cols_v]
+        c_df = pd.read_csv(self.URL_C, header=0).rename({"Location": "Area"}, axis=1)[cols + cols_v]
         # Download the datset at province level
-        p_df = self.load(self.URL_P, header=0).rename({"Prefecture": "Area"}, axis=1)[cols]
+        p_df = pd.read_csv(self.URL_P, header=0).rename({"Prefecture": "Area"}, axis=1)[cols]
         # Combine the datsets
         df = pd.concat([c_df, p_df], axis=0, ignore_index=True, sort=True)
         # Save the raw data
@@ -201,7 +201,7 @@ class JapanData(CountryData):
         # Show URL
         if verbose:
             print("Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-sir/data/japan")
-        df = self.load(self.URL_M)
+        df = pd.read_csv(self.URL_M)
         df.to_csv(filename, index=False)
         return df
 
@@ -244,7 +244,7 @@ class JapanData(CountryData):
         """
         filepath = self.dir_path.joinpath(basename)
         if filepath.exists() and not force:
-            df = self.load(filepath)
+            df = pd.read_csv(filepath)
         else:
             df = self._retrieve_meta(filename=filepath, verbose=self.verbose)
         if not cleaned:
