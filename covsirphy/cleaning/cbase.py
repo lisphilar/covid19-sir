@@ -44,7 +44,7 @@ class CleaningBase(Term):
         else:
             self._dirpath = Path(filename).resolve().parent
 
-    def _parse_raw(self, filename, data, required_cols, optional_cols=None):
+    def _parse_raw(self, filename, data, columns):
         """
         Parse raw data with a CSV file or a dataframe.
 
@@ -55,8 +55,7 @@ class CleaningBase(Term):
                     reset index
                 Columns
                     columns defined by @required_cols
-            required_cols (list[str]): required columns to parse
-            optional_cols (list[str] or None): optional columns to parse or None (no optinal columns)
+            columns (list[str]): column names to use
 
         Returns:
             pandas.DataFrame:
@@ -69,27 +68,17 @@ class CleaningBase(Term):
             Either @filename (high priority) or @data must be specified.
 
         Note:
-            When some optional columns are not included, None will be registered.
+            If some columns are not included in the dataset, values will be None.
         """
-        all_columns = [*required_cols, *(optional_cols or [])]
         if filename is None:
             if data is None:
-                return pd.DataFrame(columns=all_columns)
-            raw = self._ensure_dataframe(data, name="data")
-        else:
-            raw = self.load(
-                filename, columns=None,
-                dtype={
-                    self.PROVINCE: "object", "Province/State": "object",
-                    "key": "object", "key_alpha_2": "object"
-                }
-            )
-        df = self._ensure_dataframe(raw, name="loaded data", columns=required_cols)
-        if optional_cols is None:
-            return df
-        for col in optional_cols:
-            df[col] = raw.loc[:, col] if col in raw else None
-        return df.loc[:, all_columns]
+                return pd.DataFrame(columns=columns)
+            return data.reindex(columns=columns)
+        dtype_dict = {
+            self.PROVINCE: "object", "Province/State": "object",
+            "key": "object", "key_alpha_2": "object"
+        }
+        return pd.read_csv(filename, dtype=dtype_dict).reindex(columns=columns)
 
     @property
     def raw(self):
@@ -117,6 +106,7 @@ class CleaningBase(Term):
         self._dirpath = Path(name)
 
     @staticmethod
+    @deprecate(".load()", version="2.21.0-kappa-fu5")
     def load(urlpath, header=0, columns=None, dtype="object"):
         """
         Load a local/remote file.

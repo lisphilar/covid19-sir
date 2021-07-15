@@ -22,7 +22,7 @@ class CountryData(CleaningBase):
     """
 
     def __init__(self, filename, country, province=None):
-        self._raw = pd.DataFrame() if filename is None else self.load(filename)
+        self._raw = pd.DataFrame() if filename is None else pd.read_csv(filename)
         self._country = country
         self._province = province
         self.province_col = None
