@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-kappa-fu4
+                2.21.0-kappa-fu5
               </div>
             
           
@@ -276,8 +276,8 @@
             <span class="s2">&quot;people_vaccinated&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_ONCE</span><span class="p">,</span>
             <span class="s2">&quot;people_fully_vaccinated&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_FULL</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">rec_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">URL_REC</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rename_dict</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;vaccines&quot;</span><span class="p">])))</span>
-        <span class="n">loc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">URL_LOC</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="s2">&quot;vaccines&quot;</span><span class="p">])</span>
+        <span class="n">rec_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">URL_REC</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rename_dict</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;vaccines&quot;</span><span class="p">])))</span>
+        <span class="n">loc_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">URL_LOC</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="s2">&quot;vaccines&quot;</span><span class="p">])</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">rec_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">loc_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;location&quot;</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">rename_dict</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Save the dataframe as CSV file</span>

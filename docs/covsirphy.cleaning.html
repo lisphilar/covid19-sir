@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-kappa-fu4
+                2.21.0-kappa-fu5
               </div>
             
           
@@ -434,25 +434,8 @@ When &#64;country is a country name, province level data in the selected country
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.load">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urlpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'object'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a local/remote file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>urlpath</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – filename or URL</p></li>
-<li><p><strong>header</strong> (<em>int</em>) – row number of the header</p></li>
-<li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – columns to use</p></li>
-<li><p><strong>dtype</strong> (<em>str</em><em> or </em><em>dict</em><em>[</em><em>str</em><em>]</em>) – data type for the dataframe or specified columns</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>raw dataset</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.raw">
@@ -1071,24 +1054,18 @@ dict: status for each complement type</p>
 <p class="admonition-title">Note</p>
 <p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The number of infected cases will be (re-)calculated when data cleaning automatically.</p>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS">
 <span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.OPTINAL_COLS">
-<span class="sig-name descname"><span class="pre">OPTINAL_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['ISO3',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.OPTINAL_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.RAW_COLS">
 <span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.REQUIRED_COLS">
-<span class="sig-name descname"><span class="pre">REQUIRED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.REQUIRED_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
