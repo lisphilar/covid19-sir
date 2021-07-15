@@ -32,13 +32,10 @@ class JHUData(CleaningBase):
 
     Note:
         Either @filename (high priority) or @data must be specified.
+
+    Note:
+        The number of infected cases will be (re-)calculated when data cleaning automatically.
     """
-    # Required/optinal cols of raw dataset
-    REQUIRED_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.C, CleaningBase.F, CleaningBase.R,
-    ]
-    OPTINAL_COLS = [CleaningBase.ISO3, CleaningBase.N]
     # Columns of self._cleaned_df
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
@@ -57,8 +54,7 @@ class JHUData(CleaningBase):
 
     def __init__(self, filename=None, data=None, citation=None):
         # Raw data
-        self._raw = self._parse_raw(filename, data, self.REQUIRED_COLS, optional_cols=self.OPTINAL_COLS)
-        self._raw[self.CI] = None
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Citation
