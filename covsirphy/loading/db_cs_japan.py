@@ -31,13 +31,13 @@ class _CSJapan(_RemoteDatabase):
         "Positive": Term.C,
         "Fatal": Term.F,
         "Discharged": Term.R,
+        "Hosp_require": "Hosp_require",
         Term.MODERATE: Term.MODERATE,
         "Hosp_severe": Term.SEVERE,
         "Tested": Term.TESTS,
         Term.VAC: Term.VAC,
-        "Vaccinated_1st": Term.V_ONCE,
-        "Vaccinated_2nd": Term.V_FULL,
-        "Hosp_require": "Hosp_require",
+        Term.V_ONCE: Term.V_ONCE,
+        Term.V_FULL: Term.V_FULL,
     }
 
     def download(self, verbose):
@@ -82,5 +82,7 @@ class _CSJapan(_RemoteDatabase):
         df[self.COUNTRY] = "Japan"
         df[self.ISO3] = "JPN"
         df[self.MODERATE] = df["Hosp_require"] - df["Hosp_severe"]
-        df[self.VAC] = df["Vaccinated_1st"] + df["Vaccinated_2nd"]
+        df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
+        df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
+        df[self.VAC] = df[[self.V_ONCE, self.V_FULL]].sum(axis=1)
         return df
