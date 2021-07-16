@@ -126,6 +126,38 @@ class DataLoader(Term):
         if not lock_expected and not self._locked_df.empty:
             raise DBLockedError(name="the local database")
 
+    def _edit_local(self, data, citation, how_combine, **kwargs):
+        """
+        Edit the local database with a dataframe.
+
+        Args:
+            data (pandas.DataFrame): dataframe to read
+            citation (str or None): citation of the CSV file or None (basename of the CSV file)
+            how_combine (str): how to combine datasets when we call this method multiple times
+                - 'replace': replace registered dataset with the new data
+                - 'concat': concat datasets with pandas.concat()
+                - 'merge': merge datasets with pandas.DataFrame.merge()
+                - 'update': update the current dataset with pandas.DataFrame.update()
+            kwargs: keyword arguments of pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update()
+
+        Raises:
+            UnExpectedValueError: un-expected value was applied as @how_combine
+        """
+        self._ensure_lock_status(lock_expected=False)
+        if self._local_df.empty or how_combine == "replace":
+            self._local_df = data.copy()
+        elif how_combine == "concat":
+            self._local_df = pd.concat(
+                [self._local_df, data], ignore_index=True, sort=True, **find_args(pd.concat, **kwargs))
+        elif how_combine == "merge":
+            self._local_df = self._local_df.merge(data, **find_args(pd.merge, **kwargs))
+        elif how_combine == "update":
+            self._local_df.update(data, **find_args(data.update, **kwargs))
+        else:
+            raise UnExpectedValueError(
+                "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
+        self._local_citations.append(citation)
+
     def read_csv(self, filename, citation=None, dayfirst=False, how_combine="replace", **kwargs):
         """
         Read dataset saved in a CSV file and include it local database.
@@ -165,21 +197,9 @@ class DataLoader(Term):
             Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
             for the keyword arguments of pandas.DataFrame.update().
         """
-        self._ensure_lock_status(lock_expected=False)
         df = pd.read_csv(filename, dayfirst=dayfirst, **find_args(pd.read_csv, **kwargs))
-        if self._local_df.empty or how_combine == "replace":
-            self._local_df = df.copy()
-        elif how_combine == "concat":
-            self._local_df = pd.concat(
-                [self._local_df, df], ignore_index=True, sort=True, **find_args(pd.concat, **kwargs))
-        elif how_combine == "merge":
-            self._local_df = self._local_df.merge(df, **find_args(pd.merge, **kwargs))
-        elif how_combine == "update":
-            self._local_df.update(df, **find_args(df.update, **kwargs))
-        else:
-            raise UnExpectedValueError(
-                "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
-        self._local_citations.append(str(citation or Path(filename).name))
+        self._edit_local(
+            data=df, citation=str(citation or Path(filename).name), how_combine=how_combine, **kwargs)
         return self
 
     def assign(self, **kwargs):
