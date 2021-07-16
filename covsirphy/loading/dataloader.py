@@ -158,13 +158,15 @@ class DataLoader(Term):
                 "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
         self._local_citations.append(citation)
 
-    def read_csv(self, filename, citation=None, dayfirst=False, how_combine="replace", **kwargs):
+    def read_csv(self, filename, citation=None, parse_dates=False, dayfirst=False,
+                 how_combine="replace", **kwargs):
         """
         Read dataset saved in a CSV file and include it local database.
 
         Args:
             filename (str or pathlib.Path): path/URL of the CSV file
             citation (str or None): citation of the CSV file or None (basename of the CSV file)
+            parse_dates (list[str] or bool): list of column names to parse as date information
             dayfirst (bool): whether date format is DD/MM or not
             how_combine (str): how to combine datasets when we call this method multiple times
                 - 'replace': replace registered dataset with the new data
@@ -197,9 +199,61 @@ class DataLoader(Term):
             Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
             for the keyword arguments of pandas.DataFrame.update().
         """
-        df = pd.read_csv(filename, dayfirst=dayfirst, **find_args(pd.read_csv, **kwargs))
+        df = pd.read_csv(
+            filename, parse_dates=parse_dates, dayfirst=dayfirst, **find_args(pd.read_csv, **kwargs))
         self._edit_local(
             data=df, citation=str(citation or Path(filename).name), how_combine=how_combine, **kwargs)
+        return self
+
+    def read_dataframe(self, dataframe, citation=None, parse_dates=False, dayfirst=False,
+                       how_combine="replace", **kwargs):
+        """
+        Read a pandas.DataFrame and include it local database.
+
+        Args:
+            dataframe (pandas.DataFrame): dataframe to read
+            citation (str or None): citation of the CSV file or None (basename of the CSV file)
+            parse_dates (list[str] or bool): list of column names to parse as date information
+            dayfirst (bool): whether date format is DD/MM or not
+            how_combine (str): how to combine datasets when we call this method multiple times
+                - 'replace': replace registered dataset with the new data
+                - 'concat': concat datasets with pandas.concat()
+                - 'merge': merge datasets with pandas.DataFrame.merge()
+                - 'update': update the current dataset with pandas.DataFrame.update()
+            kwargs: keyword arguments of pandas.to_datetime and
+                pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update()
+
+        Raises:
+            UnExpectedValueError: un-expected value was applied as @how_combine
+
+        Returns:
+            covsirphy.DataLoader: self
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+            for the keyword arguments of pandas.read_csv().
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.concat.html
+            for the keyword arguments of pandas.concat().
+            Note that we always use 'ignore_index=True' and 'sort=True'.
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
+            for the keyword arguments of pandas.DataFrame.merge().
+
+        Note:
+            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
+            for the keyword arguments of pandas.DataFrame.update().
+        """
+        df = self._ensure_dataframe(dataframe, name="dataframe")
+        if parse_dates:
+            self._ensure_list(parse_dates, candidates=df.columns.tolist(), name="parse_dates")
+            datetime_kwargs = find_args(pd.to_datetime, **kwargs)
+            for col in parse_dates:
+                df[col] = pd.to_datetime(df[col], dayfirst=dayfirst, **datetime_kwargs)
+        self._edit_local(
+            data=dataframe, citation=str(citation or "dataframe"), how_combine=how_combine, **kwargs)
         return self
 
     def assign(self, **kwargs):
