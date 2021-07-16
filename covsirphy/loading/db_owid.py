@@ -85,6 +85,7 @@ class _OWID(_RemoteDatabase):
                 "Congo": "Republic of the Congo",
             }
         )
+        df = df.loc[~df["iso_code"].str.contains("OWID_")]
         df["location"] = df.groupby("iso_code")["location"].bfill()
         df.loc[df["location"] == df["iso_code"], "location"] = None
         df.loc[df["location"].isna(), "location"] = df.loc[df["location"].isna(), "iso_code"].apply(
