@@ -27,15 +27,13 @@ class TestDataLoader(object):
         assert isinstance(pyramid_data, PopulationPyramidData)
         # List of primary sources of COVID-19 Data Hub
         assert isinstance(data_loader.covid19dh_citation, str)
-        # Collect datasets for scenario analysis
-        data_dict = data_loader.collect()
-        snl = Scenario(country="Japan")
-        snl.register(**data_dict)
+        self._extracted_from_test_local_and_remote_14(data_loader, "Japan")
 
     def test_local_and_remote(self):
         loader = DataLoader(directory="input")
         # Read CSV file: Japan dataset at country level
         loader.read_csv(JapanData.URL_C, dayfirst=False)
+        loader.read_dataframe(loader.local, how_combine="replace")
         # Read CSV file: Japan dataset at province level
         loader.read_csv(JapanData.URL_P, how_combine="concat", dayfirst=False)
         with pytest.raises(UnExpectedValueError):
@@ -60,6 +58,9 @@ class TestDataLoader(object):
         # Create datasets
         loader.japan()
         loader.pyramid()
-        data_dict = loader.collect()
-        snl = Scenario(country="Italy")
+        self._extracted_from_test_local_and_remote_14(loader, "Italy")
+
+    def _extracted_from_test_local_and_remote_14(self, arg0, country):
+        data_dict = arg0.collect()
+        snl = Scenario(country=country)
         snl.register(**data_dict)
