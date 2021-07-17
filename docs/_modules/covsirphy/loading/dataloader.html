@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-kappa-fu5
+                2.21.0-lambda-fu1
               </div>
             
           
@@ -302,13 +302,47 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">lock_expected</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locked_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DBLockedError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;the local database&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DataLoader.read_csv"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.read_csv">[docs]</a>    <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">how_combine</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_edit_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">citation</span><span class="p">,</span> <span class="n">how_combine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit the local database with a dataframe.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame): dataframe to read</span>
+<span class="sd">            citation (str or None): citation of the CSV file or None (basename of the CSV file)</span>
+<span class="sd">            how_combine (str): how to combine datasets when we call this method multiple times</span>
+<span class="sd">                - &#39;replace&#39;: replace registered dataset with the new data</span>
+<span class="sd">                - &#39;concat&#39;: concat datasets with pandas.concat()</span>
+<span class="sd">                - &#39;merge&#39;: merge datasets with pandas.DataFrame.merge()</span>
+<span class="sd">                - &#39;update&#39;: update the current dataset with pandas.DataFrame.update()</span>
+<span class="sd">            kwargs: keyword arguments of pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update()</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedValueError: un-expected value was applied as @how_combine</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_lock_status</span><span class="p">(</span><span class="n">lock_expected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;replace&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;merge&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>
+                <span class="s2">&quot;how_combine&quot;</span><span class="p">,</span> <span class="n">how_combine</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="s2">&quot;concat&quot;</span><span class="p">,</span> <span class="s2">&quot;merge&quot;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local_citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">citation</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataLoader.read_csv"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.read_csv">[docs]</a>    <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">how_combine</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read dataset saved in a CSV file and include it local database.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str or pathlib.Path): path/URL of the CSV file</span>
 <span class="sd">            citation (str or None): citation of the CSV file or None (basename of the CSV file)</span>
+<span class="sd">            parse_dates (list[str] or bool): list of column names to parse as date information</span>
 <span class="sd">            dayfirst (bool): whether date format is DD/MM or not</span>
 <span class="sd">            how_combine (str): how to combine datasets when we call this method multiple times</span>
 <span class="sd">                - &#39;replace&#39;: replace registered dataset with the new data</span>
@@ -341,21 +375,61 @@
 <span class="sd">            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html</span>
 <span class="sd">            for the keyword arguments of pandas.DataFrame.update().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_lock_status</span><span class="p">(</span><span class="n">lock_expected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="n">dayfirst</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;replace&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="p">,</span> <span class="n">df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;merge&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">how_combine</span> <span class="o">==</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_local_df</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>
-                <span class="s2">&quot;how_combine&quot;</span><span class="p">,</span> <span class="n">how_combine</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="s2">&quot;concat&quot;</span><span class="p">,</span> <span class="s2">&quot;merge&quot;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local_citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">citation</span> <span class="ow">or</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">filename</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="n">parse_dates</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="n">dayfirst</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_local</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">citation</span> <span class="ow">or</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">how_combine</span><span class="o">=</span><span class="n">how_combine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="DataLoader.read_dataframe"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.read_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">read_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">how_combine</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a pandas.DataFrame and include it local database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataframe (pandas.DataFrame): dataframe to read</span>
+<span class="sd">            citation (str or None): citation of the CSV file or None (basename of the CSV file)</span>
+<span class="sd">            parse_dates (list[str] or bool): list of column names to parse as date information</span>
+<span class="sd">            dayfirst (bool): whether date format is DD/MM or not</span>
+<span class="sd">            how_combine (str): how to combine datasets when we call this method multiple times</span>
+<span class="sd">                - &#39;replace&#39;: replace registered dataset with the new data</span>
+<span class="sd">                - &#39;concat&#39;: concat datasets with pandas.concat()</span>
+<span class="sd">                - &#39;merge&#39;: merge datasets with pandas.DataFrame.merge()</span>
+<span class="sd">                - &#39;update&#39;: update the current dataset with pandas.DataFrame.update()</span>
+<span class="sd">            kwargs: keyword arguments of pandas.to_datetime and</span>
+<span class="sd">                pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update()</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedValueError: un-expected value was applied as @how_combine</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.DataLoader: self</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html</span>
+<span class="sd">            for the keyword arguments of pandas.read_csv().</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.concat.html</span>
+<span class="sd">            for the keyword arguments of pandas.concat().</span>
+<span class="sd">            Note that we always use &#39;ignore_index=True&#39; and &#39;sort=True&#39;.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html</span>
+<span class="sd">            for the keyword arguments of pandas.DataFrame.merge().</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html</span>
+<span class="sd">            for the keyword arguments of pandas.DataFrame.update().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parse_dates</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">parse_dates</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;parse_dates&quot;</span><span class="p">)</span>
+            <span class="n">datetime_kwargs</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">parse_dates</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="n">dayfirst</span><span class="p">,</span> <span class="o">**</span><span class="n">datetime_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_local</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">citation</span> <span class="ow">or</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">),</span> <span class="n">how_combine</span><span class="o">=</span><span class="n">how_combine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DataLoader.assign"><a class="viewcode-back" href="../../../covsirphy.loading.html#covsirphy.DataLoader.assign">[docs]</a>    <span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-kappa-fu5
+                2.21.0-lambda-fu1
               </div>
             
           
@@ -1593,13 +1593,14 @@ World Bank Group (2020), World Bank Open Data, <a class="reference external" hre
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataLoader.read_csv">
-<span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dayfirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'replace'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.read_csv" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dayfirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'replace'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.read_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read dataset saved in a CSV file and include it local database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – path/URL of the CSV file</p></li>
 <li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation of the CSV file or None (basename of the CSV file)</p></li>
+<li><p><strong>parse_dates</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>bool</em>) – list of column names to parse as date information</p></li>
 <li><p><strong>dayfirst</strong> (<em>bool</em>) – whether date format is DD/MM or not</p></li>
 <li><p><strong>how_combine</strong> (<em>str</em>) – how to combine datasets when we call this method multiple times
 - ‘replace’: replace registered dataset with the new data
@@ -1608,6 +1609,59 @@ World Bank Group (2020), World Bank Open Data, <a class="reference external" hre
 - ‘update’: update the current dataset with pandas.DataFrame.update()</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of pandas.read_csv()
 and pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update().</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.UnExpectedValueError" title="covsirphy.UnExpectedValueError"><strong>UnExpectedValueError</strong></a> – un-expected value was applied as &#64;how_combine</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.DataLoader" title="covsirphy.DataLoader">covsirphy.DataLoader</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html</a>
+for the keyword arguments of pandas.read_csv().</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.concat.html">https://pandas.pydata.org/docs/reference/api/pandas.concat.html</a>
+for the keyword arguments of pandas.concat().
+Note that we always use ‘ignore_index=True’ and ‘sort=True’.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html">https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html</a>
+for the keyword arguments of pandas.DataFrame.merge().</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html">https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html</a>
+for the keyword arguments of pandas.DataFrame.update().</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.DataLoader.read_dataframe">
+<span class="sig-name descname"><span class="pre">read_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dayfirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'replace'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.read_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.read_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a pandas.DataFrame and include it local database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataframe</strong> (<em>pandas.DataFrame</em>) – dataframe to read</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation of the CSV file or None (basename of the CSV file)</p></li>
+<li><p><strong>parse_dates</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>bool</em>) – list of column names to parse as date information</p></li>
+<li><p><strong>dayfirst</strong> (<em>bool</em>) – whether date format is DD/MM or not</p></li>
+<li><p><strong>how_combine</strong> (<em>str</em>) – how to combine datasets when we call this method multiple times
+- ‘replace’: replace registered dataset with the new data
+- ‘concat’: concat datasets with pandas.concat()
+- ‘merge’: merge datasets with pandas.DataFrame.merge()
+- ‘update’: update the current dataset with pandas.DataFrame.update()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of pandas.to_datetime and
+pandas.concat()/pandas.DataFrame.merge()/pandas.DataFrame.update()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
