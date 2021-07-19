@@ -119,8 +119,22 @@
 <li class="toctree-l3"><a class="reference internal" href="#set-population-values">3.3. Set population values</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#data-loading-in-kaggle-notebook">4. Data loading in Kaggle Notebook</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#acknowledgement">5. Acknowledgement</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#data-loading-to-be-released">Data loading (To Be Released)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#decide-whether-to-use-the-recommended-datasets">1-1. Decide whether to use the recommended datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-read-datasets-saved-in-our-local-environment">1-2. (Optional) Read datasets saved in our local environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#variables-to-use">1-2-1. Variables to use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-csv-files">1-2-2. Read datasets from CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-pandas-dataframe">1-2-3. Read datasets from pandas.DataFrame</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-download-the-recommended-datasets">1-3. (Auto) Download the recommended datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-perform-database-lock">1-4. (Optional) Perform database lock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-clean-data">1-5. (Auto) Clean data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-loading-in-kaggle-notebook">Data loading in Kaggle Notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgement">Acknowledgement</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
@@ -233,6 +247,11 @@
 <h2>Stable version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h2>
 <p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index): covsirphy</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade covsirphy
+</pre></div>
+</div>
+<p>Please check the version number as follows.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
 </div>
@@ -419,14 +438,129 @@ pip install --upgrade covsirphy
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="data-loading-to-be-released">
+<h1>Data loading (To Be Released)<a class="headerlink" href="#data-loading-to-be-released" title="Permalink to this headline">¶</a></h1>
+<p>From version 2.22.0, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will support to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. (We can try this new feature with the latest development version.) Workflow of CovsirPhy analysis will be as follows.</p>
+<ol class="simple">
+<li><p>Prepare datasets</p>
+<ol class="simple">
+<li><p>Decide whether to use the recommended datasets</p></li>
+<li><p>(Optional) Read datasets saved in our local environment</p></li>
+<li><p>(Auto) Download the recommended datasets</p></li>
+<li><p>(Optional) Perform database lock</p></li>
+<li><p>(Auto) Clean data</p></li>
+</ol>
+</li>
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Perform Exploratory data analysis</a></p></li>
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Learn SIR-derived models</a></p></li>
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_phases.html">Learn S-R trend analysis</a></p></li>
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html">Perform scenario analysis</a></p>
+<ol class="simple">
+<li><p>Register cleaned data</p></li>
+<li><p>Check records of the selected country/province</p></li>
+<li><p>Perform S-R trend analysis to split time series data to phases</p></li>
+<li><p>Estimate ODE parameter values in the past phases</p></li>
+<li><p>(Experimental) Predict ODE parameter values in the future phases</p></li>
+<li><p>Simulate the number of cases with some scenarios</p></li>
+<li><p>(To Be Implemented) Find solutions to end the outbreak</p></li>
+</ol>
+</li>
+</ol>
+<p>Here, how to “prepare datasets” (the first step) will be explained.</p>
+<div class="section" id="decide-whether-to-use-the-recommended-datasets">
+<h2>1-1. Decide whether to use the recommended datasets<a class="headerlink" href="#decide-whether-to-use-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
+<p>As the first step, please create <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance. As default, the recommended datasets will be download and saved to “input” directory of the current directory. These downloaded datasets will be updated automatically when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance is created and 12 hours passed since the last downloading.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you want to change the download directory (e.g. “datasets”), please use <code class="docutils literal notranslate"><span class="pre">directory</span></code> argument. the interval of downloading (default: 12 hours) can be changed with <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> argument (e.g. 24 hours).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to use <strong>ONLY</strong> your own datasets, please set <code class="docutils literal notranslate"><span class="pre">update_interval=None</span></code>. <code class="docutils literal notranslate"><span class="pre">directory</span></code> argument will be ignored.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">update_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-read-datasets-saved-in-our-local-environment">
+<h2>1-2. (Optional) Read datasets saved in our local environment<a class="headerlink" href="#optional-read-datasets-saved-in-our-local-environment" title="Permalink to this headline">¶</a></h2>
+<p>We can load our own datasets with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+<div class="section" id="variables-to-use">
+<h3>1-2-1. Variables to use<a class="headerlink" href="#variables-to-use" title="Permalink to this headline">¶</a></h3>
+<p>Variables to analyse are defined by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code>. (If you want to use a new dataset for your analysis, kindly create an issue with <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>! Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.)</p>
+<p>Required:</p>
+<ul class="simple">
+<li><p>date: observation dates</p></li>
+<li><p>country: country names (the top level administration)</p></li>
+<li><p>province: province/state/prefecture names (the second level adminitration)</p></li>
+<li><p>confirmed: the number of confirmed cases</p></li>
+<li><p>fatal: the number of fatal cases</p></li>
+<li><p>population population values</p></li>
+</ul>
+<p>Optional:</p>
+<ul class="simple">
+<li><p>iso3: ISO codes of countries</p></li>
+<li><p>recovered: the number of recovered cases</p></li>
+<li><p>tests: the number of tests</p></li>
+<li><p>product: vaccine product names</p></li>
+<li><p>vaccinations: cumulative number of vaccinations</p></li>
+<li><p>vaccinated_once: cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>vaccinated_full: cumulative number of people who received all doses prescrived by the protocol</p></li>
+</ul>
+</div>
+<div class="section" id="read-datasets-from-csv-files">
+<h3>1-2-2. Read datasets from CSV files<a class="headerlink" href="#read-datasets-from-csv-files" title="Permalink to this headline">¶</a></h3>
+<p>To Be Edited (TBE), <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+</div>
+<div class="section" id="read-datasets-from-pandas-dataframe">
+<h3>1-2-3. Read datasets from pandas.DataFrame<a class="headerlink" href="#read-datasets-from-pandas-dataframe" title="Permalink to this headline">¶</a></h3>
+<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+</div>
+</div>
+<div class="section" id="auto-download-the-recommended-datasets">
+<h2>1-3. (Auto) Download the recommended datasets<a class="headerlink" href="#auto-download-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
+<p>If <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance was created, downloading of the recommended datasets will be done automatically. Downloading will be started with <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> or <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> and so on, but they will be done at the next steps.</p>
+</div>
+<div class="section" id="optional-perform-database-lock">
+<h2>1-4. (Optional) Perform database lock<a class="headerlink" href="#optional-perform-database-lock" title="Permalink to this headline">¶</a></h2>
+<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code>.</p>
+</div>
+<div class="section" id="auto-clean-data">
+<h2>1-5. (Auto) Clean data<a class="headerlink" href="#auto-clean-data" title="Permalink to this headline">¶</a></h2>
+<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> etc.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The number of cases and population values</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="c1"># Government Response Tracker (OxCGRT)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="c1"># Population values</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="c1"># The number of tests</span>
+<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
+<span class="c1"># The number of vaccinations</span>
+<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
+<span class="c1"># Population pyramid</span>
+<span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
+<span class="c1"># Japan-specific dataset</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>TBE, workflow of methods (only with recommended datasets, both, only local)</p>
+</div>
 <div class="section" id="data-loading-in-kaggle-notebook">
-<h2>4. Data loading in Kaggle Notebook<a class="headerlink" href="#data-loading-in-kaggle-notebook" title="Permalink to this headline">¶</a></h2>
+<h2>Data loading in Kaggle Notebook<a class="headerlink" href="#data-loading-in-kaggle-notebook" title="Permalink to this headline">¶</a></h2>
 <p>We can use the recommended datasets in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a> Notebook. The datasets are saved in “/kaggle/input/” directory. Additionally, we can use Kaggle Datasets (CSV files) with <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> in Kaggle Notebook.</p>
 <p>Note:<br />If you have Kaggle API, you can download Kaggle datasets to your local environment by updating and executing <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a> script. CSV files will be saved in “/kaggle/input/” directory.</p>
 <p>Kaggle API:<br />Move to account page of Kaggle and download “kaggle.json” by selecting “API &gt; Create New API Token” button. Copy the json file to the top directory of the local repository or “~/.kaggle”. Please refer to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a> and <a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API <em>within</em> python?</a></p>
 </div>
 <div class="section" id="acknowledgement">
-<h2>5. Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this headline">¶</a></h2>
+<h2>Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this headline">¶</a></h2>
 <p>In Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
 <ul class="simple">
 <li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
