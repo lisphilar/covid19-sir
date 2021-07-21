@@ -359,7 +359,7 @@ class PhaseTracker(Term):
             raise UnExecutedError("PhaseTracker.estimate() or PhaseTracker.set_ode()")
         # Get parameter sets and initial values
         record_df = self._track_df.copy()
-        record_df = record_df.loc[record_df[self.ID] != 0].ffill().dropna()
+        record_df = record_df.loc[record_df[self.ID] != 0].ffill().dropna(subset=self._model.PARAMETERS)
         start_dates = record_df.reset_index().groupby(self.ID).first()[self.DATE].sort_values()
         end_dates = record_df.reset_index().groupby(self.ID).last()[self.DATE].sort_values()
         # Set-up ODEHandler
