@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-lambda-fu1
+                2.21.0-mu
               </div>
             
           
@@ -536,7 +536,7 @@
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;PhaseTracker.estimate() or PhaseTracker.set_ode()&quot;</span><span class="p">)</span>
         <span class="c1"># Get parameter sets and initial values</span>
         <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span>
         <span class="n">start_dates</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
         <span class="n">end_dates</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
         <span class="c1"># Set-up ODEHandler</span>
