@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-mu
+                2.21.0-mu-fu1
               </div>
             
           
@@ -243,26 +243,60 @@
 <span id="covsirphy-cleaning-cbase-module"></span><h2>covsirphy.cleaning.cbase module<a class="headerlink" href="#module-covsirphy.cleaning.cbase" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CleaningBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CleaningBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
-<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code (optional)</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Confirmed: the number of confirmed cases</p></li>
+<li><p>Fatal: the number of fatal cases</p></li>
+<li><p>Recovered: the number of recovered cases</p></li>
+<li><p>Population: population values (optional)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>If &#64;filename is None, empty dataframe will be set as raw data and geometry information will be saved in “input” directory.</p></li>
+<li><p>If &#64;filename is None, geometry information will be saved in “input” directory.</p></li>
 <li><p>If &#64;filename is not None, geometry information will be saved in the directory which has the file.</p></li>
 <li><p>The directory of geometry information could be changed with .directory property.</p></li>
-<li><p>If &#64;citation is None, citation will be empty string.</p></li>
 </ul>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.CLEANED_COLS">
+<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.RAW_COLS">
+<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.SUBSET_COLS">
+<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.area_name">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">area_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.area_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.area_name" title="Permalink to this definition">¶</a></dt>
