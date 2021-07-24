@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.21.0-mu"
+__version__ = "2.21.0-mu-fu1"
