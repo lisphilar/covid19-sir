@@ -8,6 +8,7 @@ from covsirphy import CleaningBase, Word, Population, SubsetNotFoundError
 
 class TestCleaningBase(object):
     def test_cbase(self):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         cbase = CleaningBase(filename=None)
         with pytest.raises(KeyError):
             cbase.iso3_to_country("JPN")

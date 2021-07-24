@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, SubsetNotFoundError
@@ -39,18 +38,7 @@ class PopulationData(CleaningBase):
     POPULATION_COLS = RAW_COLS[:]
 
     def __init__(self, filename=None, data=None, citation=None):
-        # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
-        # Data cleaning
-        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
-        # Citation
-        self._citation = citation or ""
-        # Directory that save the file
-        if filename is None:
-            self._dirpath = Path("input")
-        else:
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._dirpath = Path(filename).resolve().parent
+        super().__init__(filename=filename, data=data, citation=citation)
 
     def _cleaning(self):
         """
