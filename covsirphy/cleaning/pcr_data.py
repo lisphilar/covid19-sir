@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError, deprecate
@@ -43,19 +42,10 @@ class PCRData(CleaningBase):
     PCR_RATE = "Test_positive_rate"
 
     def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
-        # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
-        # Data cleaning
-        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        super().__init__(filename=filename, data=data, citation=citation)
         # Settings
         self.interval = self._ensure_natural_int(interval, name="interval")
         self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
-        self._citation = citation or ""
-        # Directory that save the file
-        if filename is None:
-            self._dirpath = Path("input")
-        else:
-            self._dirpath = Path(filename).resolve().parent
 
     def cleaned(self):
         """

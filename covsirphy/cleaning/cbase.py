@@ -19,29 +19,47 @@ class CleaningBase(Term):
 
     Args:
         filename (str or None): CSV filename of the dataset
-        citation (str or None): citation
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - ISO3: ISO3 code (optional)
+                - Country: country/region name
+                - Province: province/prefecture/state name
+                - Confirmed: the number of confirmed cases
+                - Fatal: the number of fatal cases
+                - Recovered: the number of recovered cases
+                - Population: population values (optional)
+        citation (str or None): citation or None (empty)
 
     Note:
-        - If @filename is None, empty dataframe will be set as raw data and geometry information will be saved in "input" directory.
+        Either @filename (high priority) or @data must be specified.
+
+    Note:
+        - If @filename is None, geometry information will be saved in "input" directory.
         - If @filename is not None, geometry information will be saved in the directory which has the file.
         - The directory of geometry information could be changed with .directory property.
-        - If @citation is None, citation will be empty string.
     """
+    # Columns of self._cleaned_df
+    RAW_COLS = []
+    # Columns of self.cleaned()
+    CLEANED_COLS = []
+    # Columns of self.subset()
+    SUBSET_COLS = []
 
-    def __init__(self, filename, citation=None):
-        warnings.simplefilter("ignore", DeprecationWarning)
-        if filename is None:
-            self._raw = pd.DataFrame()
-            self._cleaned_df = pd.DataFrame()
-        else:
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._raw = pd.read_csv(filename, dtype={"Province/State": "object"})
-            self._cleaned_df = self._cleaning()
+    def __init__(self, filename=None, data=None, citation=None):
+        # Raw data
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Citation
         self._citation = citation or ""
         # Directory that save the file
         if filename is None:
             self._dirpath = Path("input")
         else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
             self._dirpath = Path(filename).resolve().parent
 
     def _parse_raw(self, filename, data, columns):
