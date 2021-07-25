@@ -27,13 +27,6 @@ class PopulationData(CleaningBase):
     Note:
         Either @filename (high priority) or @data must be specified.
     """
-    # Columns of self._raw, self._clean_df and self.cleaned()
-    RAW_COLS = [
-        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE, CleaningBase.N]
-    # Columns of self.subset()
-    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.N]
-    # Deprecated
-    POPULATION_COLS = RAW_COLS[:]
 
     def __init__(self, filename=None, data=None, citation=None):
         super().__init__(filename=filename, data=data, citation=citation)
@@ -60,7 +53,7 @@ class PopulationData(CleaningBase):
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df[self.N] = df[self.N].fillna(0).astype(np.int64)
         # Columns to use
-        df = df.loc[:, self.RAW_COLS]
+        df = df.loc[:, self._raw_cols]
         # Remove duplicates
         df = df.dropna(subset=[self.N]).drop_duplicates().reset_index(drop=True)
         # Update data types to reduce memory
@@ -152,7 +145,7 @@ class PopulationData(CleaningBase):
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            [date_stamp, self.UNKNOWN, country, province, population], index=self.RAW_COLS)
+            [date_stamp, self.UNKNOWN, country, province, population], index=self._raw_cols)
         self._cleaned_df = df.append(series, ignore_index=True)
         return self
 
