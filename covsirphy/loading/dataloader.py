@@ -16,9 +16,11 @@ from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.cleaning.mobility_data import MobilityData
 from covsirphy.loading.db_cs_japan import _CSJapan
 from covsirphy.loading.db_covid19dh import _COVID19dh
 from covsirphy.loading.db_owid import _OWID
+from covsirphy.loading.db_google import _GoogleOpenData
 
 
 class DataLoader(Term):
@@ -31,6 +33,7 @@ class DataLoader(Term):
         basename_dict (dict[str, str]): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
             "owid": Our World In Data (default: ourworldindata.csv),
+            "google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
             "wbdata": World Bank Open Data (default: wbdata_population_pyramid.csv),
             "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
         verbose (int): level of verbosity when downloading
@@ -60,6 +63,7 @@ class DataLoader(Term):
         filename_dict = {
             "covid19dh": "covid19dh.csv",
             "owid": "ourworldindata.csv",
+            "google": "google_cloud_platform.csv",
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
         }
@@ -335,14 +339,15 @@ class DataLoader(Term):
             # Our World In Data
             owid_filename = self._filename_dict["owid"]
             df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
+            # COVID-19 Open Data by Google Cloud Platform
+            google_filename = self._filename_dict["google"]
+            df, citation_dict, _ = self._add_remote(df, _GoogleOpenData, google_filename, citation_dict)
             # Reset index
             df = df.reset_index()
         # Complete database lock
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
-        df[self.DATE] = pd.to_datetime(df[self.DATE])
-        df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        self._set_date_location(df)
         df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
         self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
         self._locked_citation_dict = citation_dict.copy()
@@ -399,24 +404,31 @@ class DataLoader(Term):
                 updated database, citations and the handler
         """
         df = current_df.reset_index()
-        df[self.DATE] = pd.to_datetime(df[self.DATE])
-        df[self.COUNTRY] = df[self.COUNTRY].fillna(self.UNKNOWN)
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        self._set_date_location(df)
         df = df.set_index(self._id_cols)
         cite_dict = citation_dict.copy()
         # Get the remote dataset
         force = self._download_necessity(filename)
         handler = remote_handler(filename)
         remote_df = handler.to_dataframe(force=force, verbose=self._verbose)
-        remote_df[self.DATE] = pd.to_datetime(remote_df[self.DATE])
-        remote_df[self.COUNTRY] = remote_df[self.COUNTRY].fillna(self.UNKNOWN)
-        remote_df[self.PROVINCE] = remote_df[self.PROVINCE].fillna(self.UNKNOWN)
+        self._set_date_location(remote_df)
         remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
         df = df.replace(0, None).combine_first(remote_df).reset_index().set_index(self._id_cols)
         # Update citations
         cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
         return (df, cite_dict, handler)
+
+    def _set_date_location(self, data):
+        """
+        Set date column and location columns.
+
+        Args:
+            data (pandas.DataFrame): dataframe to update (itself will be updated)
+        """
+        data[self.DATE] = pd.to_datetime(data[self.DATE])
+        data[self.COUNTRY] = data[self.COUNTRY].fillna(self.UNKNOWN)
+        data[self.PROVINCE] = data[self.PROVINCE].fillna(self.UNKNOWN)
 
     def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
         """
@@ -567,18 +579,26 @@ class DataLoader(Term):
     def vaccine(self, **kwargs):
         """
         Load the dataset regarding vaccination.
-        https://github.com/owid/covid-19-data/tree/master/public/data
-        https://ourworldindata.org/coronavirus
 
         Args:
             kwargs: all keyword arguments will be ignored
 
         Returns:
-            covsirphy.VaccineData: dataset regarding vaccines
+            covsirphy.VaccineData: dataset regarding vaccinations
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=VaccineData.RAW_COLS)
         return VaccineData(data=df.dropna(subset=VaccineData.RAW_COLS), citation="\n".join(citations))
+
+    def mobility(self):
+        """
+        Load the dataset regarding mobility.
+
+        Returns:
+            covsirphy.MobilityData: dataset regarding mobilities
+        """
+        df, citations = self._auto_lock(variables=MobilityData.RAW_COLS)
+        return MobilityData(data=df.dropna(subset=MobilityData.RAW_COLS), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """
