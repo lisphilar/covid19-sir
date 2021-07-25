@@ -11,11 +11,9 @@ from covsirphy import Scenario, Term, PhaseTracker, SIRF, Filer
 
 
 @pytest.fixture(scope="module")
-def snl(jhu_data, population_data, japan_data, oxcgrt_data, vaccine_data, pcr_data):
+def snl(data_loader):
     snl = Scenario(country="Italy", province=None, tau=None, auto_complement=True)
-    snl.register(
-        jhu_data, population_data,
-        extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+    snl.register(**data_loader.collect())
     return snl
 
 
@@ -55,7 +53,7 @@ class TestScenario(object):
         )
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_interactive(self, jhu_data, population_data, country):
+    def test_interactive(self, jhu_data, country):
         with pytest.raises(ValueError):
             Scenario()
         # Setting
@@ -67,7 +65,7 @@ class TestScenario(object):
         scenario.records(show_figure=True)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_adjust_end(self, jhu_data, population_data, country):
+    def test_adjust_end(self, jhu_data, country):
         # Setting
         scenario = Scenario(country=country)
         scenario.register(jhu_data)
@@ -305,7 +303,7 @@ class TestScenario(object):
         with pytest.raises(NotIncludedError):
             snl.fit(engineering_tools=[])
 
-    def test_backup(self, snl, jhu_data, population_data):
+    def test_backup(self, snl, jhu_data):
         filer = Filer("input")
         backupfile_dict = filer.json("backup")
         # Backup

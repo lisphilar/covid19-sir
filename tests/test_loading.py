@@ -6,7 +6,7 @@ import pytest
 from covsirphy import DBLockedError, NotDBLockedError, UnExpectedValueError
 from covsirphy import DataLoader
 from covsirphy import JHUData, CountryData, PopulationData, JapanData
-from covsirphy import OxCGRTData, PCRData, VaccineData, PopulationPyramidData
+from covsirphy import OxCGRTData, PCRData, VaccineData, MobilityData, PopulationPyramidData
 from covsirphy import Scenario, Term
 
 
@@ -16,7 +16,7 @@ class TestDataLoader(object):
             DataLoader(directory=0)
 
     def test_remote(self, data_loader, jhu_data, population_data, oxcgrt_data,
-                    japan_data, pcr_data, vaccine_data, pyramid_data):
+                    japan_data, pcr_data, vaccine_data, mobility_data, pyramid_data):
         # Data loading
         assert isinstance(jhu_data, JHUData)
         assert isinstance(population_data, PopulationData)
@@ -24,6 +24,7 @@ class TestDataLoader(object):
         assert isinstance(japan_data, CountryData)
         assert isinstance(pcr_data, PCRData)
         assert isinstance(vaccine_data, VaccineData)
+        assert isinstance(mobility_data, MobilityData)
         assert isinstance(pyramid_data, PopulationPyramidData)
         # List of primary sources of COVID-19 Data Hub
         assert isinstance(data_loader.covid19dh_citation, str)
