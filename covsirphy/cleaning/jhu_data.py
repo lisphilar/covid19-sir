@@ -42,7 +42,7 @@ class JHUData(CleaningBase):
     ]
 
     def __init__(self, filename=None, data=None, citation=None):
-        variables = [self.DATE, self.C, self.CI, self.F, self.R, self.N]
+        variables = [self.C, self.CI, self.F, self.R, self.N]
         super().__init__(filename=filename, data=data, citation=citation, variables=variables)
         # Recovery period
         self._recovery_period = None
