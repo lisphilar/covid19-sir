@@ -78,6 +78,9 @@ class DataLoader(Term):
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
         self._local_citations = []
+        # Flexible columns
+        self._oxcgrt_cols = []
+        self._mobility_cols = []
         # Locked database
         self._locked_df = pd.DataFrame(columns=self._id_cols)
         self._locked_citation_dict = {}
@@ -280,7 +283,8 @@ class DataLoader(Term):
 
     def lock(self, date, country, province, iso3=None,
              confirmed=None, fatal=None, recovered=None, population=None, tests=None,
-             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None):
+             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None,
+             oxcgrt_variables=None, mobility_variables=None):
         """
         Lock the local database, specifying columns which has date and area information.
 
@@ -298,11 +302,23 @@ class DataLoader(Term):
             vaccinations (str or None): cumulative number of vaccinations
             vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
             vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
+            oxcgrt_variables (list[str] or None): list of variables for OxCGRTData
+            mobility_variables (list[str] or None): list of variables for MobilityData
 
         Returns:
             covsirphy.DataLoader: self
+
+        Note:
+            If @oxcgrt_variables is None, variables registered in COVID-19 Data Hub will be used.
+
+        Note:
+            If @mobility_variables is None, variables registed in COVID-19 Open Data (Google) will be used.
         """
         self._ensure_lock_status(lock_expected=False)
+        # Flexible variables
+        self._oxcgrt_cols = oxcgrt_variables or _COVID19dh.OXCGRT_VARS[:]
+        self._mobility_cols = mobility_variables or _GoogleOpenData.MOBILITY_VARS[:]
+        # All variables
         variables = [
             self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
             self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
@@ -495,7 +511,7 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding the number of cases
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=JHUData.RAW_COLS)
+        df, citations = self._auto_lock(variables=[self.C, self.F, self.R, self.N])
         return JHUData(data=df, citation="\n".join(citations))
 
     def population(self, **kwargs):
@@ -509,7 +525,7 @@ class DataLoader(Term):
             covsirphy.PopulationData: dataset regarding population values
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=PopulationData.RAW_COLS)
+        df, citations = self._auto_lock(variables=[self.N])
         return PopulationData(data=df, citation="\n".join(citations))
 
     def oxcgrt(self, **kwargs):
@@ -523,7 +539,7 @@ class DataLoader(Term):
             covsirphy.JHUData: dataset regarding OxCGRT data
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=OxCGRTData.RAW_COLS)
+        df, citations = self._auto_lock(variables=[self._oxcgrt_cols])
         return OxCGRTData(data=df, citation="\n".join(citations))
 
     def japan(self, **kwargs):
@@ -573,7 +589,7 @@ class DataLoader(Term):
             covsirphy.PCRData: dataset regarding the number of tests and confirmed cases
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=PCRData.RAW_COLS)
+        df, citations = self._auto_lock(variables=[self.TESTS, self.C])
         return PCRData(data=df, citation="\n".join(citations))
 
     def vaccine(self, **kwargs):
@@ -587,8 +603,9 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccinations
         """
         self._read_dep(**kwargs)
-        df, citations = self._auto_lock(variables=VaccineData.RAW_COLS)
-        return VaccineData(data=df.dropna(subset=VaccineData.RAW_COLS), citation="\n".join(citations))
+        v_cols = [self.VAC, self.V_ONCE, self.V_FULL]
+        df, citations = self._auto_lock(variables=v_cols)
+        return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
 
     def mobility(self):
         """
@@ -597,8 +614,8 @@ class DataLoader(Term):
         Returns:
             covsirphy.MobilityData: dataset regarding mobilities
         """
-        df, citations = self._auto_lock(variables=MobilityData.RAW_COLS)
-        return MobilityData(data=df.dropna(subset=MobilityData.RAW_COLS), citation="\n".join(citations))
+        df, citations = self._auto_lock(variables=self._mobility_cols)
+        return MobilityData(data=df.dropna(subset=self._mobility_cols), citation="\n".join(citations))
 
     def pyramid(self, **kwargs):
         """

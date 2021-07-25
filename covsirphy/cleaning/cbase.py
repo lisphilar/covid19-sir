@@ -32,6 +32,7 @@ class CleaningBase(Term):
                 - Recovered: the number of recovered cases
                 - Population: population values (optional)
         citation (str or None): citation or None (empty)
+        variables (list[str] or None): variables to clean (not including date and location identifiers)
 
     Note:
         Either @filename (high priority) or @data must be specified.
@@ -41,18 +42,15 @@ class CleaningBase(Term):
         - If @filename is not None, geometry information will be saved in the directory which has the file.
         - The directory of geometry information could be changed with .directory property.
     """
-    # Columns of self._cleaned_df
-    RAW_COLS = []
-    # Columns of self.cleaned()
-    CLEANED_COLS = []
-    # Columns of self.subset()
-    SUBSET_COLS = []
 
-    def __init__(self, filename=None, data=None, citation=None):
+    def __init__(self, filename=None, data=None, citation=None, variables=None):
+        # Columns of self._raw, self._clean_df and self.cleaned()
+        self._raw_cols = [self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE] + (variables or [])
+        self._subset_cols = [self.DATE] + (variables or [])
         # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        self._raw = self._parse_raw(filename, data, self._raw_cols)
         # Data cleaning
-        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        self._cleaned_df = pd.DataFrame(columns=self._raw_cols) if self._raw.empty else self._cleaning()
         # Citation
         self._citation = citation or ""
         # Directory that save the file
