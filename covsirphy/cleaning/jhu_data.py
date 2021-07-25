@@ -20,13 +20,13 @@ class JHUData(CleaningBase):
                 reset index
             Columns
                 - Date: Observation date
-                - ISO3: ISO3 code (optional)
+                - ISO3: ISO3 code
                 - Country: country/region name
                 - Province: province/prefecture/state name
                 - Confirmed: the number of confirmed cases
                 - Fatal: the number of fatal cases
                 - Recovered: the number of recovered cases
-                - Population: population values (optional)
+                - Population: population values
         citation (str or None): citation or None (empty)
 
     Note:
@@ -39,11 +39,6 @@ class JHUData(CleaningBase):
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R, CleaningBase.N
-    ]
-    # Columns of self.cleaned()
-    CLEANED_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
     ]
     # Columns of self.subset()
     SUBSET_COLS = [
@@ -73,7 +68,7 @@ class JHUData(CleaningBase):
         Return the cleaned dataset.
 
         Args:
-            kwargs: keword arguments will be ignored.
+            kwargs: keyword arguments will be ignored
 
         Returns:
             pandas.DataFrame
@@ -81,19 +76,21 @@ class JHUData(CleaningBase):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): Observation date
+                    - ISO3: ISO3 code
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Population: population values
         """
         if "population" in kwargs.keys():
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
         df = self._cleaned_df.copy()
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        return df.loc[:, self.CLEANED_COLS]
+        return df
 
     def _cleaning(self):
         """
