@@ -20,13 +20,13 @@ class JHUData(CleaningBase):
                 reset index
             Columns
                 - Date: Observation date
-                - ISO3: ISO3 code (optional)
+                - ISO3: ISO3 code
                 - Country: country/region name
                 - Province: province/prefecture/state name
                 - Confirmed: the number of confirmed cases
                 - Fatal: the number of fatal cases
                 - Recovered: the number of recovered cases
-                - Population: population values (optional)
+                - Population: population values
         citation (str or None): citation or None (empty)
 
     Note:
@@ -35,24 +35,15 @@ class JHUData(CleaningBase):
     Note:
         The number of infected cases will be (re-)calculated when data cleaning automatically.
     """
-    # Columns of self._cleaned_df
-    RAW_COLS = [
+    # For JHUData.from_dataframe()
+    _RAW_COLS_DEFAULT = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R, CleaningBase.N
     ]
-    # Columns of self.cleaned()
-    CLEANED_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
-    ]
-    # Columns of self.subset()
-    SUBSET_COLS = [
-        CleaningBase.DATE, CleaningBase.C, CleaningBase.CI,
-        CleaningBase.F, CleaningBase.R, CleaningBase.S,
-    ]
 
     def __init__(self, filename=None, data=None, citation=None):
-        super().__init__(filename=filename, data=data, citation=citation)
+        variables = [self.C, self.CI, self.F, self.R, self.N]
+        super().__init__(filename=filename, data=data, citation=citation, variables=variables)
         # Recovery period
         self._recovery_period = None
 
@@ -73,7 +64,7 @@ class JHUData(CleaningBase):
         Return the cleaned dataset.
 
         Args:
-            kwargs: keword arguments will be ignored.
+            kwargs: keyword arguments will be ignored
 
         Returns:
             pandas.DataFrame
@@ -81,19 +72,21 @@ class JHUData(CleaningBase):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): Observation date
+                    - ISO3: ISO3 code
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Population: population values
         """
         if "population" in kwargs.keys():
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
         df = self._cleaned_df.copy()
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        return df.loc[:, self.CLEANED_COLS]
+        return df
 
     def _cleaning(self):
         """
@@ -114,7 +107,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases
                     - Population (int): population values or 0 (when raw data is 0 values)
         """
-        df = self._raw.loc[:, self.RAW_COLS]
+        df = self._raw.loc[:, self._raw_cols]
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
         try:
@@ -138,7 +131,7 @@ class JHUData(CleaningBase):
         df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
-        return df.loc[:, self.RAW_COLS]
+        return df.loc[:, self._raw_cols]
 
     def replace(self, country_data):
         """
@@ -163,7 +156,7 @@ class JHUData(CleaningBase):
         new[self.N] = new.loc[:, self.N] if self.N in new else None
         new = new.set_index([self.COUNTRY, self.PROVINCE, self.DATE])
         new.update(df.set_index([self.COUNTRY, self.PROVINCE, self.DATE]).loc[:, [self.N]])
-        new = new.reset_index().loc[:, self.RAW_COLS]
+        new = new.reset_index().loc[:, self._raw_cols]
         # Calculate Infected
         new[self.CI] = (new[self.C] - new[self.F] - new[self.R]).astype(np.int64)
         # Remove the data in the country from JHU dataset
@@ -204,7 +197,7 @@ class JHUData(CleaningBase):
             return super().subset(
                 country=country, province=province, start_date=start_date, end_date=end_date)
         except SubsetNotFoundError:
-            return pd.DataFrame(columns=self.RAW_COLS)
+            return pd.DataFrame(columns=self._raw_cols)
 
     def _calculate_susceptible(self, subset_df, population):
         """
@@ -245,7 +238,7 @@ class JHUData(CleaningBase):
             df[self.S] = df[self.S].astype(np.int64)
         except ValueError:
             return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R]]
-        return df.loc[:, self.SUBSET_COLS]
+        return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R, self.S]]
 
     def subset(self, country, province=None, start_date=None, end_date=None,
                population=None, recovered_min=1):
@@ -356,7 +349,7 @@ class JHUData(CleaningBase):
         df[cls.N] = df[cls.N] if cls.N in df else 0
         instance = cls()
         instance.directory = str(directory)
-        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
+        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls._RAW_COLS_DEFAULT)
         return instance
 
     def total(self):
@@ -417,7 +410,7 @@ class JHUData(CleaningBase):
             if not self.subset_complement(country=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
-    @ deprecate("JHUData.calculate_closing_period()")
+    @deprecate("JHUData.calculate_closing_period()")
     def calculate_closing_period(self):
         """
         Calculate mode value of closing period, time from confirmation to get outcome.

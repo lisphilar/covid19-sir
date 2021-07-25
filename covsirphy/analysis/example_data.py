@@ -36,6 +36,9 @@ class ExampleData(JHUData):
         if clean_df is None:
             clean_df = pd.DataFrame(columns=self.COLUMNS)
         clean_df = self._ensure_dataframe(clean_df, name="clean_df", columns=self.COLUMNS)
+        variables = [self.C, self.CI, self.F, self.R, self.N]
+        self._raw_cols = [self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, *variables]
+        self._subset_cols = [self.DATE, *variables]
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
