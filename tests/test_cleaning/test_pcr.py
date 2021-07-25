@@ -19,7 +19,7 @@ class TestPCRData(object):
             pcr_data.subset(country, end_date="01Jan2000")
         pcr_data.subset(country)
         df = pcr_data.subset(country, end_date="01Jan2021")
-        assert set([Term.DATE, Term.TESTS, Term.C, Term.T_DIFF]).issubset(df.columns)
+        assert set([Term.DATE, Term.TESTS, Term.C, PCRData.T_DIFF]).issubset(df.columns)
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_subset_complement(self, pcr_data, country):
@@ -31,7 +31,7 @@ class TestPCRData(object):
         with pytest.raises(SubsetNotFoundError):
             pcr_data.records(country, end_date="01Jan2000")
         df, _ = pcr_data.records(country)
-        assert set([Term.DATE, Term.TESTS, Term.C, Term.T_DIFF]).issubset(df.columns)
+        assert set([Term.DATE, Term.TESTS, Term.C, PCRData.T_DIFF]).issubset(df.columns)
 
     @pytest.mark.parametrize("country", ["Greece", "Italy", "Sweden"])
     @pytest.mark.parametrize("last_date", ["21Apr2021", None])
