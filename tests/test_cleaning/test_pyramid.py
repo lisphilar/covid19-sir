@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from covsirphy import SubsetNotFoundError, PopulationPyramidData
+from covsirphy import SubsetNotFoundError, PopulationPyramidData, Term
 
 
 class TestPopulationPyramidData(object):
@@ -20,4 +20,4 @@ class TestPopulationPyramidData(object):
     @pytest.mark.parametrize("sex", [None, "Female", "Male"])
     def test_records(self, pyramid_data, country, sex):
         df = pyramid_data.records(country, sex=sex)
-        assert set(df.columns) == set(PopulationPyramidData.SUBSET_COLS)
+        assert set(df.columns) == set([Term.AGE, Term.N, Term.PORTION])

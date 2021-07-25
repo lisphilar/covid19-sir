@@ -47,9 +47,10 @@ class DataHandler(Term):
         # Details of the area name
         self._area_dict = {"country": str(country), "province": str(province or self.UNKNOWN)}
         # Main dataset before complement
-        self._main_raw = pd.DataFrame(columns=JHUData.SUBSET_COLS)
+        main_cols = [self.DATE, self.C, self.CI, self.F, self.R, self.S]
+        self._main_raw = pd.DataFrame(columns=main_cols)
         # Main dataset After complement
-        self._main_df = pd.DataFrame(columns=JHUData.SUBSET_COLS)
+        self._main_df = pd.DataFrame(columns=main_cols)
         # Extra dataset
         self._extra_df = pd.DataFrame(columns=[self.DATE])
         # Population
@@ -318,7 +319,7 @@ class DataHandler(Term):
         # Get all subset
         df = self._extra_df.copy()
         # Remove columns which is included in the main datasets
-        unused_set = set(JHUData.SUBSET_COLS) - set([self.DATE])
+        unused_set = set(self._main_df.columns) - set([self.DATE])
         df = df.loc[:, ~df.columns.isin(unused_set)]
         # Data cleaning
         df = df.set_index(self.DATE).resample("D").last()
