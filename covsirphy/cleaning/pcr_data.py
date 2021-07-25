@@ -28,21 +28,14 @@ class PCRData(CleaningBase):
         min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
         citation (str): citation
     """
-    # Columns of self._raw and self._clean_df
-    RAW_COLS = [
-        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.TESTS, CleaningBase.C]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
-    # Columns of self.subset()
-    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.TESTS, CleaningBase.C]
     # Daily values
     T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 
     def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
-        super().__init__(filename=filename, data=data, citation=citation)
+        variables = [self.TESTS, self.C]
+        super().__init__(filename=filename, data=data, citation=citation, variables=variables)
         # Settings
         self.interval = self._ensure_natural_int(interval, name="interval")
         self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
@@ -62,7 +55,7 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._cleaned_df.loc[:, self.CLEANED_COLS]
+        df = self._cleaned_df.loc[:, self._raw_cols]
         return df.drop(self.ISO3, axis=1)
 
     def _cleaning(self):
@@ -83,7 +76,7 @@ class PCRData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
         """
         df = self._raw.copy()
-        df = df.loc[:, self.CLEANED_COLS].reset_index(drop=True)
+        df = df.loc[:, self._raw_cols].reset_index(drop=True)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
@@ -121,7 +114,7 @@ class PCRData(CleaningBase):
         df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.UNKNOWN
         instance = cls(filename=None)
         instance.directory = str(directory)
-        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
+        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls._raw_cols)
         return instance
 
     @deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
@@ -162,8 +155,8 @@ class PCRData(CleaningBase):
         country = country_data.country
         new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
-        self._ensure_dataframe(new, name="the raw data", columns=self.CLEANED_COLS)
-        new = new.loc[:, self.CLEANED_COLS]
+        self._ensure_dataframe(new, name="the raw data", columns=self._raw_cols)
+        new = new.loc[:, self._raw_cols]
         # Remove the data in the country from the current datset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
