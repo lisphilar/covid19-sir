@@ -66,8 +66,8 @@ test:
 	@# Selected tests: make test target=/test_scenario.py::TestScenario cov=/analysis
 	@# Without '--failed-first': make test add=
 	@poetry run flake8 covsirphy --ignore=E501
-	@poetry run pytest tests${target} -v --durations=0 ${add:---failed-first} --maxfail=1 \
-	 --cov=covsirphy${cov} --cov-report=term-missing -vv
+	@poetry run pytest tests${target} -v --durations=1 ${add:---failed-first} --maxfail=1 \
+	 --cov=covsirphy${cov} --cov-report=term-missing -vv --no-cov-on-fail
 
 .PHONY: flake8
 flake8:
