@@ -9,7 +9,7 @@ from covsirphy import MobilityData
 class TestOxCGRTData(object):
     def test_cleaning(self, mobility_data):
         df = mobility_data.cleaned()
-        assert set(df.columns) == set(MobilityData.CLEANED_COLS)
+        assert set(df.columns) == set(MobilityData.RAW_COLS)
 
     def test_subset(self, mobility_data):
         with pytest.raises(KeyError):

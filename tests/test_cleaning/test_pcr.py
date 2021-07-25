@@ -11,7 +11,7 @@ from covsirphy import PCRData
 class TestPCRData(object):
     def test_cleaning(self, pcr_data):
         df = pcr_data.cleaned()
-        assert set(df.columns) == set(PCRData.CLEANED_COLS) - set([PCRData.ISO3])
+        assert set(df.columns) == set(PCRData.RAW_COLS) - set([PCRData.ISO3])
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, pcr_data, country):

@@ -24,7 +24,7 @@ class TestExampleData(object):
             example_data.subset()
         # Cleaned dataset
         clean_df = example_data.cleaned()
-        assert set(clean_df.columns) == set(JHUData.CLEANED_COLS) - set([Term.ISO3])
+        assert set(clean_df.columns) == set(JHUData.RAW_COLS) - set([Term.ISO3])
         # Subset
         subset_df = example_data.subset(model=model)
         assert subset_df.columns.tolist() == Term.SUB_COLUMNS

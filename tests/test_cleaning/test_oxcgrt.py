@@ -9,7 +9,7 @@ from covsirphy import OxCGRTData
 class TestOxCGRTData(object):
     def test_cleaning(self, oxcgrt_data):
         df = oxcgrt_data.cleaned()
-        assert set(df.columns) == set(OxCGRTData.CLEANED_COLS)
+        assert set(df.columns) == set(OxCGRTData.RAW_COLS)
 
     def test_subset(self, oxcgrt_data):
         with pytest.raises(KeyError):
