@@ -23,7 +23,7 @@ class TestExampleData(object):
             example_data.subset()
         # Cleaned dataset
         clean_df = example_data.cleaned()
-        cols = [Term.DATE, Term.COUNTRY, Term.PROVINCE, Term.C, Term.CI, Term.F, Term.R, Term.N]
+        cols = [Term.ISO3, Term.DATE, Term.COUNTRY, Term.PROVINCE, Term.C, Term.CI, Term.F, Term.R, Term.N]
         assert set(clean_df.columns) == set(cols)
         # Subset
         subset_df = example_data.subset(model=model)
