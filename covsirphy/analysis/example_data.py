@@ -109,10 +109,12 @@ class ExampleData(JHUData):
         handler.add(end, param_dict=arg_dict[self.PARAM_DICT], y0_dict=arg_dict[self.Y0_DICT])
         restored_df = handler.simulate()
         # JHU-type records
+        restored_df[self.ISO3] = self.UNKNOWN
         restored_df[self.COUNTRY] = country
         restored_df[self.PROVINCE] = province
         restored_df[self.C] = restored_df[[self.CI, self.F, self.R]].sum(axis=1)
-        selected_df = restored_df.loc[:, self.COLUMNS]
+        restored_df[self.N] = self._population
+        selected_df = restored_df.loc[:, self._raw_cols]
         cleaned_df = pd.concat([self._cleaned_df, selected_df], axis=0, ignore_index=True)
         for col in self.AREA_COLUMNS:
             cleaned_df[col] = cleaned_df[col].astype("category")
