@@ -14,7 +14,7 @@ class TestJHUData(object):
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
-        assert set(df.columns) == set(Term.COLUMNS)
+        assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     def test_from_dataframe(self, japan_data):
@@ -27,7 +27,6 @@ class TestJHUData(object):
     @pytest.mark.parametrize("country", ["USA", "Japan"])
     def test_subset(self, jhu_data, country):
         df = jhu_data.subset(country, start_date="01Apr2020", end_date="01Jun2020")
-        assert set(df.columns) == set(JHUData.SUBSET_COLS)
         assert df[Term.S].dtype == "int64"
         with pytest.raises(KeyError):
             jhu_data.subset("Moon")
@@ -35,7 +34,6 @@ class TestJHUData(object):
             jhu_data.subset(country, start_date="01Jan2020", end_date="10Jan2020")
         if country == "Japan":
             s_df = jhu_data.subset(country, population=126_500_000)
-            assert set(s_df.columns) == set(JHUData.SUBSET_COLS)
             assert int(s_df[[Term.S, Term.C]].sum(axis=1).mean()) == 126_500_000
 
     def test_replace(self, jhu_data, japan_data):
@@ -77,7 +75,6 @@ class TestJHUData(object):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
         assert isinstance(jhu_data.recovery_period, int)
-        assert set(df.columns) == set(JHUData.SUBSET_COLS)
         assert is_complemented
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
@@ -85,7 +82,6 @@ class TestJHUData(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset_complement_partial(self, jhu_data, country):
         df, is_complemented = jhu_data.subset_complement(country=country)
-        assert set(df.columns) == set(JHUData.SUBSET_COLS)
         assert is_complemented
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
@@ -94,7 +90,6 @@ class TestJHUData(object):
         "country", ["UK", "Netherlands", "China", "Germany", "France", "Japan"])
     def test_records(self, jhu_data, country):
         df, is_complemented = jhu_data.records(country=country)
-        assert set(df.columns) == set(JHUData.SUBSET_COLS)
         assert is_complemented
 
     @pytest.mark.parametrize("country", ["Netherlands", "Moon"])
