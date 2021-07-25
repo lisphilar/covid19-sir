@@ -3,19 +3,19 @@
 
 import warnings
 import pytest
-from covsirphy import MobilityData
+from covsirphy import Term
 
 
-class TestOxCGRTData(object):
+class TestMobilityData(object):
     def test_cleaning(self, mobility_data):
         df = mobility_data.cleaned()
-        assert set(df.columns) == set(MobilityData.CLEANED_COLS)
+        assert set([Term.DATE, Term.ISO3, Term.COUNTRY, Term.PROVINCE]).issubset(df.columns)
 
     def test_subset(self, mobility_data):
         with pytest.raises(KeyError):
             mobility_data.subset("Moon")
         df = mobility_data.subset("JPN")
-        assert set(df.columns) == set(MobilityData.SUBSET_COLS)
+        assert set([Term.DATE]).issubset(df.columns)
 
     def test_total(self, mobility_data):
         with pytest.raises(NotImplementedError):

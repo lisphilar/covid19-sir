@@ -3,13 +3,13 @@
 
 import pytest
 import warnings
-from covsirphy import SubsetNotFoundError, Term, VaccineData
+from covsirphy import SubsetNotFoundError, Term
 
 
 class TestVaccineData(object):
     def test_cleaning(self, vaccine_data):
         df = vaccine_data.cleaned()
-        assert set(VaccineData.RAW_COLS).issubset(df.columns)
+        assert set([Term.DATE, Term.COUNTRY, Term.PROVINCE]).issubset(df.columns)
 
     @pytest.mark.parametrize("country", ["Canada"])
     def test_subset(self, vaccine_data, country):
