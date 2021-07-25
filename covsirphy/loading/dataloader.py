@@ -283,7 +283,8 @@ class DataLoader(Term):
 
     def lock(self, date, country, province, iso3=None,
              confirmed=None, fatal=None, recovered=None, population=None, tests=None,
-             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None):
+             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None,
+             oxcgrt_variables=None, mobility_variables=None):
         """
         Lock the local database, specifying columns which has date and area information.
 
@@ -301,14 +302,22 @@ class DataLoader(Term):
             vaccinations (str or None): cumulative number of vaccinations
             vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
             vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
+            oxcgrt_variables (list[str] or None): list of variables for OxCGRTData
+            mobility_variables (list[str] or None): list of variables for MobilityData
 
         Returns:
             covsirphy.DataLoader: self
+
+        Note:
+            If @oxcgrt_variables is None, variables registered in COVID-19 Data Hub will be used.
+
+        Note:
+            If @mobility_variables is None, variables registed in COVID-19 Open Data (Google) will be used.
         """
         self._ensure_lock_status(lock_expected=False)
         # Flexible variables
-        self._oxcgrt_cols = _COVID19dh.OXCGRT_VARS[:]
-        self._mobility_cols = _GoogleOpenData.MOBILITY_VARS[:]
+        self._oxcgrt_cols = oxcgrt_variables or _COVID19dh.OXCGRT_VARS[:]
+        self._mobility_cols = mobility_variables or _GoogleOpenData.MOBILITY_VARS[:]
         # All variables
         variables = [
             self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
