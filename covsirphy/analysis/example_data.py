@@ -36,6 +36,9 @@ class ExampleData(JHUData):
         if clean_df is None:
             clean_df = pd.DataFrame(columns=self.COLUMNS)
         clean_df = self._ensure_dataframe(clean_df, name="clean_df", columns=self.COLUMNS)
+        variables = [self.C, self.CI, self.F, self.R, self.N]
+        self._raw_cols = [self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, *variables]
+        self._subset_cols = [self.DATE, *variables]
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
@@ -106,10 +109,12 @@ class ExampleData(JHUData):
         handler.add(end, param_dict=arg_dict[self.PARAM_DICT], y0_dict=arg_dict[self.Y0_DICT])
         restored_df = handler.simulate()
         # JHU-type records
+        restored_df[self.ISO3] = self.UNKNOWN
         restored_df[self.COUNTRY] = country
         restored_df[self.PROVINCE] = province
         restored_df[self.C] = restored_df[[self.CI, self.F, self.R]].sum(axis=1)
-        selected_df = restored_df.loc[:, self.COLUMNS]
+        restored_df[self.N] = self._population
+        selected_df = restored_df.loc[:, self._raw_cols]
         cleaned_df = pd.concat([self._cleaned_df, selected_df], axis=0, ignore_index=True)
         for col in self.AREA_COLUMNS:
             cleaned_df[col] = cleaned_df[col].astype("category")

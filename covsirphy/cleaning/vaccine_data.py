@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from covsirphy.util.error import deprecate, SubsetNotFoundError
-from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -45,25 +44,21 @@ class VaccineData(CleaningBase):
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
-    # Columns of self._raw and self._clean_df
-    RAW_COLS = [
-        Term.DATE, Term.COUNTRY, Term.ISO3, Term.PROVINCE, Term.PRODUCT,
-        Term.VAC, Term.V_ONCE, Term.V_FULL]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
-    # Columns of self.subset()
-    SUBSET_COLS = [Term.DATE, Term.VAC, Term.V_ONCE, Term.V_FULL]
 
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
+        self._subset_cols = [self.DATE, self.VAC, self.V_ONCE, self.V_FULL]
+        self._raw_cols = [
+            self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.PRODUCT,
+            self.VAC, self.V_ONCE, self.V_FULL]
         # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        self._raw = self._parse_raw(filename, data, self._raw_cols)
         # Backward compatibility
         if self._raw.empty:
             self._raw = self._retrieve(filename, **kwargs)
         if self.PROVINCE not in self._raw:
             self._raw[self.PROVINCE] = self.UNKNOWN
         # Data cleaning
-        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        self._cleaned_df = pd.DataFrame(columns=self._raw_cols) if self._raw.empty else self._cleaning()
         # Citation
         self._citation = citation or ""
         # Directory that save the file
@@ -146,7 +141,7 @@ class VaccineData(CleaningBase):
         # Set dtype for category data
         for col in [self.COUNTRY, self.ISO3, self.PROVINCE, self.PRODUCT]:
             df[col] = df[col].astype("category")
-        return df.loc[:, self.RAW_COLS]
+        return df.loc[:, self._raw_cols]
 
     def subset(self, country, province=None, product=None, start_date=None, end_date=None):
         """
@@ -187,7 +182,7 @@ class VaccineData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
-        return df.loc[:, self.SUBSET_COLS].reset_index(drop=True)
+        return df.loc[:, self._subset_cols].reset_index(drop=True)
 
     def records(self, country, product=None, start_date=None, end_date=None):
         """
@@ -231,7 +226,7 @@ class VaccineData(CleaningBase):
         df = df.loc[df[self.COUNTRY] == "World"]
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
-        return df.reset_index()[self.SUBSET_COLS]
+        return df.reset_index()[self._subset_cols]
 
     def map(self, country=None, variable="Vaccinations", date=None, **kwargs):
         """

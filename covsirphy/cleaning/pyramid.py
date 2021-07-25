@@ -40,7 +40,6 @@ class PopulationPyramidData(CleaningBase):
     AGE = "Age"
     PYRAMID_COLS = [CleaningBase.COUNTRY, YEAR, SEX, AGE, CleaningBase.N]
     PORTION = "Per_total"
-    SUBSET_COLS = [AGE, CleaningBase.N, PORTION]
 
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)

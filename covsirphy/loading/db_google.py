@@ -25,17 +25,21 @@ class _GoogleOpenData(_RemoteDatabase):
         " Work in progress, https://goo.gle/covid-19-open-data"
     # Column names and data types
     # {"name in database": "name defined in Term class"}
+    _MOBILITY_COLS_RAW_INT = [
+        "mobility_grocery_and_pharmacy",
+        "mobility_parks",
+        "mobility_transit_stations",
+        "mobility_retail_and_recreation",
+        "mobility_residential",
+        "mobility_workplaces",
+    ]
+    MOBILITY_VARS = [v.capitalize() for v in _MOBILITY_COLS_RAW_INT]
     COL_DICT = {
         "date": Term.DATE,
         "country_name": Term.COUNTRY,
         Term.PROVINCE: Term.PROVINCE,
         "iso_3166_1_alpha_3": Term.ISO3,
-        "mobility_grocery_and_pharmacy": "Mobility_grocery_and_pharmacy",
-        "mobility_parks": "Mobility_parks",
-        "mobility_transit_stations": "Mobility_transit_stations",
-        "mobility_retail_and_recreation": "Mobility_retail_and_recreation",
-        "mobility_residential": "Mobility_residential",
-        "mobility_workplaces": "Mobility_workplaces",
+        **{v: v.capitalize() for v in _MOBILITY_COLS_RAW_INT},
     }
 
     def download(self, verbose):

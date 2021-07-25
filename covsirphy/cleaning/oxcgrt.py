@@ -19,25 +19,27 @@ class OxCGRTData(CleaningBase):
                 - Date: Observation date
                 - ISO3: ISO 3166-1 alpha-3, like JPN
                 - Country: country/region name
-                - School_closing
-                - Workplace_closing
-                - Cancel_events
-                - Gatherings_restrictions
-                - Transport_closing
-                - Stay_home_restrictions
-                - Internal_movement_restrictions
-                - International_movement_restrictions
-                - Information_campaigns
-                - Testing_policy
-                - Contact_tracing
-                - Stringency_index
+                - variables defined by @variables
         citation (str or None): citation or None (empty)
+        variables (list[str] or None): variables to parse or None (use default variables listed as follows)
+            - School_closing
+            - Workplace_closing
+            - Cancel_events
+            - Gatherings_restrictions
+            - Transport_closing
+            - Stay_home_restrictions
+            - Internal_movement_restrictions
+            - International_movement_restrictions
+            - Information_campaigns
+            - Testing_policy
+            - Contact_tracing
+            - Stringency_index
 
     Note:
         Either @filename (high priority) or @data must be specified.
 
     Note:
-        Policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
+        The default policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
         https://github.com/OxCGRT/covid-policy-tracker/
     """
     OXCGRT_VARS = [
@@ -54,17 +56,12 @@ class OxCGRTData(CleaningBase):
         "Contact_tracing",
         "Stringency_index"
     ]
-    # Columns of self._raw and self._clean_df
-    RAW_COLS = [CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, *OXCGRT_VARS]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
-    # Columns of self.subset()
-    SUBSET_COLS = [CleaningBase.DATE, *OXCGRT_VARS]
     # Indicators except for Stringency index
     OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
 
-    def __init__(self, filename=None, data=None, citation=None):
-        super().__init__(filename=filename, data=data, citation=citation)
+    def __init__(self, filename=None, data=None, citation=None, variables=None):
+        self._variables = variables or self.OXCGRT_VARS[:]
+        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
 
     def _cleaning(self):
         """
@@ -78,18 +75,8 @@ class OxCGRTData(CleaningBase):
                     - Date (pandas.Timestamp): Observation date
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
                     - Country (pandas.Category): country/region name
-                    - School_closing
-                    - Workplace_closing
-                    - Cancel_events
-                    - Gatherings_restrictions
-                    - Transport_closing
-                    - Stay_home_restrictions
-                    - Internal_movement_restrictions
-                    - International_movement_restrictions
-                    - Information_campaigns
-                    - Testing_policy
-                    - Contact_tracing
-                    - Stringency_index
+                    - Province (pandas.Category): province/prefecture/state name
+                    - variables defined by OxCGRTData(variables)
         """
         df = self._raw.copy()
         # Prepare data for Greenland
@@ -97,24 +84,25 @@ class OxCGRTData(CleaningBase):
         grl_df.loc[:, [self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
         df = pd.concat([df, grl_df], sort=True, ignore_index=True)
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self.CLEANED_COLS)
+        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm float type
-        for col in self.OXCGRT_VARS:
+        for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
         # Update data types to reduce memory
-        cat_cols = [self.ISO3, self.COUNTRY]
+        cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
         df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self.CLEANED_COLS]
+        return df.loc[:, self._raw_cols]
 
-    def subset(self, country, **kwargs):
+    def subset(self, country, province=None, **kwargs):
         """
         Create a subset for a country.
 
         Args:
             country (str): country name or ISO 3166-1 alpha-3, like JPN
-            kwargs: the other arguments will be ignored in the latest version.
+            province (str): province name
+            kwargs: the other arguments will be ignored at the latest version
 
         Raises:
             covsirphy.SubsetNotFoundError: no records were found
@@ -125,27 +113,17 @@ class OxCGRTData(CleaningBase):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): Observation date
-                    - School_closing
-                    - Workplace_closing
-                    - Cancel_events
-                    - Gatherings_restrictions
-                    - Transport_closing
-                    - Stay_home_restrictions
-                    - Internal_movement_restrictions
-                    - International_movement_restrictions
-                    - Information_campaigns
-                    - Testing_policy
-                    - Contact_tracing
-                    - Stringency_index
+                    - variables defined by OxCGRTData(variables)
         """
         country_arg = country
         country = self.ensure_country_name(country)
         try:
-            df = super().subset(country=country)
+            df = super().subset(country=country, province=province)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(country=country_arg, country_alias=country) from None
+            raise SubsetNotFoundError(
+                country=country_arg, country_alias=country, province=province) from None
         df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self.SUBSET_COLS]
+        return df.loc[:, self._subset_cols]
 
     def total(self):
         """
@@ -162,15 +140,15 @@ class OxCGRTData(CleaningBase):
             variable (str): variable name to show
             date (str or None): date of the records or None (the last value)
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
-
-        Raises:
-            NotImplementedError: @country was specified
         """
-        if country is not None:
-            raise NotImplementedError("@country cannot be specified, always None.")
         # Date
         date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
         country_str = country or "Global"
         title = f"{country_str}: {variable.lower().replace('_', ' ')} on {date_str}"
         # Global map
-        return self._colored_map_global(variable=variable, title=title, date=date, logscale=False, **kwargs)
+        if country is None:
+            return self._colored_map_global(
+                variable=variable, title=title, date=date, logscale=False, **kwargs)
+        # Country-specific map
+        return self._colored_map_country(
+            country=country, variable=variable, title=title, date=date, logscale=False, **kwargs)
