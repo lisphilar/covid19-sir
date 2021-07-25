@@ -28,12 +28,10 @@ class PCRData(CleaningBase):
         min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
         citation (str): citation
     """
-    # Columns of self._raw and self._clean_df
+    # Columns of self._raw, self._clean_df and self.cleaned()
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         CleaningBase.TESTS, CleaningBase.C]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
     # Columns of self.subset()
     SUBSET_COLS = [CleaningBase.DATE, CleaningBase.TESTS, CleaningBase.C]
     # Daily values
@@ -62,7 +60,7 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._cleaned_df.loc[:, self.CLEANED_COLS]
+        df = self._cleaned_df.loc[:, self.RAW_COLS]
         return df.drop(self.ISO3, axis=1)
 
     def _cleaning(self):
@@ -83,7 +81,7 @@ class PCRData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
         """
         df = self._raw.copy()
-        df = df.loc[:, self.CLEANED_COLS].reset_index(drop=True)
+        df = df.loc[:, self.RAW_COLS].reset_index(drop=True)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
@@ -162,8 +160,8 @@ class PCRData(CleaningBase):
         country = country_data.country
         new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
-        self._ensure_dataframe(new, name="the raw data", columns=self.CLEANED_COLS)
-        new = new.loc[:, self.CLEANED_COLS]
+        self._ensure_dataframe(new, name="the raw data", columns=self.RAW_COLS)
+        new = new.loc[:, self.RAW_COLS]
         # Remove the data in the country from the current datset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]

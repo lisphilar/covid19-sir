@@ -54,10 +54,8 @@ class OxCGRTData(CleaningBase):
         "Contact_tracing",
         "Stringency_index"
     ]
-    # Columns of self._raw and self._clean_df
+    # Columns of self._raw, self._clean_df and self.cleaned()
     RAW_COLS = [CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, *OXCGRT_VARS]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
     # Columns of self.subset()
     SUBSET_COLS = [CleaningBase.DATE, *OXCGRT_VARS]
     # Indicators except for Stringency index
@@ -97,7 +95,7 @@ class OxCGRTData(CleaningBase):
         grl_df.loc[:, [self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
         df = pd.concat([df, grl_df], sort=True, ignore_index=True)
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self.CLEANED_COLS)
+        self._ensure_dataframe(df, name="the raw data", columns=self.RAW_COLS)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm float type
@@ -106,7 +104,7 @@ class OxCGRTData(CleaningBase):
         # Update data types to reduce memory
         cat_cols = [self.ISO3, self.COUNTRY]
         df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self.CLEANED_COLS]
+        return df.loc[:, self.RAW_COLS]
 
     def subset(self, country, **kwargs):
         """

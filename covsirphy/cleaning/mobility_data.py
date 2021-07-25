@@ -44,11 +44,9 @@ class MobilityData(CleaningBase):
         "Mobility_residential",
         "Mobility_workplaces",
     ]
-    # Columns of self._raw and self._clean_df
+    # Columns of self._raw, self._clean_df and self.cleaned()
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE, *MOBILITY_VARS]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
     # Columns of self.subset()
     SUBSET_COLS = [CleaningBase.DATE, *MOBILITY_VARS]
 
@@ -77,7 +75,7 @@ class MobilityData(CleaningBase):
         """
         df = self._raw.copy()
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self.CLEANED_COLS)
+        self._ensure_dataframe(df, name="the raw data", columns=self.RAW_COLS)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm int type
@@ -86,7 +84,7 @@ class MobilityData(CleaningBase):
         # Update data types to reduce memory
         cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
         df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self.CLEANED_COLS]
+        return df.loc[:, self.RAW_COLS]
 
     def subset(self, country, province=None):
         """

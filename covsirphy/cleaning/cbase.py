@@ -41,10 +41,8 @@ class CleaningBase(Term):
         - If @filename is not None, geometry information will be saved in the directory which has the file.
         - The directory of geometry information could be changed with .directory property.
     """
-    # Columns of self._cleaned_df
+    # Columns of self._raw, self._clean_df and self.cleaned()
     RAW_COLS = []
-    # Columns of self.cleaned()
-    CLEANED_COLS = []
     # Columns of self.subset()
     SUBSET_COLS = []
 

@@ -45,12 +45,10 @@ class VaccineData(CleaningBase):
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
-    # Columns of self._raw and self._clean_df
+    # Columns of self._raw, self._clean_df and self.cleaned()
     RAW_COLS = [
         Term.DATE, Term.COUNTRY, Term.ISO3, Term.PROVINCE, Term.PRODUCT,
         Term.VAC, Term.V_ONCE, Term.V_FULL]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
     # Columns of self.subset()
     SUBSET_COLS = [Term.DATE, Term.VAC, Term.V_ONCE, Term.V_FULL]
 
