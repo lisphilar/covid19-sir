@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-mu-fu1
+                2.21.0-nu
               </div>
             
           
@@ -1011,7 +1011,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.DataHandler.EXTRA_DICT">
-<span class="sig-name descname"><span class="pre">EXTRA_DICT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'CountryData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.country_data.CountryData'&gt;,</span> <span class="pre">'OxCGRTData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.oxcgrt.OxCGRTData'&gt;,</span> <span class="pre">'PCRData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.pcr_data.PCRData'&gt;,</span> <span class="pre">'VaccineData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.vaccine_data.VaccineData'&gt;}</span></em><a class="headerlink" href="#covsirphy.DataHandler.EXTRA_DICT" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">EXTRA_DICT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'CountryData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.country_data.CountryData'&gt;,</span> <span class="pre">'MobilityData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.mobility_data.MobilityData'&gt;,</span> <span class="pre">'OxCGRTData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.oxcgrt.OxCGRTData'&gt;,</span> <span class="pre">'PCRData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.pcr_data.PCRData'&gt;,</span> <span class="pre">'VaccineData':</span> <span class="pre">&lt;class</span> <span class="pre">'covsirphy.cleaning.vaccine_data.VaccineData'&gt;}</span></em><a class="headerlink" href="#covsirphy.DataHandler.EXTRA_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -1391,6 +1391,7 @@ All results will be returned with a dataframe.</p>
 <li><p><strong>basename_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – basename of downloaded CSV files,
 “covid19dh”: COVID-19 Data Hub (default: covid19dh.csv),
 “owid”: Our World In Data (default: ourworldindata.csv),
+“google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
 “wbdata”: World Bank Open Data (default: wbdata_population_pyramid.csv),
 “japan”: COVID-19 Dataset in Japan (default: covid_japan.csv).</p></li>
 <li><p><strong>verbose</strong> (<em>int</em>) – level of verbosity when downloading</p></li>
@@ -1444,6 +1445,7 @@ for the keyword arguments of pandas.DataFrame.assign().</p>
 <li><p>covsirphy.OXCGRTData</p></li>
 <li><p>covsirphy.PCRData</p></li>
 <li><p>covsirphy.VaccineData</p></li>
+<li><p>covsirphy.MobilityData</p></li>
 </ul>
 </dd>
 </dl>
@@ -1552,6 +1554,20 @@ for the keyword arguments of pandas.DataFrame.assign().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.DataLoader.mobility">
+<span class="sig-name descname"><span class="pre">mobility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.mobility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.mobility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset regarding mobility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dataset regarding mobilities</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.MobilityData" title="covsirphy.MobilityData">covsirphy.MobilityData</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1735,15 +1751,13 @@ for the keyword arguments of pandas.DataFrame.update().</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataLoader.vaccine">
 <span class="sig-name descname"><span class="pre">vaccine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.vaccine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.vaccine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the dataset regarding vaccination.
-<a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">https://github.com/owid/covid-19-data/tree/master/public/data</a>
-<a class="reference external" href="https://ourworldindata.org/coronavirus">https://ourworldindata.org/coronavirus</a></p>
+<dd><p>Load the dataset regarding vaccination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kwargs</strong> – all keyword arguments will be ignored</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dataset regarding vaccines</p>
+<dd class="field-even"><p>dataset regarding vaccinations</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#covsirphy.VaccineData" title="covsirphy.VaccineData">covsirphy.VaccineData</a></p>
@@ -3466,6 +3480,132 @@ When &#64;country is a country name, province level data in the selected country
 <dd class="field-odd"><p>int or None</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.MobilityData">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MobilityData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MobilityData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<p>Data cleaning of mobility dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>ISO3: ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
+<li><p>Mobility_parks: % to baseline in visits (parks etc.)</p></li>
+<li><p>Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)</p></li>
+<li><p>Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)</p></li>
+<li><p>Mobility_residential: % to baseline in visits (places of residence)</p></li>
+<li><p>Mobility_workplaces: % to baseline in visits (places of work)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Categories of places are listed in covid-19-open-data.
+<a class="reference external" href="https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-mobility.md">https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-mobility.md</a></p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.CLEANED_COLS">
+<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.MobilityData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.MOBILITY_VARS">
+<span class="sig-name descname"><span class="pre">MOBILITY_VARS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.MobilityData.MOBILITY_VARS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.RAW_COLS">
+<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.MobilityData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.SUBSET_COLS">
+<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.MobilityData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.map">
+<span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Mobility_grocery_and_pharmacy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData.map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MobilityData.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create global colored map to show the values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None (global map)</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name to show</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – date of the records or None (the last value)</p></li>
+<li><p><strong>kwargs</strong> – arguments of ColoredMap() and ColoredMap.plot()</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64;country is None, country level data will be shown on global map.
+When &#64;country is a country name, province level data will be shown on country map.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.subset">
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MobilityData.subset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a subset for a country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>covsirphy.SubsetNotFoundError</strong></a> – no records were found</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pandas.Timestamp): Observation date</p></li>
+<li><p>Mobility_grocery_and_pharmacy (int): % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
+<li><p>Mobility_parks (int): % to baseline in visits (parks etc.)</p></li>
+<li><p>Mobility_transit_stations (int): % to baseline in visits (public transport hubs etc.)</p></li>
+<li><p>Mobility_retail_and_recreation (int): % to baseline in visits (restaurant, museums etc.)</p></li>
+<li><p>Mobility_residential (int): % to baseline in visits (places of residence)</p></li>
+<li><p>Mobility_workplaces (int): % to baseline in visits (places of work)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.MobilityData.total">
+<span class="sig-name descname"><span class="pre">total</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData.total"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MobilityData.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is not defined for MobilityData class.</p>
 </dd></dl>
 
 </dd></dl>
@@ -10283,6 +10423,7 @@ Index</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.jhu_complement">covsirphy.cleaning.jhu_complement module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.jhu_data">covsirphy.cleaning.jhu_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.linelist">covsirphy.cleaning.linelist module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.mobility_data">covsirphy.cleaning.mobility_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.oxcgrt">covsirphy.cleaning.oxcgrt module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.pcr_data">covsirphy.cleaning.pcr_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.population">covsirphy.cleaning.population module</a></li>
@@ -10297,6 +10438,7 @@ Index</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_base">covsirphy.loading.db_base module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_covid19dh">covsirphy.loading.db_covid19dh module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_cs_japan">covsirphy.loading.db_cs_japan module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_google">covsirphy.loading.db_google module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.loading.html#module-covsirphy.loading.db_owid">covsirphy.loading.db_owid module</a></li>
 </ul>
 </li>

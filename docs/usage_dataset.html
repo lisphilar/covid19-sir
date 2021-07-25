@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                2.21.0-mu-fu1
+                2.21.0-nu
               </div>
             
           
@@ -136,6 +136,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#Note-for-variables">Note for variables</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">Subset for area</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Visualize-the-number-of-vaccinations">Visualize the number of vaccinations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Mobility">Mobility</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Note for variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Subset for area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Visualize-mobility-data">Visualize mobility data</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#Population-pyramid">Population pyramid</a></li>
@@ -500,6 +506,7 @@ div.rendered_html tbody tr:hover {
 <li><p><code class="docutils literal notranslate"><span class="pre">OxCGRTData</span></code>: indicators of government responses (OxCGRT)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PCRData</span></code>: the number of tests</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">VaccineData</span></code>: the number of vaccinations, people vaccinated</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MobilityData</span></code>: percentage to baseline in visits (will be usable from 2.22.0)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PyramidData</span></code>: population pyramid</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">JapanData</span></code>: Japan-specific dataset</p></li>
 </ol>
@@ -530,7 +537,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.21.0-mu-fu1&#39;
+&#39;2.21.0-nu&#39;
 </pre></div></div>
 </div>
 <p>Data cleaning classes will be produced with methods of <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class. Please specify the directory to save CSV files when creating <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance. The default value of <code class="docutils literal notranslate"><span class="pre">directory</span></code> is “input” and we will set “../input” here.</p>
@@ -573,6 +580,7 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
         Please set verbose=2 to see the detailed citation list.
 Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -612,6 +620,7 @@ covsirphy.cleaning.jhu_data.JHUData
 Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
 (Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
 <p>Detailed citation list is saved in <code class="docutils literal notranslate"><span class="pre">DataLoader.covid19dh_citation</span></code> property. This is not a property of <code class="docutils literal notranslate"><span class="pre">JHUData</span></code>. Because many links are included, the will not be shown in this tutorial.</p>
@@ -671,19 +680,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>454925</th>
-      <td>2021-07-19</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>85732.0</td>
-      <td>NaN</td>
-      <td>2697.0</td>
-      <td>55714.0</td>
-      <td>14439018.0</td>
-    </tr>
-    <tr>
-      <th>454926</th>
+      <th>762019</th>
       <td>2021-07-20</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -695,7 +692,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018.0</td>
     </tr>
     <tr>
-      <th>454927</th>
+      <th>762020</th>
       <td>2021-07-21</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -707,7 +704,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018.0</td>
     </tr>
     <tr>
-      <th>454928</th>
+      <th>762021</th>
       <td>2021-07-22</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -719,7 +716,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018.0</td>
     </tr>
     <tr>
-      <th>454929</th>
+      <th>762022</th>
       <td>2021-07-23</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -728,6 +725,18 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>NaN</td>
       <td>2961.0</td>
       <td>62986.0</td>
+      <td>14439018.0</td>
+    </tr>
+    <tr>
+      <th>762023</th>
+      <td>2021-07-24</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>97277.0</td>
+      <td>NaN</td>
+      <td>3050.0</td>
+      <td>64628.0</td>
       <td>14439018.0</td>
     </tr>
   </tbody>
@@ -778,17 +787,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>454906</th>
-      <td>2021-07-19</td>
-      <td>China</td>
-      <td>-</td>
-      <td>104355</td>
-      <td>709</td>
-      <td>4848</td>
-      <td>98798</td>
-    </tr>
-    <tr>
-      <th>454907</th>
+      <th>762000</th>
       <td>2021-07-20</td>
       <td>China</td>
       <td>-</td>
@@ -798,7 +797,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>98798</td>
     </tr>
     <tr>
-      <th>454908</th>
+      <th>762001</th>
       <td>2021-07-21</td>
       <td>China</td>
       <td>-</td>
@@ -808,7 +807,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>98877</td>
     </tr>
     <tr>
-      <th>454909</th>
+      <th>762002</th>
       <td>2021-07-22</td>
       <td>China</td>
       <td>-</td>
@@ -818,7 +817,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>98900</td>
     </tr>
     <tr>
-      <th>454910</th>
+      <th>762003</th>
       <td>2021-07-23</td>
       <td>China</td>
       <td>-</td>
@@ -826,6 +825,16 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>740</td>
       <td>4848</td>
       <td>98903</td>
+    </tr>
+    <tr>
+      <th>762004</th>
+      <td>2021-07-24</td>
+      <td>China</td>
+      <td>-</td>
+      <td>104562</td>
+      <td>769</td>
+      <td>4848</td>
+      <td>98945</td>
     </tr>
   </tbody>
 </table>
@@ -848,19 +857,19 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 454911 entries, 0 to 454910
+RangeIndex: 762005 entries, 0 to 762004
 Data columns (total 7 columns):
  #   Column     Non-Null Count   Dtype
 ---  ------     --------------   -----
- 0   Date       454911 non-null  datetime64[ns]
- 1   Country    454911 non-null  category
- 2   Province   454911 non-null  category
- 3   Confirmed  454911 non-null  int64
- 4   Infected   454911 non-null  int64
- 5   Fatal      454911 non-null  int64
- 6   Recovered  454911 non-null  int64
+ 0   Date       762005 non-null  datetime64[ns]
+ 1   Country    762005 non-null  category
+ 2   Province   762005 non-null  category
+ 3   Confirmed  762005 non-null  int64
+ 4   Infected   762005 non-null  int64
+ 5   Fatal      762005 non-null  int64
+ 6   Recovered  762005 non-null  int64
 dtypes: category(2), datetime64[ns](1), int64(4)
-memory usage: 19.1 MB
+memory usage: 32.0 MB
 </pre></div></div>
 </div>
 <p>Note that date is <code class="docutils literal notranslate"><span class="pre">pandas.datetime64</span></code>, area names are <code class="docutils literal notranslate"><span class="pre">pandas.Category</span></code> and the number of cases is <code class="docutils literal notranslate"><span class="pre">numpy.int64</span></code>.</p>
@@ -925,52 +934,52 @@ memory usage: 19.1 MB
     <tr>
       <th>2020-01-02</th>
       <td>1</td>
-      <td>-5656</td>
-      <td>5656</td>
+      <td>-5665</td>
+      <td>5665</td>
       <td>1</td>
-      <td>5656.000000</td>
+      <td>5665.000000</td>
       <td>1.000000</td>
-      <td>0.999823</td>
+      <td>0.999824</td>
     </tr>
     <tr>
       <th>2020-01-22</th>
       <td>556</td>
-      <td>-5148</td>
-      <td>5673</td>
+      <td>-5157</td>
+      <td>5682</td>
       <td>31</td>
-      <td>10.203237</td>
+      <td>10.219424</td>
       <td>0.055755</td>
-      <td>0.994565</td>
+      <td>0.994574</td>
     </tr>
     <tr>
       <th>2020-01-23</th>
       <td>657</td>
-      <td>-5052</td>
-      <td>5674</td>
+      <td>-5061</td>
+      <td>5683</td>
       <td>35</td>
-      <td>8.636225</td>
+      <td>8.649924</td>
       <td>0.053272</td>
-      <td>0.993869</td>
+      <td>0.993879</td>
     </tr>
     <tr>
       <th>2020-01-24</th>
       <td>943</td>
-      <td>-4781</td>
-      <td>5682</td>
+      <td>-4790</td>
+      <td>5691</td>
       <td>42</td>
-      <td>6.025451</td>
+      <td>6.034995</td>
       <td>0.044539</td>
-      <td>0.992662</td>
+      <td>0.992674</td>
     </tr>
     <tr>
       <th>2020-01-25</th>
       <td>1438</td>
-      <td>-227680</td>
-      <td>10277</td>
-      <td>218841</td>
-      <td>7.146732</td>
-      <td>152.184284</td>
-      <td>0.044855</td>
+      <td>-227856</td>
+      <td>10291</td>
+      <td>219003</td>
+      <td>7.156467</td>
+      <td>152.296940</td>
+      <td>0.044881</td>
     </tr>
   </tbody>
 </table>
@@ -1019,54 +1028,54 @@ memory usage: 19.1 MB
   </thead>
   <tbody>
     <tr>
-      <th>2021-07-20</th>
-      <td>191386024</td>
-      <td>55079496</td>
-      <td>4119680</td>
-      <td>132186848</td>
-      <td>0.021526</td>
-      <td>0.690682</td>
-      <td>0.030224</td>
-    </tr>
-    <tr>
       <th>2021-07-21</th>
-      <td>191939966</td>
-      <td>55318986</td>
-      <td>4128314</td>
-      <td>132492666</td>
-      <td>0.021508</td>
-      <td>0.690282</td>
-      <td>0.030217</td>
+      <td>191939993</td>
+      <td>55318217</td>
+      <td>4128437</td>
+      <td>132493339</td>
+      <td>0.021509</td>
+      <td>0.690285</td>
+      <td>0.030218</td>
     </tr>
     <tr>
       <th>2021-07-22</th>
-      <td>192495066</td>
-      <td>55517228</td>
-      <td>4136978</td>
-      <td>132840860</td>
-      <td>0.021491</td>
-      <td>0.690100</td>
-      <td>0.030202</td>
+      <td>192495154</td>
+      <td>55516436</td>
+      <td>4137148</td>
+      <td>132841570</td>
+      <td>0.021492</td>
+      <td>0.690103</td>
+      <td>0.030203</td>
     </tr>
     <tr>
       <th>2021-07-23</th>
-      <td>193109644</td>
-      <td>55877800</td>
-      <td>4144363</td>
-      <td>133087481</td>
-      <td>0.021461</td>
-      <td>0.689181</td>
-      <td>0.030200</td>
+      <td>193115554</td>
+      <td>55880705</td>
+      <td>4144914</td>
+      <td>133089935</td>
+      <td>0.021463</td>
+      <td>0.689173</td>
+      <td>0.030203</td>
     </tr>
     <tr>
       <th>2021-07-24</th>
-      <td>8304375</td>
-      <td>2243393</td>
-      <td>184864</td>
-      <td>5876118</td>
-      <td>0.022261</td>
-      <td>0.707593</td>
-      <td>0.030501</td>
+      <td>193623009</td>
+      <td>55881373</td>
+      <td>4153288</td>
+      <td>133588348</td>
+      <td>0.021450</td>
+      <td>0.689940</td>
+      <td>0.030153</td>
+    </tr>
+    <tr>
+      <th>2021-07-25</th>
+      <td>1173107</td>
+      <td>302240</td>
+      <td>20936</td>
+      <td>849931</td>
+      <td>0.017847</td>
+      <td>0.724513</td>
+      <td>0.024040</td>
     </tr>
   </tbody>
 </table>
@@ -1136,36 +1145,36 @@ memory usage: 19.1 MB
   <tbody>
     <tr>
       <th>Fatal per Confirmed</th>
-      <td>551.0</td>
-      <td>10.393218</td>
-      <td>240.949380</td>
-      <td>0.020758</td>
-      <td>0.021845</td>
-      <td>0.027258</td>
-      <td>0.049391</td>
-      <td>5656.000000</td>
+      <td>552.0</td>
+      <td>10.390864</td>
+      <td>241.114100</td>
+      <td>0.017847</td>
+      <td>0.021841</td>
+      <td>0.027181</td>
+      <td>0.049371</td>
+      <td>5665.000000</td>
     </tr>
     <tr>
       <th>Recovered per Confirmed</th>
-      <td>551.0</td>
-      <td>1.704334</td>
-      <td>8.875179</td>
+      <td>552.0</td>
+      <td>1.703379</td>
+      <td>8.873833</td>
       <td>0.044539</td>
-      <td>0.591927</td>
-      <td>0.633749</td>
-      <td>0.680776</td>
-      <td>152.184284</td>
+      <td>0.592528</td>
+      <td>0.634333</td>
+      <td>0.681069</td>
+      <td>152.296940</td>
     </tr>
     <tr>
       <th>Fatal per (Fatal or Recovered)</th>
-      <td>551.0</td>
-      <td>0.066714</td>
-      <td>0.092967</td>
-      <td>0.011292</td>
-      <td>0.033255</td>
-      <td>0.036362</td>
-      <td>0.061503</td>
-      <td>0.999823</td>
+      <td>552.0</td>
+      <td>0.066637</td>
+      <td>0.092901</td>
+      <td>0.011285</td>
+      <td>0.033252</td>
+      <td>0.036323</td>
+      <td>0.061367</td>
+      <td>0.999824</td>
     </tr>
   </tbody>
 </table>
@@ -1227,15 +1236,6 @@ memory usage: 19.1 MB
   </thead>
   <tbody>
     <tr>
-      <th>530</th>
-      <td>2021-07-20</td>
-      <td>844014</td>
-      <td>27617</td>
-      <td>15060</td>
-      <td>801337</td>
-      <td>125685086</td>
-    </tr>
-    <tr>
       <th>531</th>
       <td>2021-07-21</td>
       <td>847614</td>
@@ -1270,6 +1270,15 @@ memory usage: 19.1 MB
       <td>15116</td>
       <td>810884</td>
       <td>125666952</td>
+    </tr>
+    <tr>
+      <th>535</th>
+      <td>2021-07-25</td>
+      <td>865666</td>
+      <td>36518</td>
+      <td>15124</td>
+      <td>814024</td>
+      <td>125663434</td>
     </tr>
   </tbody>
 </table>
@@ -1332,15 +1341,6 @@ partially complemented recovered data
   </thead>
   <tbody>
     <tr>
-      <th>530</th>
-      <td>2021-07-20</td>
-      <td>844014</td>
-      <td>27617</td>
-      <td>15060</td>
-      <td>801337</td>
-      <td>125685086</td>
-    </tr>
-    <tr>
       <th>531</th>
       <td>2021-07-21</td>
       <td>847614</td>
@@ -1375,6 +1375,15 @@ partially complemented recovered data
       <td>15116</td>
       <td>810884</td>
       <td>125666952</td>
+    </tr>
+    <tr>
+      <th>535</th>
+      <td>2021-07-25</td>
+      <td>865666</td>
+      <td>36518</td>
+      <td>15124</td>
+      <td>814024</td>
+      <td>125663434</td>
     </tr>
   </tbody>
 </table>
@@ -1432,39 +1441,30 @@ False
   </thead>
   <tbody>
     <tr>
-      <th>521</th>
-      <td>2021-07-20</td>
-      <td>191230</td>
-      <td>9485</td>
-      <td>2272</td>
-      <td>179473</td>
-      <td>13751626</td>
-    </tr>
-    <tr>
       <th>522</th>
       <td>2021-07-21</td>
       <td>193062</td>
-      <td>10396</td>
+      <td>11580</td>
       <td>2276</td>
-      <td>180390</td>
+      <td>179206</td>
       <td>13749794</td>
     </tr>
     <tr>
       <th>523</th>
       <td>2021-07-22</td>
       <td>195041</td>
-      <td>11637</td>
+      <td>12826</td>
       <td>2276</td>
-      <td>181128</td>
+      <td>179939</td>
       <td>13747815</td>
     </tr>
     <tr>
       <th>524</th>
       <td>2021-07-23</td>
       <td>196400</td>
-      <td>11957</td>
+      <td>13153</td>
       <td>2277</td>
-      <td>182166</td>
+      <td>180970</td>
       <td>13746456</td>
     </tr>
     <tr>
@@ -1475,6 +1475,15 @@ False
       <td>2277</td>
       <td>182166</td>
       <td>13745328</td>
+    </tr>
+    <tr>
+      <th>526</th>
+      <td>2021-07-25</td>
+      <td>199291</td>
+      <td>14848</td>
+      <td>2277</td>
+      <td>182166</td>
+      <td>13743565</td>
     </tr>
   </tbody>
 </table>
@@ -1774,18 +1783,7 @@ the records. We have to assume temporarily invariable compartments for this anal
   </thead>
   <tbody>
     <tr>
-      <th>112970</th>
-      <td>2021-07-19</td>
-      <td>CHN</td>
-      <td>China</td>
-      <td>104355</td>
-      <td>709</td>
-      <td>4848</td>
-      <td>98798</td>
-      <td>1361142636</td>
-    </tr>
-    <tr>
-      <th>112971</th>
+      <th>114655</th>
       <td>2021-07-20</td>
       <td>CHN</td>
       <td>China</td>
@@ -1796,7 +1794,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>1361142636</td>
     </tr>
     <tr>
-      <th>112972</th>
+      <th>114656</th>
       <td>2021-07-21</td>
       <td>CHN</td>
       <td>China</td>
@@ -1807,7 +1805,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>1361142636</td>
     </tr>
     <tr>
-      <th>112973</th>
+      <th>114657</th>
       <td>2021-07-22</td>
       <td>CHN</td>
       <td>China</td>
@@ -1818,7 +1816,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>1361142636</td>
     </tr>
     <tr>
-      <th>112974</th>
+      <th>114658</th>
       <td>2021-07-23</td>
       <td>CHN</td>
       <td>China</td>
@@ -1826,6 +1824,17 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>740</td>
       <td>4848</td>
       <td>98903</td>
+      <td>1361142636</td>
+    </tr>
+    <tr>
+      <th>114659</th>
+      <td>2021-07-24</td>
+      <td>CHN</td>
+      <td>China</td>
+      <td>104562</td>
+      <td>769</td>
+      <td>4848</td>
+      <td>98945</td>
       <td>1361142636</td>
     </tr>
   </tbody>
@@ -1901,64 +1910,64 @@ the records. We have to assume temporarily invariable compartments for this anal
   </thead>
   <tbody>
     <tr>
-      <th>26704</th>
+      <th>28321</th>
+      <td>2021-07-17</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28322</th>
+      <td>2021-07-18</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28323</th>
+      <td>2021-07-19</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28324</th>
       <td>2021-07-20</td>
       <td>JPN</td>
       <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>2190</td>
-      <td>38</td>
-      <td>21</td>
-      <td>2131</td>
-      <td>812056</td>
+      <td>Ōita</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>26705</th>
+      <th>28325</th>
       <td>2021-07-21</td>
       <td>JPN</td>
       <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>2197</td>
-      <td>37</td>
-      <td>21</td>
-      <td>2139</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26706</th>
-      <td>2021-07-22</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>2197</td>
-      <td>37</td>
-      <td>21</td>
-      <td>2139</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26707</th>
-      <td>2021-07-23</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>2218</td>
-      <td>47</td>
-      <td>21</td>
-      <td>2150</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26708</th>
-      <td>2021-07-24</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>2237</td>
-      <td>66</td>
-      <td>21</td>
-      <td>2150</td>
-      <td>812056</td>
+      <td>Ōita</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -2021,6 +2030,7 @@ covsirphy.cleaning.population.PopulationData
 Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
 (Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
 <p>The cleaned dataset is here.</p>
@@ -2065,15 +2075,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>454925</th>
-      <td>2021-07-19</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>454926</th>
+      <th>762019</th>
       <td>2021-07-20</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -2081,7 +2083,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018</td>
     </tr>
     <tr>
-      <th>454927</th>
+      <th>762020</th>
       <td>2021-07-21</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -2089,7 +2091,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018</td>
     </tr>
     <tr>
-      <th>454928</th>
+      <th>762021</th>
       <td>2021-07-22</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -2097,8 +2099,16 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>14439018</td>
     </tr>
     <tr>
-      <th>454929</th>
+      <th>762022</th>
       <td>2021-07-23</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>762023</th>
+      <td>2021-07-24</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -2225,36 +2235,36 @@ Before: 13942856
   </thead>
   <tbody>
     <tr>
-      <th>112989</th>
-      <td>2021-07-19</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>112990</th>
+      <th>114674</th>
       <td>2021-07-20</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>112991</th>
+      <th>114675</th>
       <td>2021-07-21</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>112992</th>
+      <th>114676</th>
       <td>2021-07-22</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>112993</th>
+      <th>114677</th>
       <td>2021-07-23</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>114678</th>
+      <td>2021-07-24</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>14439018</td>
@@ -2322,44 +2332,44 @@ Before: 13942856
   </thead>
   <tbody>
     <tr>
-      <th>26704</th>
+      <th>28321</th>
+      <td>2021-07-17</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28322</th>
+      <td>2021-07-18</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28323</th>
+      <td>2021-07-19</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Ōita</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28324</th>
       <td>2021-07-20</td>
       <td>JPN</td>
       <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>812056</td>
+      <td>Ōita</td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>26705</th>
+      <th>28325</th>
       <td>2021-07-21</td>
       <td>JPN</td>
       <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26706</th>
-      <td>2021-07-22</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26707</th>
-      <td>2021-07-23</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>26708</th>
-      <td>2021-07-24</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>812056</td>
+      <td>Ōita</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -2418,6 +2428,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
 (Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
 <p>The cleaned dataset is here.</p>
@@ -2472,25 +2483,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>456572</th>
-      <td>2021-07-19</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>1.0</td>
-      <td>47.22</td>
-    </tr>
-    <tr>
-      <th>456573</th>
+      <th>763669</th>
       <td>2021-07-20</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2508,7 +2501,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456574</th>
+      <th>763670</th>
       <td>2021-07-21</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2526,7 +2519,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456575</th>
+      <th>763671</th>
       <td>2021-07-22</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2544,8 +2537,26 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456576</th>
+      <th>763672</th>
       <td>2021-07-23</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>47.22</td>
+    </tr>
+    <tr>
+      <th>763673</th>
+      <td>2021-07-24</td>
       <td>GRL</td>
       <td>Greenland</td>
       <td>1.0</td>
@@ -2623,22 +2634,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>552</th>
-      <td>2021-07-20</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>50.46</td>
-    </tr>
-    <tr>
       <th>553</th>
       <td>2021-07-21</td>
       <td>1.0</td>
@@ -2689,6 +2684,22 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
     <tr>
       <th>556</th>
       <td>2021-07-24</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>50.46</td>
+    </tr>
+    <tr>
+      <th>557</th>
+      <td>2021-07-25</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -2778,25 +2789,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>456572</th>
-      <td>2021-07-19</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>1.0</td>
-      <td>47.22</td>
-    </tr>
-    <tr>
-      <th>456573</th>
+      <th>763669</th>
       <td>2021-07-20</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2814,7 +2807,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456574</th>
+      <th>763670</th>
       <td>2021-07-21</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2832,7 +2825,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456575</th>
+      <th>763671</th>
       <td>2021-07-22</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2850,8 +2843,26 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>47.22</td>
     </tr>
     <tr>
-      <th>456576</th>
+      <th>763672</th>
       <td>2021-07-23</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>47.22</td>
+    </tr>
+    <tr>
+      <th>763673</th>
+      <td>2021-07-24</td>
       <td>GRL</td>
       <td>Greenland</td>
       <td>1.0</td>
@@ -2924,6 +2935,7 @@ covsirphy.cleaning.pcr_data.PCRData
 Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
 (Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
 <p>The cleaned dataset is here.</p>
@@ -2968,15 +2980,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>454925</th>
-      <td>2021-07-19</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>833371</td>
-      <td>85732</td>
-    </tr>
-    <tr>
-      <th>454926</th>
+      <th>762019</th>
       <td>2021-07-20</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -2984,7 +2988,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>88415</td>
     </tr>
     <tr>
-      <th>454927</th>
+      <th>762020</th>
       <td>2021-07-21</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -2992,7 +2996,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>91120</td>
     </tr>
     <tr>
-      <th>454928</th>
+      <th>762021</th>
       <td>2021-07-22</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -3000,12 +3004,20 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>93421</td>
     </tr>
     <tr>
-      <th>454929</th>
+      <th>762022</th>
       <td>2021-07-23</td>
       <td>Zimbabwe</td>
       <td>-</td>
       <td>872248</td>
       <td>95686</td>
+    </tr>
+    <tr>
+      <th>762023</th>
+      <td>2021-07-24</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>872248</td>
+      <td>97277</td>
     </tr>
   </tbody>
 </table>
@@ -3026,7 +3038,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 <span class="c1"># Or, with ISO3 code</span>
 <span class="c1"># pcr_data.subset(&quot;JPN&quot;).tail()</span>
-<span class="c1"># Note: from version 2.17.0-alpha (next stable 2.18.0), &quot;Tests_diff&quot; is included</span>
 </pre></div>
 </div>
 </div>
@@ -3061,13 +3072,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>530</th>
-      <td>2021-07-20</td>
-      <td>17614879</td>
-      <td>76319</td>
-      <td>844014</td>
-    </tr>
-    <tr>
       <th>531</th>
       <td>2021-07-21</td>
       <td>17685925</td>
@@ -3094,6 +3098,13 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>17857644</td>
       <td>54353</td>
       <td>862148</td>
+    </tr>
+    <tr>
+      <th>535</th>
+      <td>2021-07-25</td>
+      <td>17893458</td>
+      <td>35814</td>
+      <td>865666</td>
     </tr>
   </tbody>
 </table>
@@ -3155,18 +3166,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>529</th>
-      <td>2021-07-20</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>-</td>
-      <td>17614879</td>
-      <td>844014</td>
-      <td>69119.571429</td>
-      <td>3104.857143</td>
-      <td>4.492009</td>
-    </tr>
-    <tr>
       <th>530</th>
       <td>2021-07-21</td>
       <td>JPN</td>
@@ -3213,6 +3212,18 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>57058.285714</td>
       <td>3932.857143</td>
       <td>6.892701</td>
+    </tr>
+    <tr>
+      <th>534</th>
+      <td>2021-07-25</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>17893458</td>
+      <td>865666</td>
+      <td>55231.857143</td>
+      <td>3890.571429</td>
+      <td>7.044071</td>
     </tr>
   </tbody>
 </table>
@@ -3281,15 +3292,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>57298</th>
-      <td>2021-07-19</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>833371</td>
-      <td>85732</td>
-    </tr>
-    <tr>
-      <th>57299</th>
+      <th>57419</th>
       <td>2021-07-20</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3297,7 +3300,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>88415</td>
     </tr>
     <tr>
-      <th>57300</th>
+      <th>57420</th>
       <td>2021-07-21</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3305,7 +3308,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>91120</td>
     </tr>
     <tr>
-      <th>57301</th>
+      <th>57421</th>
       <td>2021-07-22</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3313,12 +3316,20 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>93421</td>
     </tr>
     <tr>
-      <th>57302</th>
+      <th>57422</th>
       <td>2021-07-23</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>872248</td>
       <td>95686</td>
+    </tr>
+    <tr>
+      <th>57423</th>
+      <td>2021-07-24</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>872248</td>
+      <td>97277</td>
     </tr>
   </tbody>
 </table>
@@ -3384,16 +3395,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>23723</th>
-      <td>2021-07-20</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>65656</td>
-      <td>2190</td>
-    </tr>
-    <tr>
-      <th>23724</th>
+      <th>23771</th>
       <td>2021-07-21</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -3402,7 +3404,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>2197</td>
     </tr>
     <tr>
-      <th>23725</th>
+      <th>23772</th>
       <td>2021-07-22</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -3411,7 +3413,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>2197</td>
     </tr>
     <tr>
-      <th>23726</th>
+      <th>23773</th>
       <td>2021-07-23</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -3420,13 +3422,22 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>2218</td>
     </tr>
     <tr>
-      <th>23727</th>
+      <th>23774</th>
       <td>2021-07-24</td>
       <td>JPN</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>65656</td>
-      <td>2237</td>
+      <td>2218</td>
+    </tr>
+    <tr>
+      <th>23775</th>
+      <td>2021-07-25</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Yamanashi</td>
+      <td>65656</td>
+      <td>2261</td>
     </tr>
   </tbody>
 </table>
@@ -3482,6 +3493,7 @@ covsirphy.cleaning.vaccine_data.VaccineData
 Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
 (Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
 <p>Raw data is here.</p>
@@ -3529,7 +3541,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>454924</th>
+      <th>762017</th>
       <td>2021-07-18</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3540,7 +3552,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>641154.0</td>
     </tr>
     <tr>
-      <th>454925</th>
+      <th>762018</th>
       <td>2021-07-19</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3551,7 +3563,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>643203.0</td>
     </tr>
     <tr>
-      <th>454926</th>
+      <th>762019</th>
       <td>2021-07-20</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3562,7 +3574,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>649843.0</td>
     </tr>
     <tr>
-      <th>454927</th>
+      <th>762020</th>
       <td>2021-07-21</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3573,7 +3585,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>656830.0</td>
     </tr>
     <tr>
-      <th>454928</th>
+      <th>762021</th>
       <td>2021-07-22</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3632,18 +3644,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>42835</th>
-      <td>2021-07-20</td>
-      <td>Zimbabwe</td>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>Sinopharm/Beijing</td>
-      <td>1897337</td>
-      <td>1247494</td>
-      <td>649843</td>
-    </tr>
-    <tr>
-      <th>42836</th>
+      <th>43039</th>
       <td>2021-07-21</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3654,7 +3655,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>656830</td>
     </tr>
     <tr>
-      <th>42837</th>
+      <th>43040</th>
       <td>2021-07-22</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3665,7 +3666,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>664587</td>
     </tr>
     <tr>
-      <th>42838</th>
+      <th>43041</th>
       <td>2021-07-23</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3676,8 +3677,19 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>664587</td>
     </tr>
     <tr>
-      <th>42839</th>
+      <th>43042</th>
       <td>2021-07-24</td>
+      <td>Zimbabwe</td>
+      <td>ZWE</td>
+      <td>-</td>
+      <td>Sinopharm/Beijing</td>
+      <td>2017101</td>
+      <td>1352514</td>
+      <td>664587</td>
+    </tr>
+    <tr>
+      <th>43043</th>
+      <td>2021-07-25</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>-</td>
@@ -3802,13 +3814,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>205</th>
-      <td>2021-07-20</td>
-      <td>73970888</td>
-      <td>44586506</td>
-      <td>29384382</td>
-    </tr>
-    <tr>
       <th>206</th>
       <td>2021-07-21</td>
       <td>73970888</td>
@@ -3832,6 +3837,13 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
     <tr>
       <th>209</th>
       <td>2021-07-24</td>
+      <td>73970888</td>
+      <td>44586506</td>
+      <td>29384382</td>
+    </tr>
+    <tr>
+      <th>210</th>
+      <td>2021-07-25</td>
       <td>73970888</td>
       <td>44586506</td>
       <td>29384382</td>
@@ -3904,17 +3916,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>42835</th>
-      <td>2021-07-20</td>
-      <td>Zimbabwe</td>
-      <td>ZWE</td>
-      <td>Sinopharm/Beijing</td>
-      <td>1897337</td>
-      <td>1247494</td>
-      <td>649843</td>
-    </tr>
-    <tr>
-      <th>42836</th>
+      <th>43039</th>
       <td>2021-07-21</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3924,7 +3926,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>656830</td>
     </tr>
     <tr>
-      <th>42837</th>
+      <th>43040</th>
       <td>2021-07-22</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3934,7 +3936,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>664587</td>
     </tr>
     <tr>
-      <th>42838</th>
+      <th>43041</th>
       <td>2021-07-23</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
@@ -3944,8 +3946,18 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>664587</td>
     </tr>
     <tr>
-      <th>42839</th>
+      <th>43042</th>
       <td>2021-07-24</td>
+      <td>Zimbabwe</td>
+      <td>ZWE</td>
+      <td>Sinopharm/Beijing</td>
+      <td>2017101</td>
+      <td>1352514</td>
+      <td>664587</td>
+    </tr>
+    <tr>
+      <th>43043</th>
+      <td>2021-07-25</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
@@ -3959,11 +3971,125 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 </div>
+<div class="section" id="Mobility">
+<h2>Mobility<a class="headerlink" href="#Mobility" title="Permalink to this headline">¶</a></h2>
+<p>Levels of mobility is a key factor of <span class="math notranslate nohighlight">\(\rho\)</span> (effective contact rate) of SIR-derived ODE models. <code class="docutils literal notranslate"><span class="pre">MobilityData</span></code> class will be created with <code class="docutils literal notranslate"><span class="pre">DataLoader.mobility()</span></code> method.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_data = loader.mobility()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># type(mobility_data)</span>
+</pre></div>
+</div>
+</div>
+<p>Description is here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># print(mobility_data.citation)</span>
+</pre></div>
+</div>
+</div>
+<p>Raw data is here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_data.raw.tail()</span>
+</pre></div>
+</div>
+</div>
+<p>The next is the cleaned dataset.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_data.cleaned().tail()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Note for variables<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>Definition of variables are as follows.</p>
+<ul class="simple">
+<li><p>Mobility_grocery_and_pharmacy (int): % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
+<li><p>Mobility_parks (int): % to baseline in visits (parks etc.)</p></li>
+<li><p>Mobility_transit_stations (int): % to baseline in visits (public transport hubs etc.)</p></li>
+<li><p>Mobility_retail_and_recreation (int): % to baseline in visits (restaurant, museums etc.)</p></li>
+<li><p>Mobility_residential (int): % to baseline in visits (places of residence)</p></li>
+<li><p>Mobility_workplaces (int): % to baseline in visits (places of work)</p></li>
+</ul>
+<p>Registered countries can be checked with <code class="docutils literal notranslate"><span class="pre">MobilityData.countries()</span></code> method.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># pprint(mobility_data.countries(), compact=True)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Subset for area<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">MobilityData.subset()</span></code> creates a subset for a specific area (country/province).</p>
+<p>Subset for a country: We can use both of country names and ISO3 codes.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[66]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_data.subset(&quot;Japan&quot;).tail()</span>
+<span class="c1"># Or, with ISO3 code</span>
+<span class="c1"># mobility_data.subset(&quot;JPN&quot;).tail()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Visualize-mobility-data">
+<h3>Visualize mobility data<a class="headerlink" href="#Visualize-mobility-data" title="Permalink to this headline">¶</a></h3>
+<p>We can visualize the levels of mobility with <code class="docutils literal notranslate"><span class="pre">MobilityData.map()</span></code> method. Arguments are the same as <code class="docutils literal notranslate"><span class="pre">JHUData</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[67]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_ata.map()</span>
+</pre></div>
+</div>
+</div>
+<p>Values are here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[68]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># mobility_data.layer().tail()</span>
+
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="Population-pyramid">
 <h2>Population pyramid<a class="headerlink" href="#Population-pyramid" title="Permalink to this headline">¶</a></h2>
 <p>With population pyramid, we can divide the population to sub-groups. This will be useful when we analyse the meaning of parameters. For example, how many days go out is different between the sub-groups. <code class="docutils literal notranslate"><span class="pre">PyramidData</span></code> class will be created with <code class="docutils literal notranslate"><span class="pre">DataLoader.pyramid()</span></code> method.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[69]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3972,7 +4098,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[70]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3981,7 +4107,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[70]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -3991,7 +4117,7 @@ covsirphy.cleaning.pyramid.PopulationPyramidData
 </div>
 <p>Description is here.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[71]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4009,7 +4135,7 @@ World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
 </div>
 <p>Raw dataset is not registered. Subset will be retrieved when <code class="docutils literal notranslate"><span class="pre">PyramidData.subset()</span></code> was called.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[72]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4026,7 +4152,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[72]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4094,7 +4220,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 <h2>Japan-specific dataset<a class="headerlink" href="#Japan-specific-dataset" title="Permalink to this headline">¶</a></h2>
 <p>This includes the number of confirmed/infected/fatal/recovered/tests/moderate/severe cases at country/prefecture level and metadata of each prefecture (province). <code class="docutils literal notranslate"><span class="pre">JapanData</span></code> class will be created with <code class="docutils literal notranslate"><span class="pre">DataLoader.japan()</span></code> method.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[73]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4103,7 +4229,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[74]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4112,7 +4238,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[74]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -4122,7 +4248,7 @@ covsirphy.cleaning.japan_data.JapanData
 </div>
 <p>Description is here.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[66]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[75]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4140,7 +4266,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 </div>
 <p>The next is the cleaned dataset.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[67]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[76]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4149,7 +4275,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[67]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[76]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4188,40 +4314,40 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>24236</th>
-      <td>2021-07-23</td>
+      <th>24285</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Shiga</td>
-      <td>5757</td>
-      <td>122</td>
+      <td>5768</td>
+      <td>126</td>
       <td>92</td>
-      <td>5543</td>
-      <td>165332</td>
-      <td>121</td>
+      <td>5550</td>
+      <td>165430</td>
+      <td>125</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>24237</th>
-      <td>2021-07-23</td>
+      <th>24286</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Osaka</td>
-      <td>108614</td>
-      <td>4136</td>
-      <td>2716</td>
-      <td>101762</td>
-      <td>2376024</td>
-      <td>3134</td>
-      <td>142</td>
+      <td>108897</td>
+      <td>4161</td>
+      <td>2717</td>
+      <td>102019</td>
+      <td>2387175</td>
+      <td>3145</td>
+      <td>147</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>24238</th>
-      <td>2021-07-23</td>
+      <th>24287</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>2218</td>
@@ -4236,36 +4362,36 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>24239</th>
-      <td>2021-07-24</td>
+      <th>24288</th>
+      <td>2021-07-25</td>
       <td>Japan</td>
       <td>Entering</td>
-      <td>3405</td>
-      <td>145</td>
+      <td>3411</td>
+      <td>146</td>
       <td>6</td>
-      <td>3254</td>
-      <td>863835</td>
-      <td>145</td>
+      <td>3259</td>
+      <td>867550</td>
+      <td>146</td>
       <td>0</td>
-      <td>39204570640</td>
-      <td>23630848180</td>
-      <td>15573722460</td>
+      <td>39278541528</td>
+      <td>23675434686</td>
+      <td>15603106842</td>
     </tr>
     <tr>
-      <th>24240</th>
-      <td>2021-07-24</td>
+      <th>24289</th>
+      <td>2021-07-25</td>
       <td>Japan</td>
       <td>-</td>
-      <td>862148</td>
-      <td>36148</td>
-      <td>15116</td>
-      <td>810884</td>
-      <td>17857644</td>
-      <td>34726</td>
-      <td>436</td>
-      <td>2880089869</td>
-      <td>1911260890</td>
-      <td>968828979</td>
+      <td>865666</td>
+      <td>36518</td>
+      <td>15124</td>
+      <td>814024</td>
+      <td>17893458</td>
+      <td>35134</td>
+      <td>448</td>
+      <td>2954060757</td>
+      <td>1955847396</td>
+      <td>998213361</td>
     </tr>
   </tbody>
 </table>
@@ -4275,7 +4401,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <h3>Visualize values<a class="headerlink" href="#Visualize-values" title="Permalink to this headline">¶</a></h3>
 <p>We can visualize the values with <code class="docutils literal notranslate"><span class="pre">.map()</span></code> method. Arguments are the same as <code class="docutils literal notranslate"><span class="pre">JHUData</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[68]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[77]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4287,12 +4413,12 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_dataset_148_0.png" src="_images/usage_dataset_148_0.png" />
+<img alt="_images/usage_dataset_166_0.png" src="_images/usage_dataset_166_0.png" />
 </div>
 </div>
 <p>Values are here.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[69]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[78]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4301,7 +4427,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[69]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[78]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4340,56 +4466,56 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>23701</th>
-      <td>2021-07-23</td>
+      <th>23749</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Fukui</td>
-      <td>1440</td>
-      <td>49</td>
+      <td>1445</td>
+      <td>44</td>
       <td>36</td>
-      <td>1355</td>
-      <td>75484</td>
-      <td>49</td>
+      <td>1365</td>
+      <td>75827</td>
+      <td>44</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>23702</th>
-      <td>2021-07-23</td>
+      <th>23750</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Shiga</td>
-      <td>5757</td>
-      <td>122</td>
+      <td>5768</td>
+      <td>126</td>
       <td>92</td>
-      <td>5543</td>
-      <td>165332</td>
-      <td>121</td>
+      <td>5550</td>
+      <td>165430</td>
+      <td>125</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>23703</th>
-      <td>2021-07-23</td>
+      <th>23751</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Osaka</td>
-      <td>108614</td>
-      <td>4136</td>
-      <td>2716</td>
-      <td>101762</td>
-      <td>2376024</td>
-      <td>3134</td>
-      <td>142</td>
+      <td>108897</td>
+      <td>4161</td>
+      <td>2717</td>
+      <td>102019</td>
+      <td>2387175</td>
+      <td>3145</td>
+      <td>147</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>23704</th>
-      <td>2021-07-23</td>
+      <th>23752</th>
+      <td>2021-07-24</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>2218</td>
@@ -4404,20 +4530,20 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>23705</th>
-      <td>2021-07-24</td>
+      <th>23753</th>
+      <td>2021-07-25</td>
       <td>Japan</td>
       <td>Entering</td>
-      <td>3405</td>
-      <td>145</td>
+      <td>3411</td>
+      <td>146</td>
       <td>6</td>
-      <td>3254</td>
-      <td>863835</td>
-      <td>145</td>
+      <td>3259</td>
+      <td>867550</td>
+      <td>146</td>
       <td>0</td>
-      <td>39204570640</td>
-      <td>23630848180</td>
-      <td>15573722460</td>
+      <td>39278541528</td>
+      <td>23675434686</td>
+      <td>15603106842</td>
     </tr>
   </tbody>
 </table>
@@ -4425,7 +4551,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 </div>
 <p>Map with country level data is not prepared, but country level data can be retrieved.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[70]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[79]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4434,7 +4560,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[70]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[79]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4471,21 +4597,6 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>530</th>
-      <td>2021-07-20</td>
-      <td>Japan</td>
-      <td>844014</td>
-      <td>27617</td>
-      <td>15060</td>
-      <td>801337</td>
-      <td>17614879</td>
-      <td>26368</td>
-      <td>406</td>
-      <td>2584206317</td>
-      <td>1732914866</td>
-      <td>851291451</td>
-    </tr>
     <tr>
       <th>531</th>
       <td>2021-07-21</td>
@@ -4546,6 +4657,21 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>1911260890</td>
       <td>968828979</td>
     </tr>
+    <tr>
+      <th>535</th>
+      <td>2021-07-25</td>
+      <td>Japan</td>
+      <td>865666</td>
+      <td>36518</td>
+      <td>15124</td>
+      <td>814024</td>
+      <td>17893458</td>
+      <td>35134</td>
+      <td>448</td>
+      <td>2954060757</td>
+      <td>1955847396</td>
+      <td>998213361</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -4555,7 +4681,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <h3>Metadata<a class="headerlink" href="#Metadata" title="Permalink to this headline">¶</a></h3>
 <p>Additionally, <code class="docutils literal notranslate"><span class="pre">JapanData.meta()</span></code> retrieves meta data for Japan prefectures.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[71]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[80]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4572,7 +4698,7 @@ Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[71]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[80]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
