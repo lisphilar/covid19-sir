@@ -107,6 +107,15 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 - The number of vaccinations
 - The number of people who received vaccinations
 
+### [COVID-19 Open Data by Google Cloud Platform](https://github.com/GoogleCloudPlatform/covid-19-open-data)
+
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, [https://goo.gle/covid-19-open-data](https://goo.gle/covid-19-open-data)
+
+- percentage to baseline in visits (will be usable from 2.22.0)
+
+Note:  
+**Please refer to [Google Terms of Service](https://policies.google.com/terms) in advance.**
+
 ### [World Bank Open Data](https://data.worldbank.org/)
 
 World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)

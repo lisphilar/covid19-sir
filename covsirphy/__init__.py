@@ -43,6 +43,7 @@ from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.cleaning.mobility_data import MobilityData
 # loading
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
@@ -109,7 +110,7 @@ __all__ = [
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # cleaning
     "CleaningBase", "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
-    "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler",
+    "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
     # trend
