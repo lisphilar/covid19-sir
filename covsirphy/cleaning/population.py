@@ -29,7 +29,7 @@ class PopulationData(CleaningBase):
     """
 
     def __init__(self, filename=None, data=None, citation=None):
-        super().__init__(filename=filename, data=data, citation=citation)
+        super().__init__(filename=filename, data=data, citation=citation, variables=[self.N])
 
     def _cleaning(self):
         """
