@@ -17,6 +17,7 @@ from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.vaccine_data import VaccineData
+from covsirphy.cleaning.mobility_data import MobilityData
 
 
 class DataHandler(Term):
@@ -33,11 +34,13 @@ class DataHandler(Term):
     __NAME_OXCGRT = "OxCGRTData"
     __NAME_PCR = "PCRData"
     __NAME_VACCINE = "VaccineData"
+    __NAME_MOBILE = "MobilityData"
     EXTRA_DICT = {
         __NAME_COUNTRY: CountryData,
         __NAME_OXCGRT: OxCGRTData,
         __NAME_PCR: PCRData,
         __NAME_VACCINE: VaccineData,
+        __NAME_MOBILE: MobilityData,
     }
 
     def __init__(self, country, province=None, **kwargs):
