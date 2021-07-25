@@ -34,6 +34,7 @@ class _COVID19dh(_RemoteDatabase):
         "testing_policy",
         "contact_tracing",
     ]
+    OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW_INT]
     COL_DICT = {
         "date": Term.DATE,
         "administrative_area_level_1": Term.COUNTRY,

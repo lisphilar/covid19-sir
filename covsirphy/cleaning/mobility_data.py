@@ -21,22 +21,24 @@ class MobilityData(CleaningBase):
                 - Country: country/region name
                 - ISO3: ISO 3166-1 alpha-3, like JPN
                 - Province: province/prefecture/state name
-                - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
-                - Mobility_parks: % to baseline in visits (parks etc.)
-                - Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
-                - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
-                - Mobility_residential: % to baseline in visits (places of residence)
-                - Mobility_workplaces: % to baseline in visits (places of work)
+                - variables defined by @variables
         citation (str or None): citation or None (empty)
+        variables (list[str] or None): variables to parse or None (use default variables listed as follows)
+            - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
+            - Mobility_parks: % to baseline in visits (parks etc.)
+            - Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
+            - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
+            - Mobility_residential: % to baseline in visits (places of residence)
+            - Mobility_workplaces: % to baseline in visits (places of work)
 
     Note:
         Either @filename (high priority) or @data must be specified.
 
     Note:
-        Categories of places are listed in covid-19-open-data.
+        The default categories of places are listed in covid-19-open-data.
         https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-mobility.md
     """
-    MOBILITY_VARS = [
+    _MOBILITY_VARS = [
         "Mobility_grocery_and_pharmacy",
         "Mobility_parks",
         "Mobility_transit_stations",
@@ -44,16 +46,10 @@ class MobilityData(CleaningBase):
         "Mobility_residential",
         "Mobility_workplaces",
     ]
-    # Columns of self._raw and self._clean_df
-    RAW_COLS = [
-        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE, *MOBILITY_VARS]
-    # Columns of self.cleaned()
-    CLEANED_COLS = RAW_COLS[:]
-    # Columns of self.subset()
-    SUBSET_COLS = [CleaningBase.DATE, *MOBILITY_VARS]
 
-    def __init__(self, filename=None, data=None, citation=None):
-        super().__init__(filename=filename, data=data, citation=citation)
+    def __init__(self, filename=None, data=None, citation=None, variables=None):
+        self._variables = variables or self._MOBILITY_VARS[:]
+        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
 
     def _cleaning(self):
         """
@@ -68,25 +64,20 @@ class MobilityData(CleaningBase):
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
-                    - Mobility_grocery_and_pharmacy (int): % to baseline in visits (grocery markets, pharmacies etc.)
-                    - Mobility_parks (int): % to baseline in visits (parks etc.)
-                    - Mobility_transit_stations (int): % to baseline in visits (public transport hubs etc.)
-                    - Mobility_retail_and_recreation (int): % to baseline in visits (restaurant, museums etc.)
-                    - Mobility_residential (int): % to baseline in visits (places of residence)
-                    - Mobility_workplaces (int): % to baseline in visits (places of work)
+                    - variables defined by MobilityData(variables)
         """
         df = self._raw.copy()
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self.CLEANED_COLS)
+        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm int type
-        for col in self.MOBILITY_VARS:
+        for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(100).astype(np.int64)
         # Update data types to reduce memory
         cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
         df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self.CLEANED_COLS]
+        return df.loc[:, self._raw_cols]
 
     def subset(self, country, province=None):
         """
@@ -105,12 +96,7 @@ class MobilityData(CleaningBase):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): Observation date
-                    - Mobility_grocery_and_pharmacy (int): % to baseline in visits (grocery markets, pharmacies etc.)
-                    - Mobility_parks (int): % to baseline in visits (parks etc.)
-                    - Mobility_transit_stations (int): % to baseline in visits (public transport hubs etc.)
-                    - Mobility_retail_and_recreation (int): % to baseline in visits (restaurant, museums etc.)
-                    - Mobility_residential (int): % to baseline in visits (places of residence)
-                    - Mobility_workplaces (int): % to baseline in visits (places of work)
+                    - variables defined by MobilityData(variables)
         """
         country_arg = country
         country = self.ensure_country_name(country)
@@ -119,7 +105,7 @@ class MobilityData(CleaningBase):
         except SubsetNotFoundError:
             raise SubsetNotFoundError(country=country_arg, country_alias=country, province=province) from None
         df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self.SUBSET_COLS]
+        return df.loc[:, self._subset_cols]
 
     def total(self):
         """
