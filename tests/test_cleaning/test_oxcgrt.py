@@ -24,5 +24,3 @@ class TestOxCGRTData(object):
     def test_map(self, oxcgrt_data):
         warnings.filterwarnings("ignore", category=UserWarning)
         oxcgrt_data.map(country=None)
-        with pytest.raises(NotImplementedError):
-            oxcgrt_data.map(country="Japan")
