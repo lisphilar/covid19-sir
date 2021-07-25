@@ -14,7 +14,7 @@ class TestJHUData(object):
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
-        assert set(df.columns) == set(Term.COLUMNS)
+        assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     def test_from_dataframe(self, japan_data):
