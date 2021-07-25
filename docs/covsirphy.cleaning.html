@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-nu
+                2.21.0-xi-fu1
               </div>
             
           
@@ -244,7 +244,7 @@
 <span id="covsirphy-cleaning-cbase-module"></span><h2>covsirphy.cleaning.cbase module<a class="headerlink" href="#module-covsirphy.cleaning.cbase" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CleaningBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CleaningBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
@@ -268,6 +268,7 @@
 </dl>
 </p></li>
 <li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to clean (not including date and location identifiers)</p></li>
 </ul>
 </dd>
 </dl>
@@ -283,21 +284,6 @@
 <li><p>The directory of geometry information could be changed with .directory property.</p></li>
 </ul>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.cbase.CleaningBase.area_name">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">area_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.area_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.area_name" title="Permalink to this definition">¶</a></dt>
@@ -1071,13 +1057,13 @@ dict: status for each complement type</p>
 </dd>
 <dt>Columns</dt><dd><ul>
 <li><p>Date: Observation date</p></li>
-<li><p>ISO3: ISO3 code (optional)</p></li>
+<li><p>ISO3: ISO3 code</p></li>
 <li><p>Country: country/region name</p></li>
 <li><p>Province: province/prefecture/state name</p></li>
 <li><p>Confirmed: the number of confirmed cases</p></li>
 <li><p>Fatal: the number of fatal cases</p></li>
 <li><p>Recovered: the number of recovered cases</p></li>
-<li><p>Population: population values (optional)</p></li>
+<li><p>Population: population values</p></li>
 </ul>
 </dd>
 </dl>
@@ -1094,21 +1080,6 @@ dict: status for each complement type</p>
 <p class="admonition-title">Note</p>
 <p>The number of infected cases will be (re-)calculated when data cleaning automatically.</p>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Susceptible']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.calculate_closing_period">
 <span class="sig-name descname"><span class="pre">calculate_closing_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.calculate_closing_period" title="Permalink to this definition">¶</a></dt>
@@ -1139,7 +1110,7 @@ where recovered values are reported.</p>
 <dd><p>Return the cleaned dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – keword arguments will be ignored.</p>
+<dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments will be ignored</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
@@ -1148,12 +1119,14 @@ where recovered values are reported.</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.Timestamp): Observation date</p></li>
+<li><p>ISO3: ISO3 code</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Population: population values</p></li>
 </ul>
 </dd>
 </dl>
@@ -1737,7 +1710,7 @@ When &#64;country is a country name, province level data in the selected country
 <span id="covsirphy-cleaning-mobility-data-module"></span><h2>covsirphy.cleaning.mobility_data module<a class="headerlink" href="#module-covsirphy.cleaning.mobility_data" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MobilityData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MobilityData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of mobility dataset.</p>
 <dl class="field-list simple">
@@ -1752,17 +1725,19 @@ When &#64;country is a country name, province level data in the selected country
 <li><p>Country: country/region name</p></li>
 <li><p>ISO3: ISO 3166-1 alpha-3, like JPN</p></li>
 <li><p>Province: province/prefecture/state name</p></li>
-<li><p>Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
-<li><p>Mobility_parks: % to baseline in visits (parks etc.)</p></li>
-<li><p>Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)</p></li>
-<li><p>Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)</p></li>
-<li><p>Mobility_residential: % to baseline in visits (places of residence)</p></li>
-<li><p>Mobility_workplaces: % to baseline in visits (places of work)</p></li>
+<li><p>variables defined by &#64;variables</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to parse or None (use default variables listed as follows)
+- Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
+- Mobility_parks: % to baseline in visits (parks etc.)
+- Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
+- Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
+- Mobility_residential: % to baseline in visits (places of residence)
+- Mobility_workplaces: % to baseline in visits (places of work)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1772,29 +1747,9 @@ When &#64;country is a country name, province level data in the selected country
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Categories of places are listed in covid-19-open-data.
+<p>The default categories of places are listed in covid-19-open-data.
 <a class="reference external" href="https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-mobility.md">https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-mobility.md</a></p>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData.MOBILITY_VARS">
-<span class="sig-name descname"><span class="pre">MOBILITY_VARS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData.MOBILITY_VARS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Mobility_grocery_and_pharmacy',</span> <span class="pre">'Mobility_parks',</span> <span class="pre">'Mobility_transit_stations',</span> <span class="pre">'Mobility_retail_and_recreation',</span> <span class="pre">'Mobility_residential',</span> <span class="pre">'Mobility_workplaces']</span></em><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.mobility_data.MobilityData.map">
 <span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Mobility_grocery_and_pharmacy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/mobility_data.html#MobilityData.map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.mobility_data.MobilityData.map" title="Permalink to this definition">¶</a></dt>
@@ -1837,12 +1792,7 @@ When &#64;country is a country name, province level data will be shown on countr
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.Timestamp): Observation date</p></li>
-<li><p>Mobility_grocery_and_pharmacy (int): % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
-<li><p>Mobility_parks (int): % to baseline in visits (parks etc.)</p></li>
-<li><p>Mobility_transit_stations (int): % to baseline in visits (public transport hubs etc.)</p></li>
-<li><p>Mobility_retail_and_recreation (int): % to baseline in visits (restaurant, museums etc.)</p></li>
-<li><p>Mobility_residential (int): % to baseline in visits (places of residence)</p></li>
-<li><p>Mobility_workplaces (int): % to baseline in visits (places of work)</p></li>
+<li><p>variables defined by MobilityData(variables)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1866,7 +1816,7 @@ When &#64;country is a country name, province level data will be shown on countr
 <span id="covsirphy-cleaning-oxcgrt-module"></span><h2>covsirphy.cleaning.oxcgrt module<a class="headerlink" href="#module-covsirphy.cleaning.oxcgrt" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OxCGRTData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">OxCGRTData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of OxCGRT dataset.</p>
 <dl class="field-list simple">
@@ -1880,23 +1830,25 @@ When &#64;country is a country name, province level data will be shown on countr
 <li><p>Date: Observation date</p></li>
 <li><p>ISO3: ISO 3166-1 alpha-3, like JPN</p></li>
 <li><p>Country: country/region name</p></li>
-<li><p>School_closing</p></li>
-<li><p>Workplace_closing</p></li>
-<li><p>Cancel_events</p></li>
-<li><p>Gatherings_restrictions</p></li>
-<li><p>Transport_closing</p></li>
-<li><p>Stay_home_restrictions</p></li>
-<li><p>Internal_movement_restrictions</p></li>
-<li><p>International_movement_restrictions</p></li>
-<li><p>Information_campaigns</p></li>
-<li><p>Testing_policy</p></li>
-<li><p>Contact_tracing</p></li>
-<li><p>Stringency_index</p></li>
+<li><p>variables defined by &#64;variables</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to parse or None (use default variables listed as follows)
+- School_closing
+- Workplace_closing
+- Cancel_events
+- Gatherings_restrictions
+- Transport_closing
+- Stay_home_restrictions
+- Internal_movement_restrictions
+- International_movement_restrictions
+- Information_campaigns
+- Testing_policy
+- Contact_tracing
+- Stringency_index</p></li>
 </ul>
 </dd>
 </dl>
@@ -1906,14 +1858,9 @@ When &#64;country is a country name, province level data will be shown on countr
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
+<p>The default policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
 <a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker/">https://github.com/OxCGRT/covid-policy-tracker/</a></p>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARS">
 <span class="sig-name descname"><span class="pre">OXCGRT_VARS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARS" title="Permalink to this definition">¶</a></dt>
@@ -1922,16 +1869,6 @@ When &#64;country is a country name, province level data will be shown on countr
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARS_INDICATORS">
 <span class="sig-name descname"><span class="pre">OXCGRT_VARS_INDICATORS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing']</span></em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARS_INDICATORS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1947,21 +1884,19 @@ When &#64;country is a country name, province level data will be shown on countr
 <li><p><strong>kwargs</strong> – arguments of ColoredMap() and ColoredMap.plot()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – &#64;country was specified</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.oxcgrt.OxCGRTData.subset">
-<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.subset" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a subset for a country.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<em>str</em>) – country name or ISO 3166-1 alpha-3, like JPN</p></li>
-<li><p><strong>kwargs</strong> – the other arguments will be ignored in the latest version.</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>kwargs</strong> – the other arguments will be ignored at the latest version</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1974,18 +1909,7 @@ When &#64;country is a country name, province level data will be shown on countr
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.Timestamp): Observation date</p></li>
-<li><p>School_closing</p></li>
-<li><p>Workplace_closing</p></li>
-<li><p>Cancel_events</p></li>
-<li><p>Gatherings_restrictions</p></li>
-<li><p>Transport_closing</p></li>
-<li><p>Stay_home_restrictions</p></li>
-<li><p>Internal_movement_restrictions</p></li>
-<li><p>International_movement_restrictions</p></li>
-<li><p>Information_campaigns</p></li>
-<li><p>Testing_policy</p></li>
-<li><p>Contact_tracing</p></li>
-<li><p>Stringency_index</p></li>
+<li><p>variables defined by OxCGRTData(variables)</p></li>
 </ul>
 </dd>
 </dl>
@@ -2036,11 +1960,6 @@ When &#64;country is a country name, province level data will be shown on countr
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.pcr_data.PCRData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.cleaning.pcr_data.PCRData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.pcr_data.PCRData.C_DIFF">
 <span class="sig-name descname"><span class="pre">C_DIFF</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'Confirmed_diff'</span></em><a class="headerlink" href="#covsirphy.cleaning.pcr_data.PCRData.C_DIFF" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2048,16 +1967,6 @@ When &#64;country is a country name, province level data will be shown on countr
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.pcr_data.PCRData.PCR_RATE">
 <span class="sig-name descname"><span class="pre">PCR_RATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'Test_positive_rate'</span></em><a class="headerlink" href="#covsirphy.cleaning.pcr_data.PCRData.PCR_RATE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.pcr_data.PCRData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.cleaning.pcr_data.PCRData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.pcr_data.PCRData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.cleaning.pcr_data.PCRData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2274,26 +2183,6 @@ When &#64;country is a country name, province level data will be shown on countr
 <p class="admonition-title">Note</p>
 <p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.population.PopulationData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.population.PopulationData.POPULATION_COLS">
-<span class="sig-name descname"><span class="pre">POPULATION_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.population.PopulationData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.population.PopulationData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.population.PopulationData.countries">
 <span class="sig-name descname"><span class="pre">countries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.countries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.countries" title="Permalink to this definition">¶</a></dt>
@@ -2479,11 +2368,6 @@ If &#64;citation is None, citation will be empty string.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.pyramid.PopulationPyramidData.SEX">
 <span class="sig-name descname"><span class="pre">SEX</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'Sex'</span></em><a class="headerlink" href="#covsirphy.cleaning.pyramid.PopulationPyramidData.SEX" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.pyramid.PopulationPyramidData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Age',</span> <span class="pre">'Population',</span> <span class="pre">'Per_total']</span></em><a class="headerlink" href="#covsirphy.cleaning.pyramid.PopulationPyramidData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2702,21 +2586,6 @@ When &#64;country is a country name, province level data in the selected country
 </dd>
 </dl>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.vaccine_data.VaccineData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Province',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.vaccine_data.VaccineData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Province',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="covsirphy.cleaning.vaccine_data.VaccineData.SUBSET_COLS">
-<span class="sig-name descname"><span class="pre">SUBSET_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.cleaning.vaccine_data.VaccineData.map">
 <span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Vaccinations'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/vaccine_data.html#VaccineData.map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.map" title="Permalink to this definition">¶</a></dt>

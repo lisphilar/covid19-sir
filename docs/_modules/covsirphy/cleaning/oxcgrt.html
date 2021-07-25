@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-nu
+                2.21.0-xi-fu1
               </div>
             
           
@@ -196,25 +196,27 @@
 <span class="sd">                - Date: Observation date</span>
 <span class="sd">                - ISO3: ISO 3166-1 alpha-3, like JPN</span>
 <span class="sd">                - Country: country/region name</span>
-<span class="sd">                - School_closing</span>
-<span class="sd">                - Workplace_closing</span>
-<span class="sd">                - Cancel_events</span>
-<span class="sd">                - Gatherings_restrictions</span>
-<span class="sd">                - Transport_closing</span>
-<span class="sd">                - Stay_home_restrictions</span>
-<span class="sd">                - Internal_movement_restrictions</span>
-<span class="sd">                - International_movement_restrictions</span>
-<span class="sd">                - Information_campaigns</span>
-<span class="sd">                - Testing_policy</span>
-<span class="sd">                - Contact_tracing</span>
-<span class="sd">                - Stringency_index</span>
+<span class="sd">                - variables defined by @variables</span>
 <span class="sd">        citation (str or None): citation or None (empty)</span>
+<span class="sd">        variables (list[str] or None): variables to parse or None (use default variables listed as follows)</span>
+<span class="sd">            - School_closing</span>
+<span class="sd">            - Workplace_closing</span>
+<span class="sd">            - Cancel_events</span>
+<span class="sd">            - Gatherings_restrictions</span>
+<span class="sd">            - Transport_closing</span>
+<span class="sd">            - Stay_home_restrictions</span>
+<span class="sd">            - Internal_movement_restrictions</span>
+<span class="sd">            - International_movement_restrictions</span>
+<span class="sd">            - Information_campaigns</span>
+<span class="sd">            - Testing_policy</span>
+<span class="sd">            - Contact_tracing</span>
+<span class="sd">            - Stringency_index</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Either @filename (high priority) or @data must be specified.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        Policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in</span>
+<span class="sd">        The default policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in</span>
 <span class="sd">        https://github.com/OxCGRT/covid-policy-tracker/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">OXCGRT_VARS</span> <span class="o">=</span> <span class="p">[</span>
@@ -231,17 +233,12 @@
         <span class="s2">&quot;Contact_tracing&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Stringency_index&quot;</span>
     <span class="p">]</span>
-    <span class="c1"># Columns of self._raw and self._clean_df</span>
-    <span class="n">RAW_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">CleaningBase</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="o">*</span><span class="n">OXCGRT_VARS</span><span class="p">]</span>
-    <span class="c1"># Columns of self.cleaned()</span>
-    <span class="n">CLEANED_COLS</span> <span class="o">=</span> <span class="n">RAW_COLS</span><span class="p">[:]</span>
-    <span class="c1"># Columns of self.subset()</span>
-    <span class="n">SUBSET_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">CleaningBase</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">OXCGRT_VARS</span><span class="p">]</span>
     <span class="c1"># Indicators except for Stringency index</span>
     <span class="n">OXCGRT_VARS_INDICATORS</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">OXCGRT_VARS</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s2">&quot;Stringency_index&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="n">citation</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variables</span> <span class="o">=</span> <span class="n">variables</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">OXCGRT_VARS</span><span class="p">[:]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="n">citation</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -255,18 +252,8 @@
 <span class="sd">                    - Date (pandas.Timestamp): Observation date</span>
 <span class="sd">                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN</span>
 <span class="sd">                    - Country (pandas.Category): country/region name</span>
-<span class="sd">                    - School_closing</span>
-<span class="sd">                    - Workplace_closing</span>
-<span class="sd">                    - Cancel_events</span>
-<span class="sd">                    - Gatherings_restrictions</span>
-<span class="sd">                    - Transport_closing</span>
-<span class="sd">                    - Stay_home_restrictions</span>
-<span class="sd">                    - Internal_movement_restrictions</span>
-<span class="sd">                    - International_movement_restrictions</span>
-<span class="sd">                    - Information_campaigns</span>
-<span class="sd">                    - Testing_policy</span>
-<span class="sd">                    - Contact_tracing</span>
-<span class="sd">                    - Stringency_index</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
+<span class="sd">                    - variables defined by OxCGRTData(variables)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Prepare data for Greenland</span>
@@ -274,24 +261,25 @@
         <span class="n">grl_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GRL&quot;</span><span class="p">,</span> <span class="s2">&quot;Greenland&quot;</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">grl_df</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Confirm the expected columns are in raw data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CLEANED_COLS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">)</span>
         <span class="c1"># Read date records</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
         <span class="c1"># Confirm float type</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OXCGRT_VARS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
         <span class="c1"># Update data types to reduce memory</span>
-        <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span>
+        <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span>
         <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CLEANED_COLS</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">]</span>
 
-<div class="viewcode-block" id="OxCGRTData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="OxCGRTData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a subset for a country.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            country (str): country name or ISO 3166-1 alpha-3, like JPN</span>
-<span class="sd">            kwargs: the other arguments will be ignored in the latest version.</span>
+<span class="sd">            province (str): province name</span>
+<span class="sd">            kwargs: the other arguments will be ignored at the latest version</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            covsirphy.SubsetNotFoundError: no records were found</span>
@@ -302,27 +290,17 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    - Date (pandas.Timestamp): Observation date</span>
-<span class="sd">                    - School_closing</span>
-<span class="sd">                    - Workplace_closing</span>
-<span class="sd">                    - Cancel_events</span>
-<span class="sd">                    - Gatherings_restrictions</span>
-<span class="sd">                    - Transport_closing</span>
-<span class="sd">                    - Stay_home_restrictions</span>
-<span class="sd">                    - Internal_movement_restrictions</span>
-<span class="sd">                    - International_movement_restrictions</span>
-<span class="sd">                    - Information_campaigns</span>
-<span class="sd">                    - Testing_policy</span>
-<span class="sd">                    - Contact_tracing</span>
-<span class="sd">                    - Stringency_index</span>
+<span class="sd">                    - variables defined by OxCGRTData(variables)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">country_arg</span> <span class="o">=</span> <span class="n">country</span>
         <span class="n">country</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country_arg</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country_arg</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUBSET_COLS</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_cols</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="OxCGRTData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -339,18 +317,18 @@
 <span class="sd">            variable (str): variable name to show</span>
 <span class="sd">            date (str or None): date of the records or None (the last value)</span>
 <span class="sd">            kwargs: arguments of ColoredMap() and ColoredMap.plot()</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: @country was specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;@country cannot be specified, always None.&quot;</span><span class="p">)</span>
         <span class="c1"># Date</span>
         <span class="n">date_str</span> <span class="o">=</span> <span class="n">date</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="n">country_str</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="s2">&quot;Global&quot;</span>
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country_str</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="c1"># Global map</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_global</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_global</span><span class="p">(</span>
+                <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Country-specific map</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_country</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-nu
+                2.21.0-xi-fu1
               </div>
             
           
@@ -209,6 +209,7 @@
 <span class="sd">                - Recovered: the number of recovered cases</span>
 <span class="sd">                - Population: population values (optional)</span>
 <span class="sd">        citation (str or None): citation or None (empty)</span>
+<span class="sd">        variables (list[str] or None): variables to clean (not including date and location identifiers)</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Either @filename (high priority) or @data must be specified.</span>
@@ -218,18 +219,15 @@
 <span class="sd">        - If @filename is not None, geometry information will be saved in the directory which has the file.</span>
 <span class="sd">        - The directory of geometry information could be changed with .directory property.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Columns of self._cleaned_df</span>
-    <span class="n">RAW_COLS</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># Columns of self.cleaned()</span>
-    <span class="n">CLEANED_COLS</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># Columns of self.subset()</span>
-    <span class="n">SUBSET_COLS</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Columns of self._raw, self._clean_df and self.cleaned()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">variables</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subset_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">variables</span> <span class="ow">or</span> <span class="p">[])</span>
         <span class="c1"># Raw data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_raw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_raw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">)</span>
         <span class="c1"># Data cleaning</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaning</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaning</span><span class="p">()</span>
         <span class="c1"># Citation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="n">citation</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="c1"># Directory that save the file</span>
