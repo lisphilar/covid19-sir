@@ -20,4 +20,4 @@ class TestPopulationPyramidData(object):
     @pytest.mark.parametrize("sex", [None, "Female", "Male"])
     def test_records(self, pyramid_data, country, sex):
         df = pyramid_data.records(country, sex=sex)
-        assert set(df.columns) == set([Term.AGE, Term.N, Term.PORTION])
+        assert set(df.columns) == set([PopulationPyramidData.AGE, Term.N, PopulationPyramidData.PORTION])
