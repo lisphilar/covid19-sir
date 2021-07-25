@@ -70,4 +70,10 @@ class _GoogleOpenData(_RemoteDatabase):
         # Location (country/province)
         df = df.loc[df["subregion2_name"].isna()]
         df[self.PROVINCE] = df["subregion1_name"].fillna(self.UNKNOWN)
+        df["country_name"] = df["country_name"].replace(
+            {
+                # CIV
+                "Ivory Coast": "Cote d'Ivoire",
+            }
+        )
         return df
