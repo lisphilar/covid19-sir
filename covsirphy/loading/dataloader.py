@@ -626,8 +626,9 @@ class DataLoader(Term):
                     - covsirphy.OXCGRTData
                     - covsirphy.PCRData
                     - covsirphy.VaccineData
+                    - covsirphy.MobilityData
         """
         return {
             "jhu_data": self.jhu(),
-            "extras": [self.oxcgrt(), self.pcr(), self.vaccine()]
+            "extras": [self.oxcgrt(), self.pcr(), self.vaccine(), self.mobility()]
         }
