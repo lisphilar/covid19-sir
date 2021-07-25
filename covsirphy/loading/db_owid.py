@@ -58,7 +58,6 @@ class _OWID(_RemoteDatabase):
         Note:
             If @verbose is equal to or over 1, how to show the list will be explained.
         """
-
         # Download datasets
         if verbose:
             print("Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/")

@@ -42,6 +42,11 @@ def vaccine_data(data_loader):
 
 
 @pytest.fixture(scope="session")
+def mobility_data(data_loader):
+    return data_loader.mobility()
+
+
+@pytest.fixture(scope="session")
 def pyramid_data(data_loader):
     return data_loader.pyramid()
 
@@ -50,7 +55,7 @@ def pyramid_data(data_loader):
     scope="session",
     params=[
         "jhu_data", "population_data", "oxcgrt_data", "japan_data",
-        "pcr_data", "vaccine_data", "pyramid_data",
+        "pcr_data", "vaccine_data", "mobility_data", "pyramid_data",
     ])
 def data(request):
     return request.getfixturevalue(request.param)

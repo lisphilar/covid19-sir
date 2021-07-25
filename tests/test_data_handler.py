@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
-from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData
+from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData, MobilityData
 from covsirphy import UnExpectedValueError, NotRegisteredMainError
 from covsirphy import NotRegisteredExtraError, SubsetNotFoundError
 
@@ -20,7 +20,7 @@ class TestDataHandler(object):
         if isinstance(data, PopulationData):
             return dhl.register(population_data=data)
         # Extra datasets
-        if isinstance(data, (CountryData, JapanData, OxCGRTData, PCRData, VaccineData)):
+        if isinstance(data, (CountryData, JapanData, OxCGRTData, PCRData, VaccineData, MobilityData)):
             return dhl.register(extras=[data])
         # Un-acceptable datasets
         with pytest.raises(UnExpectedValueError):
