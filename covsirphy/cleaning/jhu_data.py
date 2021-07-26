@@ -322,6 +322,8 @@ class JHUData(CleaningBase):
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
+    @deprecate("JHUData.from_dataframe()", new="DataLoader.read_dataframe()",
+               version="2.21.0-xi-fu1", ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.
