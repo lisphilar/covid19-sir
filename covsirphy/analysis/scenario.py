@@ -168,11 +168,12 @@ class Scenario(Term):
             TypeError: non-data cleaning instance was included
             UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset
         """
-        warnings.warn(
-            ".register(population_data) was deprecated because population values are included in JHUData.",
-            DeprecationWarning,
-            stacklevel=2
-        )
+        if population_data is not None:
+            warnings.warn(
+                "Scenario.register(population_data) was deprecated because population values are included in JHUData.",
+                DeprecationWarning,
+                stacklevel=2
+            )
         self._data.register(jhu_data=jhu_data, population_data=population_data, extras=extras)
         if self._data.main_satisfied and not self._tracker_dict:
             self.timepoints()
