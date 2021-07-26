@@ -21,7 +21,7 @@ class _COVID19dh(_RemoteDatabase):
         ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.'
     # Column names and data types
     # {"name in database": "name defined in Term class"}
-    _OXCGRT_COLS_RAW_INT = [
+    _OXCGRT_COLS_RAW = [
         "school_closing",
         "workplace_closing",
         "cancel_events",
@@ -33,8 +33,9 @@ class _COVID19dh(_RemoteDatabase):
         "information_campaigns",
         "testing_policy",
         "contact_tracing",
+        "stringency_index",
     ]
-    OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW_INT]
+    OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW]
     COL_DICT = {
         "date": Term.DATE,
         "administrative_area_level_1": Term.COUNTRY,
@@ -45,8 +46,7 @@ class _COVID19dh(_RemoteDatabase):
         "recovered": Term.R,
         "population": Term.N,
         "iso_alpha_3": Term.ISO3,
-        **{v: v.capitalize() for v in _OXCGRT_COLS_RAW_INT},
-        "stringency_index": "Stringency_index",
+        **{v: v.capitalize() for v in _OXCGRT_COLS_RAW},
     }
 
     def download(self, verbose):
