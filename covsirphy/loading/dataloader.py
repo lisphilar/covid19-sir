@@ -515,8 +515,10 @@ class DataLoader(Term):
         df, citations = self._auto_lock(variables=[self.C, self.F, self.R, self.N])
         return JHUData(data=df, citation="\n".join(citations))
 
+    @deprecate("DataLoader.population()", new="DataLoader.jhu()", version="2.21.0-xi-fu1")
     def population(self, **kwargs):
         """
+        Deprecated, please use DataLoader.jhu() because JHUData includes population values.
         Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.
 
         Args:
