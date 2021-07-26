@@ -73,8 +73,6 @@ oxcgrt_data = loader.oxcgrt()
 ```
 
 ```Python
-# Population values
-population_data = loader.population()
 # Linelist of case reports
 linelist = loader.linelist()
 # The number of tests

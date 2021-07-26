@@ -79,12 +79,12 @@ TBE, `DataLoader.jhu()` etc.
 jhu_data = loader.jhu()
 # Government Response Tracker (OxCGRT)
 oxcgrt_data = loader.oxcgrt()
-# Population values
-population_data = loader.population()
 # The number of tests
 pcr_data = loader.pcr()
 # The number of vaccinations
 vaccine_data = loader.vaccine()
+# Mobility data (will be impremented, from version 2.22.0)
+# mobility_data = loader.mobility()
 # Population pyramid
 pyramid_data = loader.pyramid()
 # Japan-specific dataset
