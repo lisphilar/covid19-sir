@@ -125,7 +125,7 @@ class DataHandler(Term):
 
         Args:
             jhu_data (covsirphy.JHUData or None): object of records
-            population_data (covsirphy.PopulationData or None): PopulationData object
+            population_data (covsirphy.PopulationData or None): PopulationData object (deprecated)
             extras (list[covsirphy.CleaningBase] or None): extra datasets
 
         Raises:
@@ -143,6 +143,11 @@ class DataHandler(Term):
             self.switch_complement(whether=True)
         # Main: PopulationData
         if population_data is not None:
+            warnings.warn(
+                ".register(population_data) was deprecated because population values are included in JHUData.",
+                DeprecationWarning,
+                stacklevel=2
+            )
             self._ensure_instance(population_data, PopulationData, name="population_data")
             self._population = population_data.value(**self._area_dict)
         # Extra datasets
