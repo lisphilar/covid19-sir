@@ -3,7 +3,7 @@
 
 from covsirphy.util.term import Term
 import pytest
-from covsirphy import ExampleData, PopulationData, Scenario
+from covsirphy import ExampleData, Scenario
 from covsirphy import SIR, SIRD, SIRF, SEWIRF
 
 
@@ -65,13 +65,10 @@ class TestExampleData(object):
         area = {"country": "Theoretical"}
         # Set-up example dataset (from 01Jan2020 to 31Jan2020)
         example_data = ExampleData(tau=1440, start_date="01Jan2020")
-        example_data.add(SIRF, step_n=30, **area)
-        # Population value
-        population_data = PopulationData(filename=None)
-        population_data.update(SIRF.EXAMPLE["population"], **area)
+        example_data.add(SIRF, step_n=30, population=SIRF.EXAMPLE["population"], **area)
         # Set-up Scenario instance
         snl = Scenario(tau=1440, **area)
-        snl.register(example_data, population_data)
+        snl.register(example_data)
         # Check records
         record_df = snl.records(variables="CFR")
         assert set(record_df.columns) == set([Term.DATE, Term.C, Term.F, Term.R])
