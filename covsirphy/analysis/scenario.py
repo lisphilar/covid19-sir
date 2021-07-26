@@ -161,13 +161,18 @@ class Scenario(Term):
 
         Args:
             jhu_data (covsirphy.JHUData or None): object of records
-            population_data (covsirphy.PopulationData or None): PopulationData object
+            population_data (covsirphy.PopulationData or None): PopulationData object (deprecated)
             extras (list[covsirphy.CleaningBase] or None): extra datasets
 
         Raises:
             TypeError: non-data cleaning instance was included
             UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset
         """
+        warnings.warn(
+            ".register(population_data) was deprecated because population values are included in JHUData.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self._data.register(jhu_data=jhu_data, population_data=population_data, extras=extras)
         if self._data.main_satisfied and not self._tracker_dict:
             self.timepoints()
