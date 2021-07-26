@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-xi-fu1
+                2.21.0-omicron
               </div>
             
           
@@ -98,7 +98,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#data-loading-to-be-released">Data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Data loading (To Be Released)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage: datasets</a></li>
@@ -181,7 +182,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 
-<div class="viewcode-block" id="deprecate"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.deprecate">[docs]</a><span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="deprecate"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.deprecate">[docs]</a><span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to raise deprecation warning.</span>
 
@@ -189,14 +190,16 @@
 <span class="sd">        old (str): description of the old method/function</span>
 <span class="sd">        new (str or None): description of the new method/function</span>
 <span class="sd">        version (str or None): version number, like 2.7.3-alpha</span>
+<span class="sd">        ref (str or None): reference URL of the new method/function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_deprecate</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">version_str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;, version &gt;= </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; Refer to </span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> was deprecated</span><span class="si">{</span><span class="n">version_str</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> was deprecated</span><span class="si">{</span><span class="n">version_str</span><span class="si">}{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please use </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2"> rather than </span><span class="si">{</span><span class="n">old</span><span class="si">}{</span><span class="n">version_str</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please use </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2"> rather than </span><span class="si">{</span><span class="n">old</span><span class="si">}{</span><span class="n">version_str</span><span class="si">}{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="n">comment</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>

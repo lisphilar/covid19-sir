@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-xi-fu1
+                2.21.0-omicron
               </div>
             
           
@@ -98,7 +98,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#data-loading-to-be-released">Data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Data loading (To Be Released)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage: datasets</a></li>
@@ -310,7 +311,8 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">]</span>
 
-<div class="viewcode-block" id="JHUData.replace"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;JHUData.replace()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.21.0-xi-fu1&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace a part of cleaned dataset with a dataframe.</span>
 
@@ -345,7 +347,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Citation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">country_data</span><span class="o">.</span><span class="n">citation</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -497,7 +499,9 @@
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span>
 
-<div class="viewcode-block" id="JHUData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;JHUData.from_dataframe()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;DataLoader.read_dataframe()&quot;</span><span class="p">,</span>
+               <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.21.0-xi-fu1&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;https://lisphilar.github.io/covid19-sir/markdown/LOADING.html&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create JHUData instance using a pandas dataframe.</span>
@@ -527,7 +531,7 @@
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_RAW_COLS_DEFAULT</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">instance</span></div>
+        <span class="k">return</span> <span class="n">instance</span>
 
 <div class="viewcode-block" id="JHUData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

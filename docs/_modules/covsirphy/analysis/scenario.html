@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-xi-fu1
+                2.21.0-omicron
               </div>
             
           
@@ -98,7 +98,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#data-loading-to-be-released">Data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Data loading (To Be Released)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage: datasets</a></li>
@@ -338,13 +339,19 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            jhu_data (covsirphy.JHUData or None): object of records</span>
-<span class="sd">            population_data (covsirphy.PopulationData or None): PopulationData object</span>
+<span class="sd">            population_data (covsirphy.PopulationData or None): PopulationData object (deprecated)</span>
 <span class="sd">            extras (list[covsirphy.CleaningBase] or None): extra datasets</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TypeError: non-data cleaning instance was included</span>
 <span class="sd">            UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">population_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Scenario.register(population_data) was deprecated because population values are included in JHUData.&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">=</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="o">=</span><span class="n">population_data</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="n">extras</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">main_satisfied</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">()</span></div>

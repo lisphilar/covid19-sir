@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-xi-fu1
+                2.21.0-omicron
               </div>
             
           
@@ -98,7 +98,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#data-loading-to-be-released">Data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Data loading (To Be Released)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage: datasets</a></li>
@@ -302,7 +303,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            jhu_data (covsirphy.JHUData or None): object of records</span>
-<span class="sd">            population_data (covsirphy.PopulationData or None): PopulationData object</span>
+<span class="sd">            population_data (covsirphy.PopulationData or None): PopulationData object (deprecated)</span>
 <span class="sd">            extras (list[covsirphy.CleaningBase] or None): extra datasets</span>
 
 <span class="sd">        Raises:</span>
@@ -320,6 +321,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">switch_complement</span><span class="p">(</span><span class="n">whether</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Main: PopulationData</span>
         <span class="k">if</span> <span class="n">population_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;.register(population_data) was deprecated because population values are included in JHUData.&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population_data&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> <span class="n">population_data</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_area_dict</span><span class="p">)</span>
         <span class="c1"># Extra datasets</span>

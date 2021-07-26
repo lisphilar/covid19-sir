@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-xi-fu1
+                2.21.0-omicron
               </div>
             
           
@@ -100,7 +100,8 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html#data-loading-to-be-released">Data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/LOADING.html">Data loading (To Be Released)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
@@ -1279,7 +1280,7 @@ All results will be returned with a dataframe.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>jhu_data</strong> (<a class="reference internal" href="#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a><em> or </em><em>None</em>) – object of records</p></li>
-<li><p><strong>population_data</strong> (<a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a><em> or </em><em>None</em>) – PopulationData object</p></li>
+<li><p><strong>population_data</strong> (<a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a><em> or </em><em>None</em>) – PopulationData object (deprecated)</p></li>
 <li><p><strong>extras</strong> (<em>list</em><em>[</em><a class="reference internal" href="#covsirphy.CleaningBase" title="covsirphy.CleaningBase"><em>covsirphy.CleaningBase</em></a><em>] or </em><em>None</em>) – extra datasets</p></li>
 </ul>
 </dd>
@@ -1605,20 +1606,8 @@ using local CSV file or COVID-19 Data Hub.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataLoader.population">
-<span class="sig-name descname"><span class="pre">population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/loading/dataloader.html#DataLoader.population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataLoader.population" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – all keyword arguments will be ignored</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dataset regarding population values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData">covsirphy.PopulationData</a></p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.DataLoader.population" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataLoader.pyramid">
@@ -2068,7 +2057,7 @@ the start date will be the next data of the registered records.</p>
 <li><p><strong>model</strong> (<em>cs.ModelBase</em>) – the first ODE model</p></li>
 <li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments of ODESimulator.add()</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of model.EXAMPLE</p></li>
 </ul>
 </dd>
 </dl>
@@ -2450,42 +2439,8 @@ where recovered values are reported.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.JHUData.from_dataframe">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'input'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.JHUData.from_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create JHUData instance using a pandas dataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – <p>cleaned dataset
-Index</p>
-<blockquote>
-<div><p>reset index</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Columns</dt><dd><ul>
-<li><p>Date: Observation date</p></li>
-<li><p>ISO3: ISO3 code (optional)</p></li>
-<li><p>Country: country/region name</p></li>
-<li><p>Province: province/prefecture/state name</p></li>
-<li><p>Confirmed: the number of confirmed cases</p></li>
-<li><p>Infected: the number of currently infected cases</p></li>
-<li><p>Fatal: the number of fatal cases</p></li>
-<li><p>Recovered: the number of recovered cases</p></li>
-<li><p>Popupation: population values (optional)</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>directory</strong> (<em>str</em>) – directory to save geometry information (for .map() method)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>JHU-style dataset</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a></p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.JHUData.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.JHUData.map">
@@ -2576,24 +2531,8 @@ the number of susceptible cases will be calculated.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.JHUData.replace">
-<span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.JHUData.replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replace a part of cleaned dataset with a dataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – dataset object of the country</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Citation of the country data will be added to ‘JHUData.citation’ description.</p>
-</div>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.JHUData.replace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.JHUData.show_complement">
@@ -3390,7 +3329,8 @@ When &#64;country is a country name, province level data in the selected country
 <dt class="sig sig-object py" id="covsirphy.MPEstimator">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MPEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_estimator.html#MPEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MPEstimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Perform multiprocessing of Phaseunit.estimate()</p>
+<p>Deprecated.
+Perform multiprocessing of Phaseunit.estimate()</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -6131,7 +6071,8 @@ Simulation end at the next date of the end date of the phase.</p>
 <dt class="sig sig-object py" id="covsirphy.PolicyMeasures">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PolicyMeasures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PolicyMeasures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Analyse the relationship of policy measures and parameters of ODE models.
+<p>Deprecated.
+Analyse the relationship of policy measures and parameters of ODE models.
 This analysis will be done at country level because OxCGRT tracks policies at country level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -6329,9 +6270,10 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.PopulationData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PopulationData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PopulationData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
-<p>Data cleaning of total population dataset.</p>
+<p>Deprecated.
+Data cleaning of total population dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8650,7 +8592,7 @@ New future phases will be added (over-written).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>jhu_data</strong> (<a class="reference internal" href="#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a><em> or </em><em>None</em>) – object of records</p></li>
-<li><p><strong>population_data</strong> (<a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a><em> or </em><em>None</em>) – PopulationData object</p></li>
+<li><p><strong>population_data</strong> (<a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a><em> or </em><em>None</em>) – PopulationData object (deprecated)</p></li>
 <li><p><strong>extras</strong> (<em>list</em><em>[</em><a class="reference internal" href="#covsirphy.CleaningBase" title="covsirphy.CleaningBase"><em>covsirphy.CleaningBase</em></a><em>] or </em><em>None</em>) – extra datasets</p></li>
 </ul>
 </dd>
@@ -10141,7 +10083,7 @@ Index</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="covsirphy.deprecate">
-<span class="sig-name descname"><span class="pre">deprecate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/error.html#deprecate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.deprecate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">deprecate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/error.html#deprecate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.deprecate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator to raise deprecation warning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -10149,6 +10091,7 @@ Index</p>
 <li><p><strong>old</strong> (<em>str</em>) – description of the old method/function</p></li>
 <li><p><strong>new</strong> (<em>str</em><em> or </em><em>None</em>) – description of the new method/function</p></li>
 <li><p><strong>version</strong> (<em>str</em><em> or </em><em>None</em>) – version number, like 2.7.3-alpha</p></li>
+<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – reference URL of the new method/function</p></li>
 </ul>
 </dd>
 </dl>
