@@ -14,6 +14,7 @@ from covsirphy.phase.phase_unit import PhaseUnit
 
 class MPEstimator(Term):
     """
+    Deprecated.
     Perform multiprocessing of Phaseunit.estimate()
 
     Args:

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from covsirphy import DBLockedError, NotDBLockedError, UnExpectedValueError
 from covsirphy import DataLoader
-from covsirphy import JHUData, CountryData, PopulationData, JapanData
+from covsirphy import JHUData, CountryData, JapanData
 from covsirphy import OxCGRTData, PCRData, VaccineData, MobilityData, PopulationPyramidData
 from covsirphy import Scenario, Term
 
@@ -15,11 +15,10 @@ class TestDataLoader(object):
         with pytest.raises(TypeError):
             DataLoader(directory=0)
 
-    def test_remote(self, data_loader, jhu_data, population_data, oxcgrt_data,
+    def test_remote(self, data_loader, jhu_data, oxcgrt_data,
                     japan_data, pcr_data, vaccine_data, mobility_data, pyramid_data):
         # Data loading
         assert isinstance(jhu_data, JHUData)
-        assert isinstance(population_data, PopulationData)
         assert isinstance(oxcgrt_data, OxCGRTData)
         assert isinstance(japan_data, CountryData)
         assert isinstance(pcr_data, PCRData)

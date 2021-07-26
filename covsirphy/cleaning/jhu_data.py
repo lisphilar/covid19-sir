@@ -133,6 +133,7 @@ class JHUData(CleaningBase):
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df.loc[:, self._raw_cols]
 
+    @deprecate("JHUData.replace()", version="2.21.0-xi-fu1")
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
@@ -321,6 +322,8 @@ class JHUData(CleaningBase):
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
+    @deprecate("JHUData.from_dataframe()", new="DataLoader.read_dataframe()",
+               version="2.21.0-xi-fu1", ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.

@@ -9,6 +9,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 
 class PopulationData(CleaningBase):
     """
+    Deprecated.
     Data cleaning of total population dataset.
 
     Args:
@@ -28,6 +29,7 @@ class PopulationData(CleaningBase):
         Either @filename (high priority) or @data must be specified.
     """
 
+    @deprecate("PopulationData", new="JHUData", version="2.21.0-xi-fu1")
     def __init__(self, filename=None, data=None, citation=None):
         super().__init__(filename=filename, data=data, citation=citation, variables=[self.N])
 
