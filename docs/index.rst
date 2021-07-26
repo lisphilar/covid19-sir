@@ -15,6 +15,8 @@
 
    README
    markdown/INSTALLATION
+   markdown/WORKFLOW
+   markdown/LOADING
    usage_quickest
    usage_quick
    usage_dataset
