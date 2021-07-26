@@ -80,7 +80,7 @@ class ExampleData(JHUData):
             model (cs.ModelBase): the first ODE model
             country (str or None): country name
             province (str or None): province name
-            kwargs: the other keyword arguments of ODESimulator.add()
+            kwargs: the other keyword arguments of model.EXAMPLE
 
         Note:
             If country is None, the name of the model will be used.
