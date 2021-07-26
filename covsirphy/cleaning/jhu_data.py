@@ -133,6 +133,7 @@ class JHUData(CleaningBase):
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df.loc[:, self._raw_cols]
 
+    @deprecate("JHUData.replace()", version="2.21.0-xi-fu1")
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
