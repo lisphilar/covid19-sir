@@ -603,7 +603,7 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccinations
         """
         self._read_dep(**kwargs)
-        v_cols = [self.DATE, self.COUNTRY, self.PROVINCE, self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL]
+        v_cols = [self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL]
         df, citations = self._auto_lock(variables=v_cols)
         return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
 
