@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import pytest
 from covsirphy import DataLoader
 
@@ -18,6 +19,7 @@ def jhu_data(data_loader):
 
 @pytest.fixture(scope="session")
 def population_data(data_loader):
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
     return data_loader.population()
 
 
