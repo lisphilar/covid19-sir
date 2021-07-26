@@ -18,6 +18,7 @@ class TestDataHandler(object):
         if isinstance(data, JHUData):
             return dhl.register(jhu_data=data)
         if isinstance(data, PopulationData):
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
             return dhl.register(population_data=data)
         # Extra datasets
         if isinstance(data, (CountryData, JapanData, OxCGRTData, PCRData, VaccineData, MobilityData)):
@@ -33,15 +34,11 @@ class TestDataHandler(object):
             dhl.register(jhu_data=jhu_data)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_population(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
+    def test_population(self, jhu_data, country):
         dhl = DataHandler(country=country, province=None)
         assert not dhl.main_satisfied
-        with pytest.raises(NotRegisteredMainError):
-            assert dhl.population == population_data.value(country=country)
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.register(jhu_data=jhu_data)
         assert dhl.main_satisfied
-        assert dhl.population == population_data.value(country=country)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_complement(self, jhu_data, country):

@@ -17,6 +17,7 @@ from covsirphy.analysis.scenario import Scenario
 
 class PolicyMeasures(Term):
     """
+    Deprecated.
     Analyse the relationship of policy measures and parameters of ODE models.
     This analysis will be done at country level because OxCGRT tracks policies at country level.
 

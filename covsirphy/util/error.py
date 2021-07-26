@@ -4,7 +4,7 @@
 import warnings
 
 
-def deprecate(old, new=None, version=None):
+def deprecate(old, new=None, version=None, ref=None):
     """
     Decorator to raise deprecation warning.
 
@@ -12,14 +12,16 @@ def deprecate(old, new=None, version=None):
         old (str): description of the old method/function
         new (str or None): description of the new method/function
         version (str or None): version number, like 2.7.3-alpha
+        ref (str or None): reference URL of the new method/function
     """
     def _deprecate(func):
         def wrapper(*args, **kwargs):
             version_str = "." if version is None else f", version >= {version}."
+            message = "" if ref is None else f" Refer to {ref}."
             if new is None:
-                comment = f"{old} was deprecated{version_str}"
+                comment = f"{old} was deprecated{version_str}{message}"
             else:
-                comment = f"Please use {new} rather than {old}{version_str}"
+                comment = f"Please use {new} rather than {old}{version_str}{message}"
             warnings.warn(
                 comment,
                 DeprecationWarning,

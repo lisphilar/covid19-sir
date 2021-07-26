@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.cleaning.population import PopulationData
 from covsirphy.analysis.scenario import Scenario
 from covsirphy.analysis.example_data import ExampleData
 
@@ -127,19 +126,17 @@ class ModelValidator(Term):
         example_data = ExampleData(tau=self._tau, start_date="01Jan2020")
         # Population values
         population = model.EXAMPLE[self.N.lower()]
-        population_data = PopulationData(filename=None)
         # Register data for each setting
         for (i, setting_dict) in enumerate(setting_df.to_dict(orient="records")):
             name = f"{model.NAME}_{i}"
             step_n = setting_dict[self.STEP_N]
             param_dict = {k: v for (k, v) in setting_dict.items() if k in model.PARAMETERS}
             # Add theoretical data
-            example_data.add(model, step_n=step_n, country=name, param_dict=param_dict)
-            # Population
-            population_data.update(population, country=name)
+            example_data.add(
+                model, step_n=step_n, country=name, param_dict=param_dict, population=population)
             # Phase unit
             snl = Scenario(country=name, auto_complement=False)
-            snl.register(example_data, population_data)
+            snl.register(example_data)
             snl.add()
             snl.estimate(model, timeout=timeout, allowance=allowance)
             scenarios.append(snl)

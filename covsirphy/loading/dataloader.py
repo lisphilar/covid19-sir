@@ -322,6 +322,7 @@ class DataLoader(Term):
         variables = [
             self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
             self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
+            *self._oxcgrt_cols, *self._mobility_cols,
         ]
         id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
         rename_dict = {
@@ -514,8 +515,10 @@ class DataLoader(Term):
         df, citations = self._auto_lock(variables=[self.C, self.F, self.R, self.N])
         return JHUData(data=df, citation="\n".join(citations))
 
+    @deprecate("DataLoader.population()", new="DataLoader.jhu()", version="2.21.0-xi-fu1")
     def population(self, **kwargs):
         """
+        Deprecated, please use DataLoader.jhu() because JHUData includes population values.
         Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.
 
         Args:
@@ -540,7 +543,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=[self._oxcgrt_cols])
-        return OxCGRTData(data=df, citation="\n".join(citations))
+        return OxCGRTData(data=df, citation="\n".join(citations), variables=self._oxcgrt_cols)
 
     def japan(self, **kwargs):
         """
@@ -603,7 +606,7 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccinations
         """
         self._read_dep(**kwargs)
-        v_cols = [self.DATE, self.COUNTRY, self.PROVINCE, self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL]
+        v_cols = [self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL]
         df, citations = self._auto_lock(variables=v_cols)
         return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
 
@@ -615,7 +618,8 @@ class DataLoader(Term):
             covsirphy.MobilityData: dataset regarding mobilities
         """
         df, citations = self._auto_lock(variables=self._mobility_cols)
-        return MobilityData(data=df.dropna(subset=self._mobility_cols), citation="\n".join(citations))
+        df = df.dropna(subset=self._mobility_cols)
+        return MobilityData(data=df, citation="\n".join(citations), variables=self._mobility_cols)
 
     def pyramid(self, **kwargs):
         """
