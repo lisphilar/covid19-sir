@@ -322,6 +322,7 @@ class DataLoader(Term):
         variables = [
             self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
             self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
+            *self._oxcgrt_cols, *self._mobility_cols,
         ]
         id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
         rename_dict = {
@@ -540,7 +541,7 @@ class DataLoader(Term):
         """
         self._read_dep(**kwargs)
         df, citations = self._auto_lock(variables=[self._oxcgrt_cols])
-        return OxCGRTData(data=df, citation="\n".join(citations))
+        return OxCGRTData(data=df, citation="\n".join(citations), variables=self._oxcgrt_cols)
 
     def japan(self, **kwargs):
         """
@@ -615,7 +616,8 @@ class DataLoader(Term):
             covsirphy.MobilityData: dataset regarding mobilities
         """
         df, citations = self._auto_lock(variables=self._mobility_cols)
-        return MobilityData(data=df.dropna(subset=self._mobility_cols), citation="\n".join(citations))
+        df = df.dropna(subset=self._mobility_cols)
+        return MobilityData(data=df, citation="\n".join(citations), variables=self._mobility_cols)
 
     def pyramid(self, **kwargs):
         """
