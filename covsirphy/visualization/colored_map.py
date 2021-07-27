@@ -211,6 +211,7 @@ class ColoredMap(VisualizeBase):
         """
         # Geometry information from Natural Earth
         # pop_est, continent, name, iso_a3, gdp_md_est, geometry
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         geopath = gpd.datasets.get_path("naturalearth_lowres")
         gdf = gpd.read_file(geopath)
         # Data cleaning
