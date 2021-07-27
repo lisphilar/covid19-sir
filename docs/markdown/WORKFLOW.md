@@ -4,9 +4,9 @@ Here is the workflow of analysis with `covsirphy` library. They can be done with
 
 1. [Prepare datasets](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html)
     1. Decide whether to use the recommended datasets
-    1. (Optional) Read datasets saved in our local environment
-    1. Download the recommended datasets
+    1. (Optional) Read local datasets
     1. (Optional) Perform database lock
+    1. Download the recommended datasets
     1. Clean data
 1. [Perform Exploratory data analysis](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
 1. [Learn SIR-derived models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)

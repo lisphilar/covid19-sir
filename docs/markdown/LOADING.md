@@ -1,12 +1,16 @@
 # Data loading (To Be Released)
 
-From version 2.22.0, `DataLoader` will support to use local CSV files and `pandas.DataFrame`. (We can try this new feature with the latest development version.) Workflow of CovsirPhy analysis will be as follows.
+The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using `DataLoader` class.
 
-Here, how to "prepare datasets" (the first step of CovsirPhy workflow) will be explained.
+- recommented datasets: open datasets recommended by CovsirPhy community
+- local datasets: opened/closed datasets you have in your local environment
 
-## 1-1. Decide whether to use the recommended datasets
+Note:  
+From version 2.22.0, `DataLoader` will support local CSV files and `pandas.DataFrame` as local datasets. (We can try this new feature with the latest development version.)
 
-As the first step, please create `DataLoader` instance. As default, the recommended datasets will be download and saved to "input" directory of the current directory. These downloaded datasets will be updated automatically when `DataLoader` instance is created and 12 hours passed since the last downloading.
+## 1. Decide whether to use the recommended datasets
+
+We will create `DataLoader` instance. As default, the recommended datasets will be download and saved to "input" directory of the current directory. These downloaded datasets will be updated automatically when `DataLoader` instance is created and 12 hours have passed since the last downloading.
 
 ```Python
 import covsirphy as cs
@@ -20,20 +24,20 @@ import covsirphy as cs
 loader = cs.DataLoader(directory="datasets", update_interval=24)
 ```
 
-If you want to use **ONLY** your own datasets, please set `update_interval=None`. `directory` argument will be ignored.
+If you want to use **ONLY** local datasets, please set `update_interval=None`. `directory` argument will be ignored.
 
 ```Python
 import covsirphy as cs
 loader = cs.DataLoader(update_interval=None)
 ```
 
-## 1-2. (Optional) Read datasets saved in our local environment
+## 2. Read local datasets
 
-We can load our own datasets with `DataLoader.read_csv()` and `DataLoader.read_dataframe()`. When we use only recommended datasets, we can skip this step.
+We can read local datasets with `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`. When we use only recommended datasets, we can skip this step.
 
-### 1-2-1. Variables to use
+### 2-1. Check variables to use
 
-Variables to analyse are defined by `covsirphy`. (If you want to use a new dataset for your analysis, kindly create an issue with [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md)! Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.)
+Variables to analyse are specified by `covsirphy`. Please check that you have records of the required variables and the correspondence of te variables you have and variables specified by `covsirphy`. The required variables must be prepared with `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`. We can decide column names freely at this step and we will tell the correspondence to `DataLoader` with `DataLoader.lock()` later.
 
 Required:
 
@@ -54,19 +58,133 @@ Optional:
 - vaccinated_once: cumulative number of people who received at least one vaccine dose
 - vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
 
-### 1-2-2. Read datasets from CSV files
+Changeable:
 
-To Be Edited (TBE), `DataLoader.read_csv()` and `DataLoader.assign()`. When we use only recommended datasets, we can skip this step.
+- variables of government response indicators
+- variables of mobility indicators
 
-### 1-2-3. Read datasets from pandas.DataFrame
+Note that `covsirphy` uses only two levels of administration (country and province). If you have the third level (e.g. city), please regard it as province for analysis.
 
-TBE, `DataLoader.read_dataframe()`. When we use only recommended datasets, we can skip this step.
+If you want to use a new dataset for your analysis, kindly create an issue with [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md)! Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
-## 1-3. (Auto) Download the recommended datasets
+### 2-2. Read datasets from CSV files
 
-If `update_interval` was not `None` when `DataLoader` instance was created, downloading of the recommended datasets will be done automatically. Downloading will be started with `DataLoader.lock()` or `DataLoader.jhu()` and so on, but they will be done at the next steps.
+If we have records as CSV files (time series data of vairables), we can read them with `DataLoader.read_csv()` method. This uses `pandas.read_csv()` internally and [arguments](https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html) of `pandas.read_csv()` can be used.
 
-The datasets downloaded automatically downloaded is listed here. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
+As an example, we have records in "./japan.csv" as shown in the next table. (Data is from [COVID-19 Data Hub]((https://covid19datahub.io/).)
+
+|  | confirmed | fatal | province | population | date
+-- | -- | -- | -- | -- | --
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03
+
+We can read it with `DataLoader.read_csv()` method. Argument `parse_dates` (list of columns of dates) and `dayfirst` (whether date and month are formatted with DD/MM or not) are optional, but it is suggested to use them to read date information correctly. The read data is saved as a `pandas.DataFrame` and it can be checked with `DataLoader.local` property.
+
+```Python
+loader.read_csv("./usa.csv", parse_dates=["dates"], dayfirst=False)
+print(loader.local)
+```
+
+If you have multiple CSV files, you can call `DataLoader.read_csv()` multiple times. Note that we need to specify how to combine the current data and the new data with `how_combine` (string) argument. Candidates of `how_combine` is listed here.
+
+- "replace" (default): replace registered dataset with the new data
+- "concat": concat datasets with `pandas.concat()`
+- "merge": merge datasets with `pandas.DataFrame.merge()`
+- "update": update the current dataset with `pandas.DataFrame.update()`
+
+```Python
+loader.read_csv("./usa.csv", parse_dates=["dates"], dayfirst=False)
+loader.read_csv("./uk.csv", parse_dates=["dates"], dayfirst=True, how_combine="concat")
+print(loader.local)
+```
+
+Because `DataLoader.read_csv()` uses `pandas.read_csv()` internally, URLs can be used as the first positional argument.
+
+```Python
+loader.read_csv(
+    "https://github.com/lisphilar/covid19-sir/tree/master/data",
+    parse_dates=["dates"], dayfirst=False
+)
+print(loader.local)
+```
+
+### 2-3. Read datasets from pandas.DataFrame
+
+If you have local datasets as a `pandas.DataFrame`, please use `DataLoader.read_dataframe()`. Its usage is similar to `DataLoader.read_csv()`. As an example, we the dataset as `usa_df` and `uk_df` (instance of `pandas.DataFrame`).
+
+```Python
+loader.read_csv(usa_df, parse_dates=["dates"], dayfirst=False)
+loader.read_csv(uk_df, parse_dates=["dates"], dayfirst=True, how_combine="concat")
+print(loader.local)
+```
+
+### 2-4. Assign columns
+
+We can set variables using `DataLoader.assign()`. This use `pandas.DataFrame.assign()` internally and we can assign new variables (columns) with stable values and `lambda` function.
+
+Let's say, we have the following dataset as `loader.local`. We want to assign country name (string "USA") and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)
+
+|  | confirmed | fatal | province | population | date | vaccinated_once | vaccinated_full
+-- | -- | -- | -- | -- | -- | -- | --
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01 | 1000 | 500
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02 | 2000 | 700
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03 | 3000 | 800
+
+We can assign them as follows.
+
+```Python
+loader.assign(country="USA", vaccinations=lambda x: x["vaccinated_once"] + x["vaccinated_full"])
+print(loader.local)
+```
+
+Two columns will be added.
+
+|  | confirmed | fatal | province | population | date | vaccinated_once | vaccinated_full | country | vaccinations
+-- | -- | -- | -- | -- | -- | -- | -- | -- | --
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01 | 1000 | 500 | USA | 1500
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02 | 2000 | 700 | USA | 2700
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03 | 3000 | 800 | USA | 3800
+
+## 3. Perform database lock
+
+`DataLoader.lock()` (method for database lock) is required when you want to use local CSV files and `pandas.DataFrame` as the database. (We can skip this method when you use **ONLY** the recommended datasets.)
+
+By database lock, we tell the correspondence of te variables you have and variables specified by `covsirphy` and lock the local database. Addtionally, the all recommended datasets will be downloaded automatically (if `update_interval` was not `None`) and combined to the local database.
+
+After completion of database lock, we cannot update local database with `DataLoader.read_csv()` and so on.
+
+Database lock can be done as follows. As an example, we assume that all variables are registered in advance. Argument names of `DataLoader.lock()` is listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use). `oxcgrt_variables` and `mobility_variables` are list of variable names for `OxCGRTData` (government response indicators) and `MobilityData` (mobility indicators) respectively.
+
+```Python
+loader.lock(
+    # Always required
+    date="date", country="country", province="province",
+    confirmed="confirmed", fatal="fatal", population="population",
+    # Optional regarding location
+    iso3="iso3",
+    # Optional regarding JHUData
+    recovered="recovered",
+    # Optional regarding PCData
+    tests="tests",
+    # Optional regarding VaccineData
+    product="product", vaccinations="vaccinations",
+    vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
+    # Optinal for OxCGRTData (list[str])
+    oxcgrt_variables=None,
+    # Optinal for OxCGRTData (list[str])
+    mobility_variables=None
+)
+print(loader.locked)
+```
+
+`DataLoader.locked` is a read-only property to check the locked database. instance of `pandas.DataFrame` will be returned.
+
+## 4. Download the recommended datasets
+
+If `update_interval` was not `None` when `DataLoader` instance was created, downloading of the recommended datasets will be started automatically with calling `DataLoader.lock()` or `DataLoader.jhu()` etc.
+
+The recommended datasets are listed here. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
 
 ### [COVID-19 Data Hub](https://covid19datahub.io/)
 
@@ -111,38 +229,9 @@ Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, [http
 
 If you want to use a new dataset for your analysis, please kindly inform us using [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
-## 1-4. Perform database lock
+## 5. Clean data
 
-`DataLoader.lock()` (method for database) is required when you want to use local CSV files and `pandas.DataFrame` as the database. (Please skip this step if you use ONLY the automatically-downloaded datasets.)
-
-To use the local datasets, we need to link the column names of the local database to the variable names defined by CovsirPhy project. This can be done as follows.
-As an example, we assume that all variables are registered by `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`.
-
-```Python
-loader.lock(
-    # Always required
-    date="date", country="country", province="province",
-    confirmed="confirmed", fatal="fatal", population="population",
-    # Optional regarding location
-    iso3="iso3",
-    # Optional regarding JHUData
-    recovered="recovered",
-    # Optional regarding PCData
-    tests="tests",
-    # Optional regarding VaccineData
-    product="product", vaccinations="vaccinations",
-    vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
-    # Optinal for OxCGRTData (list[str])
-    oxcgrt_variables=None,
-    # Optinal for OxCGRTData (list[str])
-    mobility_variables=None
-)
-
-```
-
-## 1-5. Clean data
-
-TBE, `DataLoader.jhu()` etc.
+`DataLoader.jhu()` and some methods listed here will create `JHUData` instance and so on respectively and performs data cleaning automatically.
 
 ```Python
 # The number of cases and population values
@@ -154,16 +243,12 @@ pcr_data = loader.pcr()
 # The number of vaccinations
 vaccine_data = loader.vaccine()
 # Mobility data (will be impremented, from version 2.22.0)
-# mobility_data = loader.mobility()
+mobility_data = loader.mobility()
 # Population pyramid
 pyramid_data = loader.pyramid()
 # Japan-specific dataset
 japan_data = loader.japan()
 ```
-
-## Summary
-
-TBE, workflow of methods (only with recommended datasets, both, only local)
 
 ## Data loading in Kaggle Notebook
 
