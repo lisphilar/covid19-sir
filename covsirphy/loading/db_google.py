@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from unidecode import unidecode
 from covsirphy.util.term import Term
 from covsirphy.loading.db_base import _RemoteDatabase
 
@@ -73,7 +74,7 @@ class _GoogleOpenData(_RemoteDatabase):
         df = m_df.merge(i_df, how="left", on="location_key")
         # Location (country/province)
         df = df.loc[df["subregion2_name"].isna()]
-        df[self.PROVINCE] = df["subregion1_name"].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df["subregion1_name"].fillna(self.UNKNOWN).apply(unidecode)
         df["country_name"] = df["country_name"].replace(
             {
                 # CIV
