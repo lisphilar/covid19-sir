@@ -102,14 +102,16 @@
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WORKFLOW.html">Workflow</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data loading (To Be Released)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#decide-whether-to-use-the-recommended-datasets">1-1. Decide whether to use the recommended datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optional-read-datasets-saved-in-our-local-environment">1-2. (Optional) Read datasets saved in our local environment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#variables-to-use">1-2-1. Variables to use</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-csv-files">1-2-2. Read datasets from CSV files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-pandas-dataframe">1-2-3. Read datasets from pandas.DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decide-whether-to-use-the-recommended-datasets">1. Decide whether to use the recommended datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#read-local-datasets">2. Read local datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-variables-to-use">2-1. Check variables to use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-csv-files">2-2. Read datasets from CSV files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-pandas-dataframe">2-3. Read datasets from pandas.DataFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#assign-columns">2-4. Assign columns</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#auto-download-the-recommended-datasets">1-3. (Auto) Download the recommended datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#perform-database-lock">3. Perform database lock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-the-recommended-datasets">4. Download the recommended datasets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#our-world-in-data">Our World In Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#covid-19-open-data-by-google-cloud-platform">COVID-19 Open Data by Google Cloud Platform</a></li>
@@ -118,9 +120,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#how-to-request-new-data-loader">How to request new data loader</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#perform-database-lock">1-4. Perform database lock</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#clean-data">1-5. Clean data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clean-data">5. Clean data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-loading-in-kaggle-notebook">Data loading in Kaggle Notebook</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#acknowledgement">Acknowledgement</a></li>
 </ul>
@@ -228,11 +228,15 @@
 </style>
 <div class="section" id="data-loading-to-be-released">
 <h1>Data loading (To Be Released)<a class="headerlink" href="#data-loading-to-be-released" title="Permalink to this headline">¶</a></h1>
-<p>From version 2.22.0, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will support to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. (We can try this new feature with the latest development version.) Workflow of CovsirPhy analysis will be as follows.</p>
-<p>Here, how to “prepare datasets” (the first step of CovsirPhy workflow) will be explained.</p>
+<p>The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class.</p>
+<ul class="simple">
+<li><p>recommented datasets: open datasets recommended by CovsirPhy community</p></li>
+<li><p>local datasets: opened/closed datasets you have in your local environment</p></li>
+</ul>
+<p>Note:<br />From version 2.22.0, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will support local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as local datasets. (We can try this new feature with the latest development version.)</p>
 <div class="section" id="decide-whether-to-use-the-recommended-datasets">
-<h2>1-1. Decide whether to use the recommended datasets<a class="headerlink" href="#decide-whether-to-use-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
-<p>As the first step, please create <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance. As default, the recommended datasets will be download and saved to “input” directory of the current directory. These downloaded datasets will be updated automatically when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance is created and 12 hours passed since the last downloading.</p>
+<h2>1. Decide whether to use the recommended datasets<a class="headerlink" href="#decide-whether-to-use-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
+<p>We will create <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance. As default, the recommended datasets will be download and saved to “input” directory of the current directory. These downloaded datasets will be updated automatically when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance is created and 12 hours have passed since the last downloading.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">()</span>
 </pre></div>
@@ -242,18 +246,18 @@
 <span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If you want to use <strong>ONLY</strong> your own datasets, please set <code class="docutils literal notranslate"><span class="pre">update_interval=None</span></code>. <code class="docutils literal notranslate"><span class="pre">directory</span></code> argument will be ignored.</p>
+<p>If you want to use <strong>ONLY</strong> local datasets, please set <code class="docutils literal notranslate"><span class="pre">update_interval=None</span></code>. <code class="docutils literal notranslate"><span class="pre">directory</span></code> argument will be ignored.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">update_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="optional-read-datasets-saved-in-our-local-environment">
-<h2>1-2. (Optional) Read datasets saved in our local environment<a class="headerlink" href="#optional-read-datasets-saved-in-our-local-environment" title="Permalink to this headline">¶</a></h2>
-<p>We can load our own datasets with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code>. When we use only recommended datasets, we can skip this step.</p>
-<div class="section" id="variables-to-use">
-<h3>1-2-1. Variables to use<a class="headerlink" href="#variables-to-use" title="Permalink to this headline">¶</a></h3>
-<p>Variables to analyse are defined by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code>. (If you want to use a new dataset for your analysis, kindly create an issue with <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>! Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.)</p>
+<div class="section" id="read-local-datasets">
+<h2>2. Read local datasets<a class="headerlink" href="#read-local-datasets" title="Permalink to this headline">¶</a></h2>
+<p>We can read local datasets with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code>, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+<div class="section" id="check-variables-to-use">
+<h3>2-1. Check variables to use<a class="headerlink" href="#check-variables-to-use" title="Permalink to this headline">¶</a></h3>
+<p>Variables to analyse are specified by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code>. Please check that you have records of the required variables and the correspondence of te variables you have and variables specified by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code>. The required variables must be prepared with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code>, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. We can decide column names freely at this step and we will tell the correspondence to <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> with <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> later.</p>
 <p>Required:</p>
 <ul class="simple">
 <li><p>date: observation dates</p></li>
@@ -273,20 +277,113 @@
 <li><p>vaccinated_once: cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>vaccinated_full: cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
+<p>Changeable:</p>
+<ul class="simple">
+<li><p>variables of government response indicators</p></li>
+<li><p>variables of mobility indicators</p></li>
+</ul>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> uses only two levels of administration (country and province). If you have the third level (e.g. city), please regard it as province for analysis.</p>
+<p>If you want to use a new dataset for your analysis, kindly create an issue with <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>! Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.</p>
 </div>
 <div class="section" id="read-datasets-from-csv-files">
-<h3>1-2-2. Read datasets from CSV files<a class="headerlink" href="#read-datasets-from-csv-files" title="Permalink to this headline">¶</a></h3>
-<p>To Be Edited (TBE), <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+<h3>2-2. Read datasets from CSV files<a class="headerlink" href="#read-datasets-from-csv-files" title="Permalink to this headline">¶</a></h3>
+<p>If we have records as CSV files (time series data of vairables), we can read them with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> method. This uses <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> internally and <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">arguments</a> of <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> can be used.</p>
+<p>As an example, we have records in “./japan.csv” as shown in the next table. (Data is from <a class="reference external" href="(https://covid19datahub.io/).">COVID-19 Data Hub</a></p>
+<p>|  | confirmed | fatal | province | population | date
+– | – | – | – | – | –
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03</p>
+<p>We can read it with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> method. Argument <code class="docutils literal notranslate"><span class="pre">parse_dates</span></code> (list of columns of dates) and <code class="docutils literal notranslate"><span class="pre">dayfirst</span></code> (whether date and month are formatted with DD/MM or not) are optional, but it is suggested to use them to read date information correctly. The read data is saved as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> and it can be checked with <code class="docutils literal notranslate"><span class="pre">DataLoader.local</span></code> property.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./usa.csv&quot;</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you have multiple CSV files, you can call <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> multiple times. Note that we need to specify how to combine the current data and the new data with <code class="docutils literal notranslate"><span class="pre">how_combine</span></code> (string) argument. Candidates of <code class="docutils literal notranslate"><span class="pre">how_combine</span></code> is listed here.</p>
+<ul class="simple">
+<li><p>“replace” (default): replace registered dataset with the new data</p></li>
+<li><p>“concat”: concat datasets with <code class="docutils literal notranslate"><span class="pre">pandas.concat()</span></code></p></li>
+<li><p>“merge”: merge datasets with <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.merge()</span></code></p></li>
+<li><p>“update”: update the current dataset with <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.update()</span></code></p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./usa.csv&quot;</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./uk.csv&quot;</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how_combine</span><span class="o">=</span><span class="s2">&quot;concat&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Because <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> uses <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> internally, URLs can be used as the first positional argument.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="s2">&quot;https://github.com/lisphilar/covid19-sir/tree/master/data&quot;</span><span class="p">,</span>
+    <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="read-datasets-from-pandas-dataframe">
-<h3>1-2-3. Read datasets from pandas.DataFrame<a class="headerlink" href="#read-datasets-from-pandas-dataframe" title="Permalink to this headline">¶</a></h3>
-<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code>. When we use only recommended datasets, we can skip this step.</p>
+<h3>2-3. Read datasets from pandas.DataFrame<a class="headerlink" href="#read-datasets-from-pandas-dataframe" title="Permalink to this headline">¶</a></h3>
+<p>If you have local datasets as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>, please use <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code>. Its usage is similar to <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code>. As an example, we the dataset as <code class="docutils literal notranslate"><span class="pre">usa_df</span></code> and <code class="docutils literal notranslate"><span class="pre">uk_df</span></code> (instance of <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">usa_df</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">uk_df</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dates&quot;</span><span class="p">],</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how_combine</span><span class="o">=</span><span class="s2">&quot;concat&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
-<div class="section" id="auto-download-the-recommended-datasets">
-<h2>1-3. (Auto) Download the recommended datasets<a class="headerlink" href="#auto-download-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance was created, downloading of the recommended datasets will be done automatically. Downloading will be started with <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> or <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> and so on, but they will be done at the next steps.</p>
-<p>The datasets downloaded automatically downloaded is listed here. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
+<div class="section" id="assign-columns">
+<h3>2-4. Assign columns<a class="headerlink" href="#assign-columns" title="Permalink to this headline">¶</a></h3>
+<p>We can set variables using <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. This use <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.assign()</span></code> internally and we can assign new variables (columns) with stable values and <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function.</p>
+<p>Let’s say, we have the following dataset as <code class="docutils literal notranslate"><span class="pre">loader.local</span></code>. We want to assign country name (string “USA”) and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)</p>
+<p>|  | confirmed | fatal | province | population | date | vaccinated_once | vaccinated_full
+– | – | – | – | – | – | – | –
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01 | 1000 | 500
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02 | 2000 | 700
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03 | 3000 | 800</p>
+<p>We can assign them as follows.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;USA&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Two columns will be added.</p>
+<p>|  | confirmed | fatal | province | population | date | vaccinated_once | vaccinated_full | country | vaccinations
+– | – | – | – | – | – | – | – | – | –
+0 | 966287 | 17979 | Illinois | 12671821 | 2021-01-01 | 1000 | 500 | USA | 1500
+1 | 977677 | 18217 | Illinois | 12671821 | 2021-01-02 | 2000 | 700 | USA | 2700
+2 | 982105 | 18322 | Illinois | 12671821 | 2021-01-03 | 3000 | 800 | USA | 3800</p>
+</div>
+</div>
+<div class="section" id="perform-database-lock">
+<h2>3. Perform database lock<a class="headerlink" href="#perform-database-lock" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> (method for database lock) is required when you want to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as the database. (We can skip this method when you use <strong>ONLY</strong> the recommended datasets.)</p>
+<p>By database lock, we tell the correspondence of te variables you have and variables specified by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> and lock the local database. Addtionally, the all recommended datasets will be downloaded automatically (if <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code>) and combined to the local database.</p>
+<p>After completion of database lock, we cannot update local database with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and so on.</p>
+<p>Database lock can be done as follows. As an example, we assume that all variables are registered in advance. Argument names of <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> is listed at <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use">2-1. Variables to use</a>. <code class="docutils literal notranslate"><span class="pre">oxcgrt_variables</span></code> and <code class="docutils literal notranslate"><span class="pre">mobility_variables</span></code> are list of variable names for <code class="docutils literal notranslate"><span class="pre">OxCGRTData</span></code> (government response indicators) and <code class="docutils literal notranslate"><span class="pre">MobilityData</span></code> (mobility indicators) respectively.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span>
+    <span class="c1"># Always required</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
+    <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding location</span>
+    <span class="n">iso3</span><span class="o">=</span><span class="s2">&quot;iso3&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding JHUData</span>
+    <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding PCData</span>
+    <span class="n">tests</span><span class="o">=</span><span class="s2">&quot;tests&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding VaccineData</span>
+    <span class="n">product</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="s2">&quot;vaccinations&quot;</span><span class="p">,</span>
+    <span class="n">vaccinated_once</span><span class="o">=</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">,</span> <span class="n">vaccinated_full</span><span class="o">=</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">,</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
+    <span class="n">oxcgrt_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
+    <span class="n">mobility_variables</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">locked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">DataLoader.locked</span></code> is a read-only property to check the locked database. instance of <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> will be returned.</p>
+</div>
+<div class="section" id="download-the-recommended-datasets">
+<h2>4. Download the recommended datasets<a class="headerlink" href="#download-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
+<p>If <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance was created, downloading of the recommended datasets will be started automatically with calling <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> or <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> etc.</p>
+<p>The recommended datasets are listed here. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
 <div class="section" id="covid-19-data-hub">
 <h3><a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a><a class="headerlink" href="#covid-19-data-hub" title="Permalink to this headline">¶</a></h3>
 <p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
@@ -334,35 +431,9 @@
 <p>If you want to use a new dataset for your analysis, please kindly inform us using <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>. Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.</p>
 </div>
 </div>
-<div class="section" id="perform-database-lock">
-<h2>1-4. Perform database lock<a class="headerlink" href="#perform-database-lock" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> (method for database) is required when you want to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as the database. (Please skip this step if you use ONLY the automatically-downloaded datasets.)</p>
-<p>To use the local datasets, we need to link the column names of the local database to the variable names defined by CovsirPhy project. This can be done as follows.
-As an example, we assume that all variables are registered by <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code>, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span>
-    <span class="c1"># Always required</span>
-    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
-    <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span>
-    <span class="c1"># Optional regarding location</span>
-    <span class="n">iso3</span><span class="o">=</span><span class="s2">&quot;iso3&quot;</span><span class="p">,</span>
-    <span class="c1"># Optional regarding JHUData</span>
-    <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span>
-    <span class="c1"># Optional regarding PCData</span>
-    <span class="n">tests</span><span class="o">=</span><span class="s2">&quot;tests&quot;</span><span class="p">,</span>
-    <span class="c1"># Optional regarding VaccineData</span>
-    <span class="n">product</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="s2">&quot;vaccinations&quot;</span><span class="p">,</span>
-    <span class="n">vaccinated_once</span><span class="o">=</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">,</span> <span class="n">vaccinated_full</span><span class="o">=</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">,</span>
-    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
-    <span class="n">oxcgrt_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
-    <span class="n">mobility_variables</span><span class="o">=</span><span class="kc">None</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
 <div class="section" id="clean-data">
-<h2>1-5. Clean data<a class="headerlink" href="#clean-data" title="Permalink to this headline">¶</a></h2>
-<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> etc.</p>
+<h2>5. Clean data<a class="headerlink" href="#clean-data" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> and some methods listed here will create <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance and so on respectively and performs data cleaning automatically.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The number of cases and population values</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="c1"># Government Response Tracker (OxCGRT)</span>
@@ -372,17 +443,13 @@ As an example, we assume that all variables are registered by <code class="docut
 <span class="c1"># The number of vaccinations</span>
 <span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
 <span class="c1"># Mobility data (will be impremented, from version 2.22.0)</span>
-<span class="c1"># mobility_data = loader.mobility()</span>
+<span class="n">mobility_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">mobility</span><span class="p">()</span>
 <span class="c1"># Population pyramid</span>
 <span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
 <span class="c1"># Japan-specific dataset</span>
 <span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="summary">
-<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
-<p>TBE, workflow of methods (only with recommended datasets, both, only local)</p>
 </div>
 <div class="section" id="data-loading-in-kaggle-notebook">
 <h2>Data loading in Kaggle Notebook<a class="headerlink" href="#data-loading-in-kaggle-notebook" title="Permalink to this headline">¶</a></h2>
