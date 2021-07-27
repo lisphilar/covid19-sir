@@ -1,6 +1,6 @@
 # Installation
 
-`covsirphy` library supports Python 3.7 or newer versions.
+`covsirphy` library supports Python 3.7 and newer versions.
 
 **Please use `covsirphy` with a virtual environment** (venv/poetry/conda etc.) because it has many dependencies as listed in "tool.poetry.dependencies" of [pyproject.toml](https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml).
 
@@ -85,56 +85,11 @@ pyramid_data = loader.pyramid()
 japan_data = loader.japan()
 ```
 
-The downloaded datasets were retrieved from the following sites.
-
-### [COVID-19 Data Hub](https://covid19datahub.io/)
-
-Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
-
-- The number of cases (JHU style)
-- Population values in each country/province
-- [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)
-- The number of tests
-
-### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
-
-Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)
-
-- The number of tests
-- The number of vaccinations
-- The number of people who received vaccinations
-
-### [COVID-19 Open Data by Google Cloud Platform](https://github.com/GoogleCloudPlatform/covid-19-open-data)
-
-O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, [https://goo.gle/covid-19-open-data](https://goo.gle/covid-19-open-data)
-
-- percentage to baseline in visits (will be usable from 2.22.0)
-
-Note:  
-**Please refer to [Google Terms of Service](https://policies.google.com/terms) in advance.**
-
-### [World Bank Open Data](https://data.worldbank.org/)
-
-World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)
-
-- Population pyramid
-
-### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
-
-Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, [https://github.com/lisphilar/covid19-sir/tree/master/data](https://github.com/lisphilar/covid19-sir/tree/master/data).  
-
-- The number of cases in Japan (total/prefectures)
-- Metadata regarding Japan prefectures
-
-## 2. How to request new data loader
-
-If you want to use a new dataset for your analysis, please kindly inform us using [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
-
-## 3. Use a local CSV file which has the number of cases
+## 2. Use a local CSV file which has the number of cases
 
 We can replace `jhu_data` instance created by `DataLoader` class with your dataset saved in a CSV file. At this time, `covsirphy` supports country and province level data.
 
-### 3.1. Create CountryData instance
+### 2.1. Create CountryData instance
 
 Please create `CountryData` instance at first. Let's say we have a CSV file ("oslo.csv") with the following columns.
 
@@ -205,7 +160,7 @@ country_data.cleaned(date_format="%d/%m/%Y")
 ```
 
 
-### 3.2. Convert to JHUData instance
+### 2.2. Convert to JHUData instance
 
 Then, convert the `CountryData` instance to a `JHUData` instance.
 
@@ -217,7 +172,7 @@ jhu_data = cs.JHUData.from_dataframe(country_data.cleaned())
 # jhu_data.replace(country_data)
 ```
 
-### 3.3. Set population values
+### 2.3. Set population values
 
 Additionally, you may need to register population values to `PopulationData` instance manually.
 

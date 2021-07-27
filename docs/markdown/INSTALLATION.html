@@ -105,19 +105,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#dataset-preparation">Dataset preparation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recommended-datasets">1. Recommended datasets</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#our-world-in-data">Our World In Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#covid-19-open-data-by-google-cloud-platform">COVID-19 Open Data by Google Cloud Platform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#world-bank-open-data">World Bank Open Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#datasets-for-covsirphy">Datasets for CovsirPhy</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#how-to-request-new-data-loader">2. How to request new data loader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">3. Use a local CSV file which has the number of cases</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#create-countrydata-instance">3.1. Create CountryData instance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#convert-to-jhudata-instance">3.2. Convert to JHUData instance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-population-values">3.3. Set population values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-datasets">1. Recommended datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">2. Use a local CSV file which has the number of cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-countrydata-instance">2.1. Create CountryData instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convert-to-jhudata-instance">2.2. Convert to JHUData instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-population-values">2.3. Set population values</a></li>
 </ul>
 </li>
 </ul>
@@ -227,7 +219,7 @@
 </style>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> library supports Python 3.7 or newer versions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> library supports Python 3.7 and newer versions.</p>
 <p><strong>Please use <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> with a virtual environment</strong> (venv/poetry/conda etc.) because it has many dependencies as listed in “tool.poetry.dependencies” of <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml">pyproject.toml</a>.</p>
 <p>If you have any concerns, kindly create issues in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">CovsirPhy: GitHub Issues page</a>. All discussions are recorded there.</p>
 <div class="section" id="stable-version">
@@ -295,59 +287,12 @@ pip install --upgrade covsirphy
 <span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The downloaded datasets were retrieved from the following sites.</p>
-<div class="section" id="covid-19-data-hub">
-<h3><a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a><a class="headerlink" href="#covid-19-data-hub" title="Permalink to this headline">¶</a></h3>
-<p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
-<ul class="simple">
-<li><p>The number of cases (JHU style)</p></li>
-<li><p>Population values in each country/province</p></li>
-<li><p><a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">Government Response Tracker (OxCGRT)</a></p></li>
-<li><p>The number of tests</p></li>
-</ul>
-</div>
-<div class="section" id="our-world-in-data">
-<h3><a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World In Data</a><a class="headerlink" href="#our-world-in-data" title="Permalink to this headline">¶</a></h3>
-<p>Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p>
-<ul class="simple">
-<li><p>The number of tests</p></li>
-<li><p>The number of vaccinations</p></li>
-<li><p>The number of people who received vaccinations</p></li>
-</ul>
-</div>
-<div class="section" id="covid-19-open-data-by-google-cloud-platform">
-<h3><a class="reference external" href="https://github.com/GoogleCloudPlatform/covid-19-open-data">COVID-19 Open Data by Google Cloud Platform</a><a class="headerlink" href="#covid-19-open-data-by-google-cloud-platform" title="Permalink to this headline">¶</a></h3>
-<p>O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, <a class="reference external" href="https://goo.gle/covid-19-open-data">https://goo.gle/covid-19-open-data</a></p>
-<ul class="simple">
-<li><p>percentage to baseline in visits (will be usable from 2.22.0)</p></li>
-</ul>
-<p>Note:<br /><strong>Please refer to <a class="reference external" href="https://policies.google.com/terms">Google Terms of Service</a> in advance.</strong></p>
-</div>
-<div class="section" id="world-bank-open-data">
-<h3><a class="reference external" href="https://data.worldbank.org/">World Bank Open Data</a><a class="headerlink" href="#world-bank-open-data" title="Permalink to this headline">¶</a></h3>
-<p>World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
-<ul class="simple">
-<li><p>Population pyramid</p></li>
-</ul>
-</div>
-<div class="section" id="datasets-for-covsirphy">
-<h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
-<p>Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p>
-<ul class="simple">
-<li><p>The number of cases in Japan (total/prefectures)</p></li>
-<li><p>Metadata regarding Japan prefectures</p></li>
-</ul>
-</div>
-</div>
-<div class="section" id="how-to-request-new-data-loader">
-<h2>2. How to request new data loader<a class="headerlink" href="#how-to-request-new-data-loader" title="Permalink to this headline">¶</a></h2>
-<p>If you want to use a new dataset for your analysis, please kindly inform us using <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>. Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.</p>
 </div>
 <div class="section" id="use-a-local-csv-file-which-has-the-number-of-cases">
-<h2>3. Use a local CSV file which has the number of cases<a class="headerlink" href="#use-a-local-csv-file-which-has-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
+<h2>2. Use a local CSV file which has the number of cases<a class="headerlink" href="#use-a-local-csv-file-which-has-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
 <p>We can replace <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code> instance created by <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class with your dataset saved in a CSV file. At this time, <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> supports country and province level data.</p>
 <div class="section" id="create-countrydata-instance">
-<h3>3.1. Create CountryData instance<a class="headerlink" href="#create-countrydata-instance" title="Permalink to this headline">¶</a></h3>
+<h3>2.1. Create CountryData instance<a class="headerlink" href="#create-countrydata-instance" title="Permalink to this headline">¶</a></h3>
 <p>Please create <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance at first. Let’s say we have a CSV file (“oslo.csv”) with the following columns.</p>
 <ul class="simple">
 <li><p>“date”: reported dates</p></li>
@@ -408,7 +353,7 @@ pip install --upgrade covsirphy
 </div>
 </div>
 <div class="section" id="convert-to-jhudata-instance">
-<h3>3.2. Convert to JHUData instance<a class="headerlink" href="#convert-to-jhudata-instance" title="Permalink to this headline">¶</a></h3>
+<h3>2.2. Convert to JHUData instance<a class="headerlink" href="#convert-to-jhudata-instance" title="Permalink to this headline">¶</a></h3>
 <p>Then, convert the <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance to a <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create JHUData instance using cleaned dataset (pandas.DataFrame)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">())</span>
@@ -419,7 +364,7 @@ pip install --upgrade covsirphy
 </div>
 </div>
 <div class="section" id="set-population-values">
-<h3>3.3. Set population values<a class="headerlink" href="#set-population-values" title="Permalink to this headline">¶</a></h3>
+<h3>2.3. Set population values<a class="headerlink" href="#set-population-values" title="Permalink to this headline">¶</a></h3>
 <p>Additionally, you may need to register population values to <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> instance manually.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create PopulationData instance with empty dataset</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">()</span>

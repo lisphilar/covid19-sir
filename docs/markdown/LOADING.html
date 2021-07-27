@@ -109,9 +109,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#read-datasets-from-pandas-dataframe">1-2-3. Read datasets from pandas.DataFrame</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#auto-download-the-recommended-datasets">1-3. (Auto) Download the recommended datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optional-perform-database-lock">1-4. (Optional) Perform database lock</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#auto-clean-data">1-5. (Auto) Clean data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-download-the-recommended-datasets">1-3. (Auto) Download the recommended datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#our-world-in-data">Our World In Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#covid-19-open-data-by-google-cloud-platform">COVID-19 Open Data by Google Cloud Platform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#world-bank-open-data">World Bank Open Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#datasets-for-covsirphy">Datasets for CovsirPhy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-request-new-data-loader">How to request new data loader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#perform-database-lock">1-4. Perform database lock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clean-data">1-5. Clean data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-loading-in-kaggle-notebook">Data loading in Kaggle Notebook</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#acknowledgement">Acknowledgement</a></li>
@@ -278,13 +286,82 @@
 <div class="section" id="auto-download-the-recommended-datasets">
 <h2>1-3. (Auto) Download the recommended datasets<a class="headerlink" href="#auto-download-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
 <p>If <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance was created, downloading of the recommended datasets will be done automatically. Downloading will be started with <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> or <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> and so on, but they will be done at the next steps.</p>
+<p>The datasets downloaded automatically downloaded is listed here. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
+<div class="section" id="covid-19-data-hub">
+<h3><a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a><a class="headerlink" href="#covid-19-data-hub" title="Permalink to this headline">¶</a></h3>
+<p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
+<ul class="simple">
+<li><p>The number of cases (JHU style)</p></li>
+<li><p>Population values in each country/province</p></li>
+<li><p><a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">Government Response Tracker (OxCGRT)</a></p></li>
+<li><p>The number of tests</p></li>
+</ul>
 </div>
-<div class="section" id="optional-perform-database-lock">
-<h2>1-4. (Optional) Perform database lock<a class="headerlink" href="#optional-perform-database-lock" title="Permalink to this headline">¶</a></h2>
-<p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code>.</p>
+<div class="section" id="our-world-in-data">
+<h3><a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World In Data</a><a class="headerlink" href="#our-world-in-data" title="Permalink to this headline">¶</a></h3>
+<p>Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p>
+<ul class="simple">
+<li><p>The number of tests</p></li>
+<li><p>The number of vaccinations</p></li>
+<li><p>The number of people who received vaccinations</p></li>
+</ul>
 </div>
-<div class="section" id="auto-clean-data">
-<h2>1-5. (Auto) Clean data<a class="headerlink" href="#auto-clean-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="covid-19-open-data-by-google-cloud-platform">
+<h3><a class="reference external" href="https://github.com/GoogleCloudPlatform/covid-19-open-data">COVID-19 Open Data by Google Cloud Platform</a><a class="headerlink" href="#covid-19-open-data-by-google-cloud-platform" title="Permalink to this headline">¶</a></h3>
+<p>O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, <a class="reference external" href="https://goo.gle/covid-19-open-data">https://goo.gle/covid-19-open-data</a></p>
+<ul class="simple">
+<li><p>percentage to baseline in visits (will be usable from 2.22.0)</p></li>
+</ul>
+<p>Note:<br /><strong>Please refer to <a class="reference external" href="https://policies.google.com/terms">Google Terms of Service</a> in advance.</strong></p>
+</div>
+<div class="section" id="world-bank-open-data">
+<h3><a class="reference external" href="https://data.worldbank.org/">World Bank Open Data</a><a class="headerlink" href="#world-bank-open-data" title="Permalink to this headline">¶</a></h3>
+<p>World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
+<ul class="simple">
+<li><p>Population pyramid</p></li>
+</ul>
+</div>
+<div class="section" id="datasets-for-covsirphy">
+<h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
+<p>Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p>
+<ul class="simple">
+<li><p>The number of cases in Japan (total/prefectures)</p></li>
+<li><p>Metadata regarding Japan prefectures</p></li>
+</ul>
+</div>
+<div class="section" id="how-to-request-new-data-loader">
+<h3>How to request new data loader<a class="headerlink" href="#how-to-request-new-data-loader" title="Permalink to this headline">¶</a></h3>
+<p>If you want to use a new dataset for your analysis, please kindly inform us using <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>. Please read <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a> in advance.</p>
+</div>
+</div>
+<div class="section" id="perform-database-lock">
+<h2>1-4. Perform database lock<a class="headerlink" href="#perform-database-lock" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> (method for database) is required when you want to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as the database. (Please skip this step if you use ONLY the automatically-downloaded datasets.)</p>
+<p>To use the local datasets, we need to link the column names of the local database to the variable names defined by CovsirPhy project. This can be done as follows.
+As an example, we assume that all variables are registered by <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code>, <code class="docutils literal notranslate"><span class="pre">DataLoader.read_dataframe()</span></code> and <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span>
+    <span class="c1"># Always required</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
+    <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding location</span>
+    <span class="n">iso3</span><span class="o">=</span><span class="s2">&quot;iso3&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding JHUData</span>
+    <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding PCData</span>
+    <span class="n">tests</span><span class="o">=</span><span class="s2">&quot;tests&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional regarding VaccineData</span>
+    <span class="n">product</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="s2">&quot;vaccinations&quot;</span><span class="p">,</span>
+    <span class="n">vaccinated_once</span><span class="o">=</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">,</span> <span class="n">vaccinated_full</span><span class="o">=</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">,</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
+    <span class="n">oxcgrt_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
+    <span class="n">mobility_variables</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clean-data">
+<h2>1-5. Clean data<a class="headerlink" href="#clean-data" title="Permalink to this headline">¶</a></h2>
 <p>TBE, <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> etc.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The number of cases and population values</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>

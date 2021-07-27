@@ -66,11 +66,81 @@ TBE, `DataLoader.read_dataframe()`. When we use only recommended datasets, we ca
 
 If `update_interval` was not `None` when `DataLoader` instance was created, downloading of the recommended datasets will be done automatically. Downloading will be started with `DataLoader.lock()` or `DataLoader.jhu()` and so on, but they will be done at the next steps.
 
-## 1-4. (Optional) Perform database lock
+The datasets downloaded automatically downloaded is listed here. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
 
-TBE, `DataLoader.lock()`.
+### [COVID-19 Data Hub](https://covid19datahub.io/)
 
-## 1-5. (Auto) Clean data
+Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
+
+- The number of cases (JHU style)
+- Population values in each country/province
+- [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)
+- The number of tests
+
+### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
+
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)
+
+- The number of tests
+- The number of vaccinations
+- The number of people who received vaccinations
+
+### [COVID-19 Open Data by Google Cloud Platform](https://github.com/GoogleCloudPlatform/covid-19-open-data)
+
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, [https://goo.gle/covid-19-open-data](https://goo.gle/covid-19-open-data)
+
+- percentage to baseline in visits (will be usable from 2.22.0)
+
+Note:  
+**Please refer to [Google Terms of Service](https://policies.google.com/terms) in advance.**
+
+### [World Bank Open Data](https://data.worldbank.org/)
+
+World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)
+
+- Population pyramid
+
+### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
+
+Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, [https://github.com/lisphilar/covid19-sir/tree/master/data](https://github.com/lisphilar/covid19-sir/tree/master/data).  
+
+- The number of cases in Japan (total/prefectures)
+- Metadata regarding Japan prefectures
+
+### How to request new data loader
+
+If you want to use a new dataset for your analysis, please kindly inform us using [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
+
+## 1-4. Perform database lock
+
+`DataLoader.lock()` (method for database) is required when you want to use local CSV files and `pandas.DataFrame` as the database. (Please skip this step if you use ONLY the automatically-downloaded datasets.)
+
+To use the local datasets, we need to link the column names of the local database to the variable names defined by CovsirPhy project. This can be done as follows.
+As an example, we assume that all variables are registered by `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`.
+
+```Python
+loader.lock(
+    # Always required
+    date="date", country="country", province="province",
+    confirmed="confirmed", fatal="fatal", population="population",
+    # Optional regarding location
+    iso3="iso3",
+    # Optional regarding JHUData
+    recovered="recovered",
+    # Optional regarding PCData
+    tests="tests",
+    # Optional regarding VaccineData
+    product="product", vaccinations="vaccinations",
+    vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
+    # Optinal for OxCGRTData (list[str])
+    oxcgrt_variables=None,
+    # Optinal for OxCGRTData (list[str])
+    mobility_variables=None
+)
+
+```
+
+## 1-5. Clean data
 
 TBE, `DataLoader.jhu()` etc.
 
