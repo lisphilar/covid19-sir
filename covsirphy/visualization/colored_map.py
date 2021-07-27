@@ -211,6 +211,7 @@ class ColoredMap(VisualizeBase):
         """
         # Geometry information from Natural Earth
         # pop_est, continent, name, iso_a3, gdp_md_est, geometry
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         geopath = gpd.datasets.get_path("naturalearth_lowres")
         gdf = gpd.read_file(geopath)
         # Data cleaning
@@ -259,6 +260,7 @@ class ColoredMap(VisualizeBase):
             with geo_dirpath.joinpath(basename).open("wb") as fh:
                 fh.write(response.content)
         # Data cleaning
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         gdf = gpd.read_file(geo_dirpath.joinpath(f"{title}.shp"))
         gdf["name"] = gdf["name"].fillna("").apply(unidecode)
         gdf.rename(columns={"name": self.PROVINCE, "adm0_a3": self.ISO3}, inplace=True)
