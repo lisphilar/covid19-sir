@@ -74,7 +74,7 @@ If we have records as CSV files (time series data of vairables), we can read the
 As an example, we have records in "./japan.csv" as shown in the next table. (Data is from [COVID-19 Data Hub]((https://covid19datahub.io/).)
 
 |    | confirmed | fatal | province | population | date       |
-| --- | ---        | ---    | ---       | ---         | ---         |
+| :---: | :---: | :---: | :---: | :---: | :---: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 |
@@ -126,7 +126,7 @@ We can set variables using `DataLoader.assign()`. This use `pandas.DataFrame.ass
 Let's say, we have the following dataset as `loader.local`. We want to assign country name (string "USA") and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)
 
 |    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full |
-| --- | ---        | ---    | ---       | ---         | ---         | ---              | ---              |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             |
@@ -141,7 +141,7 @@ print(loader.local)
 Two columns will be added.
 
 |    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full | country | vaccinations |
-| --- | ---        | ---    | ---       | ---         | ---         | ---              | ---              | ---      | ---           |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             | USA     | 1500         |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             | USA     | 2700         |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             | USA     | 3800         |

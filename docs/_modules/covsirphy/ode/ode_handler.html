@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-pi
+                2.21.0-rho
               </div>
             
           
@@ -346,7 +346,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">comp_f</span><span class="p">(</span><span class="n">score_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span></div>
 
-    <span class="k">def</span> <span class="nf">_estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">check_dict</span><span class="p">,</span> <span class="n">study_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">check_dict</span><span class="p">,</span> <span class="n">study_dict</span><span class="p">,</span> <span class="n">show_phase</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform parameter estimation for one phase.</span>
 
@@ -364,6 +364,7 @@
 <span class="sd">            quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval</span>
 <span class="sd">            check_dict (dict[str, object]): setting of validation</span>
 <span class="sd">            study_dict (dict[str, object]): setting of optimization study</span>
+<span class="sd">            show_phase (bool): whether show phase name or not (stdout)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict(str, object):</span>
@@ -382,7 +383,11 @@
         <span class="n">n_trials</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">],</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">]</span>
         <span class="n">start_date</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="n">end_date</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">phase</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> phase (</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">): finished </span><span class="si">{</span><span class="n">n_trials</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_phase</span><span class="p">:</span>
+            <span class="n">ph_statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> phase (</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ph_statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">ph_statement</span><span class="si">}</span><span class="s2">: finished </span><span class="si">{</span><span class="n">n_trials</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est_dict</span>
 
 <div class="viewcode-block" id="ODEHandler.estimate_params"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ODEHandler.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="n">check_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -449,10 +454,10 @@
         <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">study_dict</span> <span class="ow">or</span> <span class="p">{})</span>
         <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># ODE parameter estimation</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">est_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_params</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="n">quantiles</span><span class="p">,</span>
-            <span class="n">check_dict</span><span class="o">=</span><span class="n">check_kwargs</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="n">study_kwargs</span><span class="p">)</span>
-        <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">check_dict</span><span class="o">=</span><span class="n">check_kwargs</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="n">study_kwargs</span><span class="p">,</span> <span class="n">show_phase</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">est_dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">est_f</span><span class="p">(</span><span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>

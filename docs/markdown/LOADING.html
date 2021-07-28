@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-pi
+                2.21.0-rho
               </div>
             
           
@@ -290,7 +290,7 @@
 <p>If we have records as CSV files (time series data of vairables), we can read them with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> method. This uses <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> internally and <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">arguments</a> of <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> can be used.</p>
 <p>As an example, we have records in “./japan.csv” as shown in the next table. (Data is from <a class="reference external" href="(https://covid19datahub.io/).">COVID-19 Data Hub</a></p>
 <p>|    | confirmed | fatal | province | population | date       |
-| — | —        | —    | —       | —         | —         |
+| :—: | :—: | :—: | :—: | :—: | :—: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 |</p>
@@ -334,7 +334,7 @@
 <p>We can set variables using <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. This use <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.assign()</span></code> internally and we can assign new variables (columns) with stable values and <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function.</p>
 <p>Let’s say, we have the following dataset as <code class="docutils literal notranslate"><span class="pre">loader.local</span></code>. We want to assign country name (string “USA”) and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)</p>
 <p>|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full |
-| — | —        | —    | —       | —         | —         | —              | —              |
+| :—: | :—: | :—: | :—: | :—: | :—: | :—: | :—: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             |</p>
@@ -345,7 +345,7 @@
 </div>
 <p>Two columns will be added.</p>
 <p>|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full | country | vaccinations |
-| — | —        | —    | —       | —         | —         | —              | —              | —      | —           |
+| :—: | :—: | :—: | :—: | :—: | :—: | :—: | :—: | :—: | :—: |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             | USA     | 1500         |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             | USA     | 2700         |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             | USA     | 3800         |</p>
