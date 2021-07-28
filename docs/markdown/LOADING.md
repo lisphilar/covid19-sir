@@ -1,4 +1,4 @@
-# Data loading (To Be Released)
+# Usage: data loading (To Be Released)
 
 The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using `DataLoader` class.
 
