@@ -206,7 +206,7 @@ class ODEHandler(Term):
         start_date = start.strftime(self.DATE_FORMAT)
         end_date = end.strftime(self.DATE_FORMAT)
         if show_phase:
-            ph_statement = f"{phase: > 4} phase({start_date} - {end_date})"
+            ph_statement = f"{phase:>4} phase ({start_date} - {end_date})"
         else:
             ph_statement = f"{start_date} - {end_date}"
         print(f"\t{ph_statement}: finished {n_trials:>4} trials in {runtime}")
