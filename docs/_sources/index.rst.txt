@@ -16,12 +16,12 @@
    README
    markdown/INSTALLATION
    markdown/WORKFLOW
-   markdown/LOADING
    usage_quickest
-   usage_quick
+   markdown/LOADING
    usage_dataset
-   usage_phases
    usage_theoretical
+   usage_phases
+   usage_quick
    covsirphy
    markdown/TERM
    CODE_OF_CONDUCT

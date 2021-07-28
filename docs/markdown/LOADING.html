@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Data loading (To Be Released) &mdash; CovsirPhy  documentation</title>
+  <title>Usage: data loading (To Be Released) &mdash; CovsirPhy  documentation</title>
   
 
   
@@ -45,8 +45,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Usage: quickest tour" href="../usage_quickest.html" />
-    <link rel="prev" title="Workflow" href="WORKFLOW.html" /> 
+    <link rel="next" title="Usage: exploratory data analysis (datasets)" href="../usage_dataset.html" />
+    <link rel="prev" title="Usage: quickest tour" href="../usage_quickest.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -101,7 +101,8 @@
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="WORKFLOW.html">Workflow</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Data loading (To Be Released)</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage: data loading (To Be Released)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#decide-whether-to-use-the-recommended-datasets">1. Decide whether to use the recommended datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#read-local-datasets">2. Read local datasets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#check-variables-to-use">2-1. Check variables to use</a></li>
@@ -125,11 +126,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#acknowledgement">Acknowledgement</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_quick.html">Usage: scenario analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_dataset.html">Usage: datasets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_phases.html">Usage: phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_dataset.html">Usage: exploratory data analysis (datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_theoretical.html">Usage: SIR-derived models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_phases.html">Usage: S-R trend analysis (phases)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_quick.html">Usage: scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -183,7 +183,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Data loading (To Be Released)</li>
+      <li>Usage: data loading (To Be Released)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -226,8 +226,8 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="data-loading-to-be-released">
-<h1>Data loading (To Be Released)<a class="headerlink" href="#data-loading-to-be-released" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="usage-data-loading-to-be-released">
+<h1>Usage: data loading (To Be Released)<a class="headerlink" href="#usage-data-loading-to-be-released" title="Permalink to this headline">¶</a></h1>
 <p>The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class.</p>
 <ul class="simple">
 <li><p>recommented datasets: open datasets recommended by CovsirPhy community</p></li>
@@ -290,7 +290,7 @@
 <p>If we have records as CSV files (time series data of vairables), we can read them with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> method. This uses <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> internally and <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">arguments</a> of <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> can be used.</p>
 <p>As an example, we have records in “./japan.csv” as shown in the next table. (Data is from <a class="reference external" href="(https://covid19datahub.io/).">COVID-19 Data Hub</a></p>
 <p>|    | confirmed | fatal | province | population | date       |
-| – | –        | –    | –       | –         | –         |
+| — | —        | —    | —       | —         | —         |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 |</p>
@@ -334,7 +334,7 @@
 <p>We can set variables using <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. This use <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.assign()</span></code> internally and we can assign new variables (columns) with stable values and <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function.</p>
 <p>Let’s say, we have the following dataset as <code class="docutils literal notranslate"><span class="pre">loader.local</span></code>. We want to assign country name (string “USA”) and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)</p>
 <p>|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full |
-| – | –        | –    | –       | –         | –         | –              | –              |
+| — | —        | —    | —       | —         | —         | —              | —              |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             |</p>
@@ -345,7 +345,7 @@
 </div>
 <p>Two columns will be added.</p>
 <p>|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full | country | vaccinations |
-| – | –        | –    | –       | –         | –         | –              | –              | –      | –           |
+| — | —        | —    | —       | —         | —         | —              | —              | —      | —           |
 | 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             | USA     | 1500         |
 | 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             | USA     | 2700         |
 | 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             | USA     | 3800         |</p>
@@ -475,8 +475,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../usage_quickest.html" class="btn btn-neutral float-right" title="Usage: quickest tour" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="WORKFLOW.html" class="btn btn-neutral float-left" title="Workflow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../usage_dataset.html" class="btn btn-neutral float-right" title="Usage: exploratory data analysis (datasets)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../usage_quickest.html" class="btn btn-neutral float-left" title="Usage: quickest tour" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
