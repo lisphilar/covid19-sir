@@ -75,24 +75,24 @@ class PhaseTracker(Term):
         self._ensure_date_order(track_df.index.min(), start, name="start")
         # Add a past phase (start -> min(end, today))
         if start <= self._today:
-            track_df.loc[start:min(self._today, end), self.ID] = track_df[self.ID].max() + 1
+            track_df.loc[start:min(self._today, end), self.ID] = track_df[self.ID].abs().max() + 1
         # Add a future phase (tomorrow -> end)
         if self._today < end:
             phase_start = max(self._today + timedelta(days=1), start)
             df = pd.DataFrame(index=pd.date_range(phase_start, end), columns=track_df.columns)
             df.index.name = self.DATE
-            df[self.ID] = track_df[self.ID].max() + 1
+            df[self.ID] = track_df[self.ID].abs().max() + 1
             track_df = pd.concat([track_df, df], axis=0).resample("D").last()
         # Fill in skiped dates
         series = track_df[self.ID].copy()
-        track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.max() + 1
+        track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.abs().max() + 1
         # Update self
         self._track_df = track_df.copy()
         return self
 
     def deactivate(self, start, end):
         """
-        Deactivate the phase information from the date range.
+        The status (enabled/disabled) of the phases between start and end date will be reversed.
 
         Args:
             start (str or pandas.Timestamp): start date of the phase to remove
@@ -199,7 +199,7 @@ class PhaseTracker(Term):
         if self.ODE in df:
             df[self.ODE] = df[self.ODE].ffill()
         if self.TAU in df:
-            df[self.TAU] = df[self.TAU].ffill().astype(np.int64)
+            df[self.TAU] = self._tau
         # Set the order of columns
         df = df.drop([self.C, self.CI, self.F, self.R, self.S], axis=1)
         fixed_cols = self.TENSE, self.START, self.END, self.N
@@ -269,8 +269,9 @@ class PhaseTracker(Term):
         df.insert(0, self.ODE, model.NAME)
         df.insert(6, self.TAU, tau)
         all_columns = [*self._track_df.columns.tolist(), *df.columns.tolist()]
-        self._track_df = self._track_df.reindex(columns=sorted(set(all_columns), key=all_columns.index))
-        self._track_df.update(df)
+        sorted_columns = sorted(set(all_columns), key=all_columns.index)
+        self._track_df = self._track_df.combine_first(df)
+        self._track_df = self._track_df.reindex(columns=sorted_columns)
         # Set model and tau to self
         self._model = model
         self._tau = tau
