@@ -534,9 +534,9 @@ class Scenario(Term):
         self[name] = f[last_phase in phases or "last" in phases](start, end)
         return self
 
-    def disable(self, phases, name="Main"):
+    def _reverse(self, phases, name="Main"):
         """
-        The phases will be disabled and removed from summary.
+        The status (enabled/disabled) will be reversed.
 
         Args:
             phase (list[str] or None): phase names or None (all enabled phases)
@@ -550,6 +550,22 @@ class Scenario(Term):
         self[name] = tracker.deactivate(start, end)
         return self
 
+    def disable(self, phases, name="Main"):
+        """
+        The phases will be disabled and removed from summary.
+
+        Args:
+            phase (list[str] or None): phase names or None (all enabled phases)
+            name (str): scenario name
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        df = self._tracker(name).summary()
+        enabled_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
+        rev_phases = [ph for ph in phases if ph in enabled_phases]
+        return self._reverse(phases=rev_phases, name=name)
+
     def enable(self, phases, name="Main"):
         """
         The phases will be enabled and appear in summary.
@@ -561,10 +577,10 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        tracker = self._tracker(name)
-        start, end = tracker.parse_range(phases=phases)
-        self[name] = tracker.define_phase(start, end)
-        return self
+        df = self._tracker(name).summary()
+        enabled_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
+        rev_phases = [ph for ph in phases if ph not in enabled_phases]
+        return self._reverse(phases=rev_phases, name=name)
 
     def combine(self, phases, name="Main", **kwargs):
         """
@@ -756,20 +772,22 @@ class Scenario(Term):
         Note:
             If @phases is None, all past phase will be used.
         """
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
         tracker = self._tracker(name)
         if self.TAU in kwargs:
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
-        if phases is not None:
-            df = tracker.summary()
-            all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
-            self.disable(phases=all_phases, name=name)
-            self.enable(phases, name=name)
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._tau = tracker.estimate(self._model, tau=self._tau, **kwargs)
-        if phases is not None:
-            self.enable(phases=all_phases, name=name)
-        self[name] = tracker
+        if phases is None:
+            self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
+            return
+        df = tracker.summary()
+        all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
+        self.disable(phases=all_phases, name=name)
+        for ph in phases:
+            self._reverse(phases=[ph], name=name)
+            self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
+            self._reverse(phases=[ph], name=name)
+        self.enable(phases=all_phases, name=name)
 
     @deprecate("Scenario.phase_estimator()", version="2.19.1-delta-fu1")
     def phase_estimator(self, **kwargs):
