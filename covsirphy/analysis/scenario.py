@@ -772,19 +772,22 @@ class Scenario(Term):
         Note:
             If @phases is None, all past phase will be used.
         """
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
         tracker = self._tracker(name)
         if self.TAU in kwargs:
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
-        if phases is not None:
-            df = tracker.summary()
-            all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
-            self.disable(phases=all_phases, name=name)
-            self.enable(phases, name=name)
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
-        if phases is not None:
-            self.enable(phases=all_phases, name=name)
+        if phases is None:
+            self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
+            return
+        df = tracker.summary()
+        all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
+        self.disable(phases=all_phases, name=name)
+        for ph in phases:
+            self._reverse(phases=[ph], name=name)
+            self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
+            self._reverse(phases=[ph], name=name)
+        self.enable(phases=all_phases, name=name)
 
     @deprecate("Scenario.phase_estimator()", version="2.19.1-delta-fu1")
     def phase_estimator(self, **kwargs):
