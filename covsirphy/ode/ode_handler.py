@@ -168,7 +168,7 @@ class ODEHandler(Term):
         self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
         return self._tau
 
-    def _estimate_params(self, phase, data, quantiles, check_dict, study_dict):
+    def _estimate_params(self, phase, data, quantiles, check_dict, study_dict, show_phase):
         """
         Perform parameter estimation for one phase.
 
@@ -186,6 +186,7 @@ class ODEHandler(Term):
             quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
             check_dict (dict[str, object]): setting of validation
             study_dict (dict[str, object]): setting of optimization study
+            show_phase (bool): whether show phase name or not (stdout)
 
         Returns:
             dict(str, object):
@@ -204,7 +205,11 @@ class ODEHandler(Term):
         n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
         start_date = start.strftime(self.DATE_FORMAT)
         end_date = end.strftime(self.DATE_FORMAT)
-        print(f"\t{phase:>4} phase ({start_date} - {end_date}): finished {n_trials:>4} trials in {runtime}")
+        if show_phase:
+            ph_statement = f"{phase:>4} phase ({start_date} - {end_date})"
+        else:
+            ph_statement = f"{start_date} - {end_date}"
+        print(f"\t{ph_statement}: finished {n_trials:>4} trials in {runtime}")
         return est_dict
 
     def estimate_params(self, data, quantiles=(0.1, 0.9), check_dict=None, study_dict=None, **kwargs):
@@ -271,10 +276,10 @@ class ODEHandler(Term):
         study_kwargs.update(study_dict or {})
         study_kwargs.update(kwargs)
         # ODE parameter estimation
+        phases = list(self._info_dict.keys())
         est_f = functools.partial(
             self._estimate_params, data=df, quantiles=quantiles,
-            check_dict=check_kwargs, study_dict=study_kwargs)
-        phases = list(self._info_dict.keys())
+            check_dict=check_kwargs, study_dict=study_kwargs, show_phase=(len(phases) > 1))
         if self._n_jobs == 1:
             est_dict_list = [est_f(ph) for ph in phases]
         else:
