@@ -783,9 +783,11 @@ class Scenario(Term):
         df = tracker.summary()
         all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
         self.disable(phases=all_phases, name=name)
+        handler_kwargs = {"n_jobs": 1}
+        handler_kwargs.update(kwargs)
         for ph in phases:
             self._reverse(phases=[ph], name=name)
-            self._tau = self[name].estimate(self._model, tau=self._tau, **kwargs)
+            self._tau = self[name].estimate(self._model, tau=self._tau, **handler_kwargs)
             self._reverse(phases=[ph], name=name)
         self.enable(phases=all_phases, name=name)
 
