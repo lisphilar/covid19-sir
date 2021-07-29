@@ -71,7 +71,7 @@ If you want to use a new dataset for your analysis, kindly create an issue with 
 
 If we have records as CSV files (time series data of vairables), we can read them with `DataLoader.read_csv()` method. This uses `pandas.read_csv()` internally and [arguments](https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html) of `pandas.read_csv()` can be used.
 
-As an example, we have records in "./japan.csv" as shown in the next table. (Data is from [COVID-19 Data Hub]((https://covid19datahub.io/).)
+As an example, we have records in "./usa.csv" as shown in the next table. (Data is from [COVID-19 Data Hub](https://covid19datahub.io/).)
 
 |    | confirmed | fatal | province | population | date       |
 | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -123,38 +123,50 @@ print(loader.local)
 
 We can set variables using `DataLoader.assign()`. This use `pandas.DataFrame.assign()` internally and we can assign new variables (columns) with stable values and `lambda` function.
 
-Let's say, we have the following dataset as `loader.local`. We want to assign country name (string "USA") and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)
+Let's say, we have the following dataset as `loader.local`. We want to assign
 
-|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             |
-| 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             |
-| 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             |
+- country name (string "USA"),
+- population values (12,671,821 persons), and
+- the number of vaccinations as the total value of vaccinated_once and vaccinated_full.
+
+(The values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)
+
+|    | confirmed | fatal | province | date       | vaccinated_once | vaccinated_full |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 0  | 966287    | 17979 | Illinois | 2021-01-01 | 1000            | 500             |
+| 1  | 977677    | 18217 | Illinois | 2021-01-02 | 2000            | 700             |
+| 2  | 982105    | 18322 | Illinois | 2021-01-03 | 3000            | 800             |
 
 We can assign them as follows.
 
 ```Python
-loader.assign(country="USA", vaccinations=lambda x: x["vaccinated_once"] + x["vaccinated_full"])
+loader.assign(
+    country="USA",
+    population=12_671_821,
+    vaccinations=lambda x: x["vaccinated_once"] + x["vaccinated_full"]
+)
 print(loader.local)
 ```
 
-Two columns will be added.
+Three columns will be added.
 
-|    | confirmed | fatal | province | population | date       | vaccinated_once | vaccinated_full | country | vaccinations |
+|| confirmed | fatal | province | date | vaccinated_once | vaccinated_full | country | population | vaccinations |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 0  | 966287    | 17979 | Illinois | 12671821   | 2021-01-01 | 1000            | 500             | USA     | 1500         |
-| 1  | 977677    | 18217 | Illinois | 12671821   | 2021-01-02 | 2000            | 700             | USA     | 2700         |
-| 2  | 982105    | 18322 | Illinois | 12671821   | 2021-01-03 | 3000            | 800             | USA     | 3800         |
+| 0 | 966287 | 17979 | Illinois | 2021-01-01 | 1000 | 500 | USA | 12671821 | 1500 |
+| 1 | 977677 | 18217 | Illinois | 2021-01-02 | 2000 | 700 | USA | 12671821 | 2700 |
+| 2  | 982105 | 18322 | Illinois | 2021-01-03 | 3000 | 800 | USA  | 12671821 | 3800 |
 
 ## 3. Perform database lock
 
-`DataLoader.lock()` (method for database lock) is required when you want to use local CSV files and `pandas.DataFrame` as the database. (We can skip this method when you use **ONLY** the recommended datasets.)
+We need to run `DataLoader.lock()` (method for database lock) when you want to use local CSV files and `pandas.DataFrame` as the database. (i.e. We can skip this method when you use **ONLY** the recommended datasets.) After completion of database lock, we cannot update local database with `DataLoader.read_csv()` and so on.
 
 By database lock, we tell the correspondence of te variables you have and variables specified by `covsirphy` and lock the local database. Addtionally, the all recommended datasets will be downloaded automatically (if `update_interval` was not `None`) and combined to the local database.
 
-After completion of database lock, we cannot update local database with `DataLoader.read_csv()` and so on.
+Database lock can be done as follows. As an example, we assume that all variables are registered in advance.
 
-Database lock can be done as follows. As an example, we assume that all variables are registered in advance. Argument names of `DataLoader.lock()` is listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use). `oxcgrt_variables` and `mobility_variables` are list of variable names for `OxCGRTData` (government response indicators) and `MobilityData` (mobility indicators) respectively.
+- Argument names of `DataLoader.lock()` is listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use).
+- `oxcgrt_variables` (e.g. `["Stringency_index", "Contact_tracing"]`) is a variable name list for `OxCGRTData` (government response indicators).
+- `mobility_variables` (e.g. `["Mobility_workplaces", "Mobility_residential"]`) is a variable name list for `MobilityData` (mobility indicators).
 
 ```Python
 loader.lock(
@@ -170,15 +182,27 @@ loader.lock(
     # Optional regarding VaccineData
     product="product", vaccinations="vaccinations",
     vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
-    # Optinal for OxCGRTData (list[str])
-    oxcgrt_variables=None,
-    # Optinal for OxCGRTData (list[str])
-    mobility_variables=None
+    # Optinal for OxCGRTData (list[str] or None)
+    oxcgrt_variables=["Stringency_index", "Contact_tracing"],
+    # Optinal for OxCGRTData (list[str] or None)
+    mobility_variables=["Mobility_workplaces", "Mobility_residential"],
 )
-print(loader.locked)
+```
+
+If you do not have some variables in the local database, please skip the arguments or apply `None` to the arguments. For example, the codes will be as follows if we have only the required arguemnts listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use).
+
+```Python
+loader.lock(
+    date="date", country="country", province="province",
+    confirmed="confirmed", fatal="fatal", population="population",
+)
 ```
 
 `DataLoader.locked` is a read-only property to check the locked database. instance of `pandas.DataFrame` will be returned.
+
+```Python
+print(loader.locked)
+```
 
 ## 4. Download the recommended datasets
 

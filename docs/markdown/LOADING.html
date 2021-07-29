@@ -288,7 +288,7 @@
 <div class="section" id="read-datasets-from-csv-files">
 <h3>2-2. Read datasets from CSV files<a class="headerlink" href="#read-datasets-from-csv-files" title="Permalink to this headline">¶</a></h3>
 <p>If we have records as CSV files (time series data of vairables), we can read them with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> method. This uses <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> internally and <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">arguments</a> of <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> can be used.</p>
-<p>As an example, we have records in “./japan.csv” as shown in the next table. (Data is from <a class="reference external" href="(https://covid19datahub.io/).">COVID-19 Data Hub</a></p>
+<p>As an example, we have records in “./usa.csv” as shown in the next table. (Data is from <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a>.)</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -364,7 +364,13 @@
 <div class="section" id="assign-columns">
 <h3>2-4. Assign columns<a class="headerlink" href="#assign-columns" title="Permalink to this headline">¶</a></h3>
 <p>We can set variables using <code class="docutils literal notranslate"><span class="pre">DataLoader.assign()</span></code>. This use <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.assign()</span></code> internally and we can assign new variables (columns) with stable values and <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function.</p>
-<p>Let’s say, we have the following dataset as <code class="docutils literal notranslate"><span class="pre">loader.local</span></code>. We want to assign country name (string “USA”) and the number of vaccinations as the total value of vaccinated_once and vaccinated_full. (Note that the values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)</p>
+<p>Let’s say, we have the following dataset as <code class="docutils literal notranslate"><span class="pre">loader.local</span></code>. We want to assign</p>
+<ul class="simple">
+<li><p>country name (string “USA”),</p></li>
+<li><p>population values (12,671,821 persons), and</p></li>
+<li><p>the number of vaccinations as the total value of vaccinated_once and vaccinated_full.</p></li>
+</ul>
+<p>(The values of vaccinated_once and vaccinated_full are not actual values. They are just simplified example values.)</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -372,7 +378,6 @@
 <th align="center">confirmed</th>
 <th align="center">fatal</th>
 <th align="center">province</th>
-<th align="center">population</th>
 <th align="center">date</th>
 <th align="center">vaccinated_once</th>
 <th align="center">vaccinated_full</th>
@@ -384,7 +389,6 @@
 <td align="center">966287</td>
 <td align="center">17979</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-01</td>
 <td align="center">1000</td>
 <td align="center">500</td>
@@ -394,7 +398,6 @@
 <td align="center">977677</td>
 <td align="center">18217</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-02</td>
 <td align="center">2000</td>
 <td align="center">700</td>
@@ -404,18 +407,21 @@
 <td align="center">982105</td>
 <td align="center">18322</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-03</td>
 <td align="center">3000</td>
 <td align="center">800</td>
 </tr>
 </tbody>
 </table><p>We can assign them as follows.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;USA&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">])</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+    <span class="n">country</span><span class="o">=</span><span class="s2">&quot;USA&quot;</span><span class="p">,</span>
+    <span class="n">population</span><span class="o">=</span><span class="mi">12_671_821</span><span class="p">,</span>
+    <span class="n">vaccinations</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Two columns will be added.</p>
+<p>Three columns will be added.</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -423,11 +429,11 @@
 <th align="center">confirmed</th>
 <th align="center">fatal</th>
 <th align="center">province</th>
-<th align="center">population</th>
 <th align="center">date</th>
 <th align="center">vaccinated_once</th>
 <th align="center">vaccinated_full</th>
 <th align="center">country</th>
+<th align="center">population</th>
 <th align="center">vaccinations</th>
 </tr>
 </thead>
@@ -437,11 +443,11 @@
 <td align="center">966287</td>
 <td align="center">17979</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-01</td>
 <td align="center">1000</td>
 <td align="center">500</td>
 <td align="center">USA</td>
+<td align="center">12671821</td>
 <td align="center">1500</td>
 </tr>
 <tr>
@@ -449,11 +455,11 @@
 <td align="center">977677</td>
 <td align="center">18217</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-02</td>
 <td align="center">2000</td>
 <td align="center">700</td>
 <td align="center">USA</td>
+<td align="center">12671821</td>
 <td align="center">2700</td>
 </tr>
 <tr>
@@ -461,11 +467,11 @@
 <td align="center">982105</td>
 <td align="center">18322</td>
 <td align="center">Illinois</td>
-<td align="center">12671821</td>
 <td align="center">2021-01-03</td>
 <td align="center">3000</td>
 <td align="center">800</td>
 <td align="center">USA</td>
+<td align="center">12671821</td>
 <td align="center">3800</td>
 </tr>
 </tbody>
@@ -473,10 +479,14 @@
 </div>
 <div class="section" id="perform-database-lock">
 <h2>3. Perform database lock<a class="headerlink" href="#perform-database-lock" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> (method for database lock) is required when you want to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as the database. (We can skip this method when you use <strong>ONLY</strong> the recommended datasets.)</p>
+<p>We need to run <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> (method for database lock) when you want to use local CSV files and <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> as the database. (i.e. We can skip this method when you use <strong>ONLY</strong> the recommended datasets.) After completion of database lock, we cannot update local database with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and so on.</p>
 <p>By database lock, we tell the correspondence of te variables you have and variables specified by <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> and lock the local database. Addtionally, the all recommended datasets will be downloaded automatically (if <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> was not <code class="docutils literal notranslate"><span class="pre">None</span></code>) and combined to the local database.</p>
-<p>After completion of database lock, we cannot update local database with <code class="docutils literal notranslate"><span class="pre">DataLoader.read_csv()</span></code> and so on.</p>
-<p>Database lock can be done as follows. As an example, we assume that all variables are registered in advance. Argument names of <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> is listed at <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use">2-1. Variables to use</a>. <code class="docutils literal notranslate"><span class="pre">oxcgrt_variables</span></code> and <code class="docutils literal notranslate"><span class="pre">mobility_variables</span></code> are list of variable names for <code class="docutils literal notranslate"><span class="pre">OxCGRTData</span></code> (government response indicators) and <code class="docutils literal notranslate"><span class="pre">MobilityData</span></code> (mobility indicators) respectively.</p>
+<p>Database lock can be done as follows. As an example, we assume that all variables are registered in advance.</p>
+<ul class="simple">
+<li><p>Argument names of <code class="docutils literal notranslate"><span class="pre">DataLoader.lock()</span></code> is listed at <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use">2-1. Variables to use</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">oxcgrt_variables</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;Stringency_index&quot;,</span> <span class="pre">&quot;Contact_tracing&quot;]</span></code>) is a variable name list for <code class="docutils literal notranslate"><span class="pre">OxCGRTData</span></code> (government response indicators).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mobility_variables</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;Mobility_workplaces&quot;,</span> <span class="pre">&quot;Mobility_residential&quot;]</span></code>) is a variable name list for <code class="docutils literal notranslate"><span class="pre">MobilityData</span></code> (mobility indicators).</p></li>
+</ul>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span>
     <span class="c1"># Always required</span>
     <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
@@ -490,15 +500,24 @@
     <span class="c1"># Optional regarding VaccineData</span>
     <span class="n">product</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">,</span> <span class="n">vaccinations</span><span class="o">=</span><span class="s2">&quot;vaccinations&quot;</span><span class="p">,</span>
     <span class="n">vaccinated_once</span><span class="o">=</span><span class="s2">&quot;vaccinated_once&quot;</span><span class="p">,</span> <span class="n">vaccinated_full</span><span class="o">=</span><span class="s2">&quot;vaccinated_full&quot;</span><span class="p">,</span>
-    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
-    <span class="n">oxcgrt_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="c1"># Optinal for OxCGRTData (list[str])</span>
-    <span class="n">mobility_variables</span><span class="o">=</span><span class="kc">None</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str] or None)</span>
+    <span class="n">oxcgrt_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Stringency_index&quot;</span><span class="p">,</span> <span class="s2">&quot;Contact_tracing&quot;</span><span class="p">],</span>
+    <span class="c1"># Optinal for OxCGRTData (list[str] or None)</span>
+    <span class="n">mobility_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Mobility_workplaces&quot;</span><span class="p">,</span> <span class="s2">&quot;Mobility_residential&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">locked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you do not have some variables in the local database, please skip the arguments or apply <code class="docutils literal notranslate"><span class="pre">None</span></code> to the arguments. For example, the codes will be as follows if we have only the required arguemnts listed at <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use">2-1. Variables to use</a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
+    <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">DataLoader.locked</span></code> is a read-only property to check the locked database. instance of <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> will be returned.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">locked</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="download-the-recommended-datasets">
 <h2>4. Download the recommended datasets<a class="headerlink" href="#download-the-recommended-datasets" title="Permalink to this headline">¶</a></h2>
