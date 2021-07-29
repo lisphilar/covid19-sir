@@ -71,7 +71,7 @@ If you want to use a new dataset for your analysis, kindly create an issue with 
 
 If we have records as CSV files (time series data of vairables), we can read them with `DataLoader.read_csv()` method. This uses `pandas.read_csv()` internally and [arguments](https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html) of `pandas.read_csv()` can be used.
 
-As an example, we have records in "./usa.csv" as shown in the next table. (Data is from [COVID-19 Data Hub](https://covid19datahub.io/).)
+As an example, we have records in "./usa.csv" as shown in the next table. Obseervation dates are assigned to "date" column with "YYYY-MM-DD" format. (Data is from [COVID-19 Data Hub](https://covid19datahub.io/).)
 
 |    | confirmed | fatal | province | population | date       |
 | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -82,7 +82,7 @@ As an example, we have records in "./usa.csv" as shown in the next table. (Data 
 We can read it with `DataLoader.read_csv()` method. Argument `parse_dates` (list of columns of dates) and `dayfirst` (whether date and month are formatted with DD/MM or not) are optional, but it is suggested to use them to read date information correctly. The read data is saved as a `pandas.DataFrame` and it can be checked with `DataLoader.local` property.
 
 ```Python
-loader.read_csv("./usa.csv", parse_dates=["dates"], dayfirst=False)
+loader.read_csv("./usa.csv", parse_dates=["date"], dayfirst=False)
 print(loader.local)
 ```
 
@@ -94,8 +94,8 @@ If you have multiple CSV files, you can call `DataLoader.read_csv()` multiple ti
 - "update": update the current dataset with `pandas.DataFrame.update()`
 
 ```Python
-loader.read_csv("./usa.csv", parse_dates=["dates"], dayfirst=False)
-loader.read_csv("./uk.csv", parse_dates=["dates"], dayfirst=True, how_combine="concat")
+loader.read_csv("./usa.csv", parse_dates=["date"], dayfirst=False)
+loader.read_csv("./uk.csv", parse_dates=["date"], dayfirst=True, how_combine="concat")
 print(loader.local)
 ```
 
@@ -104,7 +104,7 @@ Because `DataLoader.read_csv()` uses `pandas.read_csv()` internally, URLs can be
 ```Python
 loader.read_csv(
     "https://github.com/lisphilar/covid19-sir/tree/master/data",
-    parse_dates=["dates"], dayfirst=False
+    parse_dates=["date"], dayfirst=False
 )
 print(loader.local)
 ```
@@ -114,8 +114,8 @@ print(loader.local)
 If you have local datasets as a `pandas.DataFrame`, please use `DataLoader.read_dataframe()`. Its usage is similar to `DataLoader.read_csv()`. As an example, we the dataset as `usa_df` and `uk_df` (instance of `pandas.DataFrame`).
 
 ```Python
-loader.read_csv(usa_df, parse_dates=["dates"], dayfirst=False)
-loader.read_csv(uk_df, parse_dates=["dates"], dayfirst=True, how_combine="concat")
+loader.read_csv(usa_df, parse_dates=["date"], dayfirst=False)
+loader.read_csv(uk_df, parse_dates=["date"], dayfirst=True, how_combine="concat")
 print(loader.local)
 ```
 
