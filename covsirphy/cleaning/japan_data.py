@@ -4,10 +4,11 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from covsirphy.cleaning.country_data import CountryData
+from covsirphy.util.error import deprecate
+from covsirphy.cleaning.cbase import CleaningBase
 
 
-class JapanData(CountryData):
+class JapanData(CleaningBase):
     """
     Japan-specific dataset.
 
@@ -42,12 +43,12 @@ class JapanData(CountryData):
     SEVERE = "Severe"
     # Column names
     JAPAN_VALUE_COLS = [
-        CountryData.C, CountryData.CI, CountryData.F, CountryData.R,
-        CountryData.TESTS, MODERATE, SEVERE,
-        CountryData.VAC, CountryData.V_ONCE, CountryData.V_FULL,
+        CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
+        CleaningBase.TESTS, MODERATE, SEVERE,
+        CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL,
     ]
     JAPAN_COLS = [
-        CountryData.DATE, CountryData.COUNTRY, CountryData.PROVINCE,
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         *JAPAN_VALUE_COLS,
     ]
     # Meta data
@@ -79,6 +80,22 @@ class JapanData(CountryData):
         self.verbose = verbose
         # Directory that save the file
         self._dirpath = Path(filename or "input").resolve().parent
+
+    @property
+    def country(self):
+        """
+        str: country name
+        """
+        return self._country
+
+    def raw_columns(self):
+        """
+        Return the column names of the raw data.
+
+        Returns:
+            list[str]: the list of column names of the raw data
+        """
+        return self._raw.columns.tolist()
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -184,6 +201,8 @@ class JapanData(CountryData):
         df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df.loc[:, self.JAPAN_COLS]
 
+    @deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
+               ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def set_variables(self):
         raise NotImplementedError
 
@@ -260,3 +279,92 @@ class JapanData(CountryData):
         df[self.JAPAN_META_FLT] = df[self.JAPAN_META_FLT].astype(np.float64)
         df = df.sort_values("Admin_Num").reset_index(drop=True)
         return df.loc[:, self.JAPAN_META_COLS]
+
+    def total(self):
+        """
+        Return a dataframe to show chronological change of number and rates.
+
+        Returns:
+            pandas.DataFrame: group-by Date, sum of the values
+
+                Index
+                    Date (pd.Timestamp): Observation date
+                Columns
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal per Confirmed (int)
+                    - Recovered per Confirmed (int)
+                    - Fatal per (Fatal or Recovered) (int)
+        """
+        df = self.cleaned()
+        # Calculate total values at country level if not registered
+        c_level_df = df.groupby(self.DATE).sum().reset_index()
+        c_level_df[self.PROVINCE] = self.UNKNOWN
+        df = pd.concat([df, c_level_df], axis=0, ignore_index=True)
+        df = df.drop_duplicates(subset=[self.DATE, self.PROVINCE])
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+        df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+        df = df.set_index(self.DATE)
+        # Calculate rates
+        total_series = df.sum(axis=1)
+        r_cols = self.RATE_COLUMNS[:]
+        df[r_cols[0]] = df[self.F] / total_series
+        df[r_cols[1]] = df[self.R] / total_series
+        df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
+        return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
+
+    def countries(self):
+        """
+        Return names of countries where records are registered.
+
+        Returns:
+            list[str]: list of country names
+        """
+        return [self._country]
+
+    def register_total(self):
+        """
+        Register total value of all provinces as country level data.
+
+        Returns:
+            covsirphy.JapanData: self
+
+        Note:
+            If country level data was registered, this will be overwritten.
+        """
+        # Calculate total values at province level
+        clean_df = self.cleaned()
+        clean_df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        total_df = clean_df.groupby(self.DATE).sum().reset_index()
+        total_df[self.COUNTRY] = self._country
+        total_df[self.PROVINCE] = self.UNKNOWN
+        # Add/overwrite country level data
+        df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        df = pd.concat([df, total_df], ignore_index=True, sort=True)
+        df[[self.COUNTRY, self.PROVINCE]] = df[[self.COUNTRY, self.PROVINCE]].astype("category")
+        self._cleaned_df = df.loc[:, self.COLUMNS]
+        return self
+
+    def map(self, country=None, variable="Confirmed", date=None, **kwargs):
+        """
+        Create colored map to show the values.
+
+        Args:
+            country (None): None
+            variable (str): variable name to show
+            date (str or None): date of the records or None (the last value)
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Raises:
+            NotImplementedError: @country was specified
+        """
+        if country is not None:
+            raise NotImplementedError("@country cannot be specified, always None.")
+        # Date
+        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
+        title = f"{self._country}: the number of {variable.lower()} cases on {date_str}"
+        # Country-specific map
+        return self._colored_map_country(
+            country=self._country, variable=variable, title=title, date=date, **kwargs)
