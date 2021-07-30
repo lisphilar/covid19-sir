@@ -12,6 +12,7 @@ from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
@@ -29,14 +30,17 @@ class DataHandler(Term):
         province (str or None): province name
         kwargs: arguments of DataHandler.register()
     """
-    # Extra datasets {str: class}
+    # Deprecated
     __NAME_COUNTRY = "CountryData"
+    __NAME_JAPAN = "JapanData"
+    # Extra datasets {str: class}
     __NAME_OXCGRT = "OxCGRTData"
     __NAME_PCR = "PCRData"
     __NAME_VACCINE = "VaccineData"
     __NAME_MOBILE = "MobilityData"
     EXTRA_DICT = {
         __NAME_COUNTRY: CountryData,
+        __NAME_JAPAN: JapanData,
         __NAME_OXCGRT: OxCGRTData,
         __NAME_PCR: PCRData,
         __NAME_VACCINE: VaccineData,
@@ -172,6 +176,12 @@ class DataHandler(Term):
             # Check the data is a data cleaning class
             self._ensure_instance(extra_data, CleaningBase, name=statement)
             # Check the data can be accepted as an extra dataset
+            if isinstance(extra_data, (CountryData, JapanData)):
+                warnings.warn(
+                    ".register(extras=[CountryData, JapanData]) was deprecated because its role is played by the other classes.",
+                    DeprecationWarning,
+                    stacklevel=2
+                )
             if isinstance(extra_data, tuple(self.EXTRA_DICT.values())):
                 continue
             raise UnExpectedValueError(
