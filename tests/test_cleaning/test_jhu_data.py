@@ -17,13 +17,6 @@ class TestJHUData(object):
         assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
-    def test_from_dataframe(self, japan_data):
-        df = japan_data.cleaned()
-        jhu_data_df = JHUData.from_dataframe(df, directory="input_dir")
-        assert isinstance(jhu_data_df, JHUData)
-        assert jhu_data_df.directory == "input_dir"
-        jhu_data_df.records("Japan")
-
     @pytest.mark.parametrize("country", ["USA", "Japan"])
     def test_subset(self, jhu_data, country):
         df = jhu_data.subset(country, start_date="01Apr2020", end_date="01Jun2020")
@@ -36,18 +29,6 @@ class TestJHUData(object):
             s_df = jhu_data.subset(country, population=126_500_000)
             assert int(s_df[[Term.S, Term.C]].sum(axis=1).mean()) == 126_500_000
 
-    def test_replace(self, jhu_data, japan_data):
-        jhu_data.replace(japan_data)
-        df = jhu_data.subset("Japan")
-        japan_df = japan_data.cleaned()
-        last_date = japan_df.loc[japan_df.index[-1], Term.DATE]
-        assert df.loc[df.index[-1], Term.DATE] == last_date
-
-    def test_to_sr(self, jhu_data):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        df = jhu_data.to_sr("Japan", population=126_500_000)
-        assert set(df.columns) == set([Term.R, Term.S])
-
     def test_total(self, jhu_data):
         df = jhu_data.total()
         column_set = set(Term.VALUE_COLUMNS) | set(Term.RATE_COLUMNS)
@@ -56,11 +37,6 @@ class TestJHUData(object):
     def test_countries(self, jhu_data):
         assert isinstance(jhu_data.countries(complement=False), list)
         assert isinstance(jhu_data.countries(complement=True), list)
-
-    def test_closing_period(self, jhu_data):
-        warnings.simplefilter("ignore", category=DeprecationWarning)
-        assert isinstance(jhu_data.calculate_closing_period(), int)
-        assert isinstance(jhu_data.calculate_recovery_period(), int)
 
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):
