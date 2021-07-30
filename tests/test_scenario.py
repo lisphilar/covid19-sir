@@ -158,8 +158,6 @@ class TestScenario(object):
 
     def test_trend(self, snl):
         snl.trend()
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        snl.trend(force=False, include_init_phase=False)
 
     def test_estimate(self, snl):
         # Error test
@@ -174,11 +172,6 @@ class TestScenario(object):
         snl.summary()
 
     def test_estimate_accuracy(self, snl):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        with pytest.raises(NotImplementedError):
-            snl.phase_estimator(phase="1st")
-        with pytest.raises(NotImplementedError):
-            snl.estimate_history(phase="1st")
         snl.estimate_accuracy(phase="1st")
 
     def test_simulate(self, snl):
@@ -192,11 +185,6 @@ class TestScenario(object):
         with pytest.raises(KeyError):
             snl.get("feeling", phase="last")
         assert isinstance(snl.get("rho", phase="last"), float)
-
-    def test_param_history(self, snl):
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        with pytest.raises(NotImplementedError):
-            snl.param_history()
 
     def test_describe(self, snl):
         snl.add(days=100)
@@ -267,8 +255,6 @@ class TestScenario(object):
     def test_estimate_delay(self, snl, indicator, target, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
         delay, df = snl.estimate_delay(indicator=indicator, target=target)
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        delay, df = snl.estimate_delay(oxcgrt_data, indicator=indicator, target=target, value_range=(7, 35))
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
@@ -277,10 +263,6 @@ class TestScenario(object):
         snl.clear()
         with pytest.raises(UnExecutedError):
             snl.predict()
-        # Deprecated: fit with oxcgrt_data
-        warnings.filterwarnings("error", category=DeprecationWarning)
-        with pytest.raises(DeprecationWarning):
-            snl.fit(oxcgrt_data)
 
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
     @pytest.mark.parametrize("days", [[3], None])
