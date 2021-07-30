@@ -107,7 +107,7 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("extras", [True, False])
     @pytest.mark.parametrize("past", [True, False])
     @pytest.mark.parametrize("future", [True, False])
-    def test_records(self, jhu_data, country, japan_data, oxcgrt_data, pcr_data, vaccine_data,
+    def test_records(self, jhu_data, country, oxcgrt_data, pcr_data, vaccine_data,
                      main, extras, past, future):
         dhl = DataHandler(country=country, province=None)
         # Combination of arguments
@@ -125,7 +125,7 @@ class TestDataHandler(object):
         if extras:
             with pytest.raises(NotRegisteredExtraError):
                 dhl.records(main=main, extras=extras, past=past, future=future)
-        dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+        dhl.register(extras=[oxcgrt_data, pcr_data, vaccine_data])
         # Get records
         df = dhl.records(main=main, extras=extras, past=past, future=future)
         # Check the start/end date of the records
