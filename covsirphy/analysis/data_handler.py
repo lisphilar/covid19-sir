@@ -29,8 +29,9 @@ class DataHandler(Term):
         province (str or None): province name
         kwargs: arguments of DataHandler.register()
     """
-    # Extra datasets {str: class}
+    # Deprecated
     __NAME_COUNTRY = "CountryData"
+    # Extra datasets {str: class}
     __NAME_OXCGRT = "OxCGRTData"
     __NAME_PCR = "PCRData"
     __NAME_VACCINE = "VaccineData"
@@ -172,6 +173,12 @@ class DataHandler(Term):
             # Check the data is a data cleaning class
             self._ensure_instance(extra_data, CleaningBase, name=statement)
             # Check the data can be accepted as an extra dataset
+            if isinstance(extra_data, CountryData):
+                warnings.warn(
+                    ".register(extras=[CountryData]) was deprecated because its role is played by the other classes.",
+                    DeprecationWarning,
+                    stacklevel=2
+                )
             if isinstance(extra_data, tuple(self.EXTRA_DICT.values())):
                 continue
             raise UnExpectedValueError(
