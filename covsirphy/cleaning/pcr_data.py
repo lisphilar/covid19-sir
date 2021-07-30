@@ -131,6 +131,8 @@ class PCRData(CleaningBase):
         """
         raise NotImplementedError
 
+    @deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
+               ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.

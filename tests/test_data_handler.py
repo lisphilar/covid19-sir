@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
-from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData, MobilityData
+from covsirphy import JapanData, OxCGRTData, PCRData, VaccineData, MobilityData
 from covsirphy import UnExpectedValueError, NotRegisteredMainError
 from covsirphy import NotRegisteredExtraError, SubsetNotFoundError
 
@@ -21,7 +21,10 @@ class TestDataHandler(object):
             warnings.filterwarnings("ignore", category=DeprecationWarning)
             return dhl.register(population_data=data)
         # Extra datasets
-        if isinstance(data, (CountryData, JapanData, OxCGRTData, PCRData, VaccineData, MobilityData)):
+        if isinstance(data, JapanData):
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
+            return dhl.register(extras=[data])
+        if isinstance(data, (OxCGRTData, PCRData, VaccineData, MobilityData)):
             return dhl.register(extras=[data])
         # Un-acceptable datasets
         with pytest.raises(UnExpectedValueError):
@@ -86,7 +89,7 @@ class TestDataHandler(object):
         assert dhl.today == "01Jun2020"
 
     @pytest.mark.parametrize("country", ["Japan", "France"])
-    def test_records_extras(self, jhu_data, country, japan_data, oxcgrt_data, pcr_data, vaccine_data):
+    def test_records_extras(self, jhu_data, country, oxcgrt_data, pcr_data, vaccine_data):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             dhl.records_extras()
@@ -94,7 +97,7 @@ class TestDataHandler(object):
         dhl.timepoints(first_date="01May2020", last_date="01Sep2020")
         with pytest.raises(NotRegisteredExtraError):
             dhl.records_extras()
-        dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+        dhl.register(extras=[oxcgrt_data, pcr_data, vaccine_data])
         series = dhl.records_extras()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01May2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
