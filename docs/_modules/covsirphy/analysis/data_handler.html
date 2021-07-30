@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-rho
+                2.21.0-sigma
               </div>
             
           
@@ -190,6 +190,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.japan_data</span> <span class="kn">import</span> <span class="n">JapanData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.pcr_data</span> <span class="kn">import</span> <span class="n">PCRData</span>
@@ -207,14 +208,17 @@
 <span class="sd">        province (str or None): province name</span>
 <span class="sd">        kwargs: arguments of DataHandler.register()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Extra datasets {str: class}</span>
+    <span class="c1"># Deprecated</span>
     <span class="n">__NAME_COUNTRY</span> <span class="o">=</span> <span class="s2">&quot;CountryData&quot;</span>
+    <span class="n">__NAME_JAPAN</span> <span class="o">=</span> <span class="s2">&quot;JapanData&quot;</span>
+    <span class="c1"># Extra datasets {str: class}</span>
     <span class="n">__NAME_OXCGRT</span> <span class="o">=</span> <span class="s2">&quot;OxCGRTData&quot;</span>
     <span class="n">__NAME_PCR</span> <span class="o">=</span> <span class="s2">&quot;PCRData&quot;</span>
     <span class="n">__NAME_VACCINE</span> <span class="o">=</span> <span class="s2">&quot;VaccineData&quot;</span>
     <span class="n">__NAME_MOBILE</span> <span class="o">=</span> <span class="s2">&quot;MobilityData&quot;</span>
     <span class="n">EXTRA_DICT</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">__NAME_COUNTRY</span><span class="p">:</span> <span class="n">CountryData</span><span class="p">,</span>
+        <span class="n">__NAME_JAPAN</span><span class="p">:</span> <span class="n">JapanData</span><span class="p">,</span>
         <span class="n">__NAME_OXCGRT</span><span class="p">:</span> <span class="n">OxCGRTData</span><span class="p">,</span>
         <span class="n">__NAME_PCR</span><span class="p">:</span> <span class="n">PCRData</span><span class="p">,</span>
         <span class="n">__NAME_VACCINE</span><span class="p">:</span> <span class="n">VaccineData</span><span class="p">,</span>
@@ -350,6 +354,12 @@
             <span class="c1"># Check the data is a data cleaning class</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">extra_data</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">statement</span><span class="p">)</span>
             <span class="c1"># Check the data can be accepted as an extra dataset</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_data</span><span class="p">,</span> <span class="p">(</span><span class="n">CountryData</span><span class="p">,</span> <span class="n">JapanData</span><span class="p">)):</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;.register(extras=[CountryData, JapanData]) was deprecated because its role is played by the other classes.&quot;</span><span class="p">,</span>
+                    <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EXTRA_DICT</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
                 <span class="k">continue</span>
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>

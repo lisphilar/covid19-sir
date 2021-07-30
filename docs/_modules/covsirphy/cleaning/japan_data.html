@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.21.0-rho
+                2.21.0-sigma
               </div>
             
           
@@ -182,10 +182,11 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="JapanData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData">[docs]</a><span class="k">class</span> <span class="nc">JapanData</span><span class="p">(</span><span class="n">CountryData</span><span class="p">):</span>
+<div class="viewcode-block" id="JapanData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData">[docs]</a><span class="k">class</span> <span class="nc">JapanData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Japan-specific dataset.</span>
 
@@ -220,12 +221,12 @@
     <span class="n">SEVERE</span> <span class="o">=</span> <span class="s2">&quot;Severe&quot;</span>
     <span class="c1"># Column names</span>
     <span class="n">JAPAN_VALUE_COLS</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">CountryData</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
-        <span class="n">CountryData</span><span class="o">.</span><span class="n">TESTS</span><span class="p">,</span> <span class="n">MODERATE</span><span class="p">,</span> <span class="n">SEVERE</span><span class="p">,</span>
-        <span class="n">CountryData</span><span class="o">.</span><span class="n">VAC</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">V_ONCE</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">V_FULL</span><span class="p">,</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">TESTS</span><span class="p">,</span> <span class="n">MODERATE</span><span class="p">,</span> <span class="n">SEVERE</span><span class="p">,</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">VAC</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">V_ONCE</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">V_FULL</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">JAPAN_COLS</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">CountryData</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span>
         <span class="o">*</span><span class="n">JAPAN_VALUE_COLS</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="c1"># Meta data</span>
@@ -257,6 +258,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="c1"># Directory that save the file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dirpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;input&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        str: country name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
+
+<div class="viewcode-block" id="JapanData.raw_columns"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.raw_columns">[docs]</a>    <span class="k">def</span> <span class="nf">raw_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the column names of the raw data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: the list of column names of the raw data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -362,8 +379,10 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_COLS</span><span class="p">]</span>
 
-<div class="viewcode-block" id="JapanData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;PCRData.replace()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;DataLoader.read_dataframe()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span>
+               <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;https://lisphilar.github.io/covid19-sir/markdown/LOADING.html&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -437,7 +456,96 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_INT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_INT</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_FLT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_FLT</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Admin_Num&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_COLS</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_COLS</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="JapanData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dataframe to show chronological change of number and rates.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: group-by Date, sum of the values</span>
+
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pd.Timestamp): Observation date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">                    - Fatal per Confirmed (int)</span>
+<span class="sd">                    - Recovered per Confirmed (int)</span>
+<span class="sd">                    - Fatal per (Fatal or Recovered) (int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+        <span class="c1"># Calculate total values at country level if not registered</span>
+        <span class="n">c_level_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">c_level_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">c_level_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="c1"># Calculate rates</span>
+        <span class="n">total_series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">r_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RATE_COLUMNS</span><span class="p">[:]</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_series</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_series</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">r_cols</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="JapanData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return names of countries where records are registered.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: list of country names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="JapanData.register_total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.register_total">[docs]</a>    <span class="k">def</span> <span class="nf">register_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register total value of all provinces as country level data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.JapanData: self</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If country level data was registered, this will be overwritten.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate total values at province level</span>
+        <span class="n">clean_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+        <span class="n">clean_df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clean_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
+        <span class="n">total_df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">total_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
+        <span class="n">total_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="c1"># Add/overwrite country level data</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clean_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">total_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="JapanData.map"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JapanData.map">[docs]</a>    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create colored map to show the values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (None): None</span>
+<span class="sd">            variable (str): variable name to show</span>
+<span class="sd">            date (str or None): date of the records or None (the last value)</span>
+<span class="sd">            kwargs: arguments of ColoredMap() and ColoredMap.plot()</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: @country was specified</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;@country cannot be specified, always None.&quot;</span><span class="p">)</span>
+        <span class="c1"># Date</span>
+        <span class="n">date_str</span> <span class="o">=</span> <span class="n">date</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="si">}</span><span class="s2">: the number of </span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2"> cases on </span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># Country-specific map</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_country</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
