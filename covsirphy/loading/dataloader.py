@@ -554,7 +554,7 @@ class DataLoader(Term):
             kwargs: all keyword arguments will be ignored
 
         Returns:
-            covsirphy.CountryData: dataset at country level in Japan
+            covsirphy.JapanData: dataset at country level in Japan
         """
         self._read_dep(**kwargs)
         filename = self._filename_dict["japan"]
