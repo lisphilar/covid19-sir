@@ -22,7 +22,7 @@ class CountryData(CleaningBase):
         If province name will be set in CountryData.set_variables(), @province will be ignored.
     """
 
-    @deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
+    @deprecate("CountryData()", new="DataLoader.read_dataframe()", version="sigma",
                ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def __init__(self, filename, country, province=None):
         self._raw = pd.DataFrame() if filename is None else pd.read_csv(filename)
