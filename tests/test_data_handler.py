@@ -89,7 +89,7 @@ class TestDataHandler(object):
         assert dhl.today == "01Jun2020"
 
     @pytest.mark.parametrize("country", ["Japan", "France"])
-    def test_records_extras(self, jhu_data, country, japan_data, oxcgrt_data, pcr_data, vaccine_data):
+    def test_records_extras(self, jhu_data, country, oxcgrt_data, pcr_data, vaccine_data):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             dhl.records_extras()
@@ -97,7 +97,7 @@ class TestDataHandler(object):
         dhl.timepoints(first_date="01May2020", last_date="01Sep2020")
         with pytest.raises(NotRegisteredExtraError):
             dhl.records_extras()
-        dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+        dhl.register(extras=[oxcgrt_data, pcr_data, vaccine_data])
         series = dhl.records_extras()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01May2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
