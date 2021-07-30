@@ -109,7 +109,7 @@ __all__ = [
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # cleaning
-    "CleaningBase", "JHUData", "CountryData", "OxCGRTData", "VaccineData",
+    "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
@@ -125,6 +125,7 @@ __all__ = [
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
+    "CountryData",
 ]
 
 # Show exceptions in better format if used from command line

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from covsirphy import DBLockedError, NotDBLockedError, UnExpectedValueError
 from covsirphy import DataLoader
-from covsirphy import JHUData, CountryData, JapanData
+from covsirphy import JHUData, JapanData
 from covsirphy import OxCGRTData, PCRData, VaccineData, MobilityData, PopulationPyramidData
 from covsirphy import Scenario, Term
 
@@ -20,7 +20,7 @@ class TestDataLoader(object):
         # Data loading
         assert isinstance(jhu_data, JHUData)
         assert isinstance(oxcgrt_data, OxCGRTData)
-        assert isinstance(japan_data, CountryData)
+        assert isinstance(japan_data, JapanData)
         assert isinstance(pcr_data, PCRData)
         assert isinstance(vaccine_data, VaccineData)
         assert isinstance(mobility_data, MobilityData)
