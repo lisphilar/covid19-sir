@@ -1,4 +1,4 @@
-# Usage: data loading (To Be Released)
+# Usage: data loading
 
 The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using `DataLoader` class.
 
@@ -208,7 +208,7 @@ print(loader.locked)
 
 If `update_interval` was not `None` when `DataLoader` instance was created, downloading of the recommended datasets will be started automatically with calling `DataLoader.lock()` or `DataLoader.jhu()` etc.
 
-The recommended datasets are listed here. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
+The recommended datasets are listed here. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets. All recommended datasets are retrieved from public databases. No confidential information is included. If you found any issues, please let us know via [GitHub issue page](https://github.com/lisphilar/covid19-sir/issues).
 
 ### [COVID-19 Data Hub](https://covid19datahub.io/)
 
@@ -266,7 +266,7 @@ oxcgrt_data = loader.oxcgrt()
 pcr_data = loader.pcr()
 # The number of vaccinations
 vaccine_data = loader.vaccine()
-# Mobility data (will be impremented, from version 2.22.0)
+# Mobility data
 mobility_data = loader.mobility()
 # Population pyramid
 pyramid_data = loader.pyramid()
