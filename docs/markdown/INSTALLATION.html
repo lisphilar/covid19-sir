@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.21.0-sigma
+                2.22.0
               </div>
             
           
@@ -102,21 +102,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#stable-version">Stable version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#development-version">Development version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-with-anaconda">Installation with Anaconda</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#dataset-preparation">Dataset preparation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recommended-datasets">1. Recommended datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">2. Use a local CSV file which has the number of cases</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#create-countrydata-instance">2.1. Create CountryData instance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#convert-to-jhudata-instance">2.2. Convert to JHUData instance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-population-values">2.3. Set population values</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-preparation">Dataset preparation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="WORKFLOW.html">Workflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LOADING.html">Usage: data loading (To Be Released)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOADING.html">Usage: data loading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_dataset.html">Usage: exploratory data analysis (datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_theoretical.html">Usage: SIR-derived models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_phases.html">Usage: S-R trend analysis (phases)</a></li>
@@ -253,128 +244,9 @@ pip install --upgrade covsirphy
 </div>
 <p>To exit this conda environment, please use <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">deactivate</span></code>.</p>
 </div>
-</div>
 <div class="section" id="dataset-preparation">
-<h1>Dataset preparation<a class="headerlink" href="#dataset-preparation" title="Permalink to this headline">¶</a></h1>
-<p>With <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class, we can download recommended datasets for analysis and save/update them in your local environment. Optionally, you can use your local dataset which is saved in a CSV file.</p>
-<p>All raw datasets are retrieved from public databases. No confidential information is included. If you find any issues, please let us know via <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">GitHub issue page</a>.</p>
-<div class="section" id="recommended-datasets">
-<h2>1. Recommended datasets<a class="headerlink" href="#recommended-datasets" title="Permalink to this headline">¶</a></h2>
-<p>With the following codes, we can download the latest recommended datasets and save them in “input” folder of the current directory. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
-<p>At first, import CovsirPhy package and check the version number.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
-</pre></div>
-</div>
-<p>Save the recommended datasets in “input” folder of the current directory.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create DataLoader instance</span>
-<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases and population values</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
-</pre></div>
-</div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linelist of case reports</span>
-<span class="n">linelist</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
-<span class="c1"># The number of tests</span>
-<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
-<span class="c1"># The number of vaccinations</span>
-<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
-<span class="c1"># Population pyramid</span>
-<span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
-<span class="c1"># Japan-specific dataset</span>
-<span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="use-a-local-csv-file-which-has-the-number-of-cases">
-<h2>2. Use a local CSV file which has the number of cases<a class="headerlink" href="#use-a-local-csv-file-which-has-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
-<p>We can replace <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code> instance created by <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class with your dataset saved in a CSV file. At this time, <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> supports country and province level data.</p>
-<div class="section" id="create-countrydata-instance">
-<h3>2.1. Create CountryData instance<a class="headerlink" href="#create-countrydata-instance" title="Permalink to this headline">¶</a></h3>
-<p>Please create <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance at first. Let’s say we have a CSV file (“oslo.csv”) with the following columns.</p>
-<ul class="simple">
-<li><p>“date”: reported dates</p></li>
-<li><p>“confirmed”: the number of confirmed cases</p></li>
-<li><p>“recovered”: the number of recovered cases</p></li>
-<li><p>“fatal”: the number of fatal cases</p></li>
-<li><p>“province”: (optional) province names</p></li>
-</ul>
-<p>Country level data will be set as total values of provinces with <code class="docutils literal notranslate"><span class="pre">CountryData.register_total()</span></code> method optionally.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country name</span>
-<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">)</span>
-<span class="c1"># Specify column names</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
-    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># (Optional) register total values of provinces as country level data</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">register_total</span><span class="p">()</span>
-<span class="c1"># Check records -&gt; pandas.DataFrame</span>
-<span class="c1"># reset index, Date/Country/Province/Confirmed/Infected/Fatal/Recovered column</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>When we don’t have province column and the all records are for one province, we can specify the province name as follows.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country/province name</span>
-<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Oslo&quot;</span><span class="p">)</span>
-<span class="c1"># Specify column names except for province</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
-    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># Check records</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>When we don’t have province column and the all records are country level data, we can skip province name setting.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country name</span>
-<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">)</span>
-<span class="c1"># Specify column names except for province</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
-    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># Check records</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>If dates are parsed incorrectly (e.g. the last date of raw dataset was 12Jun2021, but that of cleaned dataset was 06Dec2021), please try the following codes with appropreate date format for a while.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="c1"># Remove cleaned data with wrong time format</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-<span class="c1"># Update raw dataframe with appropreate time format</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
-<span class="c1"># Data cleaning</span>
-<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>From development version 2.21.0-delta, we can use the following. This will be implemented at the next stable version 2.22.0.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">(</span><span class="n">date_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="convert-to-jhudata-instance">
-<h3>2.2. Convert to JHUData instance<a class="headerlink" href="#convert-to-jhudata-instance" title="Permalink to this headline">¶</a></h3>
-<p>Then, convert the <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance to a <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create JHUData instance using cleaned dataset (pandas.DataFrame)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">())</span>
-<span class="c1"># Or, we can use and update the output of DataLoader.jhu()</span>
-<span class="c1"># jhu_data = data_loader.jhu()</span>
-<span class="c1"># jhu_data.replace(country_data)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="set-population-values">
-<h3>2.3. Set population values<a class="headerlink" href="#set-population-values" title="Permalink to this headline">¶</a></h3>
-<p>Additionally, you may need to register population values to <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> instance manually.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create PopulationData instance with empty dataset</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">()</span>
-<span class="c1"># Or, we can use the output of DataLoader.population()</span>
-<span class="c1"># population_data = data_loader.population()</span>
-<span class="c1"># Update the population value: province is optional</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">693494</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Oslo&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
+<h2>Dataset preparation<a class="headerlink" href="#dataset-preparation" title="Permalink to this headline">¶</a></h2>
+<p>What to do next? Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html">Workflow</a> to obtain a comeplete view of CovsirPhy project.</p>
 </div>
 </div>
 
