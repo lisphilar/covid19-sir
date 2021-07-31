@@ -44,6 +44,6 @@ pip install --upgrade covsirphy
 
 To exit this conda environment, please use `conda deactivate`.
 
-## Dataset preparation
+## Start analysis
 
-What to do next? Please refer to [Workflow](https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html) to obtain a comeplete view of CovsirPhy project.
+What to do next? Please refer to [Workflow](https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html) to obtain a comeplete view of CovsirPhy project. The fisrt step is data preparation.

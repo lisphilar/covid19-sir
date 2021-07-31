@@ -5,9 +5,6 @@ The first step of CovsirPhy analysis is data laoding. In this chapter, we will c
 - recommented datasets: open datasets recommended by CovsirPhy community
 - local datasets: opened/closed datasets you have in your local environment
 
-Note:  
-From version 2.22.0, `DataLoader` will support local CSV files and `pandas.DataFrame` as local datasets. (We can try this new feature with the latest development version.)
-
 ## 1. Decide whether to use the recommended datasets
 
 We will create `DataLoader` instance. As default, the recommended datasets will be download and saved to "input" directory of the current directory. These downloaded datasets will be updated automatically when `DataLoader` instance is created and 12 hours have passed since the last downloading.
