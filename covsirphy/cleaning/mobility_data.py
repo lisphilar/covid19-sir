@@ -113,7 +113,7 @@ class MobilityData(CleaningBase):
         """
         raise NotImplementedError
 
-    def map(self, country, variable="Mobility_grocery_and_pharmacy", date=None, **kwargs):
+    def map(self, country=None, variable="Mobility_grocery_and_pharmacy", date=None, **kwargs):
         """
         Create global colored map to show the values.
 
