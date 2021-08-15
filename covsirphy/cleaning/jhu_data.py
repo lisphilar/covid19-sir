@@ -171,35 +171,6 @@ class JHUData(CleaningBase):
         self._citation += f"\n{country_data.citation}"
         return self
 
-    def _subset(self, country, province, start_date, end_date):
-        """
-        Return the subset of dataset or empty dataframe (when no records were found).
-
-        Args:
-            country (str): country name or ISO3 code
-            province (str or None): province name
-            start_date (str or None): start date, like 22Jan2020
-            end_date (str or None): end date, like 01Feb2020
-
-        Returns:
-            pandas.DataFrame
-                Index
-                    reset index
-                Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - Infected (int): the number of currently infected cases
-                    - Population (int): population values or 0 values
-        """
-        try:
-            return super().subset(
-                country=country, province=province, start_date=start_date, end_date=end_date)
-        except SubsetNotFoundError:
-            return pd.DataFrame(columns=self._raw_cols)
-
     def _calculate_susceptible(self, subset_df, population):
         """
         Return the subset of dataset.
@@ -272,12 +243,13 @@ class JHUData(CleaningBase):
         """
         country_alias = self.ensure_country_name(country)
         # Subset with area, start/end date
-        subset_df = self._subset(
-            country=country, province=province, start_date=start_date, end_date=end_date)
-        if subset_df.empty:
+        try:
+            subset_df = super().subset(
+                country=country, province=province, start_date=start_date, end_date=end_date)
+        except SubsetNotFoundError:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date)
+                start_date=start_date, end_date=end_date) from None
         # Calculate Susceptible
         df = self._calculate_susceptible(subset_df, population)
         # Select records where Recovered >= recovered_min
@@ -553,18 +525,26 @@ class JHUData(CleaningBase):
             If @population (high priority) is not None or population values are registered in subset,
             the number of susceptible cases will be calculated.
         """
-        # Subset with area, start/end date and calculate Susceptible
+        # Subset with area
         country_alias = self.ensure_country_name(country)
-        subset_df = self._subset(
-            country=country, province=province, start_date=start_date, end_date=end_date)
-        if subset_df.empty:
+        try:
+            subset_df = super().subset(country=country, province=province, start_date=None, end_date=None)
+        except SubsetNotFoundError:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
+                country=country, country_alias=country_alias, province=province) from None
         # Complement, if necessary
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
         df, status, _ = handler.run(subset_df)
+        # Subsetting with dates
+        if start_date is not None:
+            df = df.loc[df[self.DATE] >= self._ensure_date(start_date, name="start_date")]
+        if end_date is not None:
+            df = df.loc[df[self.DATE] <= self._ensure_date(end_date, name="end_date")]
+        if df.empty:
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date) from None
         # Calculate Susceptible
         df.loc[:, self.N] = subset_df.loc[:, self.N]
         df = self._calculate_susceptible(df, population)
@@ -678,11 +658,13 @@ class JHUData(CleaningBase):
             columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
         complement_df.set_index(self.COUNTRY, inplace=True)
         for cur_country in country:
-            subset_df = self._subset(
-                country=cur_country, province=province, start_date=start_date, end_date=end_date)
-            if subset_df.empty:
+            try:
+                subset_df = super().subset(
+                    country=country, province=province, start_date=start_date, end_date=end_date)
+            except SubsetNotFoundError:
                 raise SubsetNotFoundError(
-                    country=cur_country, province=province, start_date=start_date, end_date=end_date)
+                    country=cur_country, province=province,
+                    start_date=start_date, end_date=end_date) from None
             * _, complement_dict = handler.run(subset_df)
             complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
             complement_df.loc[cur_country] = [province, *complement_dict_values]
