@@ -222,6 +222,7 @@ class TestScenario(object):
             beginning_date=date, model=SIRF,
             control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
+    @pytest.mark.skip(reason="Will be activated with #")
     def test_retrospective_before_estimate(self, jhu_data):
         scenario = Scenario(country="Japan")
         scenario.register(jhu_data)
