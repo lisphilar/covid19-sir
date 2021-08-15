@@ -660,7 +660,7 @@ class JHUData(CleaningBase):
         for cur_country in country:
             try:
                 subset_df = super().subset(
-                    country=country, province=province, start_date=start_date, end_date=end_date)
+                    country=cur_country, province=province, start_date=start_date, end_date=end_date)
             except SubsetNotFoundError:
                 raise SubsetNotFoundError(
                     country=cur_country, province=province,
