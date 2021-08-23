@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.22.0-alpha
+                2.22.0-beta
               </div>
             
           
@@ -348,35 +348,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">country_data</span><span class="o">.</span><span class="n">citation</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the subset of dataset or empty dataframe (when no records were found).</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            country (str): country name or ISO3 code</span>
-<span class="sd">            province (str or None): province name</span>
-<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
-<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Population (int): population values or 0 values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_cols</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">_calculate_susceptible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of dataset.</span>
@@ -449,12 +420,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="c1"># Subset with area, start/end date</span>
-        <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subset_df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
-                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Calculate Susceptible</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_susceptible</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="c1"># Select records where Recovered &gt;= recovered_min</span>
@@ -730,18 +702,26 @@
 <span class="sd">            If @population (high priority) is not None or population values are registered in subset,</span>
 <span class="sd">            the number of susceptible cases will be calculated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Subset with area, start/end date and calculate Susceptible</span>
+        <span class="c1"># Subset with area</span>
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
-        <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subset_df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
-                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Complement, if necessary</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_recovery_period</span><span class="p">()</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="n">JHUDataComplementHandler</span><span class="p">(</span><span class="n">recovery_period</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
+        <span class="c1"># Subsetting with dates</span>
+        <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start_date&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
+                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Calculate Susceptible</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_susceptible</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
@@ -855,11 +835,13 @@
             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="o">*</span><span class="n">JHUDataComplementHandler</span><span class="o">.</span><span class="n">SHOW_COMPLEMENT_FULL_COLS</span><span class="p">])</span>
         <span class="n">complement_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cur_country</span> <span class="ow">in</span> <span class="n">country</span><span class="p">:</span>
-            <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">cur_country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subset_df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
                     <span class="n">country</span><span class="o">=</span><span class="n">cur_country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                    <span class="n">country</span><span class="o">=</span><span class="n">cur_country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
+                    <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
             <span class="o">*</span> <span class="n">_</span><span class="p">,</span> <span class="n">complement_dict</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
             <span class="n">complement_dict_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">complement_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
             <span class="n">complement_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cur_country</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">province</span><span class="p">,</span> <span class="o">*</span><span class="n">complement_dict_values</span><span class="p">]</span>
