@@ -121,14 +121,6 @@ class JHUData(CleaningBase):
             df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
         # Calculate Infected
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        # As country level data in China, use the total values of provinces
-        p_chn_df = df.loc[(df[self.COUNTRY] == "China") & (df[self.PROVINCE] != self.UNKNOWN)]
-        p_chn_df = p_chn_df.groupby(self.DATE).sum().reset_index()
-        p_chn_df.insert(0, self.COUNTRY, "China")
-        p_chn_df.insert(0, self.PROVINCE, self.UNKNOWN)
-        p_chn_df[self.ISO3] = self.country_to_iso3(country="China", check_data=False)
-        without_c_chn_df = df.loc[(df[self.COUNTRY] != "China") | (df[self.PROVINCE] != self.UNKNOWN)]
-        df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df.loc[:, self._raw_cols]
