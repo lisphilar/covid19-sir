@@ -23,7 +23,8 @@ class _ODESolver(Term):
 
     def __init__(self, model, **kwargs):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._param_dict = self._ensure_kwargs(model.PARAMETERS, float, **kwargs)
+        param_dict = {k: float(v) for (k, v) in kwargs.items() if isinstance(v, (float, int))}
+        self._param_dict = self._ensure_kwargs(model.PARAMETERS, float, **param_dict)
 
     def run(self, step_n, **kwargs):
         """

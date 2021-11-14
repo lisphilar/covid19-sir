@@ -357,7 +357,7 @@ class Term(object):
     @staticmethod
     def _ensure_instance(target, class_obj, name="target"):
         """
-        Ensure the target is a instance of the class object.
+        Ensure the target is an instance of the class object.
 
         Args:
             target (instance): target to ensure
