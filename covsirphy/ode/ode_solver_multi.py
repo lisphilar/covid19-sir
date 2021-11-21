@@ -80,7 +80,7 @@ class _MultiPhaseODESolver(Term):
             # Step numbers
             step_n = phase_dict["step_n"]
             # Initial values: registered information (with priority) or the last values
-            y0_dict = self._model.convert(dataframes[-1], None).iloc[-1].to_dict() if dataframes else {}
+            y0_dict = self._model.convert(dataframes[-1].reset_index(), None).iloc[-1].to_dict() if dataframes else {}
             y0_dict.update(phase_dict["y0"])
             # parameter values
             param_dict = phase_dict["param"].copy()
