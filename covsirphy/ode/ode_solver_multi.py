@@ -80,13 +80,14 @@ class _MultiPhaseODESolver(Term):
             # Step numbers
             step_n = phase_dict["step_n"]
             # Initial values: registered information (with priority) or the last values
-            y0_dict = self._model.convert(dataframes[-1].reset_index(), None).iloc[-1].to_dict() if dataframes else {}
+            y0_dict = self._model.convert(dataframes[-1], None).iloc[-1].to_dict() if dataframes else {}
             y0_dict.update(phase_dict["y0"])
             # parameter values
             param_dict = phase_dict["param"].copy()
             # Solve the initial value problem with the ODE model
             solver = _ODESolver(self._model, **param_dict)
             solved_df = solver.run(step_n=step_n, **y0_dict)
+            solved_df[self.DATE] = pd.date_range(end=phase_dict[self.END], freq="D")
             dataframes += [solved_df.iloc[1:]] if dataframes else [solved_df]
         # Combine the simulation results
         df = pd.concat(dataframes, ignore_index=True, sort=True)
