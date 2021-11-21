@@ -17,7 +17,7 @@ class TestJHUData(object):
         assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
-    @pytest.mark.parametrize("country", ["USA", "Japan"])
+    @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, jhu_data, country):
         df = jhu_data.subset(country, start_date="01Apr2020", end_date="01Jun2020")
         assert df[Term.S].dtype == "int64"
