@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import date
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -80,7 +81,9 @@ class _MultiPhaseODESolver(Term):
             # Step numbers
             step_n = phase_dict["step_n"]
             # Initial values: registered information (with priority) or the last values
-            y0_dict = dataframes[-1].iloc[-1].to_dict() if dataframes else {}
+            y0_dict = self._model.convert(
+                dataframes[-1].assign(Date=date.today()
+            ).rename(columns={"Date": self.DATE}), None).iloc[-1].to_dict() if dataframes else {}
             y0_dict.update(phase_dict["y0"])
             # parameter values
             param_dict = phase_dict["param"].copy()
