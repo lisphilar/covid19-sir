@@ -8,10 +8,9 @@ from covsirphy import PhaseTracker, Term, SIRF, UnExecutedError, UnExpectedValue
 
 class TestPhaseTracker(object):
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_edit_phases(self, jhu_data, population_data, country):
-        population = population_data.value(country=country)
-        records_df, _ = jhu_data.records(
-            country=country, start_date="01May2020", population=population)
+    def test_edit_phases(self, jhu_data, country):
+        records_df, _ = jhu_data.records(country=country, start_date="01May2020")
+        population = records_df.loc[records_df.index[0], [Term.C, Term.S]].sum()
         # Create tracker -> no phases
         tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Add two past phase
