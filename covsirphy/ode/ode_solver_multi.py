@@ -82,6 +82,10 @@ class _MultiPhaseODESolver(Term):
             # Initial values: registered information (with priority) or the last values
             y0_dict = dataframes[-1].iloc[-1].to_dict() if dataframes else {}
             y0_dict.update(phase_dict["y0"])
+            if set(self._model.VARIABLES) - y0_dict.keys():
+                un_vars = list(set(self._model.VARIABLES) - y0_dict.keys())
+                s, be = ("s", "were") if len(un_vars) > 1 else ("", "was")
+                raise KeyError(f"Initial value{s} of <{'>, <'.join(un_vars)}> {be} not specified.")
             # parameter values
             param_dict = phase_dict["param"].copy()
             # Solve the initial value problem with the ODE model
