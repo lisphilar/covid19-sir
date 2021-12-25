@@ -61,6 +61,7 @@ The number of vaccinated people:
 
 - `Vaccinated_1st`: the number of vaccinated persons for the first time on the date
 - `Vaccinated_2nd`: the number of vaccinated persons with the second dose on the date
+- `Vaccinated_3rd`: the number of vaccinated persons with the third dose on the date
 
 Data sources for vaccination:
 
