@@ -338,7 +338,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -428,8 +428,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># !pip install covsirphy --upgrade</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># !pip install covsirphy --upgrade</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
@@ -454,8 +453,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Create DataLoader instance</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create DataLoader instance</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;../input&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -469,8 +467,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Create instance</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create instance</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -491,8 +488,7 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Check type</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check type</span>
 <span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -511,8 +507,7 @@ covsirphy.cleaning.jhu_data.JHUData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -530,8 +525,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Detailed citations (string)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detailed citations (string)</span>
 <span class="c1"># data_loader.covid19dh_citation</span>
 </pre></div>
 </div>
@@ -541,8 +535,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -582,31 +575,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>1060744</th>
-      <td>2021-12-24</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>202736.0</td>
-      <td>NaN</td>
-      <td>4871.0</td>
-      <td>82994.0</td>
-      <td>14439018.0</td>
-    </tr>
-    <tr>
-      <th>1060745</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>203746.0</td>
-      <td>NaN</td>
-      <td>4885.0</td>
-      <td>82994.0</td>
-      <td>14439018.0</td>
-    </tr>
-    <tr>
-      <th>1060746</th>
+      <th>1063954</th>
       <td>2021-12-26</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -618,7 +587,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>14439018.0</td>
     </tr>
     <tr>
-      <th>1060747</th>
+      <th>1063955</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -630,7 +599,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>14439018.0</td>
     </tr>
     <tr>
-      <th>1060748</th>
+      <th>1063956</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -638,6 +607,30 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>207548.0</td>
       <td>NaN</td>
       <td>4940.0</td>
+      <td>82994.0</td>
+      <td>14439018.0</td>
+    </tr>
+    <tr>
+      <th>1063957</th>
+      <td>2021-12-29</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>207548.0</td>
+      <td>NaN</td>
+      <td>4940.0</td>
+      <td>82994.0</td>
+      <td>14439018.0</td>
+    </tr>
+    <tr>
+      <th>1063958</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>211728.0</td>
+      <td>NaN</td>
+      <td>4997.0</td>
       <td>82994.0</td>
       <td>14439018.0</td>
     </tr>
@@ -650,8 +643,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -691,31 +683,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>1060744</th>
-      <td>2021-12-24</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>202736</td>
-      <td>114871</td>
-      <td>4871</td>
-      <td>82994</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>1060745</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>203746</td>
-      <td>115867</td>
-      <td>4885</td>
-      <td>82994</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>1060746</th>
+      <th>1063954</th>
       <td>2021-12-26</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -727,7 +695,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>14439018</td>
     </tr>
     <tr>
-      <th>1060747</th>
+      <th>1063955</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -739,7 +707,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>14439018</td>
     </tr>
     <tr>
-      <th>1060748</th>
+      <th>1063956</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -747,6 +715,30 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>207548</td>
       <td>119614</td>
       <td>4940</td>
+      <td>82994</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>1063957</th>
+      <td>2021-12-29</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>207548</td>
+      <td>119614</td>
+      <td>4940</td>
+      <td>82994</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>1063958</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>211728</td>
+      <td>123737</td>
+      <td>4997</td>
       <td>82994</td>
       <td>14439018</td>
     </tr>
@@ -760,8 +752,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -771,21 +762,21 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 1060749 entries, 0 to 1060748
+RangeIndex: 1063959 entries, 0 to 1063958
 Data columns (total 9 columns):
  #   Column      Non-Null Count    Dtype
 ---  ------      --------------    -----
- 0   Date        1060749 non-null  datetime64[ns]
- 1   ISO3        1060749 non-null  category
- 2   Country     1060749 non-null  category
- 3   Province    1060749 non-null  category
- 4   Confirmed   1060749 non-null  int64
- 5   Infected    1060749 non-null  int64
- 6   Fatal       1060749 non-null  int64
- 7   Recovered   1060749 non-null  int64
- 8   Population  1060749 non-null  int64
+ 0   Date        1063959 non-null  datetime64[ns]
+ 1   ISO3        1063959 non-null  category
+ 2   Country     1063959 non-null  category
+ 3   Province    1063959 non-null  category
+ 4   Confirmed   1063959 non-null  int64
+ 5   Infected    1063959 non-null  int64
+ 6   Fatal       1063959 non-null  int64
+ 7   Recovered   1063959 non-null  int64
+ 8   Population  1063959 non-null  int64
 dtypes: category(3), datetime64[ns](1), int64(5)
-memory usage: 54.7 MB
+memory usage: 54.9 MB
 </pre></div></div>
 </div>
 <p>Note that date is <code class="docutils literal notranslate"><span class="pre">pandas.datetime64</span></code>, area names are <code class="docutils literal notranslate"><span class="pre">pandas.Category</span></code> and the number of cases is <code class="docutils literal notranslate"><span class="pre">numpy.int64</span></code>.</p>
@@ -796,8 +787,7 @@ memory usage: 54.7 MB
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">total_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">total</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">total</span><span class="p">()</span>
 <span class="c1"># Show the oldest data</span>
 <span class="n">display</span><span class="p">(</span><span class="n">total_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">total_df</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="c1"># Show the latest data</span>
@@ -850,20 +840,20 @@ memory usage: 54.7 MB
     <tr>
       <th>2020-01-02</th>
       <td>1</td>
-      <td>-13646</td>
-      <td>13646</td>
+      <td>-13758</td>
+      <td>13758</td>
       <td>1</td>
-      <td>13646.000000</td>
+      <td>13758.000000</td>
       <td>1.0</td>
       <td>0.999927</td>
     </tr>
     <tr>
       <th>2020-01-03</th>
-      <td>39399</td>
-      <td>38723</td>
+      <td>39459</td>
+      <td>38783</td>
       <td>676</td>
       <td>0</td>
-      <td>0.017158</td>
+      <td>0.017132</td>
       <td>0.0</td>
       <td>1.000000</td>
     </tr>
@@ -944,54 +934,54 @@ memory usage: 54.7 MB
   </thead>
   <tbody>
     <tr>
-      <th>2021-12-25</th>
-      <td>279640698</td>
-      <td>131824146</td>
-      <td>5427217</td>
-      <td>142389335</td>
-      <td>0.019408</td>
-      <td>0.509187</td>
-      <td>0.036716</td>
-    </tr>
-    <tr>
-      <th>2021-12-26</th>
-      <td>276431328</td>
-      <td>129252594</td>
-      <td>5407929</td>
-      <td>141770805</td>
-      <td>0.019563</td>
-      <td>0.512861</td>
-      <td>0.036744</td>
-    </tr>
-    <tr>
       <th>2021-12-27</th>
-      <td>270973851</td>
-      <td>128936471</td>
-      <td>5233891</td>
-      <td>136803489</td>
-      <td>0.019315</td>
-      <td>0.504859</td>
-      <td>0.036849</td>
+      <td>281792388</td>
+      <td>133751409</td>
+      <td>5437152</td>
+      <td>142603827</td>
+      <td>0.019295</td>
+      <td>0.506060</td>
+      <td>0.036727</td>
     </tr>
     <tr>
       <th>2021-12-28</th>
-      <td>256354359</td>
-      <td>117878139</td>
-      <td>4873507</td>
-      <td>133602713</td>
-      <td>0.019011</td>
-      <td>0.521164</td>
-      <td>0.035194</td>
+      <td>274303204</td>
+      <td>131990645</td>
+      <td>5270268</td>
+      <td>137042291</td>
+      <td>0.019213</td>
+      <td>0.499601</td>
+      <td>0.037033</td>
     </tr>
     <tr>
       <th>2021-12-29</th>
-      <td>1755463</td>
-      <td>5888</td>
-      <td>19306</td>
-      <td>1730269</td>
-      <td>0.010998</td>
-      <td>0.985648</td>
-      <td>0.011035</td>
+      <td>272021092</td>
+      <td>129769754</td>
+      <td>5226996</td>
+      <td>137024342</td>
+      <td>0.019215</td>
+      <td>0.503727</td>
+      <td>0.036745</td>
+    </tr>
+    <tr>
+      <th>2021-12-30</th>
+      <td>257503988</td>
+      <td>117800175</td>
+      <td>5037270</td>
+      <td>134666543</td>
+      <td>0.019562</td>
+      <td>0.522969</td>
+      <td>0.036057</td>
+    </tr>
+    <tr>
+      <th>2021-12-31</th>
+      <td>2795476</td>
+      <td>881721</td>
+      <td>29725</td>
+      <td>1884030</td>
+      <td>0.010633</td>
+      <td>0.673957</td>
+      <td>0.015532</td>
     </tr>
   </tbody>
 </table>
@@ -1003,8 +993,7 @@ memory usage: 54.7 MB
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">total_df</span><span class="p">[[</span><span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]],</span> <span class="s2">&quot;Total number of cases over time&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">total_df</span><span class="p">[[</span><span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]],</span> <span class="s2">&quot;Total number of cases over time&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1020,8 +1009,7 @@ memory usage: 54.7 MB
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">total_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">total_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;per&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">total_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;per&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
 </div>
@@ -1061,35 +1049,35 @@ memory usage: 54.7 MB
   <tbody>
     <tr>
       <th>Fatal per Confirmed</th>
-      <td>728.0</td>
-      <td>22.148625</td>
-      <td>507.093407</td>
-      <td>0.010998</td>
-      <td>0.021017</td>
-      <td>0.022191</td>
-      <td>0.041369</td>
-      <td>13646.000000</td>
+      <td>730.0</td>
+      <td>22.241625</td>
+      <td>510.532086</td>
+      <td>0.010633</td>
+      <td>0.021012</td>
+      <td>0.022189</td>
+      <td>0.040703</td>
+      <td>13758.000000</td>
     </tr>
     <tr>
       <th>Recovered per Confirmed</th>
-      <td>728.0</td>
-      <td>0.515729</td>
-      <td>0.385132</td>
+      <td>730.0</td>
+      <td>0.514874</td>
+      <td>0.384520</td>
       <td>0.000000</td>
-      <td>0.472908</td>
-      <td>0.561746</td>
-      <td>0.590628</td>
+      <td>0.473566</td>
+      <td>0.561701</td>
+      <td>0.590442</td>
       <td>8.480422</td>
     </tr>
     <tr>
       <th>Fatal per (Fatal or Recovered)</th>
-      <td>728.0</td>
-      <td>0.109858</td>
-      <td>0.182780</td>
-      <td>0.011035</td>
-      <td>0.035183</td>
-      <td>0.038104</td>
-      <td>0.091191</td>
+      <td>730.0</td>
+      <td>0.109721</td>
+      <td>0.182624</td>
+      <td>0.015532</td>
+      <td>0.035204</td>
+      <td>0.038103</td>
+      <td>0.090645</td>
       <td>1.000000</td>
     </tr>
   </tbody>
@@ -1108,8 +1096,7 @@ memory usage: 54.7 MB
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Specify contry name</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify contry name</span>
 <span class="n">df</span><span class="p">,</span> <span class="n">complement</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="c1"># Or, specify ISO3 code</span>
 <span class="c1"># df, complement = jhu_data.records(&quot;JPN&quot;)</span>
@@ -1152,24 +1139,6 @@ memory usage: 54.7 MB
   </thead>
   <tbody>
     <tr>
-      <th>688</th>
-      <td>2021-12-25</td>
-      <td>1731199</td>
-      <td>1869</td>
-      <td>18386</td>
-      <td>1710944</td>
-      <td>124797901</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>2021-12-26</td>
-      <td>1731515</td>
-      <td>2056</td>
-      <td>18387</td>
-      <td>1711072</td>
-      <td>124797585</td>
-    </tr>
-    <tr>
       <th>690</th>
       <td>2021-12-27</td>
       <td>1731789</td>
@@ -1196,6 +1165,24 @@ memory usage: 54.7 MB
       <td>1711630</td>
       <td>124796731</td>
     </tr>
+    <tr>
+      <th>693</th>
+      <td>2021-12-30</td>
+      <td>1732835</td>
+      <td>2614</td>
+      <td>18393</td>
+      <td>1711828</td>
+      <td>124796265</td>
+    </tr>
+    <tr>
+      <th>694</th>
+      <td>2021-12-31</td>
+      <td>1733325</td>
+      <td>2913</td>
+      <td>18393</td>
+      <td>1712019</td>
+      <td>124795775</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -1214,8 +1201,7 @@ partially complemented recovered data
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Skip complement</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Skip complement</span>
 <span class="n">df</span><span class="p">,</span> <span class="n">complement</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="c1"># Or,</span>
 <span class="c1"># df = jhu_data.subset(&quot;Japan&quot;)</span>
@@ -1257,24 +1243,6 @@ partially complemented recovered data
   </thead>
   <tbody>
     <tr>
-      <th>688</th>
-      <td>2021-12-25</td>
-      <td>1731199</td>
-      <td>1869</td>
-      <td>18386</td>
-      <td>1710944</td>
-      <td>124797901</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>2021-12-26</td>
-      <td>1731515</td>
-      <td>2056</td>
-      <td>18387</td>
-      <td>1711072</td>
-      <td>124797585</td>
-    </tr>
-    <tr>
       <th>690</th>
       <td>2021-12-27</td>
       <td>1731789</td>
@@ -1301,6 +1269,24 @@ partially complemented recovered data
       <td>1711630</td>
       <td>124796731</td>
     </tr>
+    <tr>
+      <th>693</th>
+      <td>2021-12-30</td>
+      <td>1732835</td>
+      <td>2614</td>
+      <td>18393</td>
+      <td>1711828</td>
+      <td>124796265</td>
+    </tr>
+    <tr>
+      <th>694</th>
+      <td>2021-12-31</td>
+      <td>1733325</td>
+      <td>2913</td>
+      <td>18393</td>
+      <td>1712019</td>
+      <td>124795775</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -1318,8 +1304,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Tokyo&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Tokyo&quot;</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1357,49 +1342,49 @@ False
   </thead>
   <tbody>
     <tr>
-      <th>679</th>
-      <td>2021-12-25</td>
-      <td>382756</td>
-      <td>387</td>
-      <td>3174</td>
-      <td>379195</td>
-      <td>13560100</td>
-    </tr>
-    <tr>
-      <th>680</th>
-      <td>2021-12-26</td>
-      <td>382799</td>
-      <td>403</td>
-      <td>3174</td>
-      <td>379222</td>
-      <td>13560057</td>
-    </tr>
-    <tr>
       <th>681</th>
       <td>2021-12-27</td>
       <td>382834</td>
-      <td>407</td>
+      <td>379</td>
       <td>3174</td>
-      <td>379253</td>
+      <td>379281</td>
       <td>13560022</td>
     </tr>
     <tr>
       <th>682</th>
       <td>2021-12-28</td>
       <td>382880</td>
-      <td>424</td>
+      <td>395</td>
       <td>3175</td>
-      <td>379281</td>
+      <td>379310</td>
       <td>13559976</td>
     </tr>
     <tr>
       <th>683</th>
       <td>2021-12-29</td>
-      <td>382880</td>
-      <td>424</td>
+      <td>382956</td>
+      <td>451</td>
       <td>3175</td>
-      <td>379281</td>
-      <td>13559976</td>
+      <td>379330</td>
+      <td>13559900</td>
+    </tr>
+    <tr>
+      <th>684</th>
+      <td>2021-12-30</td>
+      <td>383020</td>
+      <td>489</td>
+      <td>3175</td>
+      <td>379356</td>
+      <td>13559836</td>
+    </tr>
+    <tr>
+      <th>685</th>
+      <td>2021-12-31</td>
+      <td>383098</td>
+      <td>567</td>
+      <td>3175</td>
+      <td>379356</td>
+      <td>13559758</td>
     </tr>
   </tbody>
 </table>
@@ -1410,8 +1395,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pprint</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1482,8 +1466,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Specify country name</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify country name</span>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">show_complement</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="c1"># Or, specify country and province name</span>
 <span class="c1"># jhu_data.show_complement(country=&quot;Japan&quot;, province=&quot;Tokyo&quot;)</span>
@@ -1542,8 +1525,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Specify country names</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify country names</span>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">show_complement</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Greece&quot;</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">])</span>
 <span class="c1"># Or, apply None</span>
 <span class="c1"># jhu_data.show_complement(country=None)</span>
@@ -1616,8 +1598,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">recovery_period</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">calculate_recovery_period</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">recovery_period</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">calculate_recovery_period</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average recovery period: </span><span class="si">{</span><span class="n">recovery_period</span><span class="si">}</span><span class="s2"> [days]&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1642,8 +1623,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Global map with country level data</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Global map with country level data</span>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
 <span class="c1"># To set included/exclude some countries</span>
 <span class="c1"># jhu_data.map(country=None, variable=&quot;Infected&quot;, included=[&quot;Japan&quot;])</span>
@@ -1665,8 +1645,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1705,29 +1684,7 @@ the records. We have to assume temporarily invariable compartments for this anal
   </thead>
   <tbody>
     <tr>
-      <th>162719</th>
-      <td>2021-12-24</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>202736</td>
-      <td>114871</td>
-      <td>4871</td>
-      <td>82994</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>162720</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>203746</td>
-      <td>115867</td>
-      <td>4885</td>
-      <td>82994</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>162721</th>
+      <th>163161</th>
       <td>2021-12-26</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -1738,7 +1695,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>14439018</td>
     </tr>
     <tr>
-      <th>162722</th>
+      <th>163162</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -1749,13 +1706,35 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>14439018</td>
     </tr>
     <tr>
-      <th>162723</th>
+      <th>163163</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>207548</td>
       <td>119614</td>
       <td>4940</td>
+      <td>82994</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>163164</th>
+      <td>2021-12-29</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>207548</td>
+      <td>119614</td>
+      <td>4940</td>
+      <td>82994</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>163165</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>211728</td>
+      <td>123737</td>
+      <td>4997</td>
       <td>82994</td>
       <td>14439018</td>
     </tr>
@@ -1768,8 +1747,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Country map with province level data</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Country map with province level data</span>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
 <span class="c1"># To set included/exclude some countries</span>
 <span class="c1"># jhu_data.map(country=&quot;Japan&quot;, variable=&quot;Infected&quot;, included=[&quot;Tokyo&quot;])</span>
@@ -1791,8 +1769,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1832,31 +1809,7 @@ the records. We have to assume temporarily invariable compartments for this anal
   </thead>
   <tbody>
     <tr>
-      <th>34288</th>
-      <td>2021-12-25</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>5161</td>
-      <td>3</td>
-      <td>29</td>
-      <td>5129</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>34289</th>
-      <td>2021-12-26</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>5161</td>
-      <td>3</td>
-      <td>29</td>
-      <td>5129</td>
-      <td>812056</td>
-    </tr>
-    <tr>
-      <th>34290</th>
+      <th>34384</th>
       <td>2021-12-27</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -1868,7 +1821,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>812056</td>
     </tr>
     <tr>
-      <th>34291</th>
+      <th>34385</th>
       <td>2021-12-28</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -1880,15 +1833,39 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>812056</td>
     </tr>
     <tr>
-      <th>34292</th>
+      <th>34386</th>
       <td>2021-12-29</td>
       <td>JPN</td>
       <td>Japan</td>
       <td>Yamanashi</td>
-      <td>5156</td>
-      <td>-3</td>
+      <td>5161</td>
+      <td>0</td>
       <td>29</td>
-      <td>5130</td>
+      <td>5132</td>
+      <td>812056</td>
+    </tr>
+    <tr>
+      <th>34387</th>
+      <td>2021-12-30</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Yamanashi</td>
+      <td>5161</td>
+      <td>0</td>
+      <td>29</td>
+      <td>5132</td>
+      <td>812056</td>
+    </tr>
+    <tr>
+      <th>34388</th>
+      <td>2021-12-31</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Yamanashi</td>
+      <td>5157</td>
+      <td>-4</td>
+      <td>29</td>
+      <td>5132</td>
       <td>812056</td>
     </tr>
   </tbody>
@@ -1908,8 +1885,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1917,8 +1893,7 @@ the records. We have to assume temporarily invariable compartments for this anal
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1936,8 +1911,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Description</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Description</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="c1"># Raw</span>
 <span class="c1"># oxcgrt_data.raw.tail()</span>
@@ -1957,8 +1931,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2005,45 +1978,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>1064779</th>
-      <td>2021-12-24</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>Syddanmark</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>-38.89</td>
-    </tr>
-    <tr>
-      <th>1064780</th>
-      <td>2021-12-25</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>Syddanmark</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>-38.89</td>
-    </tr>
-    <tr>
-      <th>1064781</th>
+      <th>1068001</th>
       <td>2021-12-26</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2062,7 +1997,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>-38.89</td>
     </tr>
     <tr>
-      <th>1064782</th>
+      <th>1068002</th>
       <td>2021-12-27</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2081,8 +2016,46 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>-38.89</td>
     </tr>
     <tr>
-      <th>1064783</th>
+      <th>1068003</th>
       <td>2021-12-28</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>Syddanmark</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>-38.89</td>
+    </tr>
+    <tr>
+      <th>1068004</th>
+      <td>2021-12-29</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>Syddanmark</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>-38.89</td>
+    </tr>
+    <tr>
+      <th>1068005</th>
+      <td>2021-12-30</td>
       <td>GRL</td>
       <td>Greenland</td>
       <td>Syddanmark</td>
@@ -2114,8 +2087,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 <span class="c1"># Or, with ISO3 code</span>
 <span class="c1"># oxcgrt_data.subset(&quot;JPN&quot;).tail()</span>
 </pre></div>
@@ -2160,38 +2132,6 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>703</th>
-      <td>2021-12-25</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>47.22</td>
-    </tr>
-    <tr>
-      <th>704</th>
-      <td>2021-12-26</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>47.22</td>
-    </tr>
     <tr>
       <th>705</th>
       <td>2021-12-27</td>
@@ -2240,6 +2180,38 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2.0</td>
       <td>47.22</td>
     </tr>
+    <tr>
+      <th>708</th>
+      <td>2021-12-30</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>47.22</td>
+    </tr>
+    <tr>
+      <th>709</th>
+      <td>2021-12-31</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>47.22</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -2252,8 +2224,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Stringency_index&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Stringency_index&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2269,8 +2240,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2316,43 +2286,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>163425</th>
-      <td>2021-12-23</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>44.44</td>
-    </tr>
-    <tr>
-      <th>163426</th>
-      <td>2021-12-24</td>
-      <td>GRL</td>
-      <td>Greenland</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>3.0</td>
-      <td>2.0</td>
-      <td>44.44</td>
-    </tr>
-    <tr>
-      <th>163427</th>
+      <th>163869</th>
       <td>2021-12-25</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2370,7 +2304,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>44.44</td>
     </tr>
     <tr>
-      <th>163428</th>
+      <th>163870</th>
       <td>2021-12-26</td>
       <td>GRL</td>
       <td>Greenland</td>
@@ -2388,8 +2322,44 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>44.44</td>
     </tr>
     <tr>
-      <th>163429</th>
+      <th>163871</th>
       <td>2021-12-27</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>44.44</td>
+    </tr>
+    <tr>
+      <th>163872</th>
+      <td>2021-12-28</td>
+      <td>GRL</td>
+      <td>Greenland</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>-1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>44.44</td>
+    </tr>
+    <tr>
+      <th>163873</th>
+      <td>2021-12-29</td>
       <td>GRL</td>
       <td>Greenland</td>
       <td>1.0</td>
@@ -2418,8 +2388,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2427,8 +2396,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">pcr_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">pcr_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2446,8 +2414,7 @@ covsirphy.cleaning.pcr_data.PCRData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Description</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Description</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pcr_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="c1"># Raw</span>
 <span class="c1"># pcr_data.raw.tail()</span>
@@ -2469,8 +2436,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2506,23 +2472,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>1060744</th>
-      <td>2021-12-24</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>1670417</td>
-      <td>202736</td>
-    </tr>
-    <tr>
-      <th>1060745</th>
-      <td>2021-12-25</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>1673320</td>
-      <td>203746</td>
-    </tr>
-    <tr>
-      <th>1060746</th>
+      <th>1063954</th>
       <td>2021-12-26</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -2530,7 +2480,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>204351</td>
     </tr>
     <tr>
-      <th>1060747</th>
+      <th>1063955</th>
       <td>2021-12-27</td>
       <td>Zimbabwe</td>
       <td>-</td>
@@ -2538,12 +2488,28 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>205449</td>
     </tr>
     <tr>
-      <th>1060748</th>
+      <th>1063956</th>
       <td>2021-12-28</td>
       <td>Zimbabwe</td>
       <td>-</td>
       <td>1675163</td>
       <td>207548</td>
+    </tr>
+    <tr>
+      <th>1063957</th>
+      <td>2021-12-29</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>1675163</td>
+      <td>207548</td>
+    </tr>
+    <tr>
+      <th>1063958</th>
+      <td>2021-12-30</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>1675163</td>
+      <td>211728</td>
     </tr>
   </tbody>
 </table>
@@ -2560,8 +2526,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 <span class="c1"># Or, with ISO3 code</span>
 <span class="c1"># pcr_data.subset(&quot;JPN&quot;).tail()</span>
 </pre></div>
@@ -2598,20 +2563,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>688</th>
-      <td>2021-12-25</td>
-      <td>29092674</td>
-      <td>54523</td>
-      <td>1731199</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>2021-12-26</td>
-      <td>29132328</td>
-      <td>39654</td>
-      <td>1731515</td>
-    </tr>
-    <tr>
       <th>690</th>
       <td>2021-12-27</td>
       <td>29153902</td>
@@ -2632,6 +2583,20 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>62601</td>
       <td>1732369</td>
     </tr>
+    <tr>
+      <th>693</th>
+      <td>2021-12-30</td>
+      <td>29312089</td>
+      <td>40191</td>
+      <td>1732835</td>
+    </tr>
+    <tr>
+      <th>694</th>
+      <td>2021-12-31</td>
+      <td>29340602</td>
+      <td>28513</td>
+      <td>1733325</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -2644,8 +2609,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">positive_rate</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">positive_rate</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2692,30 +2656,6 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>687</th>
-      <td>2021-12-25</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>-</td>
-      <td>29092674</td>
-      <td>1731199</td>
-      <td>45566.000000</td>
-      <td>231.000000</td>
-      <td>0.506957</td>
-    </tr>
-    <tr>
-      <th>688</th>
-      <td>2021-12-26</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>-</td>
-      <td>29132328</td>
-      <td>1731515</td>
-      <td>46418.142857</td>
-      <td>248.285714</td>
-      <td>0.534889</td>
-    </tr>
-    <tr>
       <th>689</th>
       <td>2021-12-27</td>
       <td>JPN</td>
@@ -2751,6 +2691,30 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>290.571429</td>
       <td>0.598234</td>
     </tr>
+    <tr>
+      <th>692</th>
+      <td>2021-12-30</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>29312089</td>
+      <td>1732835</td>
+      <td>46418.857143</td>
+      <td>319.000000</td>
+      <td>0.687221</td>
+    </tr>
+    <tr>
+      <th>693</th>
+      <td>2021-12-31</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>29340602</td>
+      <td>1733325</td>
+      <td>43207.285714</td>
+      <td>345.714286</td>
+      <td>0.800130</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -2764,8 +2728,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2781,8 +2744,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2818,23 +2780,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>80878</th>
-      <td>2021-12-24</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>1670417</td>
-      <td>202736</td>
-    </tr>
-    <tr>
-      <th>80879</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>1673320</td>
-      <td>203746</td>
-    </tr>
-    <tr>
-      <th>80880</th>
+      <th>81138</th>
       <td>2021-12-26</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -2842,7 +2788,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>204351</td>
     </tr>
     <tr>
-      <th>80881</th>
+      <th>81139</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -2850,12 +2796,28 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>205449</td>
     </tr>
     <tr>
-      <th>80882</th>
+      <th>81140</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>1675163</td>
       <td>207548</td>
+    </tr>
+    <tr>
+      <th>81141</th>
+      <td>2021-12-29</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>1675163</td>
+      <td>207548</td>
+    </tr>
+    <tr>
+      <th>81142</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>1675163</td>
+      <td>211728</td>
     </tr>
   </tbody>
 </table>
@@ -2866,8 +2828,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2883,8 +2844,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pcr_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2921,25 +2881,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>31307</th>
-      <td>2021-12-25</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>135182</td>
-      <td>5161</td>
-    </tr>
-    <tr>
-      <th>31308</th>
-      <td>2021-12-26</td>
-      <td>JPN</td>
-      <td>Japan</td>
-      <td>Yamanashi</td>
-      <td>135182</td>
-      <td>5161</td>
-    </tr>
-    <tr>
-      <th>31309</th>
+      <th>31403</th>
       <td>2021-12-27</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -2948,7 +2890,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>5161</td>
     </tr>
     <tr>
-      <th>31310</th>
+      <th>31404</th>
       <td>2021-12-28</td>
       <td>JPN</td>
       <td>Japan</td>
@@ -2957,13 +2899,31 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>5161</td>
     </tr>
     <tr>
-      <th>31311</th>
+      <th>31405</th>
       <td>2021-12-29</td>
       <td>JPN</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>135182</td>
-      <td>5156</td>
+      <td>5161</td>
+    </tr>
+    <tr>
+      <th>31406</th>
+      <td>2021-12-30</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Yamanashi</td>
+      <td>135182</td>
+      <td>5161</td>
+    </tr>
+    <tr>
+      <th>31407</th>
+      <td>2021-12-31</td>
+      <td>JPN</td>
+      <td>Japan</td>
+      <td>Yamanashi</td>
+      <td>135182</td>
+      <td>5157</td>
     </tr>
   </tbody>
 </table>
@@ -2978,8 +2938,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2987,8 +2946,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">vaccine_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">vaccine_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3006,8 +2964,7 @@ covsirphy.cleaning.vaccine_data.VaccineData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3025,8 +2982,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3065,29 +3021,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>1060743</th>
-      <td>2021-12-23</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7188128.0</td>
-      <td>4089315.0</td>
-      <td>3098813.0</td>
-    </tr>
-    <tr>
-      <th>1060744</th>
-      <td>2021-12-24</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7200776.0</td>
-      <td>4095685.0</td>
-      <td>3105091.0</td>
-    </tr>
-    <tr>
-      <th>1060745</th>
+      <th>1063953</th>
       <td>2021-12-25</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3098,7 +3032,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>3108980.0</td>
     </tr>
     <tr>
-      <th>1060746</th>
+      <th>1063954</th>
       <td>2021-12-26</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3109,7 +3043,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>3111352.0</td>
     </tr>
     <tr>
-      <th>1060747</th>
+      <th>1063955</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3118,6 +3052,28 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>7218438.0</td>
       <td>4105296.0</td>
       <td>3113142.0</td>
+    </tr>
+    <tr>
+      <th>1063956</th>
+      <td>2021-12-28</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7222341.0</td>
+      <td>4107151.0</td>
+      <td>3115190.0</td>
+    </tr>
+    <tr>
+      <th>1063957</th>
+      <td>2021-12-29</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7234293.0</td>
+      <td>4112517.0</td>
+      <td>3121776.0</td>
     </tr>
   </tbody>
 </table>
@@ -3128,8 +3084,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3168,29 +3123,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>82889</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7209049</td>
-      <td>4100069</td>
-      <td>3108980</td>
-    </tr>
-    <tr>
-      <th>82890</th>
-      <td>2021-12-26</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7214640</td>
-      <td>4103288</td>
-      <td>3111352</td>
-    </tr>
-    <tr>
-      <th>82891</th>
+      <th>83323</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3201,26 +3134,48 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>3113142</td>
     </tr>
     <tr>
-      <th>82892</th>
+      <th>83324</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>-</td>
       <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7218438</td>
-      <td>4105296</td>
-      <td>3113142</td>
+      <td>7222341</td>
+      <td>4107151</td>
+      <td>3115190</td>
     </tr>
     <tr>
-      <th>82893</th>
+      <th>83325</th>
       <td>2021-12-29</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>-</td>
       <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7218438</td>
-      <td>4105296</td>
-      <td>3113142</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
+    </tr>
+    <tr>
+      <th>83326</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
+    </tr>
+    <tr>
+      <th>83327</th>
+      <td>2021-12-31</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
     </tr>
   </tbody>
 </table>
@@ -3239,8 +3194,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pprint</span><span class="p">(</span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3302,8 +3256,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 <span class="c1"># Or, with ISO3 code</span>
 <span class="c1"># vaccine_data.subset(&quot;JPN&quot;).tail()</span>
 </pre></div>
@@ -3340,20 +3293,6 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>377</th>
-      <td>2021-12-25</td>
-      <td>239952222</td>
-      <td>134009730</td>
-      <td>105942492</td>
-    </tr>
-    <tr>
-      <th>378</th>
-      <td>2021-12-26</td>
-      <td>240570422</td>
-      <td>134400424</td>
-      <td>106169998</td>
-    </tr>
-    <tr>
       <th>379</th>
       <td>2021-12-27</td>
       <td>240583436</td>
@@ -3374,6 +3313,20 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>134405160</td>
       <td>106178276</td>
     </tr>
+    <tr>
+      <th>382</th>
+      <td>2021-12-30</td>
+      <td>240583436</td>
+      <td>134405160</td>
+      <td>106178276</td>
+    </tr>
+    <tr>
+      <th>383</th>
+      <td>2021-12-31</td>
+      <td>240583436</td>
+      <td>134405160</td>
+      <td>106178276</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -3386,8 +3339,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3403,8 +3355,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vaccine_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3442,27 +3393,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>82889</th>
-      <td>2021-12-25</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7209049</td>
-      <td>4100069</td>
-      <td>3108980</td>
-    </tr>
-    <tr>
-      <th>82890</th>
-      <td>2021-12-26</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7214640</td>
-      <td>4103288</td>
-      <td>3111352</td>
-    </tr>
-    <tr>
-      <th>82891</th>
+      <th>83323</th>
       <td>2021-12-27</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3472,24 +3403,44 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>3113142</td>
     </tr>
     <tr>
-      <th>82892</th>
+      <th>83324</th>
       <td>2021-12-28</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7218438</td>
-      <td>4105296</td>
-      <td>3113142</td>
+      <td>7222341</td>
+      <td>4107151</td>
+      <td>3115190</td>
     </tr>
     <tr>
-      <th>82893</th>
+      <th>83325</th>
       <td>2021-12-29</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
-      <td>7218438</td>
-      <td>4105296</td>
-      <td>3113142</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
+    </tr>
+    <tr>
+      <th>83326</th>
+      <td>2021-12-30</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
+    </tr>
+    <tr>
+      <th>83327</th>
+      <td>2021-12-31</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...</td>
+      <td>7234293</td>
+      <td>4112517</td>
+      <td>3121776</td>
     </tr>
   </tbody>
 </table>
@@ -3504,8 +3455,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">mobility_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">mobility</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mobility_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">mobility</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3513,8 +3463,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">mobility_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">mobility_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3532,8 +3481,7 @@ covsirphy.cleaning.mobility_data.MobilityData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">mobility_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mobility_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3550,8 +3498,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span> <span class="n">mobility_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">mobility_data</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3592,33 +3539,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
   </thead>
   <tbody>
     <tr>
-      <th>1060741</th>
-      <td>2021-12-21</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>211.0</td>
-      <td>187.0</td>
-      <td>195.0</td>
-      <td>185.0</td>
-      <td>97.0</td>
-      <td>108.0</td>
-    </tr>
-    <tr>
-      <th>1060742</th>
-      <td>2021-12-22</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>194.0</td>
-      <td>162.0</td>
-      <td>181.0</td>
-      <td>166.0</td>
-      <td>103.0</td>
-      <td>57.0</td>
-    </tr>
-    <tr>
-      <th>1060743</th>
+      <th>1063951</th>
       <td>2021-12-23</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3631,7 +3552,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>91.0</td>
     </tr>
     <tr>
-      <th>1060744</th>
+      <th>1063952</th>
       <td>2021-12-24</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3644,7 +3565,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>84.0</td>
     </tr>
     <tr>
-      <th>1060745</th>
+      <th>1063953</th>
       <td>2021-12-25</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3656,6 +3577,32 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>98.0</td>
       <td>58.0</td>
     </tr>
+    <tr>
+      <th>1063954</th>
+      <td>2021-12-26</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>156.0</td>
+      <td>195.0</td>
+      <td>135.0</td>
+      <td>144.0</td>
+      <td>98.0</td>
+      <td>99.0</td>
+    </tr>
+    <tr>
+      <th>1063955</th>
+      <td>2021-12-27</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>147.0</td>
+      <td>161.0</td>
+      <td>132.0</td>
+      <td>128.0</td>
+      <td>109.0</td>
+      <td>40.0</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -3665,8 +3612,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3707,33 +3653,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
   </thead>
   <tbody>
     <tr>
-      <th>1060741</th>
-      <td>2021-12-21</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>211</td>
-      <td>187</td>
-      <td>195</td>
-      <td>185</td>
-      <td>97</td>
-      <td>108</td>
-    </tr>
-    <tr>
-      <th>1060742</th>
-      <td>2021-12-22</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>-</td>
-      <td>194</td>
-      <td>162</td>
-      <td>181</td>
-      <td>166</td>
-      <td>103</td>
-      <td>57</td>
-    </tr>
-    <tr>
-      <th>1060743</th>
+      <th>1063951</th>
       <td>2021-12-23</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3746,7 +3666,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>91</td>
     </tr>
     <tr>
-      <th>1060744</th>
+      <th>1063952</th>
       <td>2021-12-24</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3759,7 +3679,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>84</td>
     </tr>
     <tr>
-      <th>1060745</th>
+      <th>1063953</th>
       <td>2021-12-25</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -3770,6 +3690,32 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>126</td>
       <td>98</td>
       <td>58</td>
+    </tr>
+    <tr>
+      <th>1063954</th>
+      <td>2021-12-26</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>156</td>
+      <td>195</td>
+      <td>135</td>
+      <td>144</td>
+      <td>98</td>
+      <td>99</td>
+    </tr>
+    <tr>
+      <th>1063955</th>
+      <td>2021-12-27</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>-</td>
+      <td>147</td>
+      <td>161</td>
+      <td>132</td>
+      <td>128</td>
+      <td>109</td>
+      <td>40</td>
     </tr>
   </tbody>
 </table>
@@ -3791,8 +3737,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pprint</span><span class="p">(</span><span class="n">mobility_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">mobility_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3833,8 +3778,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 <span class="c1"># Or, with ISO3 code</span>
 <span class="c1"># mobility_data.subset(&quot;JPN&quot;).tail()</span>
 </pre></div>
@@ -3874,26 +3818,6 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
   </thead>
   <tbody>
     <tr>
-      <th>675</th>
-      <td>2021-12-21</td>
-      <td>108</td>
-      <td>94</td>
-      <td>86</td>
-      <td>104</td>
-      <td>104</td>
-      <td>96</td>
-    </tr>
-    <tr>
-      <th>676</th>
-      <td>2021-12-22</td>
-      <td>108</td>
-      <td>90</td>
-      <td>85</td>
-      <td>102</td>
-      <td>104</td>
-      <td>95</td>
-    </tr>
-    <tr>
       <th>677</th>
       <td>2021-12-23</td>
       <td>110</td>
@@ -3923,6 +3847,26 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>104</td>
       <td>94</td>
     </tr>
+    <tr>
+      <th>680</th>
+      <td>2021-12-26</td>
+      <td>103</td>
+      <td>68</td>
+      <td>80</td>
+      <td>92</td>
+      <td>104</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>681</th>
+      <td>2021-12-27</td>
+      <td>109</td>
+      <td>81</td>
+      <td>85</td>
+      <td>105</td>
+      <td>106</td>
+      <td>88</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -3935,8 +3879,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3952,8 +3895,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mobility_data</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -3993,31 +3935,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
   </thead>
   <tbody>
     <tr>
-      <th>83954</th>
-      <td>2021-12-21</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>211</td>
-      <td>187</td>
-      <td>195</td>
-      <td>185</td>
-      <td>97</td>
-      <td>108</td>
-    </tr>
-    <tr>
-      <th>83955</th>
-      <td>2021-12-22</td>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>194</td>
-      <td>162</td>
-      <td>181</td>
-      <td>166</td>
-      <td>103</td>
-      <td>57</td>
-    </tr>
-    <tr>
-      <th>83956</th>
+      <th>84202</th>
       <td>2021-12-23</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -4029,7 +3947,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>91</td>
     </tr>
     <tr>
-      <th>83957</th>
+      <th>84203</th>
       <td>2021-12-24</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -4041,7 +3959,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>84</td>
     </tr>
     <tr>
-      <th>83958</th>
+      <th>84204</th>
       <td>2021-12-25</td>
       <td>ZWE</td>
       <td>Zimbabwe</td>
@@ -4051,6 +3969,30 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
       <td>126</td>
       <td>98</td>
       <td>58</td>
+    </tr>
+    <tr>
+      <th>84205</th>
+      <td>2021-12-26</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>156</td>
+      <td>195</td>
+      <td>135</td>
+      <td>144</td>
+      <td>98</td>
+      <td>99</td>
+    </tr>
+    <tr>
+      <th>84206</th>
+      <td>2021-12-27</td>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>147</td>
+      <td>161</td>
+      <td>132</td>
+      <td>128</td>
+      <td>109</td>
+      <td>40</td>
     </tr>
   </tbody>
 </table>
@@ -4065,8 +4007,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4074,8 +4015,7 @@ O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, glo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">pyramid_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">pyramid_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4093,8 +4033,7 @@ covsirphy.cleaning.pyramid.PopulationPyramidData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">pyramid_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pyramid_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4111,8 +4050,7 @@ World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pyramid_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyramid_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4196,8 +4134,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4205,8 +4142,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4224,8 +4160,7 @@ covsirphy.cleaning.japan_data.JapanData
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">japan_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">japan_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4242,8 +4177,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[66]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4287,15 +4221,15 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>31978</th>
-      <td>2021-12-28</td>
+      <th>32076</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Aomori</td>
       <td>5901</td>
       <td>0</td>
       <td>38</td>
       <td>5863</td>
-      <td>104643</td>
+      <td>104876</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -4303,24 +4237,24 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>31979</th>
-      <td>2021-12-28</td>
+      <th>32077</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Yamaguchi</td>
-      <td>5814</td>
-      <td>18</td>
+      <td>5833</td>
+      <td>34</td>
       <td>93</td>
-      <td>5703</td>
+      <td>5706</td>
       <td>215836</td>
-      <td>18</td>
+      <td>34</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>31980</th>
-      <td>2021-12-28</td>
+      <th>32078</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>5161</td>
@@ -4335,36 +4269,36 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>31981</th>
-      <td>2021-12-29</td>
+      <th>32079</th>
+      <td>2021-12-31</td>
       <td>Japan</td>
       <td>-</td>
-      <td>1732369</td>
-      <td>2350</td>
-      <td>18389</td>
-      <td>1711630</td>
-      <td>29271898</td>
-      <td>2532</td>
+      <td>1733325</td>
+      <td>2913</td>
+      <td>18393</td>
+      <td>1712019</td>
+      <td>29340602</td>
+      <td>3114</td>
       <td>49</td>
-      <td>33651311831</td>
-      <td>19653078698</td>
-      <td>13998233133</td>
+      <td>34132478703</td>
+      <td>19921889018</td>
+      <td>14210589685</td>
     </tr>
     <tr>
-      <th>31982</th>
-      <td>2021-12-29</td>
+      <th>32080</th>
+      <td>2021-12-31</td>
       <td>Japan</td>
       <td>Entering</td>
-      <td>5306</td>
-      <td>517</td>
+      <td>5488</td>
+      <td>654</td>
       <td>8</td>
-      <td>4781</td>
-      <td>1346237</td>
-      <td>517</td>
+      <td>4826</td>
+      <td>1351852</td>
+      <td>654</td>
       <td>0</td>
-      <td>165521403968</td>
-      <td>92470750080</td>
-      <td>73050653888</td>
+      <td>166002570840</td>
+      <td>92739560400</td>
+      <td>73263010440</td>
     </tr>
   </tbody>
 </table>
@@ -4377,8 +4311,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[67]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Severe&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Severe&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4394,8 +4327,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[68]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4439,31 +4371,31 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
   </thead>
   <tbody>
     <tr>
-      <th>31285</th>
-      <td>2021-12-28</td>
+      <th>31381</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Tokyo</td>
-      <td>382880</td>
-      <td>395</td>
+      <td>383020</td>
+      <td>489</td>
       <td>3175</td>
-      <td>379310</td>
-      <td>4178591</td>
-      <td>393</td>
-      <td>2</td>
+      <td>379356</td>
+      <td>4186854</td>
+      <td>488</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>31286</th>
-      <td>2021-12-28</td>
+      <th>31382</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Aomori</td>
       <td>5901</td>
       <td>0</td>
       <td>38</td>
       <td>5863</td>
-      <td>104643</td>
+      <td>104876</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -4471,24 +4403,24 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>31287</th>
-      <td>2021-12-28</td>
+      <th>31383</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Yamaguchi</td>
-      <td>5814</td>
-      <td>18</td>
+      <td>5833</td>
+      <td>34</td>
       <td>93</td>
-      <td>5703</td>
+      <td>5706</td>
       <td>215836</td>
-      <td>18</td>
+      <td>34</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>31288</th>
-      <td>2021-12-28</td>
+      <th>31384</th>
+      <td>2021-12-30</td>
       <td>Japan</td>
       <td>Yamanashi</td>
       <td>5161</td>
@@ -4503,20 +4435,20 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>0</td>
     </tr>
     <tr>
-      <th>31289</th>
-      <td>2021-12-29</td>
+      <th>31385</th>
+      <td>2021-12-31</td>
       <td>Japan</td>
       <td>Entering</td>
-      <td>5306</td>
-      <td>517</td>
+      <td>5488</td>
+      <td>654</td>
       <td>8</td>
-      <td>4781</td>
-      <td>1346237</td>
-      <td>517</td>
+      <td>4826</td>
+      <td>1351852</td>
+      <td>654</td>
       <td>0</td>
-      <td>165521403968</td>
-      <td>92470750080</td>
-      <td>73050653888</td>
+      <td>166002570840</td>
+      <td>92739560400</td>
+      <td>73263010440</td>
     </tr>
   </tbody>
 </table>
@@ -4527,8 +4459,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[69]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4570,36 +4501,6 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>688</th>
-      <td>2021-12-25</td>
-      <td>Japan</td>
-      <td>1731199</td>
-      <td>1869</td>
-      <td>18386</td>
-      <td>1710944</td>
-      <td>29092674</td>
-      <td>2058</td>
-      <td>37</td>
-      <td>32688991101</td>
-      <td>19115462794</td>
-      <td>13573528307</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>2021-12-26</td>
-      <td>Japan</td>
-      <td>1731515</td>
-      <td>2056</td>
-      <td>18387</td>
-      <td>1711072</td>
-      <td>29132328</td>
-      <td>2237</td>
-      <td>38</td>
-      <td>32929561523</td>
-      <td>19249863218</td>
-      <td>13679698305</td>
-    </tr>
     <tr>
       <th>690</th>
       <td>2021-12-27</td>
@@ -4645,6 +4546,36 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
       <td>19653078698</td>
       <td>13998233133</td>
     </tr>
+    <tr>
+      <th>693</th>
+      <td>2021-12-30</td>
+      <td>Japan</td>
+      <td>1732835</td>
+      <td>2614</td>
+      <td>18393</td>
+      <td>1711828</td>
+      <td>29312089</td>
+      <td>2783</td>
+      <td>46</td>
+      <td>33891895267</td>
+      <td>19787483858</td>
+      <td>14104411409</td>
+    </tr>
+    <tr>
+      <th>694</th>
+      <td>2021-12-31</td>
+      <td>Japan</td>
+      <td>1733325</td>
+      <td>2913</td>
+      <td>18393</td>
+      <td>1712019</td>
+      <td>29340602</td>
+      <td>3114</td>
+      <td>49</td>
+      <td>34132478703</td>
+      <td>19921889018</td>
+      <td>14210589685</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -4657,8 +4588,7 @@ Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[70]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">meta</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">japan_data</span><span class="o">.</span><span class="n">meta</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

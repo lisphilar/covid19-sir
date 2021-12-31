@@ -309,7 +309,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -388,8 +388,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># !pip install covsirphy --upgrade</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># !pip install covsirphy --upgrade</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
@@ -413,8 +412,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Standard users and developers</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Standard users and developers</span>
 <span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;../input&quot;</span><span class="p">)</span>
 <span class="c1"># The number of cases and population values</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
@@ -426,8 +424,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pprint</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">countries</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -487,8 +484,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -501,8 +497,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
 <span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -545,20 +540,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>669</th>
-      <td>2021-12-24</td>
-      <td>460674</td>
-      <td>136386</td>
-      <td>4970584</td>
-    </tr>
-    <tr>
-      <th>670</th>
-      <td>2021-12-25</td>
-      <td>500466</td>
-      <td>136530</td>
-      <td>4985435</td>
-    </tr>
-    <tr>
       <th>671</th>
       <td>2021-12-26</td>
       <td>516839</td>
@@ -575,9 +556,23 @@ div.rendered_html tbody tr:hover {
     <tr>
       <th>673</th>
       <td>2021-12-28</td>
-      <td>598856</td>
-      <td>136955</td>
+      <td>598868</td>
+      <td>136943</td>
       <td>5020601</td>
+    </tr>
+    <tr>
+      <th>674</th>
+      <td>2021-12-29</td>
+      <td>674865</td>
+      <td>137091</td>
+      <td>5042472</td>
+    </tr>
+    <tr>
+      <th>675</th>
+      <td>2021-12-30</td>
+      <td>779463</td>
+      <td>137247</td>
+      <td>5064718</td>
     </tr>
   </tbody>
 </table>
@@ -594,8 +589,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -617,8 +611,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -733,27 +726,27 @@ div.rendered_html tbody tr:hover {
       <th>11th</th>
       <td>Past</td>
       <td>11Dec2020</td>
-      <td>20Dec2020</td>
+      <td>19Dec2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>12th</th>
       <td>Past</td>
-      <td>21Dec2020</td>
-      <td>30Dec2020</td>
+      <td>20Dec2020</td>
+      <td>29Dec2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>13th</th>
       <td>Past</td>
-      <td>31Dec2020</td>
-      <td>09Jan2021</td>
+      <td>30Dec2020</td>
+      <td>08Jan2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>14th</th>
       <td>Past</td>
-      <td>10Jan2021</td>
+      <td>09Jan2021</td>
       <td>20Jan2021</td>
       <td>60421760</td>
     </tr>
@@ -761,76 +754,76 @@ div.rendered_html tbody tr:hover {
       <th>15th</th>
       <td>Past</td>
       <td>21Jan2021</td>
-      <td>02Feb2021</td>
+      <td>01Feb2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>16th</th>
       <td>Past</td>
-      <td>03Feb2021</td>
-      <td>15Feb2021</td>
+      <td>02Feb2021</td>
+      <td>12Feb2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>17th</th>
       <td>Past</td>
-      <td>16Feb2021</td>
-      <td>25Feb2021</td>
+      <td>13Feb2021</td>
+      <td>24Feb2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>18th</th>
       <td>Past</td>
-      <td>26Feb2021</td>
-      <td>05Mar2021</td>
+      <td>25Feb2021</td>
+      <td>04Mar2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>19th</th>
       <td>Past</td>
-      <td>06Mar2021</td>
-      <td>14Mar2021</td>
+      <td>05Mar2021</td>
+      <td>12Mar2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>20th</th>
       <td>Past</td>
-      <td>15Mar2021</td>
-      <td>22Mar2021</td>
+      <td>13Mar2021</td>
+      <td>20Mar2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>21st</th>
       <td>Past</td>
-      <td>23Mar2021</td>
-      <td>30Mar2021</td>
+      <td>21Mar2021</td>
+      <td>29Mar2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>22nd</th>
       <td>Past</td>
-      <td>31Mar2021</td>
-      <td>07Apr2021</td>
+      <td>30Mar2021</td>
+      <td>06Apr2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>23rd</th>
       <td>Past</td>
-      <td>08Apr2021</td>
-      <td>15Apr2021</td>
+      <td>07Apr2021</td>
+      <td>14Apr2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>24th</th>
       <td>Past</td>
-      <td>16Apr2021</td>
-      <td>24Apr2021</td>
+      <td>15Apr2021</td>
+      <td>23Apr2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>25th</th>
       <td>Past</td>
-      <td>25Apr2021</td>
+      <td>24Apr2021</td>
       <td>04May2021</td>
       <td>60421760</td>
     </tr>
@@ -873,84 +866,77 @@ div.rendered_html tbody tr:hover {
       <th>31st</th>
       <td>Past</td>
       <td>09Aug2021</td>
-      <td>22Aug2021</td>
+      <td>23Aug2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>32nd</th>
       <td>Past</td>
-      <td>23Aug2021</td>
-      <td>31Aug2021</td>
+      <td>24Aug2021</td>
+      <td>02Sep2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>33rd</th>
       <td>Past</td>
-      <td>01Sep2021</td>
-      <td>09Sep2021</td>
+      <td>03Sep2021</td>
+      <td>14Sep2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>34th</th>
       <td>Past</td>
-      <td>10Sep2021</td>
-      <td>21Sep2021</td>
+      <td>15Sep2021</td>
+      <td>29Sep2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>35th</th>
       <td>Past</td>
-      <td>22Sep2021</td>
-      <td>06Oct2021</td>
+      <td>30Sep2021</td>
+      <td>18Oct2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>36th</th>
       <td>Past</td>
-      <td>07Oct2021</td>
-      <td>22Oct2021</td>
+      <td>19Oct2021</td>
+      <td>30Oct2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
-      <td>23Oct2021</td>
-      <td>03Nov2021</td>
+      <td>31Oct2021</td>
+      <td>09Nov2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>Past</td>
-      <td>04Nov2021</td>
-      <td>11Nov2021</td>
+      <td>10Nov2021</td>
+      <td>22Nov2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>39th</th>
       <td>Past</td>
-      <td>12Nov2021</td>
-      <td>19Nov2021</td>
+      <td>23Nov2021</td>
+      <td>05Dec2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>40th</th>
       <td>Past</td>
-      <td>20Nov2021</td>
-      <td>02Dec2021</td>
+      <td>06Dec2021</td>
+      <td>15Dec2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>41st</th>
       <td>Past</td>
-      <td>03Dec2021</td>
-      <td>13Dec2021</td>
-      <td>60421760</td>
-    </tr>
-    <tr>
-      <th>42nd</th>
-      <td>Past</td>
-      <td>14Dec2021</td>
-      <td>28Dec2021</td>
+      <td>16Dec2021</td>
+      <td>30Dec2021</td>
       <td>60421760</td>
     </tr>
   </tbody>
@@ -965,8 +951,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Default value of timeout is 180 sec</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Default value of timeout is 180 sec</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -979,50 +964,49 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         6th phase (13Oct2020 - 26Oct2020): finished   42 trials in 0 min  1 sec
-         9th phase (17Nov2020 - 01Dec2020): finished  160 trials in 0 min  5 sec
-         7th phase (27Oct2020 - 03Nov2020): finished  194 trials in 0 min  6 sec
-         0th phase (24Feb2020 - 22Mar2020): finished  297 trials in 0 min 10 sec
-         8th phase (04Nov2020 - 16Nov2020): finished  136 trials in 0 min  4 sec
-         3rd phase (06May2020 - 28Aug2020): finished  426 trials in 0 min 15 sec
-         1st phase (23Mar2020 - 10Apr2020): finished  165 trials in 0 min  5 sec
-        10th phase (02Dec2020 - 10Dec2020): finished  327 trials in 0 min 11 sec
-        12th phase (21Dec2020 - 30Dec2020): finished  161 trials in 0 min  5 sec
-        11th phase (11Dec2020 - 20Dec2020): finished   69 trials in 0 min  2 sec
-        15th phase (21Jan2021 - 02Feb2021): finished   39 trials in 0 min  1 sec
-        13th phase (31Dec2020 - 09Jan2021): finished  101 trials in 0 min  3 sec
-         4th phase (29Aug2020 - 25Sep2020): finished  162 trials in 0 min  5 sec
-        14th phase (10Jan2021 - 20Jan2021): finished   38 trials in 0 min  1 sec
-        16th phase (03Feb2021 - 15Feb2021): finished   69 trials in 0 min  2 sec
-        18th phase (26Feb2021 - 05Mar2021): finished   45 trials in 0 min  1 sec
-        17th phase (16Feb2021 - 25Feb2021): finished   69 trials in 0 min  2 sec
-         2nd phase (11Apr2020 - 05May2020): finished  309 trials in 0 min 10 sec
-        21st phase (23Mar2021 - 30Mar2021): finished   70 trials in 0 min  2 sec
-        24th phase (16Apr2021 - 24Apr2021): finished   80 trials in 0 min  2 sec
-        25th phase (25Apr2021 - 04May2021): finished   75 trials in 0 min  2 sec
-         5th phase (26Sep2020 - 12Oct2020): finished  300 trials in 0 min 10 sec
-        26th phase (05May2021 - 12May2021): finished   39 trials in 0 min  1 sec
-        27th phase (13May2021 - 25May2021): finished   40 trials in 0 min  1 sec
-        19th phase (06Mar2021 - 14Mar2021): finished  327 trials in 0 min 11 sec
-        28th phase (26May2021 - 17Jun2021): finished   69 trials in 0 min  2 sec
-        22nd phase (31Mar2021 - 07Apr2021): finished  266 trials in 0 min  9 sec
-        20th phase (15Mar2021 - 22Mar2021): finished   71 trials in 0 min  2 sec
-        23rd phase (08Apr2021 - 15Apr2021): finished   39 trials in 0 min  1 sec
-        36th phase (07Oct2021 - 22Oct2021): finished   39 trials in 0 min  1 sec
-        33rd phase (01Sep2021 - 09Sep2021): finished   73 trials in 0 min  2 sec
-        29th phase (18Jun2021 - 23Jul2021): finished  133 trials in 0 min  4 sec
-        34th phase (10Sep2021 - 21Sep2021): finished   42 trials in 0 min  1 sec
-        39th phase (12Nov2021 - 19Nov2021): finished   40 trials in 0 min  1 sec
-        30th phase (24Jul2021 - 08Aug2021): finished  268 trials in 0 min  9 sec
-        35th phase (22Sep2021 - 06Oct2021): finished   70 trials in 0 min  2 sec
-        37th phase (23Oct2021 - 03Nov2021): finished  135 trials in 0 min  4 sec
-        40th phase (20Nov2021 - 02Dec2021): finished  102 trials in 0 min  3 sec
-        38th phase (04Nov2021 - 11Nov2021): finished   80 trials in 0 min  2 sec
-        31st phase (09Aug2021 - 22Aug2021): finished  183 trials in 0 min  5 sec
-        32nd phase (23Aug2021 - 31Aug2021): finished   43 trials in 0 min  1 sec
-        41st phase (03Dec2021 - 13Dec2021): finished  187 trials in 0 min  6 sec
-        42nd phase (14Dec2021 - 28Dec2021): finished  549 trials in 0 min 17 sec
-Completed optimization. Total: 0 min 58 sec
+         6th phase (13Oct2020 - 26Oct2020): finished   48 trials in 0 min  1 sec
+         9th phase (17Nov2020 - 01Dec2020): finished  199 trials in 0 min  4 sec
+         7th phase (27Oct2020 - 03Nov2020): finished  233 trials in 0 min  5 sec
+         0th phase (24Feb2020 - 22Mar2020): finished  340 trials in 0 min  8 sec
+         3rd phase (06May2020 - 28Aug2020): finished  404 trials in 0 min 11 sec
+        10th phase (02Dec2020 - 10Dec2020): finished  304 trials in 0 min  8 sec
+         1st phase (23Mar2020 - 10Apr2020): finished  176 trials in 0 min  5 sec
+        11th phase (11Dec2020 - 19Dec2020): finished   79 trials in 0 min  2 sec
+         8th phase (04Nov2020 - 16Nov2020): finished  305 trials in 0 min  9 sec
+        15th phase (21Jan2021 - 01Feb2021): finished   54 trials in 0 min  1 sec
+        16th phase (02Feb2021 - 12Feb2021): finished   55 trials in 0 min  1 sec
+        12th phase (20Dec2020 - 29Dec2020): finished  225 trials in 0 min  5 sec
+        17th phase (13Feb2021 - 24Feb2021): finished  100 trials in 0 min  2 sec
+        18th phase (25Feb2021 - 04Mar2021): finished   45 trials in 0 min  1 sec
+         4th phase (29Aug2020 - 25Sep2020): finished  369 trials in 0 min 10 sec
+        13th phase (30Dec2020 - 08Jan2021): finished  132 trials in 0 min  3 sec
+         2nd phase (11Apr2020 - 05May2020): finished  347 trials in 0 min  9 sec
+        19th phase (05Mar2021 - 12Mar2021): finished   92 trials in 0 min  2 sec
+        21st phase (21Mar2021 - 29Mar2021): finished   50 trials in 0 min  1 sec
+        20th phase (13Mar2021 - 20Mar2021): finished  102 trials in 0 min  2 sec
+        24th phase (15Apr2021 - 23Apr2021): finished   60 trials in 0 min  1 sec
+        25th phase (24Apr2021 - 04May2021): finished   59 trials in 0 min  1 sec
+        26th phase (05May2021 - 12May2021): finished   59 trials in 0 min  1 sec
+        22nd phase (30Mar2021 - 06Apr2021): finished  240 trials in 0 min  5 sec
+        27th phase (13May2021 - 25May2021): finished   42 trials in 0 min  1 sec
+         5th phase (26Sep2020 - 12Oct2020): finished  337 trials in 0 min  8 sec
+        23rd phase (07Apr2021 - 14Apr2021): finished   40 trials in 0 min  1 sec
+        33rd phase (03Sep2021 - 14Sep2021): finished   49 trials in 0 min  1 sec
+        28th phase (26May2021 - 17Jun2021): finished   72 trials in 0 min  2 sec
+        14th phase (09Jan2021 - 20Jan2021): finished  364 trials in 0 min  9 sec
+        34th phase (15Sep2021 - 29Sep2021): finished   49 trials in 0 min  1 sec
+        35th phase (30Sep2021 - 18Oct2021): finished  101 trials in 0 min  2 sec
+        39th phase (23Nov2021 - 05Dec2021): finished   62 trials in 0 min  1 sec
+        29th phase (18Jun2021 - 23Jul2021): finished  181 trials in 0 min  4 sec
+        40th phase (06Dec2021 - 15Dec2021): finished   66 trials in 0 min  1 sec
+        30th phase (24Jul2021 - 08Aug2021): finished  403 trials in 0 min  9 sec
+        36th phase (19Oct2021 - 30Oct2021): finished  416 trials in 0 min  9 sec
+        37th phase (31Oct2021 - 09Nov2021): finished   62 trials in 0 min  1 sec
+        38th phase (10Nov2021 - 22Nov2021): finished   63 trials in 0 min  1 sec
+        31st phase (09Aug2021 - 23Aug2021): finished  257 trials in 0 min  5 sec
+        41st phase (16Dec2021 - 30Dec2021): finished  382 trials in 0 min  8 sec
+        32nd phase (24Aug2021 - 02Sep2021): finished  661 trials in 0 min 13 sec
+Completed optimization. Total: 0 min 57 sec
 </pre></div></div>
 </div>
 </section>
@@ -1033,8 +1017,7 @@ Completed optimization. Total: 0 min 58 sec
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1053,8 +1036,7 @@ Completed optimization. Total: 0 min 58 sec
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1073,8 +1055,7 @@ Completed optimization. Total: 0 min 58 sec
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Add a phase with 30 days from the date of the last record</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add a phase with 30 days from the date of the last record</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
 </pre></div>
