@@ -159,5 +159,5 @@ LinkData:
 ## License and how to cite
 
 Kindly cite this dataset under CC BY-4.0 license as follows.
-- Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan, or
-- Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, Kaggle Dataset, https://www.kaggle.com/lisphilar/covid19-dataset-in-japan
+- Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan, or
+- Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, Kaggle Dataset, https://www.kaggle.com/lisphilar/covid19-dataset-in-japan

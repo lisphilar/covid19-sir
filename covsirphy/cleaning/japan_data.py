@@ -74,7 +74,7 @@ class JapanData(CleaningBase):
             self._raw = self._retrieve(filename=filename, verbose=verbose)
         self._cleaned_df = self._cleaning()
         self._country = "Japan"
-        self._citation = "Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, " \
+        self._citation = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
         self.dir_path = Path(filename).parent
         self.verbose = verbose
