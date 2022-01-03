@@ -19,7 +19,7 @@ class _CSJapan(_RemoteDatabase):
     URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
     URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
     # Citation
-    CITATION = "Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, " \
+    CITATION = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
         "https://github.com/lisphilar/covid19-sir/data/japan"
     # Column names and data types
     # {"name in database": "name defined in Term class"}
