@@ -152,7 +152,7 @@ We have no original papers the author and contributors wrote, but please
 cite this library as follows with version number
 (``import covsirphy as cs; cs.__version__``).
 
-CovsirPhy Development Team (2020-2021), CovsirPhy version [version
+CovsirPhy Development Team (2020-2022), CovsirPhy version [version
 number]: Python library for COVID-19 analysis with phase-dependent
 SIR-derived ODE models, https://github.com/lisphilar/covid19-sir
 
@@ -160,7 +160,7 @@ If you want to use SIR-F model, S-R trend analysis, phase-dependent
 approach to SIR-derived models, and other scientific method performed
 with CovsirPhy, please cite the next Kaggle notebook.
 
-Hirokazu Takaya (2020-2021), Kaggle Notebook, COVID-19 data with SIR
+Hirokazu Takaya (2020-2022), Kaggle Notebook, COVID-19 data with SIR
 model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
 We can check the citation with the following script.
