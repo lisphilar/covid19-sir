@@ -250,7 +250,7 @@ class ModelBase(Term):
             return df.set_index(cls.DATE)
         # Convert to tau-free
         tau = cls._ensure_tau(tau, accept_none=False)
-        time_series = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds() // 60
+        time_series = (pd.to_datetime(df[cls.DATE]) - df[cls.DATE].min()).dt.total_seconds() // 60
         df.index = (time_series / tau).astype(np.int64)
         df.index.name = cls.TS
         return df.drop(cls.DATE, axis=1)
