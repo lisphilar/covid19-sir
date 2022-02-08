@@ -27,10 +27,12 @@ class TestDataLoader(object):
         assert isinstance(pyramid_data, PopulationPyramidData)
         # List of primary sources of COVID-19 Data Hub
         assert isinstance(data_loader.covid19dh_citation, str)
-        self._extracted_from_test_local_and_remote_14(data_loader, "Japan")
+        data_dict = data_loader.collect()
+        snl = Scenario(country="Japan")
+        snl.register(**data_dict)
 
-    def test_local_and_remote(self):
-        loader = DataLoader(directory="input")
+    def test_local(self):
+        loader = DataLoader(directory="input", interval=None)
         # Read CSV file: Japan dataset at country level
         loader.read_csv(JapanData.URL_C, dayfirst=False)
         loader.read_dataframe(loader.local, how_combine="replace")
@@ -58,7 +60,6 @@ class TestDataLoader(object):
         # Create datasets
         loader.japan()
         loader.pyramid()
-        self._extracted_from_test_local_and_remote_14(loader, "Italy")
 
     def _extracted_from_test_local_and_remote_14(self, arg0, country):
         data_dict = arg0.collect()
