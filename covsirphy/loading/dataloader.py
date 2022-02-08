@@ -4,6 +4,7 @@
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import warnings
+import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
@@ -431,7 +432,7 @@ class DataLoader(Term):
         self._set_date_location(remote_df)
         remote_df = remote_df.set_index(self._id_cols)
         # Update the current database
-        df = df.replace(0, None).combine_first(remote_df).reset_index().set_index(self._id_cols)
+        df = df.replace(0, np.nan).combine_first(remote_df).reset_index().set_index(self._id_cols)
         # Update citations
         cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
         return (df, cite_dict, handler)
