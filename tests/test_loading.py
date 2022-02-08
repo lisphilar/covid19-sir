@@ -32,7 +32,7 @@ class TestDataLoader(object):
         snl.register(**data_dict)
 
     def test_local(self):
-        loader = DataLoader(directory="input", interval=None)
+        loader = DataLoader(directory="input", update_interval=None)
         # Read CSV file: Japan dataset at country level
         loader.read_csv(JapanData.URL_C, dayfirst=False)
         loader.read_dataframe(loader.local, how_combine="replace")
@@ -60,8 +60,3 @@ class TestDataLoader(object):
         # Create datasets
         loader.japan()
         loader.pyramid()
-
-    def _extracted_from_test_local_and_remote_14(self, arg0, country):
-        data_dict = arg0.collect()
-        snl = Scenario(country=country)
-        snl.register(**data_dict)
