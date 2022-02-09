@@ -116,7 +116,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        directory (str or pathlib.Path): directory to save downloaded datasets</span>
-<span class="sd">        update_interval (int or None): update interval of downloaded or None (avoid downloading)</span>
+<span class="sd">        update_interval (int or None): update interval of downloading dataset or None (avoid downloading)</span>
 <span class="sd">        basename_dict (dict[str, str]): basename of downloaded CSV files,</span>
 <span class="sd">            &quot;covid19dh&quot;: COVID-19 Data Hub (default: covid19dh.csv),</span>
 <span class="sd">            &quot;owid&quot;: Our World In Data (default: ourworldindata.csv),</span>
@@ -129,6 +129,8 @@
 <span class="sd">        If @update_interval (not None) hours have passed since the last update of downloaded datasets,</span>
 <span class="sd">        the dawnloaded datasets will be updated automatically.</span>
 <span class="sd">        When we do not use datasets of remote servers, set @update_interval as None.</span>
+<span class="sd">        Note that the outputs of .japan() and .pyramid() are not locked by .lock().</span>
+<span class="sd">        So, they are not influenced by @update_interval.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If @verbose is 0, no discription will be shown.</span>
@@ -646,7 +648,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_dep</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_dict</span><span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_japan_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">force</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_japan_data</span> <span class="o">=</span> <span class="n">JapanData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_japan_data</span></div>
 

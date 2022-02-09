@@ -1282,7 +1282,7 @@ All results will be returned with a dataframe.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>directory</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – directory to save downloaded datasets</p></li>
-<li><p><strong>update_interval</strong> (<em>int</em><em> or </em><em>None</em>) – update interval of downloaded or None (avoid downloading)</p></li>
+<li><p><strong>update_interval</strong> (<em>int</em><em> or </em><em>None</em>) – update interval of downloading dataset or None (avoid downloading)</p></li>
 <li><p><strong>basename_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – basename of downloaded CSV files,
 “covid19dh”: COVID-19 Data Hub (default: covid19dh.csv),
 “owid”: Our World In Data (default: ourworldindata.csv),
@@ -1297,7 +1297,9 @@ All results will be returned with a dataframe.</p>
 <p class="admonition-title">Note</p>
 <p>If &#64;update_interval (not None) hours have passed since the last update of downloaded datasets,
 the dawnloaded datasets will be updated automatically.
-When we do not use datasets of remote servers, set &#64;update_interval as None.</p>
+When we do not use datasets of remote servers, set &#64;update_interval as None.
+Note that the outputs of .japan() and .pyramid() are not locked by .lock().
+So, they are not influenced by &#64;update_interval.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
