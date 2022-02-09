@@ -30,7 +30,7 @@ class DataLoader(Term):
 
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
-        update_interval (int or None): update interval of downloaded or None (avoid downloading)
+        update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
         basename_dict (dict[str, str]): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
             "owid": Our World In Data (default: ourworldindata.csv),
@@ -43,6 +43,8 @@ class DataLoader(Term):
         If @update_interval (not None) hours have passed since the last update of downloaded datasets,
         the dawnloaded datasets will be updated automatically.
         When we do not use datasets of remote servers, set @update_interval as None.
+        Note that the outputs of .japan() and .pyramid() are not locked by .lock().
+        So, they are not influenced by @update_interval.
 
     Note:
         If @verbose is 0, no discription will be shown.
@@ -560,7 +562,7 @@ class DataLoader(Term):
         self._read_dep(**kwargs)
         filename = self._filename_dict["japan"]
         if self._japan_data is None:
-            force = self._download_necessity(filename=filename)
+            force = True if self.update_interval is None else self._download_necessity(filename=filename)
             self._japan_data = JapanData(filename=filename, force=force, verbose=self._verbose)
         return self._japan_data
 
