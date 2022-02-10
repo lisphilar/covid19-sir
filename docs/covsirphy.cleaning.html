@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.22.2-gamma
+                2.22.2-delta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -677,6 +677,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <li><p>Moderate (int): the number of cases who requires hospitalization but not severe</p></li>
 <li><p>Severe (int): the number of severe cases</p></li>
 <li><p>Vaccinations (int): cumulative number of vaccinations</p></li>
+<li><p>Vaccinations_boosters (int): cumulative number of booster vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
@@ -690,7 +691,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.japan_data.JapanData.JAPAN_COLS">
-<span class="sig-name descname"><span class="pre">JAPAN_COLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Tests',</span> <span class="pre">'Moderate',</span> <span class="pre">'Severe',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.japan_data.JapanData.JAPAN_COLS" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">JAPAN_COLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Tests',</span> <span class="pre">'Moderate',</span> <span class="pre">'Severe',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinations_boosters',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.japan_data.JapanData.JAPAN_COLS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -715,7 +716,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.japan_data.JapanData.JAPAN_VALUE_COLS">
-<span class="sig-name descname"><span class="pre">JAPAN_VALUE_COLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Tests',</span> <span class="pre">'Moderate',</span> <span class="pre">'Severe',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.japan_data.JapanData.JAPAN_VALUE_COLS" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">JAPAN_VALUE_COLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Tests',</span> <span class="pre">'Moderate',</span> <span class="pre">'Severe',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinations_boosters',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.japan_data.JapanData.JAPAN_VALUE_COLS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2484,6 +2485,7 @@ When &#64;country is a country name, province level data in the selected country
 <li><p>Province: province/prefecture/state name</p></li>
 <li><p>Product: vaccine product names</p></li>
 <li><p>Vaccinations: cumulative number of vaccinations</p></li>
+<li><p>Vaccinations: cumulative number of booster vaccinations</p></li>
 <li><p>Vaccinated_once: cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
@@ -2509,6 +2511,7 @@ When &#64;country is a country name, province level data in the selected country
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Product (pandas.Category): vaccine product names</p></li>
 <li><p>Vaccinations (int): cumulative number of vaccinations</p></li>
+<li><p>Vaccinations (int): cumulative number of booster vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
@@ -2555,6 +2558,7 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinations (int): the number of booster vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
@@ -2589,6 +2593,7 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.Timestamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinations (int): the number of booster vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
@@ -2613,6 +2618,7 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinations_boosters (int): the number of booster vaccinations</p></li>
 <li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
 <li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>

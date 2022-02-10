@@ -52,6 +52,7 @@ Optional:
 - tests: the number of tests
 - product: vaccine product names
 - vaccinations: cumulative number of vaccinations
+- vaccinations_boosters: cumulative number of booster vaccinations
 - vaccinated_once: cumulative number of people who received at least one vaccine dose
 - vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
 
@@ -177,7 +178,7 @@ loader.lock(
     # Optional regarding PCData
     tests="tests",
     # Optional regarding VaccineData
-    product="product", vaccinations="vaccinations",
+    product="product", vaccinations="vaccinations", vaccinations_boosters="vaccinations_boosters",
     vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
     # Optinal for OxCGRTData (list[str] or None)
     oxcgrt_variables=["Stringency_index", "Contact_tracing"],
