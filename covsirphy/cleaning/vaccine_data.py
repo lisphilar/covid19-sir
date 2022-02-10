@@ -25,6 +25,7 @@ class VaccineData(CleaningBase):
                 - Province: province/prefecture/state name
                 - Product: vaccine product names
                 - Vaccinations: cumulative number of vaccinations
+                - Vaccinations: cumulative number of booster vaccinations
                 - Vaccinated_once: cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
         citation (str or None): citation or None (empty)
@@ -41,15 +42,16 @@ class VaccineData(CleaningBase):
             - Province (pandas.Category): province/prefecture/state name
             - Product (pandas.Category): vaccine product names
             - Vaccinations (int): cumulative number of vaccinations
+            - Vaccinations (int): cumulative number of booster vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
 
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
-        self._subset_cols = [self.DATE, self.VAC, self.V_ONCE, self.V_FULL]
+        self._subset_cols = [self.DATE, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         self._raw_cols = [
             self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.PRODUCT,
-            self.VAC, self.V_ONCE, self.V_FULL]
+            self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         # Raw data
         self._raw = self._parse_raw(filename, data, self._raw_cols)
         # Backward compatibility
@@ -91,7 +93,7 @@ class VaccineData(CleaningBase):
         # Download datasets and merge them
         rename_dict = {
             "date": self.DATE, "location": self.COUNTRY, "iso_code": self.ISO3,
-            "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
+            "vaccines": self.PRODUCT, "total_vaccinations": self.VAC, "total_boosters": self.VAC_BOOSTERS,
             "people_vaccinated": self.V_ONCE,
             "people_fully_vaccinated": self.V_FULL,
         }
@@ -118,6 +120,7 @@ class VaccineData(CleaningBase):
                 - Province: province/prefecture/state name
                 - Product (pandas.Category): vaccine product names
                 - Vaccinations (int): cumulative number of vaccinations
+                - Vaccinations (int): cumulative number of booster vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
@@ -125,13 +128,13 @@ class VaccineData(CleaningBase):
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Fill in NA values
-        for col in [self.VAC, self.V_ONCE, self.V_FULL]:
+        for col in [self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
         country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
         # Extent dates to today
         today_date = datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
         df = df.pivot_table(
-            values=[self.VAC, self.V_ONCE, self.V_FULL],
+            values=[self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL],
             index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="last")
         df = df.reindex(pd.date_range(df.index[0], today_date, freq="D"))
         df.index.name = self.DATE
@@ -161,6 +164,7 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.Timestamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinations (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
@@ -201,6 +205,7 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinations (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
@@ -218,6 +223,7 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinations_boosters (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """

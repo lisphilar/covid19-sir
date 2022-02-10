@@ -286,7 +286,7 @@ class DataLoader(Term):
 
     def lock(self, date, country, province, iso3=None,
              confirmed=None, fatal=None, recovered=None, population=None, tests=None,
-             product=None, vaccinations=None, vaccinated_once=None, vaccinated_full=None,
+             product=None, vaccinations=None, vaccinations_boosters=None, vaccinated_once=None, vaccinated_full=None,
              oxcgrt_variables=None, mobility_variables=None):
         """
         Lock the local database, specifying columns which has date and area information.
@@ -303,6 +303,7 @@ class DataLoader(Term):
             tests (str or None): the number of tests
             product (str or None): vaccine product names
             vaccinations (str or None): cumulative number of vaccinations
+            vaccinations_boosters (str or None): cumulative number of booster vaccinations
             vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
             vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
             oxcgrt_variables (list[str] or None): list of variables for OxCGRTData
@@ -324,14 +325,14 @@ class DataLoader(Term):
         # All variables
         variables = [
             self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
-            self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL,
+            self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL,
             *self._oxcgrt_cols, *self._mobility_cols,
         ]
         id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
         rename_dict = {
             **id_dict, iso3: self.ISO3,
             confirmed: self.C, fatal: self.F, recovered: self.R, population: self.N,
-            tests: self.TESTS, product: self.PRODUCT, vaccinations: self.VAC,
+            tests: self.TESTS, product: self.PRODUCT, vaccinations: self.VAC, vaccinations_boosters: self.VAC_BOOSTERS,
             vaccinated_once: self.V_ONCE, vaccinated_full: self.V_FULL,
         }
         # Local database
@@ -609,7 +610,7 @@ class DataLoader(Term):
             covsirphy.VaccineData: dataset regarding vaccinations
         """
         self._read_dep(**kwargs)
-        v_cols = [self.PRODUCT, self.VAC, self.V_ONCE, self.V_FULL]
+        v_cols = [self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         df, citations = self._auto_lock(variables=v_cols)
         return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
 

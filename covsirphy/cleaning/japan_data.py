@@ -30,6 +30,7 @@ class JapanData(CleaningBase):
             - Moderate (int): the number of cases who requires hospitalization but not severe
             - Severe (int): the number of severe cases
             - Vaccinations (int): cumulative number of vaccinations
+            - Vaccinations_boosters (int): cumulative number of booster vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
             - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
@@ -45,7 +46,7 @@ class JapanData(CleaningBase):
     JAPAN_VALUE_COLS = [
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
         CleaningBase.TESTS, MODERATE, SEVERE,
-        CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL,
+        CleaningBase.VAC, CleaningBase.VAC_BOOSTERS, CleaningBase.V_ONCE, CleaningBase.V_FULL,
     ]
     JAPAN_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
@@ -116,7 +117,7 @@ class JapanData(CleaningBase):
             "Area", "Date", "Positive",
             "Tested", "Discharged", "Fatal", "Hosp_require", "Hosp_severe",
         ]
-        cols_v = ["Vaccinated_1st", "Vaccinated_2nd"]
+        cols_v = ["Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
         c_df = pd.read_csv(self.URL_C, header=0).rename({"Location": "Area"}, axis=1)[cols + cols_v]
         # Download the datset at province level
         p_df = pd.read_csv(self.URL_P, header=0).rename({"Prefecture": "Area"}, axis=1)[cols]
@@ -145,6 +146,7 @@ class JapanData(CleaningBase):
             "Tested": self.TESTS,
             "Vaccinated_1st": self.V_ONCE,
             "Vaccinated_2nd": self.V_FULL,
+            "Vaccinated_3rd": self.VAC_BOOSTERS,
         }
         df = df.rename(rename_dict, axis=1)
         # Date
@@ -159,7 +161,7 @@ class JapanData(CleaningBase):
         # Moderate
         df[self.MODERATE] = df["Hosp_require"] - df[self.SEVERE]
         # Vaccinations
-        v_raw_cols = [self.V_ONCE, self.V_FULL]
+        v_raw_cols = [self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]
         v_df = self._raw.rename(rename_dict, axis=1)
         v_df = v_df.loc[:, [self.PROVINCE, self.DATE, *v_raw_cols]]
         v_df[self.DATE] = pd.to_datetime(v_df[self.DATE])
@@ -167,11 +169,13 @@ class JapanData(CleaningBase):
             v_df[col] = pd.to_numeric(v_df[col], errors="coerce").fillna(0)
         v_1st = v_df.groupby(self.PROVINCE)[self.V_ONCE].cumsum().fillna(0)
         v_2nd = v_df.groupby(self.PROVINCE)[self.V_FULL].cumsum().fillna(0)
+        v_3rd = v_df.groupby(self.PROVINCE)[self.VAC_BOOSTERS].cumsum().fillna(0)
         v_sum_df = pd.DataFrame(
             {
                 self.PROVINCE: v_df[self.PROVINCE],
                 self.DATE: v_df[self.DATE],
-                self.VAC: v_1st + v_2nd,
+                self.VAC: v_1st + v_2nd + v_3rd,
+                self.VAC_BOOSTERS: v_3rd,
                 self.V_ONCE: v_1st,
                 self.V_FULL: v_2nd,
             }
