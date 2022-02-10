@@ -31,6 +31,7 @@ class Term(object):
     V = "Vaccinated"
     V_ONCE = f"{V}_once"
     V_FULL = f"{V}_full"
+    VAC_BOOSTERS = f"{VAC}_boosters"
     PRODUCT = "Product"
     # Column names
     DATE = "Date"

@@ -36,6 +36,7 @@ class _CSJapan(_RemoteDatabase):
         "Hosp_severe": Term.SEVERE,
         "Tested": Term.TESTS,
         Term.VAC: Term.VAC,
+        Term.VAC_BOOSTERS: Term.VAC_BOOSTERS,
         Term.V_ONCE: Term.V_ONCE,
         Term.V_FULL: Term.V_FULL,
     }
@@ -63,7 +64,7 @@ class _CSJapan(_RemoteDatabase):
             print("Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan")
         # Domestic/Airport/Returnee
         dar_value_cols = ["Positive", "Tested", "Discharged", "Fatal", "Hosp_require", "Hosp_severe"]
-        dar_cols = [*dar_value_cols, "Date", "Location", "Vaccinated_1st", "Vaccinated_2nd"]
+        dar_cols = [*dar_value_cols, "Date", "Location", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
         dar_df = pd.read_csv(self.URL_C, usecols=dar_cols)
         dar_df = dar_df.rename(columns={"Location": "Area"}).set_index("Date")
         # Country level data
@@ -84,5 +85,6 @@ class _CSJapan(_RemoteDatabase):
         df[self.MODERATE] = df["Hosp_require"] - df["Hosp_severe"]
         df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
-        df[self.VAC] = df[[self.V_ONCE, self.V_FULL]].sum(axis=1)
+        df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
+        df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
         return df

@@ -14,7 +14,7 @@ class TestVaccineData(object):
     @pytest.mark.parametrize("country", ["Canada"])
     def test_subset(self, vaccine_data, country):
         df = vaccine_data.subset(country=country)
-        assert set(df.columns) == set([Term.DATE, Term.VAC, Term.V_ONCE, Term.V_FULL])
+        assert set(df.columns) == set([Term.DATE, Term.VAC, Term.VAC_BOOSTERS, Term.V_ONCE, Term.V_FULL])
         clean_df = vaccine_data.cleaned()
         df = clean_df.loc[clean_df[Term.COUNTRY] == country, :]
         product = df.loc[df.index[0], Term.PRODUCT]
@@ -29,7 +29,7 @@ class TestVaccineData(object):
 
     def test_total(self, vaccine_data):
         df = vaccine_data.total()
-        assert set(df.columns) == set([Term.DATE, Term.VAC, Term.V_ONCE, Term.V_FULL])
+        assert set(df.columns) == set([Term.DATE, Term.VAC, Term.VAC_BOOSTERS, Term.V_ONCE, Term.V_FULL])
 
     def test_map(self, vaccine_data):
         warnings.filterwarnings("ignore", category=UserWarning)
