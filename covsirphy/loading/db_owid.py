@@ -36,6 +36,7 @@ class _OWID(_RemoteDatabase):
         "iso_code": Term.ISO3,
         "vaccines": Term.PRODUCT,
         "total_vaccinations": Term.VAC,
+        "total_boosters": Term.VAC_BOOSTERS,
         "people_vaccinated": Term.V_ONCE,
         "people_fully_vaccinated": Term.V_FULL,
         "tests": Term.TESTS,
@@ -63,7 +64,7 @@ class _OWID(_RemoteDatabase):
             print("Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/")
         # Vaccinations
         v_rec_cols = [
-            "date", "location", "iso_code", "total_vaccinations", "people_vaccinated", "people_fully_vaccinated"]
+            "date", "location", "iso_code", "total_vaccinations", "total_boosters", "people_vaccinated", "people_fully_vaccinated"]
         v_rec_df = pd.read_csv(self.URL_V_REC, usecols=v_rec_cols)
         v_loc_df = pd.read_csv(self.URL_V_LOC, usecols=["location", "vaccines"])
         v_df = v_rec_df.merge(v_loc_df, how="left", on="location")
