@@ -31,7 +31,7 @@
             <a href="../../../index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.22.2-delta
+                2.23.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -218,7 +218,10 @@
             <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
         <span class="n">country_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PRODUCT</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
         <span class="c1"># Extent dates to today</span>
-        <span class="n">today_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">00</span><span class="p">)</span>
+        <span class="n">today_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">hour</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">00</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">00</span>
+        <span class="p">)</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
             <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VAC_BOOSTERS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_ONCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_FULL</span><span class="p">],</span>
             <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
@@ -250,7 +253,7 @@
 <span class="sd">                Columns</span>
 <span class="sd">                    - Date (pandas.Timestamp): observation date</span>
 <span class="sd">                    - Vaccinations (int): the number of vaccinations</span>
-<span class="sd">                    - Vaccinations (int): the number of booster vaccinations</span>
+<span class="sd">                    - Vaccinations_boosters (int): the number of booster vaccinations</span>
 <span class="sd">                    - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</span>
 <span class="sd">                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -337,8 +340,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;@country cannot be specified, always None.&quot;</span><span class="p">)</span>
         <span class="c1"># Date</span>
         <span class="n">date_str</span> <span class="o">=</span> <span class="n">date</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="n">country_str</span> <span class="o">=</span> <span class="s2">&quot;Global&quot;</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country_str</span><span class="si">}</span><span class="s2">: the number of </span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Global: the number of </span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1"> on </span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="c1"># Global map</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_global</span><span class="p">(</span><span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
