@@ -56,8 +56,8 @@ class DataLoader(Term):
         # Directory
         try:
             self.dir_path = Path(directory)
-        except TypeError:
-            raise TypeError(f"@directory should be a path-like object, but {directory} was applied.")
+        except TypeError as e:
+            raise TypeError(f"@directory should be a path-like object, but {directory} was applied.") from e
         self.update_interval = self._ensure_natural_int(
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
@@ -612,7 +612,7 @@ class DataLoader(Term):
         self._read_dep(**kwargs)
         v_cols = [self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         df, citations = self._auto_lock(variables=v_cols)
-        return VaccineData(data=df.dropna(subset=[self.VAC]), citation="\n".join(citations))
+        return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
 
     def mobility(self):
         """
