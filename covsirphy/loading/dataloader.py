@@ -612,7 +612,7 @@ class DataLoader(Term):
         self._read_dep(**kwargs)
         v_cols = [self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         df, citations = self._auto_lock(variables=v_cols)
-        return VaccineData(data=df.dropna(subset=v_cols), citation="\n".join(citations))
+        return VaccineData(data=df.dropna(subset=[self.VAC]), citation="\n".join(citations))
 
     def mobility(self):
         """
