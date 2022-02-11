@@ -164,7 +164,7 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.Timestamp): observation date
                     - Vaccinations (int): the number of vaccinations
-                    - Vaccinations (int): the number of booster vaccinations
+                    - Vaccinations_boosters (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
