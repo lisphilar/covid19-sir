@@ -132,7 +132,10 @@ class VaccineData(CleaningBase):
             df[col] = pd.to_numeric(df[col], errors="coerce")
         country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
         # Extent dates to today
-        today_date = datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
+        today_date = datetime.now().replace(
+            hour=00, minute=00, second=00, microsecond=00
+        )
+
         df = df.pivot_table(
             values=[self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL],
             index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="last")
@@ -164,7 +167,7 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.Timestamp): observation date
                     - Vaccinations (int): the number of vaccinations
-                    - Vaccinations (int): the number of booster vaccinations
+                    - Vaccinations_boosters (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
@@ -251,7 +254,6 @@ class VaccineData(CleaningBase):
             raise NotImplementedError("@country cannot be specified, always None.")
         # Date
         date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
-        country_str = "Global"
-        title = f"{country_str}: the number of {variable.lower()} on {date_str}"
+        title = f'Global: the number of {variable.lower()} on {date_str}'
         # Global map
         return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)
