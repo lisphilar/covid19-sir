@@ -56,8 +56,8 @@ class DataLoader(Term):
         # Directory
         try:
             self.dir_path = Path(directory)
-        except TypeError:
-            raise TypeError(f"@directory should be a path-like object, but {directory} was applied.")
+        except TypeError as e:
+            raise TypeError(f"@directory should be a path-like object, but {directory} was applied.") from e
         self.update_interval = self._ensure_natural_int(
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
