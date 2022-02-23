@@ -1264,8 +1264,10 @@ class Scenario(Term):
         delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
+    @deprecate("Scenario.fit()", new="Scenario.predict()", version="2.23.0-alpha", ref="https://github.com/lisphilar/covid19-sir/issues/1006")
     def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="MAPE", **kwargs):
         """
+        Deprecated and merged to .predict().
         Fit regressors to predict the parameter values in the future phases,
         assuming that indicators will impact on ODE parameter values/the number of cases with delay.
         Please refer to covsirphy.RegressionHander class.
@@ -1374,6 +1376,9 @@ class Scenario(Term):
             metric (str): metric name, refer to covsirphy.Evaluator.score()
             show_figure (bool): whether show figure or not
             kwargs: keyword arguments of RegressionHandler.pred_true_plot()
+
+        Returns:
+            dict: this is the same as covsirphy.Regressionhander.to_dict()
         """
         metric = kwargs.pop("metrics") if "metrics" in kwargs else metric
         handler = self._get_fit_handler(name=name)
@@ -1381,8 +1386,10 @@ class Scenario(Term):
         if show_figure:
             handler.pred_actual_plot(
                 metric=metric, **find_args(RegressionHandler.pred_actual_plot, **kwargs))
+        # Return information
+        return handler.to_dict(metric=metric)
 
-    def predict(self, days=None, name="Main"):
+    def predict(self, days=None, name="Main", **kwargs):
         """
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
@@ -1399,6 +1406,7 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
+        self.fit(name=name, **find_args(Scenario.fit, **kwargs))
         handler = self._get_fit_handler(name=name)
         # Prediction with regression model
         df = handler.predict()
@@ -1413,8 +1421,10 @@ class Scenario(Term):
             self.add(name=name, **phase_dict)
         return self
 
+    @deprecate("Scenario.fit_predict()", new="Scenario.predict()", version="2.23.0-alpha", ref="https://github.com/lisphilar/covid19-sir/issues/1006")
     def fit_predict(self, oxcgrt_data=None, name="Main", **kwargs):
         """
+        Deprecated and renamed to .predict().
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
         New future phases will be added (over-written).
