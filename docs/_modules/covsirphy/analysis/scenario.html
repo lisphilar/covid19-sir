@@ -31,7 +31,7 @@
             <a href="../../../index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.23.1
+                2.23.1-alpha
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -1350,8 +1350,10 @@
         <span class="n">delay_period</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">low_lim</span> <span class="o">+</span> <span class="n">Q1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">delay_period</span><span class="p">),</span> <span class="n">df</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Scenario.fit"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span> <span class="n">removed_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;MAPE&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;Scenario.fit()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Scenario.predict()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.23.0-alpha&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;https://github.com/lisphilar/covid19-sir/issues/1006&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span> <span class="n">removed_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;MAPE&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated and merged to .predict().</span>
 <span class="sd">        Fit regressors to predict the parameter values in the future phases,</span>
 <span class="sd">        assuming that indicators will impact on ODE parameter values/the number of cases with delay.</span>
 <span class="sd">        Please refer to covsirphy.RegressionHander class.</span>
@@ -1435,7 +1437,7 @@
         <span class="c1"># Accuracy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_accuracy</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Return information</span>
-        <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_fit_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1460,15 +1462,20 @@
 <span class="sd">            metric (str): metric name, refer to covsirphy.Evaluator.score()</span>
 <span class="sd">            show_figure (bool): whether show figure or not</span>
 <span class="sd">            kwargs: keyword arguments of RegressionHandler.pred_true_plot()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: this is the same as covsirphy.Regressionhander.to_dict()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">metric</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metrics&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;metrics&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">metric</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fit_handler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># Show predicted vs. actual plot</span>
         <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
             <span class="n">handler</span><span class="o">.</span><span class="n">pred_actual_plot</span><span class="p">(</span>
-                <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">RegressionHandler</span><span class="o">.</span><span class="n">pred_actual_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+                <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">RegressionHandler</span><span class="o">.</span><span class="n">pred_actual_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="c1"># Return information</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Scenario.predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,</span>
 <span class="sd">        assuming that OxCGRT scores will impact on ODE parameter values with delay.</span>
@@ -1485,6 +1492,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.Scenario: self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fit_handler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># Prediction with regression model</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
@@ -1499,8 +1507,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">phase_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Scenario.fit_predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit_predict">[docs]</a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;Scenario.fit_predict()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Scenario.predict()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.23.0-alpha&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;https://github.com/lisphilar/covid19-sir/issues/1006&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated and renamed to .predict().</span>
 <span class="sd">        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,</span>
 <span class="sd">        assuming that OxCGRT scores will impact on ODE parameter values with delay.</span>
 <span class="sd">        New future phases will be added (over-written).</span>
@@ -1522,7 +1532,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="Scenario.backup"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.backup">[docs]</a>    <span class="k">def</span> <span class="nf">backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
