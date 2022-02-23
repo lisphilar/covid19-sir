@@ -6,6 +6,7 @@ import warnings
 import pytest
 import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
+from covsirphy import NotIncludedError
 from covsirphy import Scenario, Term, PhaseTracker, SIRF, Filer
 
 
@@ -258,22 +259,26 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    def test_fit_predict_error(self, snl, oxcgrt_data):
-        # Fitting
-        snl.clear()
-        with pytest.raises(UnExecutedError):
-            snl.predict()
-
-    @pytest.mark.parametrize("days", [21])
-    def test_fit_predict(self, snl, days, imgfile):
+    @pytest.mark.parametrize("delay", [5, (7, 31), None])
+    @pytest.mark.parametrize("days", [[3], None])
+    def test_fit_predict(self, snl, delay, days, imgfile):
         snl.clear(name="Forecast")
+        # Fitting & predict
+        snl.fit_predict(name="Forecast", delay=delay, days=days)
+        # Fitting
+        info_dict = snl.fit(name="Forecast", delay=delay, filename=imgfile)
+        delay_est = max(info_dict["delay"])
+        assert isinstance(info_dict, dict)
         # Prediction
         snl.predict(name="Forecast", days=days)
-        snl.fit_accuracy(name="Forecast", fileaname=imgfile)
         df = snl.summary(name="Forecast")
         assert Term.FUTURE in df[Term.TENSE].unique()
-        end = pd.to_datetime(snl.today) + timedelta(days=days)
+        max_days = delay_est if days is None else max(days)
+        end = pd.to_datetime(snl.today) + timedelta(days=max_days)
         assert pd.to_datetime(df.loc[df.index[-1], Term.END]) == end
+        # Feature engineering
+        with pytest.raises(NotIncludedError):
+            snl.fit(engineering_tools=[])
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
