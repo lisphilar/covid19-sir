@@ -259,12 +259,6 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    def test_fit_predict_error(self, snl, oxcgrt_data):
-        # Fitting
-        snl.clear()
-        with pytest.raises(UnExecutedError):
-            snl.predict()
-
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
     @pytest.mark.parametrize("days", [[3], None])
     def test_fit_predict(self, snl, delay, days, imgfile):
