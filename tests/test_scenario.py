@@ -263,7 +263,7 @@ class TestScenario(object):
         snl.clear(name="Forecast")
         # Prediction
         snl.predict(name="Forecast", days=days)
-        snl.fit_accuracy(ame="Forecast", filename=imgfile)
+        snl.fit_accuracy(name="Forecast", filename=imgfile)
         df = snl.summary(name="Forecast")
         assert Term.FUTURE in df[Term.TENSE].unique()
 
