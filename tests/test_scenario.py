@@ -260,7 +260,7 @@ class TestScenario(object):
         assert isinstance(df, pd.DataFrame)
 
     @pytest.mark.parametrize("days", [30])
-    def test_fit_predict(self, snl, days):
+    def test_predict(self, snl, days):
         snl.predict(name="Main", days=days)
 
     def test_backup(self, snl, jhu_data):
