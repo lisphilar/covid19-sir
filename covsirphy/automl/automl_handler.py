@@ -52,17 +52,12 @@ class AutoMLHandler(Term):
         Returns:
             AutoMLHandler: self
 
-        Raises:
-            ValueError: X is empty, but 'univarate' was not selected
-
         Note:
             Models used by "univariate" can be checked with from autots.models.model_list import model_lists; model_list["univariate"].
 
         Note:
             Model used by "multivariate_regression" is Multivariate Regression.
         """
-        if self._X.empty and method != "univarate":
-            raise ValueError("When X is empty, only 'univarate' can be used as the method.")
         method_dict = {
             "univariate": self._univariate,
             "multivariate_regression": self._multivariate_regression,

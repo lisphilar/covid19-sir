@@ -1410,9 +1410,12 @@ class Scenario(Term):
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Create X/Y
-        X = self.records("all").set_index(self.DATE).drop([self.S, self.C, self.CI, self.F, self.R], axis=1)
-        Y = self.track().set_index(self.DATE)
-        Y = Y.loc[Y[self.SERIES] == name, self._model.PARAMETERS]
+        try:
+            X = self._data.records(main=True, extras=True).set_index(self.DATE)
+        except NotRegisteredExtraError:
+            X = self._data.records(main=True, extras=False).set_index(self.DATE)
+        tracker = self._tracker(name=name)
+        Y = tracker.track().set_index(self.DATE)[self._model.PARAMETERS].dropna()
         # Prediction
         handler = AutoMLHandler(X, Y, model=self._model, days=days)
         handler.predict(method=method)
