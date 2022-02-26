@@ -253,7 +253,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("indicator", ["Stringency_index"])
     @pytest.mark.parametrize("target", ["Confirmed"])
-    def test_estimate_delay(self, snl, indicator, target, oxcgrt_data):
+    def test_estimate_delay(self, snl, indicator, target):
         warnings.simplefilter("ignore", category=UserWarning)
         delay, df = snl.estimate_delay(indicator=indicator, target=target)
         assert isinstance(delay, int)
