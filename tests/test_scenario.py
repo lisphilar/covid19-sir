@@ -258,14 +258,9 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    @pytest.mark.parametrize("days", [[30]])
-    def test_fit_predict(self, snl, days, imgfile):
-        snl.clear(name="Forecast")
-        # Prediction
-        snl.predict(name="Forecast", days=days)
-        snl.fit_accuracy(name="Forecast", filename=imgfile)
-        df = snl.summary(name="Forecast")
-        assert Term.FUTURE in df[Term.TENSE].unique()
+    @pytest.mark.parametrize("days", [30])
+    def test_fit_predict(self, snl, days):
+        snl.predict(name="Main", days=days)
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
