@@ -787,8 +787,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Short-term prediction of parameter values\n",
-    "With extra datasets, we can predict the ODE parameter values in the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values with delay period (the number of days that indicators take for the ODE parameter values to be changed).\n",
+    "### Prediction of parameter values\n",
+    "With extra datasets, we can predict the ODE parameter values in the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values.\n",
     "\n",
     "OxCGRT indicators are\n",
     "\n",
@@ -809,58 +809,17 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "`Scenario.fit()` method learns the relationship of indicators (X) and the parameter values (y) with regresion models. X was registered with `Scenario.register()` and y was calculated with `Scenario.estimate()` in advance respectively.\n",
+    "As method of prediction, we can select\n",
     "\n",
-    "Regression models and abbreviations:  \n",
-    "\n",
-    "- \"en\": Indicators -> Parameters with Elastic Net\n",
-    "- \"dt\": Indicators -> Parameters with Decision Tree Regressor\n",
-    "- \"lgbm\": Indicators -> Parameters with Light Gradient Boosting Machine Regressor (Light GBM)\n",
-    "- \"svr\": Indicators -> Parameters with Epsilon-Support Vector Regressor (SVR)\n",
-    "\n",
-    "We can specify regressors with `regressors` argument of `Scenario.fit()` and abbreviations. When `regreesors=[\"en\", \"svr\"]`, only Elastic Net and SVR will be used. As default, `regressors=None` and we use all registered regressors."
+    "- `method=\"multivariate_regression\"` (default, multivariate forecasting of OE parameter values with indicators), and\n",
+    "- `method=\"univariate\"` (univariate forecasting of OE parameter values)."
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "`Scenario.fit()` has `delay` argument and we can apply the following values.\n",
-    "\n",
-    "- `delay=20`: Exact value of delay period [days].\n",
-    "- `delay=(7, 31)` (default): All values 7, 9,...,31 will be inculded in X and some values will be selected by feature selection or PCA.\n",
-    "- `delay=None`: Delay period will be calculated with `Scenario.estimate_delay()` method. In this method, change point analysis will be done with one selected indicator (\"Stringency_index\" as default) and variable (\"Confirmed\" as default) to estimate delay period.\n",
-    "\n",
-    "When we use `delay=None`, the indicator used to estimate delay period (\"Stringency_index\" as default) will be automatically removed from X dataset. If you have some indicators to be removed additionally, please use `removed_cols` argument (list of indicator names) of `Scenario.fit()`."
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "As an example, we only use he number of vaccinated (once/full) people and OxCGRT indicators (except for \"Stringency_index\" because this is calculated with the other OxCGRT indicators)."
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "`Scenario.fit()` shows \"predicted vs. actual parameter values\" figure and train/test score when `show_figure=True` (default) via `Scenario.fit_accuracy()`."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Create Forecast scenario (copy Main scenario and delete future phases)\n",
-    "snl.clear(name=\"Forecast\", template=\"Main\")\n",
-    "# Fitting with linear regression model (Elastic Net regression)\n",
-    "fit_dict = snl.fit(\n",
-    "    name=\"Forecast\", metric=\"MAPE\", regressors=None,\n",
-    "    removed_cols=[\"Stringency_index\", \"Tests\", \"Tests_diff\", \"Vaccinations\"]\n",
-    ")"
+    "`Scenario.estimate()` must be done in advance to get Y for training. Indicators should be registered in advance with `Scenario.register()` to get X for training."
    ]
   },
   {
@@ -876,17 +835,16 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# Short-term prediction\n",
-    "snl.predict(name=\"Forecast\")\n",
-    "# We can select list of days to predict optionally\n",
-    "# snl.predict(days=[1, 4], name=\"Forecast\")"
+    "# When using Y of the main scenario for training\n",
+    "# From version 2.23.0-beta\n",
+    "snl.predict(name=\"Main\", days=30)"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Show summary of future phases."
+    "Show summary of future phases. The most likely scenario and scenarios with combinations of the predicted upper/lower ODE parameter values."
    ]
   },
   {
@@ -897,23 +855,6 @@
    "source": [
     "df = snl.summary()\n",
     "df.loc[df[\"Type\"] == \"Future\"]"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "Or, short-cut `.fit()` and `.predict()` with `Scenario.fit_predict()`. We can apply all arguments (of `.fit()` and `.predict()`) to `Scenario.fit_predict()`."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Or, when you do not need 'fit_dict',\n",
-    "# snl.fit_predict(name=\"Forecast\").summary(name=\"Forecast\")"
    ]
   },
   {
@@ -952,7 +893,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "snl.simulate(variables=\"CFR\", name=\"Forecast\").tail();"
+    "snl.simulate(variables=\"CFR\", name=\"Multivariate_regression_Likely\").tail();"
    ]
   },
   {

@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.23.1-alpha
+                2.23.1-beta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -58,6 +58,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">covsirphy package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.automl.html">covsirphy.automl package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.cleaning.html">covsirphy.cleaning package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.loading.html">covsirphy.loading package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode package</a></li>
@@ -128,6 +129,107 @@
 </style>
 <section id="module-covsirphy">
 <span id="covsirphy-package"></span><h1>covsirphy package<a class="headerlink" href="#module-covsirphy" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.AutoMLHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AutoMLHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/automl/automl_handler.html#AutoMLHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.AutoMLHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
+<p>Predict ODE parameter values automatically with machine learning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>pandas.Timestamp: Observation date</p>
+</dd>
+<dt>Columns</dt><dd><p>observed variables (int or float)</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>Y</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>pandas.Timestamp: Observation date</p>
+</dd>
+<dt>Columns</dt><dd><p>observed ODE parameter values (float)</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – days to predict</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of autots.AutoTS.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When X is a empty dataframe, only “univariate” can be used as &#64;method with AutoHandler.predict().</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.AutoMLHandler.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/automl/automl_handler.html#AutoMLHandler.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.AutoMLHandler.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Perform automated machine learning to predict values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>method</strong> (<em>str</em>) – machine learning method name, “univariate” or “multivariate_regression”</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.AutoMLHandler" title="covsirphy.AutoMLHandler">AutoMLHandler</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Models used by “univariate” can be checked with from autots.models.model_list import model_lists; model_list[“univariate”].</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Model used by “multivariate_regression” is Multivariate Regression.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.AutoMLHandler.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/automl/automl_handler.html#AutoMLHandler.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.AutoMLHandler.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Create and summarize the scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Scenario (str): scenario name, “Univariate_Likely”, “Univariate_1” etc.</p></li>
+<li><p>Start (pandas.Timestamp): start date of the phase</p></li>
+<li><p>End (pandas.Timestamp): end date of the phase</p></li>
+<li><p>Rt (float): phase-dependent reproduction number</p></li>
+<li><p>columns of Y data</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“Univariate_Likely” scenario is the most likely scenario when univariate forcasting is used.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“Univariate_01” scenario is the created with upper values of ODE parameter values.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“Univariate_16” scenario is the created with lower values of ODE parameter values. (if the model has four parameters)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dates with the same Rt values at the 1st decimal place will be merged to one phase.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.BarPlot">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BarPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_inches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tight'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/bar_plot.html#BarPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.BarPlot" title="Permalink to this definition"></a></dt>
@@ -8379,28 +8481,21 @@ When using interactive shell, we can change the modes by Scenario.interactive = 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.Scenario.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.predict" title="Permalink to this definition"></a></dt>
-<dd><p>Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
-assuming that OxCGRT scores will impact on ODE parameter values with delay.
-New future phases will be added (over-written).</p>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'multivariate_regression'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict ODE parameter values with machine learning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>days</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – list of days to predict or None (only the max value)</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – days to predict</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – machine learning method name, refer to covsirphy.automl.automl_handler.AutoMLHandler.predict().</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – Scenario.fit() was not performed</p></li>
-<li><p><a class="reference internal" href="#covsirphy.NotRegisteredExtraError" title="covsirphy.NotRegisteredExtraError"><strong>NotRegisteredExtraError</strong></a> – no extra datasets were registered</p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -10153,6 +10248,12 @@ Index</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html#module-covsirphy.analysis.param_tracker">covsirphy.analysis.param_tracker module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html#module-covsirphy.analysis.phase_tracker">covsirphy.analysis.phase_tracker module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html#module-covsirphy.analysis.scenario">covsirphy.analysis.scenario module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.automl.html">covsirphy.automl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.automl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.automl.html#module-covsirphy.automl.automl_handler">covsirphy.automl.automl_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.automl.html#module-covsirphy.automl.autots_predictor">covsirphy.automl.autots_predictor module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.cleaning.html">covsirphy.cleaning package</a><ul>
