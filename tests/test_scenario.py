@@ -17,6 +17,8 @@ def snl(data_loader):
 
 
 class TestScenario(object):
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+
     @pytest.mark.parametrize("first_date", ["01Mar2020"])
     @pytest.mark.parametrize("last_date", ["31Dec2020"])
     @pytest.mark.parametrize("today", ["30Nov2020"])
@@ -129,10 +131,7 @@ class TestScenario(object):
         snl.clear(include_past=True)
 
     def test_enable(self, snl):
-        # Setting
-        snl.add(end_date="01May2020")
-        snl.add(end_date="01Sep2020")
-        snl.add(end_date="01Nov2020")
+        self._extracted_from_test_combine_separate_3(snl)
         # Disable/enable
         snl.disable(phases=["1st", "2nd"])
         snl.enable(phases=["2nd"])
@@ -144,16 +143,18 @@ class TestScenario(object):
         snl.clear(include_past=True)
 
     def test_combine_separate(self, snl):
-        # Setting
-        snl.add(end_date="01May2020")
-        snl.add(end_date="01Sep2020")
-        snl.add(end_date="01Nov2020")
+        self._extracted_from_test_combine_separate_3(snl)
         # Combine
         snl.combine(phases=["0th", "1st"])
         snl.separate(date="01Jun2020")
         assert len(snl.summary()) == 3
         # Clear all phases
         snl.clear(include_past=True)
+
+    def _extracted_from_test_combine_separate_3(self, snl):
+        snl.add(end_date="01May2020")
+        snl.add(end_date="01Sep2020")
+        snl.add(end_date="01Nov2020")
 
     def test_trend(self, snl):
         snl.trend()
@@ -252,20 +253,15 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("indicator", ["Stringency_index"])
     @pytest.mark.parametrize("target", ["Confirmed"])
-    def test_estimate_delay(self, snl, indicator, target, oxcgrt_data):
+    def test_estimate_delay(self, snl, indicator, target):
         warnings.simplefilter("ignore", category=UserWarning)
         delay, df = snl.estimate_delay(indicator=indicator, target=target)
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    @pytest.mark.parametrize("days", [[30]])
-    def test_fit_predict(self, snl, days, imgfile):
-        snl.clear(name="Forecast")
-        # Prediction
-        snl.predict(name="Forecast", days=days)
-        snl.fit_accuracy(name="Forecast", filename=imgfile)
-        df = snl.summary(name="Forecast")
-        assert Term.FUTURE in df[Term.TENSE].unique()
+    @pytest.mark.parametrize("days", [30])
+    def test_predict(self, snl, days):
+        snl.predict(name="Main", days=days)
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
