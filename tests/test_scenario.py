@@ -129,10 +129,7 @@ class TestScenario(object):
         snl.clear(include_past=True)
 
     def test_enable(self, snl):
-        # Setting
-        snl.add(end_date="01May2020")
-        snl.add(end_date="01Sep2020")
-        snl.add(end_date="01Nov2020")
+        self._extracted_from_test_combine_separate_3(snl)
         # Disable/enable
         snl.disable(phases=["1st", "2nd"])
         snl.enable(phases=["2nd"])
@@ -144,16 +141,18 @@ class TestScenario(object):
         snl.clear(include_past=True)
 
     def test_combine_separate(self, snl):
-        # Setting
-        snl.add(end_date="01May2020")
-        snl.add(end_date="01Sep2020")
-        snl.add(end_date="01Nov2020")
+        self._extracted_from_test_combine_separate_3(snl)
         # Combine
         snl.combine(phases=["0th", "1st"])
         snl.separate(date="01Jun2020")
         assert len(snl.summary()) == 3
         # Clear all phases
         snl.clear(include_past=True)
+
+    def _extracted_from_test_combine_separate_3(self, snl):
+        snl.add(end_date="01May2020")
+        snl.add(end_date="01Sep2020")
+        snl.add(end_date="01Nov2020")
 
     def test_trend(self, snl):
         snl.trend()
@@ -258,14 +257,9 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    @pytest.mark.parametrize("days", [[30]])
-    def test_fit_predict(self, snl, days, imgfile):
-        snl.clear(name="Forecast")
-        # Prediction
-        snl.predict(name="Forecast", days=days)
-        snl.fit_accuracy(name="Forecast", filename=imgfile)
-        df = snl.summary(name="Forecast")
-        assert Term.FUTURE in df[Term.TENSE].unique()
+    @pytest.mark.parametrize("days", [30])
+    def test_fit_predict(self, snl, days):
+        snl.predict(name="Main", days=days)
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
