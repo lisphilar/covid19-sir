@@ -1426,7 +1426,7 @@ class Scenario(Term):
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             new_scenario = phase_dict["name"]
-            if new_scenario not in self:
+            if new_scenario not in self._tracker_dict:
                 self.clear(name=new_scenario, template=name)
             self.add(**phase_dict)
         return self
