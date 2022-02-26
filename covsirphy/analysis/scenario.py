@@ -1418,13 +1418,16 @@ class Scenario(Term):
         Y = tracker.track().set_index(self.DATE)
         Y = Y.loc[Y.index <= self._data.today, self._model.PARAMETERS].dropna()
         # Prediction
-        handler = AutoMLHandler(X, Y, model=self._model, days=days)
+        handler = AutoMLHandler(X, Y, model=self._model, days=days, **kwargs)
         handler.predict(method=method)
         phase_df = handler.summary()
         phase_df = phase_df.rename(
             columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
+            new_scenario = phase_dict["name"]
+            if new_scenario not in self:
+                self.clear(name=new_scenario, template=name)
             self.add(**phase_dict)
         return self
 
