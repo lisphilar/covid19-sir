@@ -1006,7 +1006,7 @@ class Scenario(Term):
                     reset index
                 Columns
                     - Scenario (str)
-                    - Date (pandas.TimeStamp)
+                    - Date (pandas.Timestamp)
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -1415,7 +1415,8 @@ class Scenario(Term):
         except NotRegisteredExtraError:
             X = self._data.records(main=True, extras=False).set_index(self.DATE)
         tracker = self._tracker(name=name)
-        Y = tracker.track().set_index(self.DATE)[self._model.PARAMETERS].dropna()
+        Y = tracker.track().set_index(self.DATE)
+        Y = Y.loc[Y.index <= self._data.today, self._model.PARAMETERS].dropna()
         # Prediction
         handler = AutoMLHandler(X, Y, model=self._model, days=days)
         handler.predict(method=method)
