@@ -124,9 +124,10 @@ class Term(object):
         """
         try:
             return int(string[:-2])
-        except ValueError:
+        except ValueError as e:
             raise ValueError(
-                f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied.")
+                f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied."
+            ) from e
 
     @staticmethod
     def negative_exp(x, a, b):
@@ -176,7 +177,7 @@ class Term(object):
         return flattened
 
     @staticmethod
-    def _ensure_dataframe(target, name="df", time_index=False, columns=None):
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
         """
         Ensure the dataframe has the columns.
 
@@ -185,6 +186,7 @@ class Term(object):
             name (str): argument name of the dataframe
             time_index (bool): if True, the dataframe must has DatetimeIndex
             columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
 
         Returns:
             pandas.DataFrame:
@@ -198,6 +200,8 @@ class Term(object):
         df = target.copy()
         if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
             raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
         if columns is None:
             return df
         if not set(columns).issubset(df.columns):
@@ -334,8 +338,8 @@ class Term(object):
             return target.replace(hour=0, minute=0, second=0, microsecond=0)
         try:
             return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
-        except ValueError:
-            raise ValueError(f"{name} was not recognized as a date, {target} was applied.")
+        except ValueError as e:
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
 
     @staticmethod
     def _ensure_subclass(target, parent, name="target"):
