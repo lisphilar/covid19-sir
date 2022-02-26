@@ -149,7 +149,6 @@ class TestScenario(object):
         # Clear all phases
         snl.clear(include_past=True)
 
-    # TODO Rename this here and in `test_enable` and `test_combine_separate`
     def _extracted_from_test_combine_separate_3(self, snl):
         snl.add(end_date="01May2020")
         snl.add(end_date="01Sep2020")
