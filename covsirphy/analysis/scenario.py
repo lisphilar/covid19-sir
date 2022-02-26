@@ -1418,7 +1418,7 @@ class Scenario(Term):
         Y = tracker.track().set_index(self.DATE)
         Y = Y.loc[Y.index <= self._data.today, self._model.PARAMETERS].dropna()
         # Prediction
-        handler = AutoMLHandler(X, Y, model=self._model, days=days)
+        handler = AutoMLHandler(X, Y, model=self._model, days=days, **kwargs)
         handler.predict(method=method)
         phase_df = handler.summary()
         phase_df = phase_df.rename(
