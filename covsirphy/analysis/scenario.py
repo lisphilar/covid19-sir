@@ -1425,6 +1425,9 @@ class Scenario(Term):
             columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
+            new_scenario = phase_dict["name"]
+            if new_scenario not in self:
+                self.clear(name=new_scenario, template=name)
             self.add(**phase_dict)
         return self
 
