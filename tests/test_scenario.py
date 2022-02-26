@@ -17,6 +17,8 @@ def snl(data_loader):
 
 
 class TestScenario(object):
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+
     @pytest.mark.parametrize("first_date", ["01Mar2020"])
     @pytest.mark.parametrize("last_date", ["31Dec2020"])
     @pytest.mark.parametrize("today", ["30Nov2020"])
