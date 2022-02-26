@@ -1404,6 +1404,11 @@ class Scenario(Term):
         """
         if days is None or isinstance(days, list):
             return self.fit_predict(days=None, name="Main", **kwargs)
+        # ODE model
+        if self._model is None:
+            raise UnExecutedError(
+                "Scenario.estimate() or Scenario.add()",
+                message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Create X/Y
         X = self.records("all").set_index(self.DATE).drop([self.S, self.C, self.CI, self.F, self.R], axis=1)
         Y = self.track().set_index(self.DATE)
