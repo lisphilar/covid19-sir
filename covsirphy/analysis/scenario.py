@@ -23,6 +23,7 @@ from covsirphy.ode.sir import SIR
 from covsirphy.ode.sird import SIRD
 from covsirphy.ode.sirf import SIRF
 from covsirphy.regression.reg_handler import RegressionHandler
+from covsirphy.automl.automl_handler import AutoMLHandler
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.phase_tracker import PhaseTracker
 
@@ -1389,40 +1390,45 @@ class Scenario(Term):
         # Return information
         return handler.to_dict(metric=metric)
 
-    def predict(self, days=None, name="Main", **kwargs):
+    def predict(self, days=30, method="multivariate_regression", name="Main", **kwargs):
         """
-        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay.
-        New future phases will be added (over-written).
+        Predict ODE parameter values with machine learning.
 
         Args:
-            days (list[int]): list of days to predict or None (only the max value)
+            days (int): days to predict
+            method (str): machine learning method name, refer to covsirphy.automl.automl_handler.AutoMLHandler.predict().
             name (str): scenario name
-
-        Raises:
-            covsirphy.UnExecutedError: Scenario.fit() was not performed
-            NotRegisteredExtraError: no extra datasets were registered
 
         Returns:
             covsirphy.Scenario: self
         """
-        self.fit(name=name, **find_args(Scenario.fit, **kwargs))
-        handler = self._get_fit_handler(name=name)
-        # Prediction with regression model
-        df = handler.predict()
-        # -> index=end_date (pandas.Timestamp), columns=parameter values
-        df.index.name = "end_date"
-        # Days to predict
-        days = days or [len(df)]
-        self._ensure_list(days, candidates=list(range(1, len(df) + 1)), name="days")
-        phase_df = df.reset_index().loc[[day - 1 for day in days], :]
+        if days is None or isinstance(days, list):
+            return self.fit_predict(days=None, name="Main", **kwargs)
+        # ODE model
+        if self._model is None:
+            raise UnExecutedError(
+                "Scenario.estimate() or Scenario.add()",
+                message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
+        # Create X/Y
+        try:
+            X = self._data.records(main=True, extras=True).set_index(self.DATE)
+        except NotRegisteredExtraError:
+            X = self._data.records(main=True, extras=False).set_index(self.DATE)
+        tracker = self._tracker(name=name)
+        Y = tracker.track().set_index(self.DATE)[self._model.PARAMETERS].dropna()
+        # Prediction
+        handler = AutoMLHandler(X, Y, model=self._model, days=days)
+        handler.predict(method=method)
+        phase_df = handler.summary()
+        phase_df = phase_df.rename(
+            columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
-            self.add(name=name, **phase_dict)
+            self.add(**phase_dict)
         return self
 
     @deprecate("Scenario.fit_predict()", new="Scenario.predict()", version="2.23.0-alpha", ref="https://github.com/lisphilar/covid19-sir/issues/1006")
-    def fit_predict(self, oxcgrt_data=None, name="Main", **kwargs):
+    def fit_predict(self, oxcgrt_data=None, days=None, name="Main", **kwargs):
         """
         Deprecated and renamed to .predict().
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
@@ -1431,6 +1437,7 @@ class Scenario(Term):
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData or None): OxCGRT dataset
+            days (list[int]): list of days to predict or None (only the max value)
             name (str): scenario name
             kwargs: the other arguments of Scenario.fit() and Scenario.predict()
 
@@ -1445,7 +1452,18 @@ class Scenario(Term):
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
         self.fit(oxcgrt_data=oxcgrt_data, name=name, **find_args(Scenario.fit, **kwargs))
-        self.predict(name=name, **find_args(Scenario.predict, **kwargs))
+        handler = self._get_fit_handler(name=name)
+        # Prediction with regression model
+        df = handler.predict()
+        # -> index=end_date (pandas.Timestamp), columns=parameter values
+        df.index.name = "end_date"
+        # Days to predict
+        days = days or [len(df)]
+        self._ensure_list(days, candidates=list(range(1, len(df) + 1)), name="days")
+        phase_df = df.reset_index().loc[[day - 1 for day in days], :]
+        # Set new future phases
+        for phase_dict in phase_df.to_dict(orient="records"):
+            self.add(name=name, **phase_dict)
         return self
 
     def backup(self, filename):
@@ -1465,8 +1483,8 @@ class Scenario(Term):
             },
             "scenario": {}
         }
-        for (name, trakcer) in self._tracker_dict.items():
-            summary_df = trakcer.summary()
+        for (name, tracker) in self._tracker_dict.items():
+            summary_df = tracker.summary()
             for col in [self.START, self.END]:
                 summary_df[col] = summary_df[col].dt.strftime(self.DATE_FORMAT)
             info_dict["scenario"][name] = summary_df.to_dict(orient="index")

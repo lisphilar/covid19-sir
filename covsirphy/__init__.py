@@ -67,6 +67,8 @@ from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.phase.phase_estimator import MPEstimator
 # regression
 from covsirphy.regression.reg_handler import RegressionHandler
+# automl
+from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
@@ -119,6 +121,8 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     # regression
     "RegressionHandler",
+    # automl
+    "AutoMLHandler",
     # analysis
     "ExampleData", "Scenario", "ModelValidator", "DataHandler", "PhaseTracker",
     # Deprecated
