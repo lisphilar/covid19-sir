@@ -72,13 +72,10 @@ def main(country="Italy", province=None, file_prefix="ita"):
     snl.add(name="Main", days=60)
     snl.simulate(name="Main", **filer.png("simulate_main"))
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
-    # Forecast scenario: Short-term prediction with regression and OxCGRT data
-    fit_dict = snl.fit(delay=(7, 31), name="Forecast", **filer.png("fit_plot"))
-    del fit_dict["dataset"], fit_dict["intercept"], fit_dict["coef"]
-    print(fit_dict)
-    snl.predict(name="Forecast")
+    # Forecast scenario: AutoML prediction
+    snl.predict(name="Main")
     snl.adjust_end()
-    snl.simulate(name="Forecast", **filer.png("simulate_forecast"))
+    snl.simulate(name="Multivariate_regression_Likely", **filer.png("simulate_forecast"))
     snl.history_rate(name="Main", **filer.png("history-rate_forecast"))
     # Parameter history
     for item in ["Rt", "rho", "sigma", "Confirmed", "Infected", "Recovered", "Fatal"]:
