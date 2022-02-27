@@ -453,8 +453,11 @@ class Scenario(Term):
         tracker.define_phase(start, end)
         # Set parameter values
         if None not in set([self._model, self._tau]):
-            param_dict = {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
-            if param_dict:
+            if param_dict := {
+                k: float(v)
+                for (k, v) in pre_param_dict.items()
+                if k in self._model.PARAMETERS
+            }:
                 param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
                 param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
                 tracker.set_ode(self._model, param_df, self._tau)
