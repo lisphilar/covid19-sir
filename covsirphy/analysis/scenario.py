@@ -1532,3 +1532,26 @@ class Scenario(Term):
                     add_dict["model"] = model_dict[model_name]
                 self.add(name=name, **add_dict)
         return self
+
+    def rename(self, old, new):
+        """
+        Rename the given scenario names with a new one.
+
+        Args:
+            old (str): old name
+            new (str): new name
+
+        Raises:
+            ScenarioNotFoundError: the old scenario does not exist
+            ValueError: the new scenario name has already exist
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        if old not in self._tracker_dict:
+            raise ScenarioNotFoundError(name=old)
+        if new in self._tracker_dict:
+            raise ValueError(f"@new={new}, but this scenario has already exist.")
+        self._tracker(name=new, template=old)
+        self._delete_series(name=old)
+        return self
