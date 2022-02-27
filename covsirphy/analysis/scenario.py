@@ -1423,6 +1423,7 @@ class Scenario(Term):
         phase_df = handler.summary()
         phase_df = phase_df.rename(
             columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
+        phase_df = phase_df.sort_values(["name", "end_date"], ignore_index=True)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             new_scenario = phase_dict["name"]
