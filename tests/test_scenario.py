@@ -260,8 +260,15 @@ class TestScenario(object):
         assert isinstance(df, pd.DataFrame)
 
     @pytest.mark.parametrize("days", [30])
-    def test_predict(self, snl, days):
+    def test_predict_find(self, snl, days):
+        # Prediction
         snl.predict(name="Main", days=days)
+        # Rename
+        with pytest.raises(ScenarioNotFoundError):
+            snl.rename(old="Unknown", new="New")
+        with pytest.raises(ValueError):
+            snl.rename(old="Multivariate_regression_Likely", new="Main")
+        snl.rename(old="Multivariate_regression_Likely", new="Likely")
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
