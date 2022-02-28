@@ -547,9 +547,9 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         p = re.compile(pattern)
-        for name in self._tracker_dict.keys():
-            if p.match(name):
-                self.delete(name=name)
+        names = [name for name in self._tracker_dict.keys() if p.match(name)]
+        for name in names:
+            self.delete(name=name)
         return self
 
     def _reverse(self, phases, name="Main"):
