@@ -269,6 +269,11 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             snl.rename(old="Multivariate_regression_Likely", new="Main")
         snl.rename(old="Multivariate_regression_Likely", new="Likely")
+        assert "Multivariate_regression_Likely" not in snl._tracker_dict
+        assert "Likely" in snl._tracker_dict
+        # Delete scenarios with partial name
+        snl.delete_matched(pattern=r"^Multi")
+        assert "Multivariate_regression_00" not in snl._tracker_dict
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
