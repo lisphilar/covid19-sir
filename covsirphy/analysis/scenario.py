@@ -5,8 +5,9 @@ import copy
 from datetime import timedelta
 import json
 from pathlib import Path
-import warnings
+import re
 import sys
+import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
@@ -533,6 +534,22 @@ class Scenario(Term):
         start, end = tracker.parse_range(phases=phases)
         f = {True: tracker.deactivate, False: tracker.remove_phase}
         self[name] = f[last_phase in phases or "last" in phases](start, end)
+        return self
+
+    def delete_matched(self, pattern):
+        """
+        Delete scenarios which matchs to the given pattern.
+
+        Arg:
+            pattern (raw string): pattern to match
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        p = re.compile(pattern)
+        for name in self._tracker_dict.keys():
+            if p.match(name):
+                self.delete(name=name)
         return self
 
     def _reverse(self, phases, name="Main"):
