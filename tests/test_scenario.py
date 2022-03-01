@@ -257,7 +257,7 @@ class TestScenario(object):
         assert isinstance(df, pd.DataFrame)
 
     @pytest.mark.parametrize("days", [30])
-    def test_predict_find(self, snl, days):
+    def test_predict(self, snl, days):
         # Prediction
         snl.predict(name="Main", days=days)
         snl.adjust_end()
@@ -271,7 +271,7 @@ class TestScenario(object):
         assert "Likely" in snl._tracker_dict
         # Delete all scenarios except Main/Likely scenario
         with pytest.raises(KeyError):
-            snl.represent(q=0.5, variable="Infected", date="01Jan3000")
+            snl.represent(q=0.5, variable="Infected", date="01Jan2050")
         best, worst = snl.represent(q=[0.05, 0.95], variable="Fatal", date=None, excluded=["Main", "Likely"])
         snl.rename(old=best, new="Best")
         snl.rename(old=worst, new="Worst")
