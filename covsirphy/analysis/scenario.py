@@ -1572,3 +1572,42 @@ class Scenario(Term):
         self._tracker(name=new, template=old)
         self._delete_series(name=old)
         return self
+
+    def represent(self, q, variable, date=None, included=None, excluded=None):
+        """
+        Return the names of representative scenarios using quantiles of the variable on on the date.
+
+        Args:
+            q (list[float] or float): quantiles
+            variable (str): reference variable, Confirmed, Infected, Fatal or Recovered
+            date (str): reference date or None (the last end date in the all scenarios)
+            included (list[str] or None): included scenarios or None (all included)
+            excluded (list[str] or None): excluded scenarios or None (no scenarios not excluded)
+
+        Raises:
+            ValueError: the end dates of the last phase is not aligned
+
+        Returns:
+            list[float] or float: the nearest scenarios which has the values at the given quantiles
+
+        Note:
+            Dimension of returned object corresponds to the type of @q.
+        """
+        quantiles = [q] if isinstance(q, float) else self._ensure_list(q, name="q")
+        variable = self._ensure_selectable(variable, candidates=self.VALUE_COLUMNS, name="variable")
+        # Target scenarios to represent
+        all_set = set(self._tracker_dict.keys())
+        in_set = all_set if included is None else set(self._ensure_list(included, name="included"))
+        ex_set = set() if excluded is None else set(self._ensure_list(excluded, name="excluded"))
+        scenarios = list(all_set & (in_set) - ex_set)
+        # Get simulation data of the variable of the target scenarios
+        sim_dict = {name: self._tracker_dict[name].simulate().set_index(self.DATE)[variable] for name in scenarios}
+        sim_df = pd.DataFrame(sim_dict)
+        if sim_df.isna().to_numpy().sum():
+            raise ValueError(
+                "The end dates of the last phases must be aligned. Scenario.adjust_end() method may fix this issue.")
+        # Find representative scenario
+        date_obj = self._ensure_date(target=date, name="date", default=sim_df.index[-1])
+        series = sim_df.loc[sim_df.index == date_obj].squeeze()
+        values = series.quantile(q=quantiles, interpolation="nearest")
+        return [series[series == v].index.tolist()[0] for v in values]
