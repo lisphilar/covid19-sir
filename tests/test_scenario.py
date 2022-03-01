@@ -163,8 +163,6 @@ class TestScenario(object):
         # Error test
         with pytest.raises(UnExecutedError):
             snl.simulate()
-        with pytest.raises(UnExecutedError):
-            snl.fit()
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Parameter estimation
@@ -219,8 +217,7 @@ class TestScenario(object):
         date = snl.summary().loc["5th", Term.START]
         snl.clear(name="Control", template="Main")
         snl.retrospective(
-            beginning_date=date, model=SIRF,
-            control="Control", target="Retro", timeout=1, timeout_iteration=1)
+            beginning_date=date, model=SIRF, control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
     @pytest.mark.skip(reason="Will be activated with #923")
     def test_retrospective_before_estimate(self, jhu_data):
@@ -263,6 +260,7 @@ class TestScenario(object):
     def test_predict_find(self, snl, days):
         # Prediction
         snl.predict(name="Main", days=days)
+        snl.adjust_end()
         # Rename
         with pytest.raises(ScenarioNotFoundError):
             snl.rename(old="Unknown", new="New")
