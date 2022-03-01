@@ -271,9 +271,14 @@ class TestScenario(object):
         snl.rename(old="Multivariate_regression_Likely", new="Likely")
         assert "Multivariate_regression_Likely" not in snl._tracker_dict
         assert "Likely" in snl._tracker_dict
-        # Delete scenarios with partial name
+        # Delete all scenarios except Main/Likely scenario
+        with pytest.raises(KeyError):
+            snl.represent(q=0.5, variable="Infected", date="01Jan3000")
+        best, worst = snl.represent(q=[0.05, 0.95], variable="Fatal", date=None, excluded=["Main", "Likely"])
+        snl.rename(old=best, new="Best")
+        snl.rename(old=worst, new="Worst")
         snl.delete_matched(pattern=r"^Multi")
-        assert "Multivariate_regression_00" not in snl._tracker_dict
+        assert set(snl._tracker_dict.keys()) == set(["Main", "Likely", "Best", "Worst"])
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
