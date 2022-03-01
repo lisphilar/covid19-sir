@@ -163,8 +163,6 @@ class TestScenario(object):
         # Error test
         with pytest.raises(UnExecutedError):
             snl.simulate()
-        with pytest.raises(UnExecutedError):
-            snl.fit()
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Parameter estimation
@@ -219,8 +217,7 @@ class TestScenario(object):
         date = snl.summary().loc["5th", Term.START]
         snl.clear(name="Control", template="Main")
         snl.retrospective(
-            beginning_date=date, model=SIRF,
-            control="Control", target="Retro", timeout=1, timeout_iteration=1)
+            beginning_date=date, model=SIRF, control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
     @pytest.mark.skip(reason="Will be activated with #923")
     def test_retrospective_before_estimate(self, jhu_data):
@@ -260,7 +257,7 @@ class TestScenario(object):
         assert isinstance(df, pd.DataFrame)
 
     @pytest.mark.parametrize("days", [30])
-    def test_predict_find(self, snl, days):
+    def test_predict(self, snl, days):
         # Prediction
         snl.predict(name="Main", days=days)
         # Rename
@@ -271,9 +268,15 @@ class TestScenario(object):
         snl.rename(old="Multivariate_regression_Likely", new="Likely")
         assert "Multivariate_regression_Likely" not in snl._tracker_dict
         assert "Likely" in snl._tracker_dict
-        # Delete scenarios with partial name
+        # Delete all scenarios except Main/Likely scenario
+        with pytest.raises(ValueError):
+            snl.represent(q=[0.05, 0.95], variable="Fatal", date=None, excluded=["Main", "Likely"])
+        snl.adjust_end()
+        best, worst = snl.represent(q=[0.05, 0.95], variable="Fatal", date=None, excluded=["Main", "Likely"])
+        snl.rename(old=best, new="Best")
+        snl.rename(old=worst, new="Worst")
         snl.delete_matched(pattern=r"^Multi")
-        assert "Multivariate_regression_00" not in snl._tracker_dict
+        assert set(snl._tracker_dict.keys()) == set(["Main", "Likely", "Best", "Worst"])
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")
