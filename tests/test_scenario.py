@@ -218,6 +218,8 @@ class TestScenario(object):
         snl.clear(name="Control", template="Main")
         snl.retrospective(
             beginning_date=date, model=SIRF, control="Control", target="Retro", timeout=1, timeout_iteration=1)
+        snl.delete(name="Control")
+        snl.delete(name="Retro")
 
     @pytest.mark.skip(reason="Will be activated with #923")
     def test_retrospective_before_estimate(self, jhu_data):
@@ -228,6 +230,8 @@ class TestScenario(object):
             control="Control", target="Retro", timeout=1, timeout_iteration=1)
         scenario.simulate(name="Control")
         scenario.simulate(name="Retro")
+        snl.delete(name="Control")
+        snl.delete(name="Retro")
 
     @pytest.mark.parametrize("metrics", ["RMSLE"])
     def test_score(self, snl, metrics):
@@ -247,6 +251,7 @@ class TestScenario(object):
         assert snl.score(past_days=past_days, name="Score") == sel_score
         # Selected past days
         snl.score(past_days=60, name="Score")
+        snl.delete(name="Score")
 
     @pytest.mark.parametrize("indicator", ["Stringency_index"])
     @pytest.mark.parametrize("target", ["Confirmed"])
