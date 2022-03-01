@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.23.1-eta
+                2.23.1-iota
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -8134,6 +8134,24 @@ If the last phase is not included, the dates will be assigned to the previous ph
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.Scenario.delete_matched">
+<span class="sig-name descname"><span class="pre">delete_matched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.delete_matched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.delete_matched" title="Permalink to this definition"></a></dt>
+<dd><p>Delete scenarios which matchs to the given pattern.</p>
+<dl class="simple">
+<dt>Arg:</dt><dd><p>pattern (raw string): pattern to match</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.Scenario.describe">
 <span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.describe" title="Permalink to this definition"></a></dt>
 <dd><p>Describe representative values.</p>
@@ -8632,6 +8650,36 @@ When using interactive shell, we can change the modes by Scenario.interactive = 
 <dd class="field-even"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.Scenario.represent">
+<span class="sig-name descname"><span class="pre">represent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">included</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.represent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.represent" title="Permalink to this definition"></a></dt>
+<dd><p>Return the names of representative scenarios using quantiles of the variable on on the date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>float</em>) – quantiles</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – reference variable, Confirmed, Infected, Fatal or Recovered</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – reference date or None (the last end date in the all scenarios)</p></li>
+<li><p><strong>included</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – included scenarios or None (all included)</p></li>
+<li><p><strong>excluded</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – excluded scenarios or None (no scenarios not excluded)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – the end dates of the last phase is not aligned</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the nearest scenarios which has the values at the given quantiles</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[float] or float</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dimension of returned object corresponds to the type of &#64;q.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
