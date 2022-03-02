@@ -790,21 +790,7 @@
    "metadata": {},
    "source": [
     "### Prediction of parameter values\n",
-    "With extra datasets, we can predict the ODE parameter values in the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values.\n",
-    "\n",
-    "OxCGRT indicators are\n",
-    "\n",
-    "- school_closing,\n",
-    "- workplace_closing,\n",
-    "- cancel_events, \n",
-    "- gatherings_restrictions,\n",
-    "- transport_closing,\n",
-    "- stay_home_restrictions,\n",
-    "- internal_movement_restrictions,\n",
-    "- international_movement_restrictions,\n",
-    "- information_campaigns,\n",
-    "- testing_policy, and\n",
-    "- contact_tracing."
+    "With extra datasets, we can predict the ODE parameter values in the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values."
    ]
   },
   {
@@ -840,7 +826,6 @@
    "outputs": [],
    "source": [
     "# When using Y of the main scenario for training\n",
-    "# From version 2.23.0-beta\n",
     "snl.predict(name=\"Main\", days=30);"
    ]
   },
@@ -903,7 +888,6 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# From 2.23.1-theta\n",
     "snl.rename(old=\"Multivariate_regression_Likely\", new=\"Likely\");"
    ]
   },
@@ -924,8 +908,8 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# From 2.23.1-iota\n",
-    "best, worst = snl.represent(q=[0.05, 0.95], variable=\"Fatal\", date=None, excluded=[\"Main\", \"Likely\"])\n",
+    "best, worst = snl.represent(\n",
+    "    q=[0.05, 0.95], variable=\"Fatal\", date=None, excluded=[\"Main\", \"Medicine\", \"Likely\"])\n",
     "print({\"best\": best, \"worst\": worst})"
    ]
   },
@@ -942,7 +926,6 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# From 2.23.1-theta\n",
     "snl.rename(old=best, new=\"Best\")\n",
     "snl.rename(old=worst, new=\"Worst\");"
    ]
@@ -960,7 +943,6 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# From 2.23.1-theta\n",
     "snl.delete_matched(pattern=r\"^Multi\")"
    ]
   },
