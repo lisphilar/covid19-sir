@@ -34,8 +34,8 @@ Functionalities
 -  `Scenario
    analysis <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__:
    Simulate the number of cases with user-defined parameter values
--  `Predict the parameter valuse to forecast the number of
-   cases. <https://lisphilar.github.io/covid19-sir/usage_quick.html#Short-term-prediction-of-parameter-values>`__
+-  `Predict the parameter value to forecast the number of
+   cases <https://lisphilar.github.io/covid19-sir/usage_quick.html#Prediction-of-parameter-values>`__
 
 Inspiration
 -----------
@@ -77,11 +77,11 @@ records in Japan, but we can change the country name when creating
 
     import covsirphy as cs
     # Download and update datasets
-    data_loader = cs.DataLoader("input")
-    jhu_data = data_loader.jhu()
+    loader = cs.DataLoader("input")
+    data_dict = loader.collect()
     # Select country name and register the data
     snl = cs.Scenario(country="Japan")
-    snl.register(jhu_data)
+    snl.register(**data_dict)
     # Check records
     snl.records()
     # S-R trend analysis
@@ -89,13 +89,23 @@ records in Japan, but we can change the country name when creating
     # Parameter estimation of SIR-F model
     snl.estimate(cs.SIRF)
     # History of reproduction number
-    _ = snl.history(target="Rt")
+    snl.history(target="Rt")
     # History of parameters
-    _ = snl.history_rate()
-    _ = snl.history(target="rho")
-    # Simulation for 30 days
+    snl.history_rate()
+    snl.history(target="rho")
+    # Baseline
     snl.add(days=30)
-    _ = snl.simulate()
+    # Forecasting
+    snl.predict(days=30)
+    snl.adjust_end()
+    snl.rename(old="Multivariate_regression_Likely", new="Likely")
+    snl.delete_matched(pattern=r"^Multi")
+    # Compare scenarios
+    snl.describe()
+    # Summary
+    snl.summary()
+    # Simulation
+    snl.simulate()
 
 Further information:
 

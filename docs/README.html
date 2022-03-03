@@ -153,8 +153,8 @@ models</a></p></li>
 <li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html">Scenario
 analysis</a>:
 Simulate the number of cases with user-defined parameter values</p></li>
-<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html#Short-term-prediction-of-parameter-values">Predict the parameter valuse to forecast the number of
-cases.</a></p></li>
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html#Prediction-of-parameter-values">Predict the parameter value to forecast the number of
+cases</a></p></li>
 </ul>
 </section>
 <section id="inspiration">
@@ -191,11 +191,11 @@ records in Japan, but we can change the country name when creating
 <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> class instance for your own analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="c1"># Download and update datasets</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">data_dict</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 <span class="c1"># Select country name and register the data</span>
 <span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="o">**</span><span class="n">data_dict</span><span class="p">)</span>
 <span class="c1"># Check records</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
 <span class="c1"># S-R trend analysis</span>
@@ -203,13 +203,23 @@ records in Japan, but we can change the country name when creating
 <span class="c1"># Parameter estimation of SIR-F model</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
 <span class="c1"># History of reproduction number</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
 <span class="c1"># History of parameters</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">()</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
-<span class="c1"># Simulation for 30 days</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">()</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<span class="c1"># Baseline</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+<span class="c1"># Forecasting</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">adjust_end</span><span class="p">()</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">old</span><span class="o">=</span><span class="s2">&quot;Multivariate_regression_Likely&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Likely&quot;</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">delete_matched</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;^Multi&quot;</span><span class="p">)</span>
+<span class="c1"># Compare scenarios</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="c1"># Summary</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="c1"># Simulation</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Further information:</p>
