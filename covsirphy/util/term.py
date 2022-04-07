@@ -43,6 +43,7 @@ class Term(object):
     COUNTRY = "Country"
     ISO3 = "ISO3"
     PROVINCE = "Province"
+    CITY = "City"
     STEP_N = "step_n"
     Y0_DICT = "y0_dict"
     PARAM_DICT = "param_dict"

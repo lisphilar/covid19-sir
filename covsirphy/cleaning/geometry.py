@@ -1,0 +1,130 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import contextlib
+from covsirphy.util.term import Term
+
+
+class Geometry(Term):
+    """
+    Class to manipulate geography data.
+
+    Args:
+        layers (list[str]): names of administration layers with the order (upper layers precede, e.g. ["Country", "Province"])
+    """
+
+    def __init__(self, layers):
+        self._layers = self._ensure_list(layers, candidates=None, name="layers")
+
+    def layer(self, data, geo=None):
+        """
+        Return the data at the selected layer.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation date
+                    - columns defined by `Geometry(layers)` argument: note that "-" means total values of the upper layer
+                    - the other columns of values
+            geo (tuple(list[str] or tuple(str) or str) or None): location names to filter or None (top-level layer)
+
+        Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is equal to or larger than the length of layers
+
+        Returns:
+            pandas.DataFrame: as-is @data
+
+        Note:
+            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
+
+        Note:
+            When `geo=("Japan",)`, returns province-level data in Japan.
+
+        Note:
+            When `geo=(["Japan", "UK"],)`, returns province-level data in Japan and UK.
+
+        Note:
+            When `geo=("Japan", "Kanagawa")`, returns city-level data in Kanagawa/Japan.
+
+        Note:
+            When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns city-level data in Tokyo/Japan and Kanagawa/Japan.
+        """
+        if geo is not None and not isinstance(geo, (list, tuple)):
+            raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
+        self._ensure_dataframe(target=data, name="data", columns=self._layers, empty_ok=False)
+        df = data.copy()
+        for (i, sel) in enumerate(geo or (None,)):
+            if sel is None:
+                return df.loc[df[self._layers[i + 1]] == self.UNKNOWN].reset_index(drop=True)
+            if not isinstance(sel, (str, list, tuple)):
+                raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
+            if i >= len(self._layers):
+                raise ValueError(f"The length of @geo must be smaller than that of layers, but {geo} was applied.")
+            df = df.loc[df[self._layers[i]].isin([sel] if isinstance(sel, str) else sel)]
+            if i == len(geo) - 1 and i < len(self._layers) - 1:
+                df = df.loc[df[self._layers[i + 1]] != self.UNKNOWN]
+                with contextlib.suppress(IndexError):
+                    df = df.loc[df[self._layers[i + 2]] == self.UNKNOWN]
+        return df.reset_index(drop=True)
+
+    def filter(self, data, geo=None):
+        """
+        Filter the data with geometry information.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation date
+                    - columns defined by `Geometry(layers)` argument: note that "-" means total values of the upper layer
+                    - the other columns of values
+            geo (tuple(list[str] or tuple(str) or str)): location names for the layers to filter or None (all data at the top level)
+
+        Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is larger than the length of layers
+
+        Returns:
+            pandas.DataFrame: as-is @data
+
+        Note:
+            When `geo=None` or `geo=(None,)`, returns all country-level data, assuming we have country/provonce/city as layers here.
+
+        Note:
+            When `geo=("Japan",)`, returns country-level data in Japan.
+
+        Note:
+            When `geo=(["Japan", "UK"],)`, returns country-level data of Japan and UK.
+
+        Note:
+            When `geo=("Japan", "Tokyo")`, returns province-level data of Tokyo/Japan.
+
+        Note:
+            When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns province-level data of Tokyo/Japan and Kanagawa/Japan.
+
+        Note:
+            When `geo=("Japan", "Kanagawa", "Yokohama")`, returns city-level data of Yokohama/Kanagawa/Japan.
+
+        Note:
+            When `geo=(("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.
+        """
+        if geo is None or geo == (None,):
+            return self.layer(data=data, geo=None)
+        if not isinstance(geo, (list, tuple)):
+            raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
+        if len(geo) > len(self._layers):
+            raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
+        *geo_formars, geo_last = geo
+        try:
+            df = self.layer(data=data, geo=geo_formars)
+        except TypeError as e:
+            raise e from None
+        if not isinstance(geo_last, (str, list, tuple)):
+            raise TypeError(
+                f"The last value of @geo must be a list[str] or tuple(str) or str, but {geo_last} was applied.")
+        selectors = [geo_last] if isinstance(geo_last, str) else geo_last
+        return df.loc[df[self._layers[len(geo) - 1]].isin(selectors)].reset_index(drop=True)
