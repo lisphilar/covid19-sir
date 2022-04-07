@@ -453,9 +453,12 @@ class Scenario(Term):
             self._ensure_date_order(start, end, name="end_date")
         tracker.define_phase(start, end)
         # Set parameter values
-        if None not in set([self._model, self._tau]):
-            param_dict = {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
-            if param_dict:
+        if None not in {self._model, self._tau}:
+            if param_dict := {
+                k: float(v)
+                for (k, v) in pre_param_dict.items()
+                if k in self._model.PARAMETERS
+            }:
                 param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
                 param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
                 tracker.set_ode(self._model, param_df, self._tau)
@@ -802,7 +805,7 @@ class Scenario(Term):
         all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
         self.disable(phases=all_phases, name=name)
         handler_kwargs = {"n_jobs": 1}
-        handler_kwargs.update(kwargs)
+        handler_kwargs |= kwargs
         for ph in phases:
             self._reverse(phases=[ph], name=name)
             self._tau = self[name].estimate(self._model, tau=self._tau, **handler_kwargs)
@@ -1280,7 +1283,7 @@ class Scenario(Term):
         Q1 = np.percentile(df["Period Length"], percentile, interpolation="midpoint")
         low_lim = min_size
         delay_period = int((low_lim + Q1) / 2)
-        return (int(delay_period), df)
+        return delay_period, df
 
     @deprecate("Scenario.fit()", new="Scenario.predict()", version="2.23.0-alpha", ref="https://github.com/lisphilar/covid19-sir/issues/1006")
     def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="MAPE", **kwargs):
