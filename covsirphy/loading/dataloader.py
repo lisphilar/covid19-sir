@@ -369,7 +369,7 @@ class DataLoader(Term):
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
         self._set_date_location(df)
-        df[self.ISO3] = df[self.ISO3].fillna(self.UNKNOWN)
+        df[self.ISO3] = df[self.ISO3].fillna(self.NA)
         self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
         self._locked_citation_dict = citation_dict.copy()
         return self
@@ -448,8 +448,8 @@ class DataLoader(Term):
             data (pandas.DataFrame): dataframe to update (itself will be updated)
         """
         data[self.DATE] = pd.to_datetime(data[self.DATE])
-        data[self.COUNTRY] = data[self.COUNTRY].fillna(self.UNKNOWN)
-        data[self.PROVINCE] = data[self.PROVINCE].fillna(self.UNKNOWN)
+        data[self.COUNTRY] = data[self.COUNTRY].fillna(self.NA)
+        data[self.PROVINCE] = data[self.PROVINCE].fillna(self.NA)
 
     def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
         """

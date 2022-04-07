@@ -13,10 +13,10 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: [*["UK" for _ in range(4)], *["Japan" for _ in range(10)]],
                 Term.PROVINCE: [
-                    "England", "England", *[Term.UNKNOWN for _ in range(4)],
+                    "England", "England", *[Term.NA for _ in range(4)],
                     *["Tokyo" for _ in range(4)], *["Kanagawa" for _ in range(4)]],
                 Term.CITY: [
-                    *[Term.UNKNOWN for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
+                    *[Term.NA for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
                 Term.DATE: [day0, day1] * 7,
                 Term.C: range(14),
             }
@@ -26,8 +26,8 @@ class TestGeometry(object):
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["UK", "UK", "Japan", "Japan"],
-                Term.PROVINCE: [Term.UNKNOWN for _ in range(4)],
-                Term.CITY: [Term.UNKNOWN for _ in range(4)],
+                Term.PROVINCE: [Term.NA for _ in range(4)],
+                Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
                 Term.C: [2, 3, 4, 5],
             }
@@ -39,7 +39,7 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: ["Japan" for _ in range(2)],
                 Term.PROVINCE: ["Tokyo", "Tokyo"],
-                Term.CITY: [Term.UNKNOWN for _ in range(2)],
+                Term.CITY: [Term.NA for _ in range(2)],
                 Term.DATE: [day0, day1],
                 Term.C: [6, 7],
             }
@@ -50,7 +50,7 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: ["UK", "UK", "Japan", "Japan"],
                 Term.PROVINCE: ["England", "England", "Tokyo", "Tokyo"],
-                Term.CITY: [Term.UNKNOWN for _ in range(4)],
+                Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
                 Term.C: [0, 1, 6, 7],
             }
@@ -92,10 +92,10 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: [*["UK" for _ in range(4)], *["Japan" for _ in range(10)]],
                 Term.PROVINCE: [
-                    "England", "England", *[Term.UNKNOWN for _ in range(4)],
+                    "England", "England", *[Term.NA for _ in range(4)],
                     *["Tokyo" for _ in range(4)], *["Kanagawa" for _ in range(4)]],
                 Term.CITY: [
-                    *[Term.UNKNOWN for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
+                    *[Term.NA for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
                 Term.DATE: [day0, day1] * 7,
                 Term.C: range(14),
             }
@@ -105,8 +105,8 @@ class TestGeometry(object):
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["UK", "UK", "Japan", "Japan"],
-                Term.PROVINCE: [Term.UNKNOWN for _ in range(4)],
-                Term.CITY: [Term.UNKNOWN for _ in range(4)],
+                Term.PROVINCE: [Term.NA for _ in range(4)],
+                Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
                 Term.C: [2, 3, 4, 5],
             }
@@ -117,8 +117,8 @@ class TestGeometry(object):
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["Japan", "Japan"],
-                Term.PROVINCE: [Term.UNKNOWN for _ in range(2)],
-                Term.CITY: [Term.UNKNOWN for _ in range(2)],
+                Term.PROVINCE: [Term.NA for _ in range(2)],
+                Term.CITY: [Term.NA for _ in range(2)],
                 Term.DATE: [day0, day1],
                 Term.C: [4, 5],
             }
@@ -128,8 +128,8 @@ class TestGeometry(object):
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["UK", "UK", "Japan", "Japan"],
-                Term.PROVINCE: [Term.UNKNOWN for _ in range(4)],
-                Term.CITY: [Term.UNKNOWN for _ in range(4)],
+                Term.PROVINCE: [Term.NA for _ in range(4)],
+                Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
                 Term.C: [2, 3, 4, 5],
             }
@@ -140,7 +140,7 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: ["Japan", "Japan"],
                 Term.PROVINCE: ["Tokyo", "Tokyo"],
-                Term.CITY: [Term.UNKNOWN for _ in range(2)],
+                Term.CITY: [Term.NA for _ in range(2)],
                 Term.DATE: [day0, day1],
                 Term.C: [6, 7],
             }
@@ -152,7 +152,7 @@ class TestGeometry(object):
             {
                 Term.COUNTRY: ["Japan", "Japan"],
                 Term.PROVINCE: ["Tokyo", "Tokyo"],
-                Term.CITY: [Term.UNKNOWN for _ in range(2)],
+                Term.CITY: [Term.NA for _ in range(2)],
                 Term.DATE: [day0, day1],
                 Term.C: [6, 7],
             }

@@ -58,16 +58,16 @@ class Geometry(Term):
         df = data.copy()
         for (i, sel) in enumerate(geo or (None,)):
             if sel is None:
-                return df.loc[df[self._layers[i + 1]] == self.UNKNOWN].reset_index(drop=True)
+                return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
             if not isinstance(sel, (str, list, tuple)):
                 raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
             if i >= len(self._layers):
                 raise ValueError(f"The length of @geo must be smaller than that of layers, but {geo} was applied.")
             df = df.loc[df[self._layers[i]].isin([sel] if isinstance(sel, str) else sel)]
             if i == len(geo) - 1 and i < len(self._layers) - 1:
-                df = df.loc[df[self._layers[i + 1]] != self.UNKNOWN]
+                df = df.loc[df[self._layers[i + 1]] != self.NA]
                 with contextlib.suppress(IndexError):
-                    df = df.loc[df[self._layers[i + 2]] == self.UNKNOWN]
+                    df = df.loc[df[self._layers[i + 2]] == self.NA]
         return df.reset_index(drop=True)
 
     def filter(self, data, geo=None):

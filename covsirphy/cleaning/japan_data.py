@@ -188,7 +188,7 @@ class JapanData(CleaningBase):
         e_df[self.PROVINCE] = "Entering"
         c_cols = ["Domestic", "Airport", "Returnee"]
         c_df = df.loc[df[self.PROVINCE].isin(c_cols)].groupby(self.DATE).sum()
-        c_df[self.PROVINCE] = self.UNKNOWN
+        c_df[self.PROVINCE] = self.NA
         df = pd.concat(
             [
                 df.loc[~df[self.PROVINCE].isin(c_cols)],
@@ -305,10 +305,10 @@ class JapanData(CleaningBase):
         df = self.cleaned()
         # Calculate total values at country level if not registered
         c_level_df = df.groupby(self.DATE).sum().reset_index()
-        c_level_df[self.PROVINCE] = self.UNKNOWN
+        c_level_df[self.PROVINCE] = self.NA
         df = pd.concat([df, c_level_df], axis=0, ignore_index=True)
         df = df.drop_duplicates(subset=[self.DATE, self.PROVINCE])
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+        df = df.loc[df[self.PROVINCE] == self.NA, :]
         df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
         df = df.set_index(self.DATE)
         # Calculate rates
@@ -340,12 +340,12 @@ class JapanData(CleaningBase):
         """
         # Calculate total values at province level
         clean_df = self.cleaned()
-        clean_df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        clean_df = clean_df.loc[clean_df[self.PROVINCE] != self.NA]
         total_df = clean_df.groupby(self.DATE).sum().reset_index()
         total_df[self.COUNTRY] = self._country
-        total_df[self.PROVINCE] = self.UNKNOWN
+        total_df[self.PROVINCE] = self.NA
         # Add/overwrite country level data
-        df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        df = clean_df.loc[clean_df[self.PROVINCE] != self.NA]
         df = pd.concat([df, total_df], ignore_index=True, sort=True)
         df[[self.COUNTRY, self.PROVINCE]] = df[[self.COUNTRY, self.PROVINCE]].astype("category")
         self._cleaned_df = df.loc[:, self.COLUMNS]

@@ -92,7 +92,7 @@ class Term(object):
     SERIES = "Scenario"
     MAIN = "Main"
     # Flag
-    UNKNOWN = "-"
+    NA = "-"
     OTHERS = "Others"
 
     @classmethod
