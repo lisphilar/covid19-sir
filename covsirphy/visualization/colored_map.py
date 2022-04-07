@@ -37,7 +37,7 @@ class ColoredMap(VisualizeBase):
     @property
     def directory(self):
         """
-        str: directory to save the downloaded files of geometry information
+        str: directory to save the downloaded files of geography information
         """
         return str(self._geo_dirpath)
 
@@ -67,7 +67,7 @@ class ColoredMap(VisualizeBase):
         Raises:
             ValueError: labels for data are not unique
             UnExpectedValueError: some countries' records are included when @level is 'Province'
-            SubsetNotFoundError: no geometry information available for the labels
+            SubsetNotFoundError: no geography information available for the labels
         """
         expected_cols = [self.COUNTRY, "Value"] + [] if level == self.COUNTRY else [self.PROVINCE]
         self._ensure_dataframe(data, name="data", columns=expected_cols)
@@ -119,7 +119,7 @@ class ColoredMap(VisualizeBase):
 
     def _global_data(self, data, included, excluded):
         """
-        Create global map data with geometry information.
+        Create global map data with geography information.
 
         Args:
             data (pandas.DataFrame): data to show
@@ -138,12 +138,12 @@ class ColoredMap(VisualizeBase):
                     reset index
                 Columns
                     - Value (int or float or None)
-                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+                    - geography (geopandas.GeoDataFrame.geography): geography information
         """
         # data to plot
         df = data.copy()
         df[self.ISO3] = df[self.COUNTRY].apply(self._to_iso3) if self.ISO3 not in df else df[self.ISO3]
-        # Geometry
+        # Geography
         gdf = self._load_geo_global()
         # Merge them
         gdf = gdf.merge(df, how="left", on=self.ISO3)
@@ -151,11 +151,11 @@ class ColoredMap(VisualizeBase):
         included_codes = gdf[self.ISO3].tolist() if included is None else [self._to_iso3(c) for c in included]
         excluded_codes = [] if excluded is None else [self._to_iso3(c) for c in excluded]
         sel = set(included_codes) - set(excluded_codes)
-        return gdf.loc[gdf[self.ISO3].isin(sel), ["Value", "geometry"]]
+        return gdf.loc[gdf[self.ISO3].isin(sel), ["Value", "geography"]]
 
     def _country_specific_data(self, data, included, excluded, country):
         """
-        Create country-specific map data with geometry information.
+        Create country-specific map data with geography information.
 
         Args:
             data (pandas.DataFrame): data to show
@@ -176,9 +176,9 @@ class ColoredMap(VisualizeBase):
                 Columns
                     - Value (int or float or None): values to plot
                     - Province (str): province names
-                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+                    - geography (geopandas.GeoDataFrame.geography): geography information
         """
-        # Get geometry information of the country
+        # Get geography information of the country
         iso3 = self._to_iso3(country)
         scale = "50m" if iso3 == "USA" else "10m"
         gdf = self._load_geo_country_specific(scale=scale)
@@ -191,15 +191,15 @@ class ColoredMap(VisualizeBase):
         # Update province names
         gdf[self.PROVINCE] = gdf[self.PROVINCE].replace(
             {"Xizang": "Tibet", "Inner Mongol": "Inner Mongolia"})
-        # Merge the data with geometry information
+        # Merge the data with geography information
         gdf = gdf.merge(data, how="left", on=self.PROVINCE)
         # Select countries
         sel = set(included or gdf[self.PROVINCE].unique()) - set(excluded or [])
-        return gdf.loc[gdf[self.PROVINCE].isin(sel), ["Value", self.PROVINCE, "geometry"]]
+        return gdf.loc[gdf[self.PROVINCE].isin(sel), ["Value", self.PROVINCE, "geography"]]
 
     def _load_geo_global(self):
         """
-        Retrieve geometry information for global map.
+        Retrieve geography information for global map.
 
         Returns:
             geopandas.GeoDataFrame:
@@ -207,10 +207,10 @@ class ColoredMap(VisualizeBase):
                     reset index
                 Columns
                     - ISO3 (str): ISO3 codes
-                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+                    - geography (geopandas.GeoDataFrame.geography): geography information
         """
-        # Geometry information from Natural Earth
-        # pop_est, continent, name, iso_a3, gdp_md_est, geometry
+        # Geography information from Natural Earth
+        # pop_est, continent, name, iso_a3, gdp_md_est, geography
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         geopath = gpd.datasets.get_path("naturalearth_lowres")
         gdf = gpd.read_file(geopath)
@@ -227,7 +227,7 @@ class ColoredMap(VisualizeBase):
         gdf.loc[sel, self.ISO3] = gdf.loc[sel, "name"].apply(self._to_iso3)
         # Remove Antarctica and
         gdf = gdf.loc[gdf[self.ISO3] != "ATA"]
-        return gdf.loc[:, [self.ISO3, "geometry"]]
+        return gdf.loc[:, [self.ISO3, "geography"]]
 
     def _load_geo_country_specific(self, scale):
         """
@@ -244,7 +244,7 @@ class ColoredMap(VisualizeBase):
                 Columns
                     - ISO3 (str): ISO3 codes
                     - Province (str): province name
-                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+                    - geography (geopandas.GeoDataFrame.geography): geography information
         """
         title = f"ne_{scale}_admin_1_states_provinces"
         extensions = [".README.html", ".VERSION.txt", ".cpg", ".dbf", ".sbn", ".sbx", ".shp", ".shx"]
@@ -264,4 +264,4 @@ class ColoredMap(VisualizeBase):
         gdf = gpd.read_file(geo_dirpath.joinpath(f"{title}.shp"))
         gdf["name"] = gdf["name"].fillna("").apply(unidecode)
         gdf.rename(columns={"name": self.PROVINCE, "adm0_a3": self.ISO3}, inplace=True)
-        return gdf.loc[:, [self.ISO3, self.PROVINCE, "geometry"]]
+        return gdf.loc[:, [self.ISO3, self.PROVINCE, "geography"]]

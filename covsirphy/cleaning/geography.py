@@ -5,7 +5,7 @@ import contextlib
 from covsirphy.util.term import Term
 
 
-class Geometry(Term):
+class Geography(Term):
     """
     Class to manipulate geography data.
 
@@ -26,7 +26,7 @@ class Geometry(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geometry(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or None): location names to filter or None (top-level layer)
 
@@ -72,7 +72,7 @@ class Geometry(Term):
 
     def filter(self, data, geo=None):
         """
-        Filter the data with geometry information.
+        Filter the data with geography information.
 
         Args:
             data (pandas.DataFrame):
@@ -80,7 +80,7 @@ class Geometry(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geometry(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str)): location names for the layers to filter or None (all data at the top level)
 

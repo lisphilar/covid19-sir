@@ -38,9 +38,9 @@ class CleaningBase(Term):
         Either @filename (high priority) or @data must be specified.
 
     Note:
-        - If @filename is None, geometry information will be saved in "input" directory.
-        - If @filename is not None, geometry information will be saved in the directory which has the file.
-        - The directory of geometry information could be changed with .directory property.
+        - If @filename is None, geography information will be saved in "input" directory.
+        - If @filename is not None, geography information will be saved in the directory which has the file.
+        - The directory of geography information could be changed with .directory property.
     """
 
     def __init__(self, filename=None, data=None, citation=None, variables=None):
@@ -113,7 +113,7 @@ class CleaningBase(Term):
     @property
     def directory(self):
         """
-        str: directory name to save geometry information
+        str: directory name to save geography information
         """
         return str(self._dirpath)
 

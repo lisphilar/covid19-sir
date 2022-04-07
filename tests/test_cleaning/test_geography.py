@@ -3,10 +3,10 @@
 
 import pandas as pd
 import pytest
-from covsirphy import Geometry, Term
+from covsirphy import Geography, Term
 
 
-class TestGeometry(object):
+class TestGeography(object):
     def test_layer(self):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.DataFrame(
@@ -21,7 +21,7 @@ class TestGeometry(object):
                 Term.C: range(14),
             }
         )
-        geometry = Geometry(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
+        geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
         # When `geo=None` or `geo=(None,)`, returns country-level data.
         df = pd.DataFrame(
             {
@@ -32,8 +32,8 @@ class TestGeometry(object):
                 Term.C: [2, 3, 4, 5],
             }
         )
-        assert geometry.layer(data=raw, geo=None).equals(df)
-        assert geometry.layer(data=raw, geo=(None,)).equals(df)
+        assert geography.layer(data=raw, geo=None).equals(df)
+        assert geography.layer(data=raw, geo=(None,)).equals(df)
         # When `geo=("Japan",)`, returns province-level data in Japan.
         df = pd.DataFrame(
             {
@@ -44,7 +44,7 @@ class TestGeometry(object):
                 Term.C: [6, 7],
             }
         )
-        assert geometry.layer(data=raw, geo=("Japan",)).equals(df)
+        assert geography.layer(data=raw, geo=("Japan",)).equals(df)
         # When `geo=(["Japan", "UK"],)`, returns province-level data in Japan and UK.
         df = pd.DataFrame(
             {
@@ -55,7 +55,7 @@ class TestGeometry(object):
                 Term.C: [0, 1, 6, 7],
             }
         )
-        assert geometry.layer(data=raw, geo=(["Japan", "UK"],)).equals(df)
+        assert geography.layer(data=raw, geo=(["Japan", "UK"],)).equals(df)
         # When `geo=("Japan", "Kanagawa")`, returns city-level data in Kanagawa/Japan.
         df = pd.DataFrame(
             {
@@ -66,7 +66,7 @@ class TestGeometry(object):
                 Term.C: [10, 11, 12, 13],
             }
         )
-        assert geometry.layer(data=raw, geo=("Japan", "Kanagawa")).equals(df)
+        assert geography.layer(data=raw, geo=("Japan", "Kanagawa")).equals(df)
         # When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns city-level data in Tokyo/Japan and Kanagawa/Japan.
         df = pd.DataFrame(
             {
@@ -77,14 +77,14 @@ class TestGeometry(object):
                 Term.C: [8, 9, 10, 11, 12, 13],
             }
         )
-        assert geometry.layer(data=raw, geo=("Japan", ["Tokyo", "Kanagawa"])).equals(df)
+        assert geography.layer(data=raw, geo=("Japan", ["Tokyo", "Kanagawa"])).equals(df)
         # Errors
         with pytest.raises(TypeError):
-            geometry.layer(data=raw, geo="a")
+            geography.layer(data=raw, geo="a")
         with pytest.raises(TypeError):
-            geometry.layer(data=raw, geo=(1,))
+            geography.layer(data=raw, geo=(1,))
         with pytest.raises(ValueError):
-            geometry.layer(data=raw, geo=("The Earth", "Japan", "Tokyo", "Chiyoda"))
+            geography.layer(data=raw, geo=("The Earth", "Japan", "Tokyo", "Chiyoda"))
 
     def test_filter(self):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
@@ -100,7 +100,7 @@ class TestGeometry(object):
                 Term.C: range(14),
             }
         )
-        geometry = Geometry(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
+        geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
         # When `geo = None` or `geo = (None,)`, returns all country-level data.
         df = pd.DataFrame(
             {
@@ -111,8 +111,8 @@ class TestGeometry(object):
                 Term.C: [2, 3, 4, 5],
             }
         )
-        assert geometry.filter(data=raw, geo=None).equals(df)
-        assert geometry.filter(data=raw, geo=(None,)).equals(df)
+        assert geography.filter(data=raw, geo=None).equals(df)
+        assert geography.filter(data=raw, geo=(None,)).equals(df)
         # When `geo = ("Japan",)`, returns country-level data in Japan.
         df = pd.DataFrame(
             {
@@ -123,7 +123,7 @@ class TestGeometry(object):
                 Term.C: [4, 5],
             }
         )
-        assert geometry.filter(data=raw, geo=("Japan",)).equals(df)
+        assert geography.filter(data=raw, geo=("Japan",)).equals(df)
         # When `geo = (["Japan", "UK"],)`, returns country-level data of Japan and UK.
         df = pd.DataFrame(
             {
@@ -134,7 +134,7 @@ class TestGeometry(object):
                 Term.C: [2, 3, 4, 5],
             }
         )
-        assert geometry.filter(data=raw, geo=(["Japan", "UK"],)).equals(df)
+        assert geography.filter(data=raw, geo=(["Japan", "UK"],)).equals(df)
         # When `geo = ("Japan", "Tokyo")`, returns province - level data of Tokyo/Japan.
         df = pd.DataFrame(
             {
@@ -145,7 +145,7 @@ class TestGeometry(object):
                 Term.C: [6, 7],
             }
         )
-        assert geometry.filter(data=raw, geo=("Japan", "Tokyo")).equals(df)
+        assert geography.filter(data=raw, geo=("Japan", "Tokyo")).equals(df)
         # When `geo = ("Japan", ["Tokyo", "Kanagawa"])`, returns province-level data of Tokyo/Japan and Kanagawa/Japan.
         # Note that the example raw data does not include province-level data of Kanagawa/Japan.
         df = pd.DataFrame(
@@ -157,7 +157,7 @@ class TestGeometry(object):
                 Term.C: [6, 7],
             }
         )
-        assert geometry.filter(data=raw, geo=("Japan", ["Tokyo", "Kanagawa"])).equals(df)
+        assert geography.filter(data=raw, geo=("Japan", ["Tokyo", "Kanagawa"])).equals(df)
         # When `geo = ("Japan", "Kanagawa", "Yokohama")`, returns city-level data of Yokohama/Kanagawa/Japan.
         df = pd.DataFrame(
             {
@@ -168,7 +168,7 @@ class TestGeometry(object):
                 Term.C: [10, 11],
             }
         )
-        assert geometry.filter(data=raw, geo=("Japan", "Kanagawa", "Yokohama")).equals(df)
+        assert geography.filter(data=raw, geo=("Japan", "Kanagawa", "Yokohama")).equals(df)
         # When `geo = (("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns city-level data of Yokohama/Kanagawa/Japan and Kawasaki / Kanagawa / Japan.
         df = pd.DataFrame(
             {
@@ -179,11 +179,11 @@ class TestGeometry(object):
                 Term.C: [10, 11, 12, 13],
             }
         )
-        assert geometry.filter(data=raw, geo=("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])).equals(df)
+        assert geography.filter(data=raw, geo=("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])).equals(df)
         # Errors
         with pytest.raises(TypeError):
-            geometry.filter(data=raw, geo="a")
+            geography.filter(data=raw, geo="a")
         with pytest.raises(TypeError):
-            geometry.filter(data=raw, geo=(1,))
+            geography.filter(data=raw, geo=(1,))
         with pytest.raises(ValueError):
-            geometry.filter(data=raw, geo=("The Earth", "Japan", "Tokyo", "Chiyoda"))
+            geography.filter(data=raw, geo=("The Earth", "Japan", "Tokyo", "Chiyoda"))

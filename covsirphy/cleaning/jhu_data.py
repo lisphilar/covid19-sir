@@ -306,7 +306,7 @@ class JHUData(CleaningBase):
                     - Fatal: the number of fatal cases
                     - Recovered: the number of recovered cases
                     - Popupation: population values (optional)
-            directory (str): directory to save geometry information (for .map() method)
+            directory (str): directory to save geography information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset

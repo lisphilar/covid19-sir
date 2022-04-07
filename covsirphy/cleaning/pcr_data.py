@@ -105,7 +105,7 @@ class PCRData(CleaningBase):
                     - Country: country/region name
                     - Province: province/prefecture/state name
                     - Tests: the number of tests
-            directory (str): directory to save geometry information (for .map() method)
+            directory (str): directory to save geography information (for .map() method)
 
         Returns:
             covsirphy.PCRData: PCR dataset
