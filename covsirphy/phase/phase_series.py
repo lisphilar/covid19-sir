@@ -401,7 +401,7 @@ class PhaseSeries(Term):
         """
         dataframes = []
         rec_dates = record_df[self.DATE].dt.strftime(self.DATE_FORMAT).unique()
-        for (num, unit) in enumerate(self._units):
+        for unit in self._units:
             if not unit:
                 continue
             if unit.start_date in rec_dates:
