@@ -38,9 +38,9 @@ class CleaningBase(Term):
         Either @filename (high priority) or @data must be specified.
 
     Note:
-        - If @filename is None, geometry information will be saved in "input" directory.
-        - If @filename is not None, geometry information will be saved in the directory which has the file.
-        - The directory of geometry information could be changed with .directory property.
+        - If @filename is None, geography information will be saved in "input" directory.
+        - If @filename is not None, geography information will be saved in the directory which has the file.
+        - The directory of geography information could be changed with .directory property.
     """
 
     def __init__(self, filename=None, data=None, citation=None, variables=None):
@@ -113,7 +113,7 @@ class CleaningBase(Term):
     @property
     def directory(self):
         """
-        str: directory name to save geometry information
+        str: directory name to save geography information
         """
         return str(self._dirpath)
 
@@ -260,7 +260,7 @@ class CleaningBase(Term):
             If province is None or '-', return country name.
             If not, return the area name, like 'Japan/Tokyo'
         """
-        if province in [None, cls.UNKNOWN]:
+        if province in [None, cls.NA]:
             return country
         return f"{country}{cls.SEP}{province}"
 
@@ -291,18 +291,18 @@ class CleaningBase(Term):
         df = self._cleaned_df.copy()
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
         if self.PROVINCE not in df:
-            df[self.PROVINCE] = self.UNKNOWN
+            df[self.PROVINCE] = self.NA
         df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
         # Country level data
         if country is None:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+            df = df.loc[df[self.PROVINCE] == self.NA]
             return df.drop(self.PROVINCE, axis=1).reset_index(drop=True)
         # Province level data at the selected country
         country_alias = self.ensure_country_name(country, errors="coerce")
         df = df.loc[df[self.COUNTRY] == country_alias]
         if df.empty:
             raise SubsetNotFoundError(country=country, country_alias=country_alias) from None
-        df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] != self.NA]
         return df.reset_index(drop=True)
 
     def _subset_by_area(self, country, province=None):
@@ -320,7 +320,7 @@ class CleaningBase(Term):
             SubsetNotFoundError: no records were found for the condition
         """
         # Country level
-        if province is None or province == self.UNKNOWN:
+        if province is None or province == self.NA:
             df = self.layer(country=None)
             country_alias = self.ensure_country_name(country)
             df = df.loc[df[self.COUNTRY] == country_alias]
@@ -475,12 +475,12 @@ class CleaningBase(Term):
             try:
                 df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
                 df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
-                df.loc[df[self.PROVINCE] == "Greenland", self.AREA_ABBR_COLS] = ["GRL", "Greenland", self.UNKNOWN]
+                df.loc[df[self.PROVINCE] == "Greenland", self.AREA_ABBR_COLS] = ["GRL", "Greenland", self.NA]
             except ValueError:
                 pass
         # Select country level data
         if self.PROVINCE in df.columns:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+            df = df.loc[df[self.PROVINCE] == self.NA]
         # Select date
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])
@@ -511,7 +511,7 @@ class CleaningBase(Term):
         # Select country-specific data
         self._ensure_dataframe(df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
         df = df.loc[df[self.COUNTRY] == country_alias]
-        df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] != self.NA]
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, message="at province level")

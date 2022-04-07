@@ -52,7 +52,7 @@ class Scenario(Term):
             raise ValueError("@country must be specified.")
         self._area = JHUData.area_name(country, province)
         # Initialize data handler
-        self._data = DataHandler(country=str(country), province=str(province or self.UNKNOWN))
+        self._data = DataHandler(country=str(country), province=str(province or self.NA))
         self._data.switch_complement(whether=auto_complement)
         # ODE model
         self._model = None
@@ -720,7 +720,7 @@ class Scenario(Term):
         Note:
             "Start" and "End" are string at this time.
         """
-        df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.NA)
         if df.empty:
             return pd.DataFrame(index=[self.TENSE, self.START, self.END, self.N])
         df[self.START] = df[self.START].dt.strftime(self.DATE_FORMAT)
@@ -1001,9 +1001,9 @@ class Scenario(Term):
         if not with_rt or len(self._tracker_dict) == 1:
             return df
         # History of reproduction number
-        rt_df = self.summary().reset_index().replace(self.UNKNOWN, np.nan)
+        rt_df = self.summary().reset_index().replace(self.NA, np.nan)
         rt_df = rt_df.pivot_table(index=self.SERIES, columns=self.PHASE, values=self.RT, aggfunc="last")
-        rt_df = rt_df.fillna(self.UNKNOWN)
+        rt_df = rt_df.fillna(self.NA)
         rt_df = rt_df.loc[:, rt_df.nunique() > 1]
         cols = sorted(rt_df, key=self.str2num)
         return df.join(rt_df[cols].add_suffix(f"_{self.RT}"), how="left")

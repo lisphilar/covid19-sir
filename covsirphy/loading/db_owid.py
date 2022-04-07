@@ -90,5 +90,5 @@ class _OWID(_RemoteDatabase):
         df.loc[df["location"] == df["iso_code"], "location"] = None
         df.loc[df["location"].isna(), "location"] = df.loc[df["location"].isna(), "iso_code"].apply(
             lambda x: coco.convert(x, to="name_short", not_found=None))
-        df[self.PROVINCE] = self.UNKNOWN
+        df[self.PROVINCE] = self.NA
         return df

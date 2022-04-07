@@ -115,7 +115,7 @@ class JHUData(CleaningBase):
         except TypeError:
             pass
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Values
         for col in [self.C, self.F, self.R, self.N]:
             df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
@@ -306,13 +306,13 @@ class JHUData(CleaningBase):
                     - Fatal: the number of fatal cases
                     - Recovered: the number of recovered cases
                     - Popupation: population values (optional)
-            directory (str): directory to save geometry information (for .map() method)
+            directory (str): directory to save geography information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset
         """
         df = cls._ensure_dataframe(dataframe, name="dataframe")
-        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df else cls.UNKNOWN
+        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df else cls.NA
         df[cls.N] = df[cls.N] if cls.N in df else 0
         instance = cls()
         instance.directory = str(directory)
@@ -338,7 +338,7 @@ class JHUData(CleaningBase):
                     - Fatal per (Fatal or Recovered) (int)
         """
         df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] == self.NA]
         df = df.groupby(self.DATE).sum()
         total_series = df.loc[:, self.C]
         r_cols = self.RATE_COLUMNS[:]
@@ -364,7 +364,7 @@ class JHUData(CleaningBase):
             list[str]: list of country names
         """
         df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] == self.NA]
         # All countries
         all_set = set((df[self.COUNTRY].unique()))
         # Selectable countries without complement
@@ -390,7 +390,7 @@ class JHUData(CleaningBase):
         """
         # Get cleaned dataset at country level
         df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] == self.NA]
         # Select records of countries where recovered values are reported
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
         if df.empty:
@@ -424,7 +424,7 @@ class JHUData(CleaningBase):
         default = 17
         # Get valid data for calculation
         df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.loc[df[self.PROVINCE] == self.NA]
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
         # If no records were found the default value will be returned
         if df.empty:
@@ -638,8 +638,8 @@ class JHUData(CleaningBase):
         # Area name
         if country is None:
             country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
-        province = province or self.UNKNOWN
-        if not isinstance(country, str) and province != self.UNKNOWN:
+        province = province or self.NA
+        if not isinstance(country, str) and province != self.NA:
             raise ValueError("@province cannot be specified when @country is not a string.")
         if not isinstance(country, list):
             country = [country]
