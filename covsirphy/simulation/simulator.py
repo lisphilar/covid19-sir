@@ -21,8 +21,8 @@ class ODESimulator(Term):
 
     @deprecate("ODESimulator", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, country=None, province=None):
-        self.country = country or self.UNKNOWN
-        self.province = province or self.UNKNOWN
+        self.country = country or self.NA
+        self.province = province or self.NA
         # keys: model, step_n, population, param_dict, y0_dict
         self.setting = {}
         # key: non-dim variable name, value: dimensional variable name

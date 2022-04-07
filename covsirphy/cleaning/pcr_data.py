@@ -80,7 +80,7 @@ class PCRData(CleaningBase):
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Values
         df = df.dropna(subset=[self.TESTS, self.C], how="any")
         for col in [self.TESTS, self.C]:
@@ -111,7 +111,7 @@ class PCRData(CleaningBase):
             covsirphy.PCRData: PCR dataset
         """
         df = cls._ensure_dataframe(dataframe, name="dataframe")
-        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.UNKNOWN
+        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.NA
         instance = cls(filename=None)
         instance.directory = str(directory)
         instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls._raw_cols)
@@ -456,7 +456,7 @@ class PCRData(CleaningBase):
         window = self._ensure_natural_int(window, name="window")
         # Subset with area
         country_alias = self.ensure_country_name(country)
-        province = province or self.UNKNOWN
+        province = province or self.NA
         try:
             subset_df = self._subset_select(country_alias, province)
         except PCRIncorrectPreconditionError:
@@ -506,7 +506,7 @@ class PCRData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
         """
         country_alias = self.ensure_country_name(country)
-        df = self._subset_select(country=country_alias, province=province or self.UNKNOWN)
+        df = self._subset_select(country=country_alias, province=province or self.NA)
         # Calculate Tests_diff
         df[self.T_DIFF] = df[self.TESTS].diff().fillna(0)
         df.loc[df[self.T_DIFF] < 0, self.T_DIFF] = 0

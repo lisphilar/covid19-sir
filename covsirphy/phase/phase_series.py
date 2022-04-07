@@ -251,7 +251,7 @@ class PhaseSeries(Term):
             return pd.DataFrame(columns=[self.TENSE, self.START, self.END, self.N])
         # Convert to dataframe
         df = pd.DataFrame.from_dict(info_dict, orient="index")
-        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        return df.dropna(how="all", axis=1).fillna(self.NA)
 
     def to_dict(self):
         """

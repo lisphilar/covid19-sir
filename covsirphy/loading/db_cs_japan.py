@@ -69,7 +69,7 @@ class _CSJapan(_RemoteDatabase):
         dar_df = dar_df.rename(columns={"Location": "Area"}).set_index("Date")
         # Country level data
         c_df = dar_df.groupby("Date").sum().reset_index()
-        c_df["Area"] = self.UNKNOWN
+        c_df["Area"] = self.NA
         # Entering (= Airport + Returnee)
         e_df = dar_df.loc[dar_df["Area"].isin(["Airport", "Returnee"])].groupby("Date").sum().reset_index()
         e_df["Area"] = "Entering"
