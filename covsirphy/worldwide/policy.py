@@ -153,7 +153,7 @@ class PolicyMeasures(Term):
             dataframes.append(df)
         summary_df = pd.concat(dataframes, axis=0, ignore_index=True)
         summary_df = summary_df.set_index([self.COUNTRY, self.PHASE])
-        return summary_df.fillna(self.UNKNOWN)
+        return summary_df.fillna(self.NA)
 
     def phase_len(self):
         """
@@ -287,7 +287,7 @@ class PolicyMeasures(Term):
         if self.model is None:
             raise UnExecutedError("PolicyMeasures.estimate(model)")
         # Get parameter/Rt/data parameter value of each date
-        df = self.summary().reset_index().replace(self.UNKNOWN, None)
+        df = self.summary().reset_index().replace(self.NA, None)
         df[self.START] = pd.to_datetime(
             df[self.START], format=self.DATE_FORMAT)
         df[self.END] = pd.to_datetime(df[self.END], format=self.DATE_FORMAT)

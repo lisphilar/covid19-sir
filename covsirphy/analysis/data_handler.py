@@ -49,7 +49,7 @@ class DataHandler(Term):
 
     def __init__(self, country, province=None, **kwargs):
         # Details of the area name
-        self._area_dict = {"country": str(country), "province": str(province or self.UNKNOWN)}
+        self._area_dict = {"country": str(country), "province": str(province or self.NA)}
         # Main dataset before complement
         main_cols = [self.DATE, self.C, self.CI, self.F, self.R, self.S]
         self._main_raw = pd.DataFrame(columns=main_cols)
