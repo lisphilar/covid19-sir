@@ -97,7 +97,7 @@ class VaccineData(CleaningBase):
             "people_vaccinated": self.V_ONCE,
             "people_fully_vaccinated": self.V_FULL,
         }
-        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - set(["vaccines"])))
+        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - {"vaccines"}))
         loc_df = pd.read_csv(URL_LOC, usecols=["location", "vaccines"])
         df = rec_df.merge(loc_df, how="left", on="location")
         df = df.rename(rename_dict, axis=1)

@@ -102,7 +102,7 @@ class ColoredMap(VisualizeBase):
                 "hatch": "///",
             }
         }
-        plot_kwargs.update(kwargs)
+        plot_kwargs |= kwargs
         plot_kwargs["legend_kwds"] = {"orientation": "horizontal"}
         # Convert to log10 scale
         if logscale:
