@@ -62,17 +62,17 @@ class DataLoader(Term):
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
-        # Dictionary of filenames to save remote datasets
         filename_dict = {
             "covid19dh": "covid19dh.csv",
             "owid": "ourworldindata.csv",
             "google": "google_cloud_platform.csv",
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
+        } | {
+            k: self.dir_path.joinpath((basename_dict or {}).get(k, v))
+            for (k, v) in filename_dict.items()
         }
-        filename_dict.update(
-            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in filename_dict.items()}
-        )
+
         self._filename_dict = filename_dict.copy()
         # Verbosity
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
