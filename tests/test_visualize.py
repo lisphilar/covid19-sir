@@ -43,7 +43,7 @@ class TestColoredMap(object):
     @pytest.mark.parametrize("variable", ["Infected"])
     def test_global_country(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
-        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
+        df = df.loc[df[Term.PROVINCE] == Term.NA]
         df = df.groupby(Term.COUNTRY).last().reset_index()
         df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
@@ -55,7 +55,7 @@ class TestColoredMap(object):
     @pytest.mark.parametrize("variable", ["Infected"])
     def test_global_country_ununique(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
-        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
+        df = df.loc[df[Term.PROVINCE] == Term.NA]
         df.rename(columns={variable: "Value"}, inplace=True)
         with pytest.raises(ValueError):
             with ColoredMap(filename=imgfile) as cm:
@@ -66,7 +66,7 @@ class TestColoredMap(object):
     def test_in_a_country(self, imgfile, jhu_data, country, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.COUNTRY] == country]
-        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.loc[df[Term.PROVINCE] != Term.NA]
         df = df.groupby(Term.PROVINCE).last().dropna().reset_index()
         df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
@@ -75,7 +75,7 @@ class TestColoredMap(object):
     @pytest.mark.parametrize("variable", ["Infected"])
     def test_in_a_country_unselected_country(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
-        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.loc[df[Term.PROVINCE] != Term.NA]
         df = df.groupby(Term.PROVINCE).last().dropna().reset_index()
         df.rename(columns={variable: "Value"}, inplace=True)
         with pytest.raises(ValueError):
@@ -87,7 +87,7 @@ class TestColoredMap(object):
     def test_in_a_country_ununique(self, imgfile, jhu_data, country, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.COUNTRY] == country]
-        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.loc[df[Term.PROVINCE] != Term.NA]
         df = df.dropna().reset_index()
         df.rename(columns={variable: "Value"}, inplace=True)
         with pytest.raises(ValueError):

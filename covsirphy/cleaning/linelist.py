@@ -118,7 +118,7 @@ class LinelistData(CleaningBase):
         df = df.rename(self.RAW_COL_DICT, axis=1)
         # Location
         df = df.dropna(subset=[self.COUNTRY])
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Date
         for col in [self.HOSPITAL_DATE, self.CONFIRM_DATE, self.OUTCOME_DATE]:
             df[col] = pd.to_datetime(
@@ -146,7 +146,7 @@ class LinelistData(CleaningBase):
         # Age
         df[self.AGE] = pd.to_numeric(df[self.AGE], errors="coerce")
         # Sex
-        df[self.SEX] = df[self.SEX].fillna(self.UNKNOWN)
+        df[self.SEX] = df[self.SEX].fillna(self.NA)
         # Update data types to reduce memory
         cat_cols = [
             self.AGE, self.SEX, self.SYMPTOM, self.CHRONIC, *self.AREA_COLUMNS]
@@ -187,7 +187,7 @@ class LinelistData(CleaningBase):
         country = self.ensure_country_name(country)
         df = df.loc[df[self.COUNTRY] == country]
         # Subset by province name
-        if province not in (None, self.UNKNOWN):
+        if province not in (None, self.NA):
             df = df.loc[df[self.PROVINCE] == province]
         # Check records are registered
         country_alias = self.ensure_country_name(country)

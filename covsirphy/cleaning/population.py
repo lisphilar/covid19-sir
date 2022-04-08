@@ -52,7 +52,7 @@ class PopulationData(CleaningBase):
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         df[self.N] = df[self.N].fillna(0).astype(np.int64)
         # Columns to use
         df = df.loc[:, self._raw_cols]
@@ -86,10 +86,10 @@ class PopulationData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         if country_level:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+            df = df.loc[df[self.PROVINCE] == self.NA, :]
             df["key"] = df[self.COUNTRY]
         else:
-            df = df.loc[df[self.PROVINCE] != self.UNKNOWN, :]
+            df = df.loc[df[self.PROVINCE] != self.NA, :]
             df["key"] = df[self.COUNTRY].str.cat(df[self.PROVINCE], sep=self.SEP)
         return df.set_index("key").to_dict()[self.N]
 
@@ -135,7 +135,7 @@ class PopulationData(CleaningBase):
             If @province is None, "-" will be used.
         """
         population = self._ensure_natural_int(value, "value")
-        province = province or self.UNKNOWN
+        province = province or self.NA
         date_stamp = self._ensure_date(date, name="date", default=self._cleaned_df[self.DATE].max())
         df = self._cleaned_df.copy()
         c_series = df[self.COUNTRY]
@@ -147,7 +147,7 @@ class PopulationData(CleaningBase):
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            [date_stamp, self.UNKNOWN, country, province, population], index=self._raw_cols)
+            [date_stamp, self.NA, country, province, population], index=self._raw_cols)
         self._cleaned_df = df.append(series, ignore_index=True)
         return self
 

@@ -143,7 +143,7 @@ class ColoredMap(VisualizeBase):
         # data to plot
         df = data.copy()
         df[self.ISO3] = df[self.COUNTRY].apply(self._to_iso3) if self.ISO3 not in df else df[self.ISO3]
-        # Geometry
+        # Geography
         gdf = self._load_geo_global()
         # Merge them
         gdf = gdf.merge(df, how="left", on=self.ISO3)
@@ -209,7 +209,7 @@ class ColoredMap(VisualizeBase):
                     - ISO3 (str): ISO3 codes
                     - geometry (geopandas.GeoDataFrame.geometry): geometry information
         """
-        # Geometry information from Natural Earth
+        # Geography information from Natural Earth
         # pop_est, continent, name, iso_a3, gdp_md_est, geometry
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         geopath = gpd.datasets.get_path("naturalearth_lowres")

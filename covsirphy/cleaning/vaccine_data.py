@@ -58,7 +58,7 @@ class VaccineData(CleaningBase):
         if self._raw.empty:
             self._raw = self._retrieve(filename, **kwargs)
         if self.PROVINCE not in self._raw:
-            self._raw[self.PROVINCE] = self.UNKNOWN
+            self._raw[self.PROVINCE] = self.NA
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self._raw_cols) if self._raw.empty else self._cleaning()
         # Citation
@@ -174,7 +174,7 @@ class VaccineData(CleaningBase):
         df = self._cleaned_df.copy()
         # Subset by country
         country_alias = self.ensure_country_name(country)
-        df = df.loc[(df[self.COUNTRY] == country_alias) & (df[self.PROVINCE] == (province or self.UNKNOWN))]
+        df = df.loc[(df[self.COUNTRY] == country_alias) & (df[self.PROVINCE] == (province or self.NA))]
         # Subset by product name
         if product is not None:
             df = df.loc[df[self.PRODUCT] == product]

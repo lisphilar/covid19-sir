@@ -62,7 +62,7 @@ class ExampleData(JHUData):
         Returns:
             tuple(str, str): country name and province name
         """
-        province = province or self.UNKNOWN
+        province = province or self.NA
         if country is not None:
             return (country, province)
         if model is None:
@@ -109,7 +109,7 @@ class ExampleData(JHUData):
         handler.add(end, param_dict=arg_dict[self.PARAM_DICT], y0_dict=arg_dict[self.Y0_DICT])
         restored_df = handler.simulate()
         # JHU-type records
-        restored_df[self.ISO3] = self.UNKNOWN
+        restored_df[self.ISO3] = self.NA
         restored_df[self.COUNTRY] = country
         restored_df[self.PROVINCE] = province
         restored_df[self.C] = restored_df[[self.CI, self.F, self.R]].sum(axis=1)
