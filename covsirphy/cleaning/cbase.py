@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import warnings
 import country_converter as coco
@@ -11,6 +12,7 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
 from covsirphy.util.term import Term
 from covsirphy.visualization.colored_map import ColoredMap
+from covsirphy.cleaning.geography import Geography
 
 
 class CleaningBase(Term):
@@ -24,14 +26,10 @@ class CleaningBase(Term):
                 reset index
             Columns
                 - Date: Observation date
-                - ISO3: ISO3 code (optional)
-                - Country: country/region name
-                - Province: province/prefecture/state name
-                - Confirmed: the number of confirmed cases
-                - Fatal: the number of fatal cases
-                - Recovered: the number of recovered cases
-                - Population: population values (optional)
+                - (str): location identifiers defined by @layers
+                - (str): variable names defined by @variables
         citation (str or None): citation or None (empty)
+        layers (list[str] or None): list of location identifiers or None (ISO3, Country, Province)
         variables (list[str] or None): variables to clean (not including date and location identifiers)
 
     Note:
@@ -43,9 +41,10 @@ class CleaningBase(Term):
         - The directory of geography information could be changed with .directory property.
     """
 
-    def __init__(self, filename=None, data=None, citation=None, variables=None):
+    def __init__(self, filename=None, data=None, citation=None, layers=None, variables=None):
         # Columns of self._raw, self._clean_df and self.cleaned()
-        self._raw_cols = [self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE] + (variables or [])
+        self._layers = self._ensure_list(layers or self.LOC_COLS[:], name="layers")
+        self._raw_cols = [self.DATE] + self._layers + (variables or [])
         self._subset_cols = [self.DATE] + (variables or [])
         # Raw data
         self._raw = self._parse_raw(filename, data, self._raw_cols)
@@ -264,52 +263,61 @@ class CleaningBase(Term):
             return country
         return f"{country}{cls.SEP}{province}"
 
-    def layer(self, country=None):
+    def layer(self, geo=None, country=None):
         """
         Return the cleaned data at the selected layer.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
             country (str or None): country name or None (country level data or country-specific dataset)
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    reset index
-                Columns
-                - Country (str): country names
-                - Province (str): province names (or removed when country level data)
-                - any other columns of the cleaned data
+            pandas.DataFrame: as-is tue cleaned data at the given layer
 
         Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is equal to or larger than the length of layers
             SubsetNotFoundError: no records were found for the country (when @country is not None)
             KeyError: @country was None, but country names were not registered in the dataset
 
         Note:
+            Please refer to Geometry.layer() for more information regarding @geo argument.
+
+        Note:
+            @country was deprecated and please use @geo.
             When @country is None, country level data will be returned.
             When @country is a country name, province level data in the selected country will be returned.
         """
-        df = self._cleaned_df.copy()
-        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
-        if self.PROVINCE not in df:
-            df[self.PROVINCE] = self.NA
-        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
-        # Country level data
-        if country is None:
-            df = df.loc[df[self.PROVINCE] == self.NA]
-            return df.drop(self.PROVINCE, axis=1).reset_index(drop=True)
-        # Province level data at the selected country
-        country_alias = self.ensure_country_name(country, errors="coerce")
-        df = df.loc[df[self.COUNTRY] == country_alias]
-        if df.empty:
-            raise SubsetNotFoundError(country=country, country_alias=country_alias) from None
-        df = df.loc[df[self.PROVINCE] != self.NA]
-        return df.reset_index(drop=True)
+        if {self.ISO3, self.COUNTRY}.issubset(self._layers):
+            loc_columns = [col for col in self._layers if col != self.ISO3]
+            loc_columns = sorted(set(loc_columns), key=loc_columns.index)
+        else:
+            loc_columns = self._layers[:]
+        if geo is None and country is not None:
+            country_alias = self.ensure_country_name(country, errors="raise")
+            geo_all = [country_alias if col == self.COUNTRY else None for col in loc_columns]
+            geo_arranged = tuple(geo_all[:geo_all.index(None)])
+            warnings.warn(
+                f".layer(country) was deprecated and please use .layer(geo={geo_arranged})",
+                DeprecationWarning, stacklevel=2)
+        elif isinstance(geo, str):
+            geo_arranged = (self.ensure_country_name(geo, errors="coerce"),)
+        else:
+            geo_arranged = [
+                self.ensure_country_name(info, errors="coerce") if col == self.COUNTRY else info
+                for (info, col) in zip(geo or [], loc_columns)]
+        geography = Geography(layers=loc_columns)
+        df = geography.layer(data=self._cleaned_df, geo=geo_arranged)
+        if not df.empty:
+            return df
+        raise SubsetNotFoundError(geo=geo, country=country, country_alias=country_alias) from None
 
-    def _subset_by_area(self, country, province=None):
+    def _subset_by_area(self, geo=None, country=None, province=None):
         """
         Return subset for the country/province.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name
             province (str or None): province name or None (country level data)
 
@@ -318,25 +326,44 @@ class CleaningBase(Term):
 
         Raises:
             SubsetNotFoundError: no records were found for the condition
-        """
-        # Country level
-        if province is None or province == self.NA:
-            df = self.layer(country=None)
-            country_alias = self.ensure_country_name(country)
-            df = df.loc[df[self.COUNTRY] == country_alias]
-            return df.reset_index(drop=True)
-        # Province level
-        df = self.layer(country=country)
-        df = df.loc[df[self.PROVINCE] == province]
-        if df.empty:
-            raise SubsetNotFoundError(country=country)
-        return df.reset_index(drop=True)
 
-    def subset(self, country, province=None, start_date=None, end_date=None):
+        Note:
+            Please refer to Geometry.layer() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
+        """
+        if {self.ISO3, self.COUNTRY}.issubset(self._layers):
+            loc_columns = [col for col in self._layers if col != self.ISO3]
+            loc_columns = sorted(set(loc_columns), key=loc_columns.index)
+        else:
+            loc_columns = self._layers[:]
+        if geo is None and country is not None:
+            country_alias = self.ensure_country_name(country, errors="raise")
+            geo_all = [
+                country_alias if col == self.COUNTRY else province if col == self.PROVINCE else None for col in loc_columns]
+            geo_arranged = tuple(geo_all[:geo_all.index(None)] if None in geo_all else geo_all)
+            warnings.warn(
+                f"Argument country was deprecated and please use geo={geo_arranged}",
+                DeprecationWarning, stacklevel=2)
+        elif isinstance(geo, str):
+            geo_arranged = (self.ensure_country_name(geo, errors="raise"),)
+        else:
+            geo_arranged = [
+                self.ensure_country_name(info, errors="raise") if col == self.COUNTRY else info
+                for (info, col) in zip(geo or [], loc_columns)]
+        geography = Geography(layers=loc_columns)
+        df = geography.filter(data=self._cleaned_df, geo=geo_arranged)
+        if not df.empty:
+            return df
+        raise SubsetNotFoundError(geo=geo, country=country)
+
+    def subset(self, geo=None, country=None, province=None, start_date=None, end_date=None):
         """
         Return subset with country/province name and start/end date.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name or ISO3 code
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
@@ -351,29 +378,34 @@ class CleaningBase(Term):
 
         Raises:
             SubsetNotFoundError: no records were found for the condition
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
-        country_alias = self.ensure_country_name(country, errors="coerce")
         try:
-            df = self._subset_by_area(country=country, province=province)
+            df = self._subset_by_area(geo=geo, country=country, province=province)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province) from None
-        df = df.drop([self.COUNTRY, self.ISO3, self.PROVINCE], axis=1, errors="ignore")
-        # Subset with Start/end date
-        if start_date is None and end_date is None:
-            return df.reset_index(drop=True)
+            raise SubsetNotFoundError(geo=geo, country=country, province=province) from None
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
+        df = df.drop(self._layers, axis=1, errors="ignore")
+        # Subset with Start/end date
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
+        df = df.groupby(self.DATE).sum().reset_index()
+        if start_date is None and end_date is None:
+            return df
         series = df[self.DATE].copy()
         start_obj = self._ensure_date(start_date, default=series.min())
         end_obj = self._ensure_date(end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         if df.empty:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
+                geo=geo, country=country, province=province, start_date=start_date, end_date=end_date) from None
         return df.reset_index(drop=True)
 
-    def subset_complement(self, country, **kwargs):
+    def subset_complement(self, **kwargs):
         """
         Return the subset. If necessary, complemention will be performed.
 
@@ -382,12 +414,13 @@ class CleaningBase(Term):
         """
         raise NotImplementedError
 
-    def records(self, country, province=None, start_date=None, end_date=None,
+    def records(self, geo=None, country=None, province=None, start_date=None, end_date=None,
                 auto_complement=True, **kwargs):
         """
         Return the subset. If necessary, complemention will be performed.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name or ISO3 code
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
@@ -400,25 +433,25 @@ class CleaningBase(Term):
                 Index
                     reset index
                 Columns
-                    without ISO3, Country, Province column
+                    without location identifiers
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
-        country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
-            "country": country, "province": province, "start_date": start_date, "end_date": end_date}
+            "geo": geo, "country": country, "province": province, "start_date": start_date, "end_date": end_date}
         if auto_complement:
-            try:
-                df, is_complemented = self.subset_complement(
-                    **subset_arg_dict, **kwargs)
+            with contextlib.suppress(NotImplementedError):
+                df, is_complemented = self.subset_complement(**subset_arg_dict, **kwargs)
                 if not df.empty:
                     return (df, is_complemented)
-            except NotImplementedError:
-                pass
         try:
             return (self.subset(**subset_arg_dict), False)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
+            raise SubsetNotFoundError(**subset_arg_dict) from None
 
     def countries(self):
         """
@@ -430,8 +463,7 @@ class CleaningBase(Term):
         Returns:
             list[str]: list of country names
         """
-        df = self._ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
+        df = self._ensure_dataframe(self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
         return list(df[self.COUNTRY].unique())
 
     def total(self):
@@ -472,12 +504,10 @@ class CleaningBase(Term):
         df = df.loc[df[self.COUNTRY] != self.OTHERS]
         # Recognize province as a region/country
         if self.PROVINCE in df:
-            try:
+            with contextlib.suppress(ValueError):
                 df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
                 df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
                 df.loc[df[self.PROVINCE] == "Greenland", self.LOC_COLS] = ["GRL", "Greenland", self.NA]
-            except ValueError:
-                pass
         # Select country level data
         if self.PROVINCE in df.columns:
             df = df.loc[df[self.PROVINCE] == self.NA]
@@ -513,8 +543,7 @@ class CleaningBase(Term):
         df = df.loc[df[self.COUNTRY] == country_alias]
         df = df.loc[df[self.PROVINCE] != self.NA]
         if df.empty:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, message="at province level")
+            raise SubsetNotFoundError(country=country, country_alias=country_alias, message="at province level")
         # Select date
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])
