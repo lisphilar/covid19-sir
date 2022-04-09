@@ -155,7 +155,7 @@ class PopulationPyramidData(CleaningBase):
         """
         return self._cleaned_df
 
-    def layer(self, country=None):
+    def layer(self, **kwargs):
         raise NotImplementedError
 
     def subset(self, country, year=None, sex=None):

@@ -14,28 +14,22 @@ class PCRData(CleaningBase):
     Data cleaning of PCR dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - ISO3: ISO3 code
-                - Country: country/region name
-                - Province: province/prefecture/state name
-                - Tests: the number of tests
+        arguments defined for CleaningBase class except for @variables
         interval (int): expected update interval of the number of confirmed cases and tests [days]
         min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
-        citation (str): citation
+
+    Note:
+        @variables are Tests (the number of tests) and Confirmed (the number of confirmed cases).
+
     """
     # Daily values
     T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 
-    def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
+    def __init__(self, interval=2, min_pcr_tests=100, **kwargs):
         variables = [self.TESTS, self.C]
-        super().__init__(filename=filename, data=data, citation=citation, variables=variables)
+        super().__init__(variables=variables, **kwargs)
         # Settings
         self.interval = self._ensure_natural_int(interval, name="interval")
         self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")

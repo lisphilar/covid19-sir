@@ -11,16 +11,7 @@ class OxCGRTData(CleaningBase):
     Data cleaning of OxCGRT dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - ISO3: ISO 3166-1 alpha-3, like JPN
-                - Country: country/region name
-                - variables defined by @variables
-        citation (str or None): citation or None (empty)
+        arguments defined for CleaningBase class except for @variables
         variables (list[str] or None): variables to parse or None (use default variables listed as follows)
             - School_closing
             - Workplace_closing
@@ -34,9 +25,6 @@ class OxCGRTData(CleaningBase):
             - Testing_policy
             - Contact_tracing
             - Stringency_index
-
-    Note:
-        Either @filename (high priority) or @data must be specified.
 
     Note:
         The default policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
@@ -59,9 +47,9 @@ class OxCGRTData(CleaningBase):
     # Indicators except for Stringency index
     OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
 
-    def __init__(self, filename=None, data=None, citation=None, variables=None):
+    def __init__(self, variables=None, **kwargs):
         self._variables = variables or self.OXCGRT_VARS[:]
-        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
+        super().__init__(variables=self._variables, **kwargs)
 
     def _cleaning(self):
         """
