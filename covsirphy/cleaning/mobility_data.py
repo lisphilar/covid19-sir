@@ -12,17 +12,7 @@ class MobilityData(CleaningBase):
     Data cleaning of mobility dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - Country: country/region name
-                - ISO3: ISO 3166-1 alpha-3, like JPN
-                - Province: province/prefecture/state name
-                - variables defined by @variables
-        citation (str or None): citation or None (empty)
+        arguments defined for CleaningBase class except for @variables
         variables (list[str] or None): variables to parse or None (use default variables listed as follows)
             - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
             - Mobility_parks: % to baseline in visits (parks etc.)
@@ -30,9 +20,6 @@ class MobilityData(CleaningBase):
             - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
             - Mobility_residential: % to baseline in visits (places of residence)
             - Mobility_workplaces: % to baseline in visits (places of work)
-
-    Note:
-        Either @filename (high priority) or @data must be specified.
 
     Note:
         The default categories of places are listed in covid-19-open-data.
@@ -47,9 +34,9 @@ class MobilityData(CleaningBase):
         "Mobility_workplaces",
     ]
 
-    def __init__(self, filename=None, data=None, citation=None, variables=None):
+    def __init__(self, variables=None, **kwargs):
         self._variables = variables or self._MOBILITY_VARS[:]
-        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
+        super().__init__(variables=self._variables, **kwargs)
 
     def _cleaning(self):
         """
