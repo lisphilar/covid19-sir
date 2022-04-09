@@ -86,7 +86,7 @@ class PCRData(CleaningBase):
         for col in [self.TESTS, self.C]:
             df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
         return df
 
     @classmethod
@@ -165,7 +165,7 @@ class PCRData(CleaningBase):
         # Add the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"

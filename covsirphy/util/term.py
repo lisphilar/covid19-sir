@@ -49,6 +49,7 @@ class Term(object):
     PARAM_DICT = "param_dict"
     ID = "ID"
     AREA_COLUMNS = [COUNTRY, PROVINCE]
+    LOC_COLS = [ISO3, COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
@@ -56,7 +57,6 @@ class Term(object):
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     MONO_COLUMNS = [C, F, R]
-    AREA_ABBR_COLS = [ISO3, *AREA_COLUMNS]
     DSIFR_COLUMNS = [DATE, S, CI, F, R]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"

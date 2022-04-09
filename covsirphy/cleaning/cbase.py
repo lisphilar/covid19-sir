@@ -466,7 +466,7 @@ class CleaningBase(Term):
         df = self._cleaned_df.copy()
         # Check variable name
         if variable not in df.columns:
-            candidates = [col for col in df.columns if col not in self.AREA_ABBR_COLS]
+            candidates = [col for col in df.columns if col not in self.LOC_COLS]
             raise UnExpectedValueError(name="variable", value=variable, candidates=candidates)
         # Remove cruise ships
         df = df.loc[df[self.COUNTRY] != self.OTHERS]
@@ -475,7 +475,7 @@ class CleaningBase(Term):
             try:
                 df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
                 df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
-                df.loc[df[self.PROVINCE] == "Greenland", self.AREA_ABBR_COLS] = ["GRL", "Greenland", self.NA]
+                df.loc[df[self.PROVINCE] == "Greenland", self.LOC_COLS] = ["GRL", "Greenland", self.NA]
             except ValueError:
                 pass
         # Select country level data
@@ -506,7 +506,7 @@ class CleaningBase(Term):
         country_alias = self.ensure_country_name(country)
         # Check variable name
         if variable not in df.columns:
-            candidates = [col for col in df.columns if col not in self.AREA_ABBR_COLS]
+            candidates = [col for col in df.columns if col not in self.LOC_COLS]
             raise UnExpectedValueError(name="variable", value=variable, candidates=candidates)
         # Select country-specific data
         self._ensure_dataframe(df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])

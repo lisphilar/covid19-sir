@@ -122,7 +122,7 @@ class JHUData(CleaningBase):
         # Calculate Infected
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
         return df.loc[:, self._raw_cols]
 
     @deprecate("JHUData.replace()", version="2.21.0-xi-fu1")
@@ -157,7 +157,7 @@ class JHUData(CleaningBase):
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
