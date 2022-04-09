@@ -301,10 +301,10 @@ class CleaningBase(Term):
                 f".layer(country) was deprecated and please use .layer(geo={geo_arranged})",
                 DeprecationWarning, stacklevel=2)
         elif isinstance(geo, str):
-            geo_arranged = (self.ensure_country_name(geo, errors="coerce"),)
+            geo_arranged = (self.ensure_country_name(geo, errors="raise"),)
         else:
             geo_arranged = [
-                self.ensure_country_name(info, errors="coerce") if col == self.COUNTRY else info
+                self.ensure_country_name(info, errors="raise") if col == self.COUNTRY else info
                 for (info, col) in zip(geo or [], loc_columns)]
         geography = Geography(layers=loc_columns)
         df = geography.layer(data=self._cleaned_df, geo=geo_arranged)
