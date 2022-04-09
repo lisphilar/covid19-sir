@@ -14,7 +14,8 @@ class TestJHUData(object):
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
-        assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
+        assert set(df.columns) == {*Term.COLUMNS, Term.ISO3, Term.N}
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -46,10 +47,10 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["Netherlands", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        if country in set(["Netherlands"]):
+        if country == "Netherlands":
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
-        df, is_complemented = jhu_data.subset_complement(country=country)
+        _, is_complemented = jhu_data.subset_complement(country=country)
         assert isinstance(jhu_data.recovery_period, int)
         assert is_complemented
         with pytest.raises(KeyError):

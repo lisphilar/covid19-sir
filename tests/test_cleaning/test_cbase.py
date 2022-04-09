@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import pytest
 import warnings
 from covsirphy import CleaningBase, Word, Population, SubsetNotFoundError
@@ -17,18 +18,16 @@ class TestCleaningBase(object):
         cbase.citation = "citation"
         assert cbase.citation == "citation"
 
+    @pytest.mark.parametrize("geo", [None, ("Japan",)])
+    def test_layer(self, data, geo):
+        with contextlib.suppress(NotImplementedError):
+            data.layer(geo=geo)
+
     @pytest.mark.parametrize("country", [None, "Japan"])
-    def test_layer(self, data, country):
-        # Country level data
-        try:
-            data.layer(country=None)
-        except NotImplementedError:
-            pass
-        # Province level data
-        try:
+    def test_layer_deprecated(self, data, country):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+        with contextlib.suppress(NotImplementedError):
             data.layer(country=country)
-        except NotImplementedError:
-            pass
 
     @pytest.mark.parametrize("country", ["Moon"])
     def test_layer_error(self, japan_data, country):
@@ -38,6 +37,5 @@ class TestCleaningBase(object):
 
 class TestObsoleted(object):
     def test_obsoleted(self):
-        warnings.simplefilter("ignore", category=DeprecationWarning)
         Population(filename=None)
         Word()
