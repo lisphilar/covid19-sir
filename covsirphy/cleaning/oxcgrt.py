@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -69,16 +68,17 @@ class OxCGRTData(CleaningBase):
         """
         df = raw.copy()
         # Prepare data for Greenland
-        loc_df = self._loc_df.copy()
-        denmark_id = loc_df.loc[loc_df[self.COUNTRY], self._LOC]
-        greenland_id = "greenland"
-        grl_df = df.loc[df[self._LOC] == denmark_id].copy()
-        grl_df.loc[:, self._LOC] = greenland_id
-        df = pd.concat([df, grl_df], sort=True, ignore_index=True)
-        self._loc_df = self._loc_df.append(
-            {
-                col: "GRL" if col == self.ISO3 else "Greenland" if col == self.COUNTRY else self.NA for col in self._layers
-            }, ignore_index=True)
+        denmark_series = self._loc_df.loc[self._loc_df[self.COUNTRY] == "Denmark", self._LOC]
+        if not denmark_series.empty:
+            denmark_id = denmark_series.unique()[0]
+            greenland_id = "greenland"
+            grl_df = df.loc[df[self._LOC] == denmark_id].copy()
+            grl_df.loc[:, self._LOC] = greenland_id
+            df = pd.concat([df, grl_df], sort=True, ignore_index=True)
+            self._loc_df = self._loc_df.append(
+                {
+                    col: "GRL" if col == self.ISO3 else "Greenland" if col == self.COUNTRY else self.NA for col in self._layers
+                }, ignore_index=True)
         # Confirm the expected columns are in raw data
         self._ensure_dataframe(df, name="the raw data", columns=self._subset_cols)
         # Read date records
@@ -86,37 +86,7 @@ class OxCGRTData(CleaningBase):
         # Confirm float type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
-        return df
-
-    def subset(self, country, province=None, **kwargs):
-        """
-        Create a subset for a country.
-
-        Args:
-            country (str): country name or ISO 3166-1 alpha-3, like JPN
-            province (str): province name
-            kwargs: the other arguments will be ignored at the latest version
-
-        Raises:
-            covsirphy.SubsetNotFoundError: no records were found
-
-        Returns:
-            pandas.DataFrame
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - variables defined by OxCGRTData(variables)
-        """
-        country_arg = country
-        country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country, province=province)
-        except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country_arg, country_alias=country, province=province) from None
-        df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self._subset_cols]
+        return df.loc[:, [self._LOC, *self._subset_cols]]
 
     def total(self):
         """

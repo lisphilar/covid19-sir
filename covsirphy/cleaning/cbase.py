@@ -161,7 +161,7 @@ class CleaningBase(Term):
         Returns:
             pandas.DataFrame: cleaned data
         """
-        return self._value_df.merge(self._loc_df, how="left", on=self._LOC).drop(self._LOC, axis=1)
+        return self._loc_df.merge(self._value_df, how="right", on=self._LOC).drop(self._LOC, axis=1)
 
     def _cleaning(self, raw):
         """

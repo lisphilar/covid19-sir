@@ -49,7 +49,7 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._cleaned_df.loc[:, self._raw_cols]
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC).drop(self._LOC, axis=1)
         return df.drop(self.ISO3, axis=1)
 
     def _cleaning(self, raw):
@@ -78,8 +78,8 @@ class PCRData(CleaningBase):
             df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         return df
 
-    @classmethod
-    @deprecate("PCRData.from_dataframe()", new="PCRData(data)", version="2.21.0-iota")
+    @ classmethod
+    @ deprecate("PCRData.from_dataframe()", new="PCRData(data)", version="2.21.0-iota")
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create PCRData instance using a pandas dataframe.
@@ -106,7 +106,7 @@ class PCRData(CleaningBase):
         instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls._raw_cols)
         return instance
 
-    @deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
+    @ deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
     def use_ourworldindata(self, filename, force=False):
         """
         Deprecated and removed.
@@ -120,8 +120,8 @@ class PCRData(CleaningBase):
         """
         raise NotImplementedError
 
-    @deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
-               ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
+    @ deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
+                ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
@@ -160,7 +160,7 @@ class PCRData(CleaningBase):
         self._citation += f"\n{country_data.citation}"
         return self
 
-    @staticmethod
+    @ staticmethod
     def _pcr_monotonic(df, variable):
         """
         Force the variable show monotonic increasing.
