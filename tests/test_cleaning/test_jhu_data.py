@@ -41,7 +41,7 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):
-        df, is_complemented = jhu_data.subset_complement(country=country)
+        df, is_complemented = jhu_data.subset_complement(geo=country)
         assert is_complemented
         assert df[Term.C].is_monotonic_increasing
 
@@ -49,30 +49,30 @@ class TestJHUData(object):
     def test_subset_complement_full(self, jhu_data, country):
         if country == "Netherlands":
             with pytest.raises(ValueError):
-                jhu_data.subset(country=country)
-        _, is_complemented = jhu_data.subset_complement(country=country)
+                jhu_data.subset(geo=country)
+        _, is_complemented = jhu_data.subset_complement(geo=country)
         assert isinstance(jhu_data.recovery_period, int)
         assert is_complemented
         with pytest.raises(KeyError):
-            jhu_data.subset_complement(country=country, end_date="01Jan1900")
+            jhu_data.subset_complement(geo=country, end_date="01Jan1900")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset_complement_partial(self, jhu_data, country):
-        df, is_complemented = jhu_data.subset_complement(country=country)
+        df, is_complemented = jhu_data.subset_complement(geo=country)
         assert is_complemented
         with pytest.raises(KeyError):
-            jhu_data.subset_complement(country=country, end_date="01Jan1900")
+            jhu_data.subset_complement(geo=country, end_date="01Jan1900")
 
     @pytest.mark.parametrize(
         "country", ["UK", "Netherlands", "China", "Germany", "France", "Japan"])
     def test_records(self, jhu_data, country):
-        df, is_complemented = jhu_data.records(country=country)
+        df, is_complemented = jhu_data.records(geo=country)
         assert is_complemented
 
     @pytest.mark.parametrize("country", ["Netherlands", "Moon"])
     def test_records_error(self, jhu_data, country):
         with pytest.raises(SubsetNotFoundError):
-            jhu_data.records(country=country, auto_complement=False)
+            jhu_data.records(geo=country, auto_complement=False)
 
     @pytest.mark.parametrize(
         "applied, expected, iso3",
@@ -103,28 +103,24 @@ class TestJHUData(object):
             assert jhu_data.country_to_iso3(response) == iso3
 
     @pytest.mark.parametrize(
-        "country, province",
+        "country, province, error",
         [
-            ("Greece", None),
-            (["Greece", "Japan"], None),
-            (None, None),
-            # raise ValueError
-            (["Greece", "Japan"], "Tokyo"),
+            ("Greece", None, False),
+            (["Greece", "Japan"], None, False),
+            (None, None, False),
+            (["Greece", "Japan"], "Tokyo", False),
             # raise SubsetNotFoundError
-            ("Moon", None),
+            ("Moon", None, True),
         ]
     )
-    def test_show_complement(self, jhu_data, country, province):
-        if country == "Moon":
+    def test_show_complement(self, jhu_data, country, province, error):
+        if error:
             with pytest.raises(SubsetNotFoundError):
-                jhu_data.show_complement(country=country, province=province)
-        elif not isinstance(country, str) and province is not None:
-            with pytest.raises(ValueError):
-                jhu_data.show_complement(country=country, province=province)
-        else:
-            df = jhu_data.show_complement(country=country, province=province)
-            all_set = set(JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
-            assert all_set.issubset(df.columns)
+                jhu_data.show_complement(geo=(country, province))
+            return
+        df = jhu_data.show_complement(geo=(country, province))
+        all_set = set(JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
+        assert all_set.issubset(df.columns)
 
     def test_map(self, jhu_data):
         warnings.filterwarnings("ignore", category=UserWarning)
