@@ -86,7 +86,7 @@ class OxCGRTData(CleaningBase):
         # Confirm float type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
-        return df.loc[:, [self._LOC, *self._subset_cols]]
+        return df
 
     def total(self):
         """
