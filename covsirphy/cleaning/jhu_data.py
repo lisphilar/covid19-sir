@@ -355,7 +355,7 @@ class JHUData(CleaningBase):
         # Selectable countries
         comp_ok_list = [
             country for country in all_set - raw_ok_set
-            if not self.subset_complement(country=country, **kwargs)[0].empty]
+            if not self.subset_complement(geo=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
     @deprecate("JHUData.calculate_closing_period()")
@@ -593,14 +593,14 @@ class JHUData(CleaningBase):
                 geo=geo, country=country, province=province,
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
 
-    def show_complement(self, country=None, province=None,
-                        start_date=None, end_date=None, **kwargs):
+    def show_complement(self, geo=None, country=None, province=None, start_date=None, end_date=None, **kwargs):
         """
         To monitor effectivity and safety of complement on JHU subset,
         we need to know what kind of complement was done for JHU subset
         for each country (if country/countries specified) or for all countries.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
             country (str or list[str] or None): country/countries name or None (all countries)
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
@@ -608,7 +608,6 @@ class JHUData(CleaningBase):
             kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
 
         Raises:
-            ValueError: @province was specified when @country is not a string
             covsirphy.SubsetNotFoundError: No records were registered for the area/dates
 
         Returns:
@@ -617,40 +616,40 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - country (str): country name
-                    - province (str): province name
+                    - (str): location information
                     - Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise
                     - Monotonic_fatal (bool): True if applied for fatal cases or False otherwise
                     - Monotonic_recovered (bool): True if applied for recovered or False otherwise
                     - Full_recovered (bool): True if applied for recovered or False otherwise
                     - Partial_recovered (bool): True if applied for recovered or False otherwise
+
+        Note:
+            @country and @province were deprecated and please use @geo.
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
         """
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
-        # Area name
-        if country is None:
-            country = [c for c in self._loc_df[self.COUNTRY].unique() if c != "Others"]
-        province = province or self.NA
-        if not isinstance(country, str) and province != self.NA:
-            raise ValueError("@province cannot be specified when @country is not a string.")
-        if not isinstance(country, list):
-            country = [country]
-        # Create complement handler
         handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
-        # Check each country
-        complement_df = pd.DataFrame(
-            columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
-        complement_df.set_index(self.COUNTRY, inplace=True)
-        for cur_country in country:
-            try:
-                subset_df = super().subset(geo=(cur_country, province), start_date=start_date, end_date=end_date)
-            except SubsetNotFoundError:
-                raise SubsetNotFoundError(
-                    country=cur_country, province=province,
-                    start_date=start_date, end_date=end_date) from None
-            * _, complement_dict = handler.run(subset_df)
-            complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
-            complement_df.loc[cur_country] = [province, *complement_dict_values]
-        return complement_df.reset_index()
+        # Locations
+        locations = self._to_location_identifiers(
+            geo=geo, country=country, province=province, method="layer" if geo is None else "filter")
+        # Get data between start date and end date
+        value_df = self._value_df.copy()
+        series = value_df[self.DATE].copy()
+        start_obj = self._ensure_date(start_date, name="start_date", default=series.min())
+        end_obj = self._ensure_date(end_date, name="end_date", default=series.max())
+        value_df = value_df.loc[(start_obj <= series) & (series <= end_obj), :]
+        # Check result of each locations
+        comp_df = pd.DataFrame(columns=JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
+        for locations in locations:
+            subset_df = value_df.loc[value_df[self._LOC] == locations]
+            *_, complement_dict = handler.run(subset_df)
+            comp_df.loc[locations] = pd.Series(complement_dict.values(), dtype=bool).values
+        # Combine with location data
+        df = self._loc_df.merge(comp_df, how="right", left_on=self._LOC, right_index=True)
+        df = df.drop(self._LOC, axis=1).reset_index(drop=True)
+        return df.drop(self.ISO3, axis=1) if {self.ISO3, self.COUNTRY}.issubset(df) else df
 
     def map(self, country=None, variable="Confirmed", date=None, **kwargs):
         """
@@ -672,8 +671,6 @@ class JHUData(CleaningBase):
         title = f"{country_str}: the number of {variable.lower()} cases on {date_str}"
         # Global map
         if country is None:
-            return self._colored_map_global(
-                variable=variable, title=title, date=date, **kwargs)
+            return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)
         # Country-specific map
-        return self._colored_map_country(
-            country=country, variable=variable, title=title, date=date, **kwargs)
+        return self._colored_map_country(country=country, variable=variable, title=title, date=date, **kwargs)

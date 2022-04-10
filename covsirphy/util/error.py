@@ -52,7 +52,7 @@ class SubsetNotFoundError(KeyError, ValueError):
         if geo is None:
             self.area = self._area(country, country_alias, province)
         else:
-            self.area = ", ".join([geo] if isinstance(geo, str) else list(geo))
+            self.area = ", ".join([geo] if isinstance(geo, str) else [info for info in geo if info is not None])
         self.date = self._date(start_date, end_date, date)
         self.message = "" if message is None else f" {message}"
 

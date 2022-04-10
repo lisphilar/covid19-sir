@@ -41,7 +41,7 @@ class CleaningBase(Term):
         - The directory of geography information could be changed with .directory property.
     """
     _LOC = "Location_ID"
-    _LOC_COLS = [Term.ISO3, Term.COUNTRY, Term.PROVINCE]
+    _LOC_COLS = [Term.COUNTRY, Term.ISO3, Term.PROVINCE]
 
     def __init__(self, filename=None, data=None, citation=None, layers=None, variables=None):
         self._layers = self._ensure_list(layers or self._LOC_COLS[:], name="layers")
@@ -51,11 +51,10 @@ class CleaningBase(Term):
         # Raw data
         self._raw = self._parse_raw(filename, data, self._raw_cols)
         # Location data
-        loc_df = self._raw[self._layers]
-        loc_df.drop_duplicates(inplace=True, ignore_index=True)
+        loc_df = self._raw[self._layers].drop_duplicates(ignore_index=True)
         for layer in self._layers:
-            loc_df[layer] = loc_df[layer].fillna(self.NA)
-        loc_df[self._LOC] = "id" + loc_df.index.astype("str").str.zfill(len(str(len(loc_df))))
+            loc_df.loc[:, layer] = loc_df[layer].fillna(self.NA)
+        loc_df.loc[:, self._LOC] = "id" + loc_df.index.astype("str").str.zfill(len(str(len(loc_df))))
         self._loc_df = loc_df.copy()
         # Data cleaning
         if self._raw.empty:
@@ -261,8 +260,9 @@ class CleaningBase(Term):
             geo_arranged = (self.ensure_country_name(geo, errors="raise"),)
         else:
             geo_arranged = [
-                self.ensure_country_name(info, errors="raise") if col == self.COUNTRY else info
-                for (info, col) in zip(geo or [], loc_columns)]
+                [self.ensure_country_name(c, errors="raise") for c in (info if isinstance(info, list) else [info])]
+                if col == self.COUNTRY else info
+                for (info, col) in zip(geo or [], loc_columns) if info is not None]
         geography = Geography(layers=loc_columns)
         method_dict = {"layer": geography.layer, "filter": geography.filter}
         df = method_dict[method](data=self._loc_df, geo=geo_arranged)
@@ -363,7 +363,7 @@ class CleaningBase(Term):
         df = df.loc[df[self._LOC].isin(loc_identifiers)]
         df = df.merge(self._loc_df, how="left", on=self._LOC).drop(self._LOC, axis=1)
         for col in self._layers:
-            if df[col].n_unique == 1:
+            if df[col].nunique == 1:
                 df = df.drop(col, axis=1)
         return df
 
@@ -506,7 +506,7 @@ class CleaningBase(Term):
             date (str or None): date of the records or None (the last value)
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
         """
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         # Check variable name
         if variable not in df.columns:
             candidates = [col for col in df.columns if col not in self._LOC_COLS]
@@ -517,8 +517,8 @@ class CleaningBase(Term):
         # Recognize province as a region/country
         if self.PROVINCE in df:
             with contextlib.suppress(ValueError):
-                df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
-                df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
+                df[self.ISO3] = df[self.ISO3].astype("category").cat.add_categories(["GRL"])
+                df[self.COUNTRY] = df[self.COUNTRY].astype("category").cat.add_categories(["Greenland"])
                 df.loc[df[self.PROVINCE] == "Greenland", self._LOC_COLS] = ["GRL", "Greenland", self.NA]
         # Select country level data
         if self.PROVINCE in df.columns:

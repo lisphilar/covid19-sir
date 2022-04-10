@@ -111,7 +111,7 @@ class Geography(Term):
         Note:
             When `geo=(("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.
         """
-        if geo is None or geo == (None,):
+        if geo is None or not geo or geo[0] is None:
             return self.layer(data=data, geo=None)
         if isinstance(geo, str):
             geo = (geo,)
@@ -119,9 +119,9 @@ class Geography(Term):
             raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
         if len(geo) > len(self._layers):
             raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
-        *geo_formars, geo_last = geo
+        *geo_formars, geo_last = [info for info in geo if info is not None]
         try:
-            df = self.layer(data=data, geo=geo_formars)
+            df = self.layer(data=data, geo=geo_formars or None)
         except TypeError as e:
             raise e from None
         if not isinstance(geo_last, (str, list, tuple)):
