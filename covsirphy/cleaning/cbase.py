@@ -416,7 +416,7 @@ class CleaningBase(Term):
                 geo=geo, country=country, province=province, start_date=start_date, end_date=end_date) from None
         return df.reset_index(drop=True)
 
-    def subset_complement(self, **kwargs):
+    def subset_complement(self, *args, **kwargs):
         """
         Return the subset. If necessary, complemention will be performed.
 

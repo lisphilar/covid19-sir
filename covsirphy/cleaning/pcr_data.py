@@ -78,8 +78,8 @@ class PCRData(CleaningBase):
             df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         return df
 
-    @ classmethod
-    @ deprecate("PCRData.from_dataframe()", new="PCRData(data)", version="2.21.0-iota")
+    @classmethod
+    @deprecate("PCRData.from_dataframe()", new="PCRData(data)", version="2.21.0-iota")
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create PCRData instance using a pandas dataframe.
@@ -106,7 +106,7 @@ class PCRData(CleaningBase):
         instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls._raw_cols)
         return instance
 
-    @ deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
+    @deprecate("PCRData.use_ourworldindata()", new="DataLoader.pcr()", version="2.21.0-iota-fu4")
     def use_ourworldindata(self, filename, force=False):
         """
         Deprecated and removed.
@@ -120,8 +120,8 @@ class PCRData(CleaningBase):
         """
         raise NotImplementedError
 
-    @ deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
-                ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
+    @deprecate("PCRData.replace()", new="DataLoader.read_dataframe()", version="sigma",
+               ref="https://lisphilar.github.io/covid19-sir/markdown/LOADING.html")
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
@@ -160,7 +160,7 @@ class PCRData(CleaningBase):
         self._citation += f"\n{country_data.citation}"
         return self
 
-    @ staticmethod
+    @staticmethod
     def _pcr_monotonic(df, variable):
         """
         Force the variable show monotonic increasing.
@@ -393,7 +393,7 @@ class PCRData(CleaningBase):
             country (str): country name
             province (str): province name or "-"
         """
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         df = df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
         if self._pcr_check_preconditions(df):
             return df
@@ -464,11 +464,12 @@ class PCRData(CleaningBase):
         )
         return df
 
-    def subset(self, country, province=None, start_date=None, end_date=None):
+    def subset(self, geo=None, country=None, province=None, start_date=None, end_date=None):
         """
         Return subset of the country/province and start/end date.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name or ISO3 code
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
@@ -483,7 +484,15 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Tests_diff (int): daily number of tests on date
                     - Confirmed (int): the number of confirmed cases
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
+        if isinstance(geo, str):
+            country = geo
         country_alias = self.ensure_country_name(country)
         df = self._subset_select(country=country_alias, province=province or self.NA)
         # Calculate Tests_diff
