@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -63,34 +62,6 @@ class MobilityData(CleaningBase):
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(100).astype(np.int64)
         return df
-
-    def subset(self, country, province=None):
-        """
-        Create a subset for a country.
-
-        Args:
-            country (str): country name or ISO 3166-1 alpha-3, like JPN
-            province (str): province name
-
-        Raises:
-            covsirphy.SubsetNotFoundError: no records were found
-
-        Returns:
-            pandas.DataFrame
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - variables defined by MobilityData(variables)
-        """
-        country_arg = country
-        country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country, province=province)
-        except SubsetNotFoundError:
-            raise SubsetNotFoundError(country=country_arg, country_alias=country, province=province) from None
-        df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self._subset_cols]
 
     def total(self):
         """
