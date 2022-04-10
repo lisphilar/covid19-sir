@@ -52,35 +52,30 @@ class PCRData(CleaningBase):
         df = self._cleaned_df.loc[:, self._raw_cols]
         return df.drop(self.ISO3, axis=1)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
-        This method overwrites super()._cleaning() method.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pd.Timestamp): Observation date
-                    - ISO3 (str): ISO3 code
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._raw.copy()
-        df = df.loc[:, self._raw_cols].reset_index(drop=True)
+        df = raw.copy()
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Values
         df = df.dropna(subset=[self.TESTS, self.C], how="any")
         for col in [self.TESTS, self.C]:
-            df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
-        # Update data types to reduce memory
-        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
+            df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         return df
 
     @classmethod
@@ -159,7 +154,7 @@ class PCRData(CleaningBase):
         # Add the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
+        df[self._LOC_COLS] = df[self._LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
@@ -390,26 +385,16 @@ class PCRData(CleaningBase):
         # Result
         return check_zero and check_missing and check_unique
 
-    def _subset_by_area(self, country, province):
+    def _subset_select(self, country, province):
         """
-        Return the subset for the area.
+        Return subset if available.
 
         Args:
             country (str): country name
             province (str): province name or "-"
         """
         df = self._cleaned_df.copy()
-        return df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
-
-    def _subset_select(self, country, province):
-        """
-        Return suset if available.
-
-        Args:
-            country (str): country name
-            province (str): province name or "-"
-        """
-        df = self._subset_by_area(country, province)
+        df = df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
         if self._pcr_check_preconditions(df):
             return df
         # Failed in retrieving sufficient data
@@ -467,7 +452,7 @@ class PCRData(CleaningBase):
         if not show_figure:
             return df
         # Create figure
-        area = self.area_name(country, province=province)
+        area = self.area_name(geo=None, country=country, province=province)
         comp_status = "\nwith partially complemented tests data" if is_complemented else ""
         line_plot(
             df.set_index(self.DATE)[self.PCR_RATE],

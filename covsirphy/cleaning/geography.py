@@ -25,7 +25,6 @@ class Geography(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): observation date
                     - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
@@ -80,7 +79,6 @@ class Geography(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): observation date
                     - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str): location names for the layers to filter or None (all data at the top level)

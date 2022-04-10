@@ -38,33 +38,31 @@ class MobilityData(CleaningBase):
         self._variables = variables or self._MOBILITY_VARS[:]
         super().__init__(variables=self._variables, **kwargs)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pandas.Timestamp): Observation date
-                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - variables defined by MobilityData(variables)
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=self._subset_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm int type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(100).astype(np.int64)
-        # Update data types to reduce memory
-        cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
-        df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self._raw_cols]
+        return df
 
     def subset(self, country, province=None):
         """

@@ -51,37 +51,42 @@ class OxCGRTData(CleaningBase):
         self._variables = variables or self.OXCGRT_VARS[:]
         super().__init__(variables=self._variables, **kwargs)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pandas.Timestamp): Observation date
-                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - variables defined by OxCGRTData(variables)
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Prepare data for Greenland
-        grl_df = df.loc[df[self.COUNTRY] == "Denmark"].copy()
-        grl_df.loc[:, [self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
+        loc_df = self._loc_df.copy()
+        denmark_id = loc_df.loc[loc_df[self.COUNTRY], self._LOC]
+        greenland_id = "greenland"
+        grl_df = df.loc[df[self._LOC] == denmark_id].copy()
+        grl_df.loc[:, self._LOC] = greenland_id
         df = pd.concat([df, grl_df], sort=True, ignore_index=True)
+        self._loc_df = self._loc_df.append(
+            {
+                col: "GRL" if col == self.ISO3 else "Greenland" if col == self.COUNTRY else self.NA for col in self._layers
+            }, ignore_index=True)
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=self._subset_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm float type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
-        # Update data types to reduce memory
-        cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
-        df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self._raw_cols]
+        return df
 
     def subset(self, country, province=None, **kwargs):
         """

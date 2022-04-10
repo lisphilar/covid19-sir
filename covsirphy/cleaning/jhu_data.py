@@ -59,7 +59,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): Observation date
+                    - Date (pandas.Timestamp): observation date
                     - (pandas.Category): defined by CleaningBase(layers)
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -69,41 +69,42 @@ class JHUData(CleaningBase):
         """
         if "population" in kwargs.keys():
             raise ValueError("@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right")
+        df[self._layers] = df[self._layers].astype("category")
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        return df
+        return df.loc[:, self._raw_cols]
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - (pandas.Category): defined by CleaningBase(layers)
+                    - Location_ID (str): location identifiers
+                    - Date (pd.Timestamp): observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
                     - Population (int): population values or 0 (when raw data is 0 values)
         """
-        df = self._raw.loc[:, self._raw_cols]
+        df = raw.copy()
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
         with contextlib.suppress(TypeError):
             df[self.DATE] = df[self.DATE].dt.tz_convert(None)
-        # Location
-        for layer in self._layers:
-            df[layer] = df[layer].fillna(self.NA).astype("category")
         # Values
         for col in [self.C, self.F, self.R, self.N]:
-            df[col] = df.groupby(self._layers)[col].ffill().fillna(0).astype(np.int64)
+            df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         # Calculate Infected
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        return df.loc[:, self._raw_cols]
+        return df
 
     @deprecate("JHUData.replace()", version="2.21.0-xi-fu1")
     def replace(self, country_data):
@@ -137,7 +138,7 @@ class JHUData(CleaningBase):
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.LOC_COLS] = df[self.LOC_COLS].astype("category")
+        df[self._LOC_COLS] = df[self._LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
@@ -343,7 +344,7 @@ class JHUData(CleaningBase):
         Returns:
             list[str]: list of country names
         """
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         df = df.loc[df[self.PROVINCE] == self.NA]
         # All countries
         all_set = set((df[self.COUNTRY].unique()))
@@ -369,7 +370,7 @@ class JHUData(CleaningBase):
             If no records we can use for calculation were registered, 12 [days] will be applied.
         """
         # Get cleaned dataset at country level
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         df = df.loc[df[self.PROVINCE] == self.NA]
         # Select records of countries where recovered values are reported
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
@@ -403,8 +404,7 @@ class JHUData(CleaningBase):
         """
         default = 17
         # Get valid data for calculation
-        df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.NA]
+        df = self.layer(geo=None)
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
         # If no records were found the default value will be returned
         if df.empty:
@@ -628,7 +628,7 @@ class JHUData(CleaningBase):
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         # Area name
         if country is None:
-            country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
+            country = [c for c in self._loc_df[self.COUNTRY].unique() if c != "Others"]
         province = province or self.NA
         if not isinstance(country, str) and province != self.NA:
             raise ValueError("@province cannot be specified when @country is not a string.")
@@ -642,7 +642,7 @@ class JHUData(CleaningBase):
         complement_df.set_index(self.COUNTRY, inplace=True)
         for cur_country in country:
             try:
-                subset_df = super().subset(geo=cur_country, province=province, start_date=start_date, end_date=end_date)
+                subset_df = super().subset(geo=(cur_country, province), start_date=start_date, end_date=end_date)
             except SubsetNotFoundError:
                 raise SubsetNotFoundError(
                     country=cur_country, province=province,

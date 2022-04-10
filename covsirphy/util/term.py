@@ -49,7 +49,6 @@ class Term(object):
     PARAM_DICT = "param_dict"
     ID = "ID"
     AREA_COLUMNS = [COUNTRY, PROVINCE]
-    LOC_COLS = [ISO3, COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
@@ -237,7 +236,7 @@ class Term(object):
         try:
             number = int(target)
         except TypeError:
-            raise TypeError(f"{s} and not converted to integer.")
+            raise TypeError(f"{s} and not converted to integer.") from None
         if number != target:
             raise ValueError(f"{s}. |{target} - {number}| > 0")
         min_value = 0 if include_zero else 1

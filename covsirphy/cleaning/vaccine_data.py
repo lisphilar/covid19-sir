@@ -67,49 +67,46 @@ class VaccineData(CleaningBase):
         df.to_csv(filename, index=False)
         return df
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                 - Date (pandas.TimeStamp): observation dates
-                - Country (pandas.Category): country (or province) names
-                - ISO3 (pandas.Category): ISO3 codes
-                - Province: province/prefecture/state name
                 - Product (pandas.Category): vaccine product names
                 - Vaccinations (int): cumulative number of vaccinations
                 - Vaccinations_boosters (int): cumulative number of booster vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Fill in NA values
         for col in [self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-        country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
+        country_df = df.loc[:, [self._LOC, self.PRODUCT]].drop_duplicates()
         # Extent dates to today
-        today_date = datetime.now().replace(
-            hour=00, minute=00, second=00, microsecond=00
-        )
-
+        today_date = datetime.now().replace(hour=00, minute=00, second=00, microsecond=00)
         df = df.pivot_table(
             values=[self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL],
-            index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="last")
+            index=self.DATE, columns=self._LOC, aggfunc="last")
         df = df.reindex(pd.date_range(df.index[0], today_date, freq="D"))
         df.index.name = self.DATE
         df = df.ffill().fillna(0).astype(np.int64).stack().stack().reset_index()
-        df.sort_values(by=[self.COUNTRY, self.PROVINCE, self.DATE], ignore_index=True, inplace=True)
-        df = df.merge(country_df, on=self.COUNTRY)
+        df.sort_values(by=[self._LOC, self.DATE], ignore_index=True, inplace=True)
+        df = df.merge(country_df, on=self._LOC)
         # Set dtype for category data
-        for col in [self.COUNTRY, self.ISO3, self.PROVINCE, self.PRODUCT]:
-            df[col] = df[col].astype("category")
-        return df.loc[:, self._raw_cols]
+        df[self.PRODUCT] = df[self.PRODUCT].astype("category")
+        return df
 
     def subset(self, country, province=None, product=None, start_date=None, end_date=None):
         """
