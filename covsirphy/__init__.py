@@ -48,6 +48,8 @@ from covsirphy.cleaning.mobility_data import MobilityData
 # loading
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
+# collecting
+from covsirphy.collecting.data_collector import DataCollector
 # trend
 from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
@@ -116,6 +118,8 @@ __all__ = [
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
+    # collecting
+    "DataCollector",
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
