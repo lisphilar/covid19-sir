@@ -4,31 +4,14 @@
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.util.filer import Filer
+from covsirphy.util.geography import Geography
 
 
 class DataCollector(Term):
     """Class for collecting data for the specified location.
 
     Args:
-        directory (str or pathlib.Path): directory to save downloaded datasets
         layers (list[str] or None): list of layers of geographic information or None (["Country", "Province", "City"])
-        update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
-        basename_dict (dict[str, str]): basename of downloaded CSV files,
-            "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
-            "owid": Our World In Data (default: ourworldindata.csv),
-            "google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
-            "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
-        verbose (int): level of verbosity when downloading
-
-    Note:
-        If @update_interval (not None) hours have passed since the last update of downloaded datasets,
-        the dawnloaded datasets will be updated automatically.
-        When we do not use datasets of remote servers, set @update_interval as None.
-
-    Note:
-        If @verbose is 0, no description will be shown.
-        If @verbose is 1 or larger, URL and database name will be shown.
-        If @verbose is 2, detailed citation list will be show, if available.
     """
     _ID = "Location_ID"
     # Default file titles of the downloaded datasets
@@ -39,16 +22,7 @@ class DataCollector(Term):
         "japan": "covid_japan",
     }
 
-    def __init__(self, directory="input", layers=None, update_interval=12, basename_dict=None, verbose=1):
-        # Filenames to save remote datasets
-        filer = Filer(directory=directory, prefix=None, suffix=None, numbering=None)
-        self._file_dict = {
-            k: filer.csv(title=(basename_dict or {}).get(k, v))["path_or_buf"] for (k, v) in self.TITLE_DICT.items()}
-        # Update interval of local files to save remote datasets
-        self._update_interval = self._ensure_natural_int(
-            update_interval, name="update_interval", include_zero=True, none_ok=True)
-        # Verbosity
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+    def __init__(self, layers=None):
         # Location data
         self._layers = self._ensure_list(target=layers or [Term.COUNTRY, Term.PROVINCE, Term.CITY], name="layers")
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
@@ -135,7 +109,20 @@ class DataCollector(Term):
             geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
             variables (list[str] or None): list of variables to collect or None (all available variables)
 
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation dates
+                    - columns defined by @variables
+
         Note:
             Please refer to covsirphy.Geography.filter() regarding @geo argument.
+
         """
-        pass
+        # Collect data of the area
+        all_df = self.all(variables=variables)
+        geography = Geography(layers=self._layers)
+        df = geography.filter(data=all_df, geo=geo)
+        return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
