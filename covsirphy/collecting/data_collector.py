@@ -57,10 +57,37 @@ class DataCollector(Term):
         # Citations
         self._citation_dict = {}
 
+    def all(self, variables=None):
+        """Return all available data.
+
+        Args:
+            variables (list[str] or None): list of variables to collect or None (all available variables)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - columns defined by covsirphy.DataCollector(layers)
+                    - Date (pandas.Timestamp): observation dates
+                    - columns defined by @variables
+        """
+        df = self._loc_df.merge(self._rec_df, how="right", on=self._ID, ignore_index=True).reset_index(drop=True)
+        if variables is None:
+            return df
+        all_variables = df.columns.tolist()
+        sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
+        return df.drop(list(set(all_variables) - set(sel_variables)), axis=1)
+
     def citations(self, variables=None):
         """
         Return citation list of the secondary data sources.
-        variables (list[str] or None): list of variables to collect or None (all available variables)
+
+        Args:
+            variables (list[str] or None): list of variables to collect or None (all available variables)
+
+        Returns:
+            list[str]: citation list
         """
         columns = self._ensure_list(target=variables or None, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
