@@ -44,7 +44,7 @@ class DataCollector(Term):
         # The number of cases
         Term.C, Term.CI, Term.F, Term.R, Term.N,
         # PCR tests
-        Term.TESTS, Term.T_DIFF,
+        Term.TESTS, Term.TESTS_DIFF,
         # Vaccinations
         Term.VAC, Term.VAC_BOOSTERS, Term.V_ONCE, Term.V_FULL,
     ]

@@ -25,7 +25,7 @@ class Term(object):
     W = "Waiting"
     # PCR tests
     TESTS = "Tests"
-    T_DIFF = "Tests_diff"
+    TESTS_DIFF = "Tests_diff"
     # Severity
     MODERATE = "Moderate"
     SEVERE = "Severe"

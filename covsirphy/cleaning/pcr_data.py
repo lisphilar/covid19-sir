@@ -295,8 +295,8 @@ class PCRData(CleaningBase):
         """
         df = before_df.copy()
         df[self.TESTS].fillna(0, inplace=True)
-        if self.T_DIFF in df.columns:
-            df[self.T_DIFF].fillna(0, inplace=True)
+        if self.TESTS_DIFF in df.columns:
+            df[self.TESTS_DIFF].fillna(0, inplace=True)
         if not self._pcr_check_complement(df, variable):
             return df
         for col in df:
@@ -342,26 +342,26 @@ class PCRData(CleaningBase):
         # Complemented or not
         is_complemented = not df.equals(compare_df)
         # Calculate daily values for tests and confirmed (with window=1)
-        df[self.T_DIFF] = df[self.TESTS].diff()
+        df[self.TESTS_DIFF] = df[self.TESTS].diff()
         df[self.C_DIFF] = df[self.C].diff()
         # Ensure that tests > confirmed in daily basis
-        df.loc[df[self.T_DIFF].abs() < df[self.C_DIFF].abs(), self.T_DIFF] = None
+        df.loc[df[self.TESTS_DIFF].abs() < df[self.C_DIFF].abs(), self.TESTS_DIFF] = None
         # Keep valid non-zero values by ignoring zeros at the beginning
         df = df.replace(0, np.nan)
-        non_zero_index_start = df[self.T_DIFF].first_valid_index()
+        non_zero_index_start = df[self.TESTS_DIFF].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
-        non_zero_index_end = df[self.T_DIFF].last_valid_index()
+        non_zero_index_end = df[self.TESTS_DIFF].last_valid_index()
         # Keep valid non-zero values by complementing zeros at the end
         if non_zero_index_end < (len(df) - 1):
-            df.loc[non_zero_index_end + 1:, self.T_DIFF] = None
-        df = self._pcr_partial_complement(df, self.T_DIFF)
+            df.loc[non_zero_index_end + 1:, self.TESTS_DIFF] = None
+        df = self._pcr_partial_complement(df, self.TESTS_DIFF)
         # Use rolling window for averaging tests and confirmed
-        df[self.T_DIFF] = df[self.T_DIFF].rolling(window).mean()
+        df[self.TESTS_DIFF] = df[self.TESTS_DIFF].rolling(window).mean()
         df[self.C_DIFF] = df[self.C_DIFF].rolling(window).mean()
-        df = self._pcr_partial_complement(df, self.T_DIFF)
+        df = self._pcr_partial_complement(df, self.TESTS_DIFF)
         # Remove first zero lines due to window
         df = df.replace(0, np.nan)
-        non_zero_index_start = df[self.T_DIFF].first_valid_index()
+        non_zero_index_start = df[self.TESTS_DIFF].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
         return (df, is_complemented)
 
@@ -378,8 +378,8 @@ class PCRData(CleaningBase):
             bool: whether the dataset has sufficient data or not
         """
         df[self.TESTS].fillna(0, inplace=True)
-        if self.T_DIFF in df.columns:
-            df[self.T_DIFF].fillna(0, inplace=True)
+        if self.TESTS_DIFF in df.columns:
+            df[self.TESTS_DIFF].fillna(0, inplace=True)
         # Check if the values are zero or nan
         check_zero = df[self.TESTS].max()
         # Check if the number of the missing values
@@ -467,7 +467,7 @@ class PCRData(CleaningBase):
         # Process PCR data
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
-        df[self.PCR_RATE] = df[[self.C_DIFF, self.T_DIFF]].apply(
+        df[self.PCR_RATE] = df[[self.C_DIFF, self.TESTS_DIFF]].apply(
             lambda x: x[0] / x[1] * 100 if x[1] > self.min_pcr_tests else 0, axis=1)
         if not show_figure:
             return df
@@ -507,10 +507,10 @@ class PCRData(CleaningBase):
         country_alias = self.ensure_country_name(country)
         df = self._subset_select(country=country_alias, province=province or self.NA)
         # Calculate Tests_diff
-        df[self.T_DIFF] = df[self.TESTS].diff().fillna(0)
-        df.loc[df[self.T_DIFF] < 0, self.T_DIFF] = 0
-        df[self.T_DIFF] = df[self.T_DIFF].astype(np.int64)
-        df = df.loc[:, [self.DATE, self.TESTS, self.T_DIFF, self.C]]
+        df[self.TESTS_DIFF] = df[self.TESTS].diff().fillna(0)
+        df.loc[df[self.TESTS_DIFF] < 0, self.TESTS_DIFF] = 0
+        df[self.TESTS_DIFF] = df[self.TESTS_DIFF].astype(np.int64)
+        df = df.loc[:, [self.DATE, self.TESTS, self.TESTS_DIFF, self.C]]
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
