@@ -29,7 +29,6 @@ class PCRData(CleaningBase):
         citation (str): citation
     """
     # Daily values
-    T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 

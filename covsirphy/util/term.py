@@ -23,7 +23,10 @@ class Term(object):
     FR = "Fatal or Recovered"
     E = "Exposed"
     W = "Waiting"
+    # PCR tests
     TESTS = "Tests"
+    T_DIFF = "Tests_diff"
+    # Severity
     MODERATE = "Moderate"
     SEVERE = "Severe"
     # Vaccination
