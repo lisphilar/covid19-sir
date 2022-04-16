@@ -73,17 +73,32 @@ class DataCollector(Term):
         """
         return self._citations
 
-    def collect(self, layers=None, geo=None, variables=None, data=None):
+    def manual(self, data, layers=None, date="Date", dayfirst=False):
+        """Add data manually.
+
+        Args:
+            data (pandas.DataFrame): local dataset or None (un-available)
+                Index
+                    reset index
+                Columns
+                    - columns defined by @date
+                    - columns defined by @layers
+                    - all remained columns will be regarded as records
+            layers (list[str] or None): list of layers of geographic information or None (["Country", "Province", "City"])
+            date (str): column name of date
+            dayfirst (bool): whether date format is DD/MM or not
+
+        Returns:
+            covsirphy.DataCollector: self
+        """
+        pass
+
+    def collect(self, geo=None, variables=None):
         """Collect necessary data from remote server and local data.
 
         Args:
-            layers (list): list of layers of geographic information
             geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
             variables (list[str] or None): list of variables to collect or None (default values)
-            data (pandas.DataFrame): local dataset or None (un-available)
-
-        Note:
-            Default layers are defined by covsirphy.DataCollector.LAYERS (class variable).
 
         Note:
             Please refer to covsirphy.Geography.filter() regarding @geo argument.
