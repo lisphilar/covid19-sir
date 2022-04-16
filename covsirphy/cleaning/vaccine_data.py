@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -14,61 +13,24 @@ class VaccineData(CleaningBase):
     Data cleaning of vaccination dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - Country: country/region name
-                - ISO3: ISO 3166-1 alpha-3, like JPN
-                - Province: province/prefecture/state name
-                - Product: vaccine product names
-                - Vaccinations: cumulative number of vaccinations
-                - Vaccinations: cumulative number of booster vaccinations
-                - Vaccinated_once: cumulative number of people who received at least one vaccine dose
-                - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
-        citation (str or None): citation or None (empty)
-        kwargs: the other arguments will be ignored
+        arguments defined for CleaningBase class except for @variables
 
     Note:
-        Either @filename (high priority) or @data must be specified.
-
-    Note:
-        Columns of VaccineData.cleaned():
-            - Date (pandas.TimeStamp): observation dates
-            - Country (pandas.Category): country (or province) names
-            - ISO3 (pandas.Category): ISO3 codes
-            - Province (pandas.Category): province/prefecture/state name
-            - Product (pandas.Category): vaccine product names
-            - Vaccinations (int): cumulative number of vaccinations
-            - Vaccinations (int): cumulative number of booster vaccinations
-            - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-            - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+        @variables are as follows.
+            - Product: vaccine product names
+            - Vaccinations: cumulative number of vaccinations
+            - Vaccinations_boosters: cumulative number of booster vaccinations
+            - Vaccinated_once: cumulative number of people who received at least one vaccine dose
+            - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
     """
 
-    def __init__(self, filename=None, data=None, citation=None, **kwargs):
-        self._subset_cols = [self.DATE, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
-        self._raw_cols = [
-            self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.PRODUCT,
-            self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
-        # Raw data
-        self._raw = self._parse_raw(filename, data, self._raw_cols)
+    def __init__(self, **kwargs):
+        variables = [self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
+        super().__init__(variables=variables, **kwargs)
         # Backward compatibility
         if self._raw.empty:
-            self._raw = self._retrieve(filename, **kwargs)
-        if self.PROVINCE not in self._raw:
-            self._raw[self.PROVINCE] = self.NA
-        # Data cleaning
-        self._cleaned_df = pd.DataFrame(columns=self._raw_cols) if self._raw.empty else self._cleaning()
-        # Citation
-        self._citation = citation or ""
-        # Directory that save the file
-        if filename is None:
-            self._dirpath = Path("input")
-        else:
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._dirpath = Path(filename).resolve().parent
+            self._raw = self._retrieve(**kwargs)
+            self._cleaned_df = pd.DataFrame(columns=self._raw_cols) if self._raw.empty else self._cleaning()
 
     @deprecate(
         "vaccine_data = cs.VaccineData()",
@@ -97,7 +59,7 @@ class VaccineData(CleaningBase):
             "people_vaccinated": self.V_ONCE,
             "people_fully_vaccinated": self.V_FULL,
         }
-        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - set(["vaccines"])))
+        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - {"vaccines"}))
         loc_df = pd.read_csv(URL_LOC, usecols=["location", "vaccines"])
         df = rec_df.merge(loc_df, how="left", on="location")
         df = df.rename(rename_dict, axis=1)
@@ -105,49 +67,46 @@ class VaccineData(CleaningBase):
         df.to_csv(filename, index=False)
         return df
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                 - Date (pandas.TimeStamp): observation dates
-                - Country (pandas.Category): country (or province) names
-                - ISO3 (pandas.Category): ISO3 codes
-                - Province: province/prefecture/state name
                 - Product (pandas.Category): vaccine product names
                 - Vaccinations (int): cumulative number of vaccinations
-                - Vaccinations (int): cumulative number of booster vaccinations
+                - Vaccinations_boosters (int): cumulative number of booster vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                 - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Fill in NA values
         for col in [self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-        country_df = df.loc[:, [self.COUNTRY, self.ISO3, self.PRODUCT]].drop_duplicates()
+        country_df = df.loc[:, [self._LOC, self.PRODUCT]].drop_duplicates()
         # Extent dates to today
-        today_date = datetime.now().replace(
-            hour=00, minute=00, second=00, microsecond=00
-        )
-
+        today_date = datetime.now().replace(hour=00, minute=00, second=00, microsecond=00)
         df = df.pivot_table(
             values=[self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL],
-            index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="last")
+            index=self.DATE, columns=self._LOC, aggfunc="last")
         df = df.reindex(pd.date_range(df.index[0], today_date, freq="D"))
         df.index.name = self.DATE
         df = df.ffill().fillna(0).astype(np.int64).stack().stack().reset_index()
-        df.sort_values(by=[self.COUNTRY, self.PROVINCE, self.DATE], ignore_index=True, inplace=True)
-        df = df.merge(country_df, on=self.COUNTRY)
+        df.sort_values(by=[self._LOC, self.DATE], ignore_index=True, inplace=True)
+        df = df.merge(country_df, on=self._LOC)
         # Set dtype for category data
-        for col in [self.COUNTRY, self.ISO3, self.PROVINCE, self.PRODUCT]:
-            df[col] = df[col].astype("category")
-        return df.loc[:, self._raw_cols]
+        df[self.PRODUCT] = df[self.PRODUCT].astype("category")
+        return df
 
     def subset(self, country, province=None, product=None, start_date=None, end_date=None):
         """

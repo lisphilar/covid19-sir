@@ -56,7 +56,6 @@ class Term(object):
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     MONO_COLUMNS = [C, F, R]
-    AREA_ABBR_COLS = [ISO3, *AREA_COLUMNS]
     DSIFR_COLUMNS = [DATE, S, CI, F, R]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
@@ -237,7 +236,7 @@ class Term(object):
         try:
             number = int(target)
         except TypeError:
-            raise TypeError(f"{s} and not converted to integer.")
+            raise TypeError(f"{s} and not converted to integer.") from None
         if number != target:
             raise ValueError(f"{s}. |{target} - {number}| > 0")
         min_value = 0 if include_zero else 1

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import copy
 from datetime import timedelta
 import json
@@ -50,7 +51,7 @@ class Scenario(Term):
         # Area name
         if country is None:
             raise ValueError("@country must be specified.")
-        self._area = JHUData.area_name(country, province)
+        self._area = JHUData.area_name(geo=None, country=country, province=province)
         # Initialize data handler
         self._data = DataHandler(country=str(country), province=str(province or self.NA))
         self._data.switch_complement(whether=auto_complement)
@@ -62,10 +63,8 @@ class Scenario(Term):
         self._tracker_dict = {}
         self.register(jhu_data=jhu_data, population_data=population_data, extras=None)
         # Initialize parameter tracker
-        try:
+        with contextlib.suppress(NotRegisteredMainError):
             self._init_trackers()
-        except NotRegisteredMainError:
-            pass
         # Interactive (True) / script (False) mode
         self._interactive = hasattr(sys, "ps1")
         # Prediction of parameter values in the future phases: {name: RegressorBase)}
@@ -453,9 +452,8 @@ class Scenario(Term):
             self._ensure_date_order(start, end, name="end_date")
         tracker.define_phase(start, end)
         # Set parameter values
-        if None not in set([self._model, self._tau]):
-            param_dict = {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
-            if param_dict:
+        if None not in {self._model, self._tau}:
+            if param_dict := {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}:
                 param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
                 param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
                 tracker.set_ode(self._model, param_df, self._tau)
@@ -931,10 +929,8 @@ class Scenario(Term):
         # Adjusted end date
         adjusted = max(current_dict.values())
         for (name, _) in self._tracker_dict.items():
-            try:
+            with contextlib.suppress(ValueError):
                 self.add(end_date=adjusted, name=name)
-            except ValueError:
-                pass
         return self
 
     def _describe(self):
@@ -1174,10 +1170,8 @@ class Scenario(Term):
         # Control
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
-        try:
+        with contextlib.suppress(ValueError):
             self.separate(date=beginning_date, name=control)
-        except ValueError:
-            pass
         self.estimate(model, name=control, **kwargs)
         # Target
         self.clear(name=target, include_past=False, template=control)
@@ -1280,7 +1274,7 @@ class Scenario(Term):
         Q1 = np.percentile(df["Period Length"], percentile, interpolation="midpoint")
         low_lim = min_size
         delay_period = int((low_lim + Q1) / 2)
-        return (int(delay_period), df)
+        return delay_period, df
 
     @deprecate("Scenario.fit()", new="Scenario.predict()", version="2.23.0-alpha", ref="https://github.com/lisphilar/covid19-sir/issues/1006")
     def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="MAPE", **kwargs):

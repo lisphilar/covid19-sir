@@ -59,7 +59,7 @@ class PopulationData(CleaningBase):
         # Remove duplicates
         df = df.dropna(subset=[self.N]).drop_duplicates().reset_index(drop=True)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self._LOC_COLS] = df[self._LOC_COLS].astype("category")
         return df
 
     def total(self):

@@ -65,6 +65,7 @@ class JapanData(CleaningBase):
     JAPAN_META_COLS = [*JAPAN_META_CAT, *JAPAN_META_INT, *JAPAN_META_FLT]
 
     def __init__(self, filename, force=False, verbose=1):
+        self._layers = self._LOC_COLS[:]
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
             try:

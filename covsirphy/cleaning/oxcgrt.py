@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -11,16 +10,7 @@ class OxCGRTData(CleaningBase):
     Data cleaning of OxCGRT dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - ISO3: ISO 3166-1 alpha-3, like JPN
-                - Country: country/region name
-                - variables defined by @variables
-        citation (str or None): citation or None (empty)
+        arguments defined for CleaningBase class except for @variables
         variables (list[str] or None): variables to parse or None (use default variables listed as follows)
             - School_closing
             - Workplace_closing
@@ -34,9 +24,6 @@ class OxCGRTData(CleaningBase):
             - Testing_policy
             - Contact_tracing
             - Stringency_index
-
-    Note:
-        Either @filename (high priority) or @data must be specified.
 
     Note:
         The default policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
@@ -59,71 +46,47 @@ class OxCGRTData(CleaningBase):
     # Indicators except for Stringency index
     OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
 
-    def __init__(self, filename=None, data=None, citation=None, variables=None):
+    def __init__(self, variables=None, **kwargs):
         self._variables = variables or self.OXCGRT_VARS[:]
-        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
+        super().__init__(variables=self._variables, **kwargs)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pandas.Timestamp): Observation date
-                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - variables defined by OxCGRTData(variables)
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Prepare data for Greenland
-        grl_df = df.loc[df[self.COUNTRY] == "Denmark"].copy()
-        grl_df.loc[:, [self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
-        df = pd.concat([df, grl_df], sort=True, ignore_index=True)
+        denmark_series = self._loc_df.loc[self._loc_df[self.COUNTRY] == "Denmark", self._LOC]
+        if not denmark_series.empty:
+            denmark_id = denmark_series.unique()[0]
+            greenland_id = "greenland"
+            grl_df = df.loc[df[self._LOC] == denmark_id].copy()
+            grl_df.loc[:, self._LOC] = greenland_id
+            df = pd.concat([df, grl_df], sort=True, ignore_index=True)
+            self._loc_df = self._loc_df.append(
+                {
+                    col: "GRL" if col == self.ISO3 else "Greenland" if col == self.COUNTRY else self.NA for col in self._layers
+                }, ignore_index=True)
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=self._subset_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm float type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
-        # Update data types to reduce memory
-        cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
-        df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self._raw_cols]
-
-    def subset(self, country, province=None, **kwargs):
-        """
-        Create a subset for a country.
-
-        Args:
-            country (str): country name or ISO 3166-1 alpha-3, like JPN
-            province (str): province name
-            kwargs: the other arguments will be ignored at the latest version
-
-        Raises:
-            covsirphy.SubsetNotFoundError: no records were found
-
-        Returns:
-            pandas.DataFrame
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - variables defined by OxCGRTData(variables)
-        """
-        country_arg = country
-        country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country, province=province)
-        except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country_arg, country_alias=country, province=province) from None
-        df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self._subset_cols]
+        return df
 
     def total(self):
         """

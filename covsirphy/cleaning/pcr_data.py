@@ -14,28 +14,22 @@ class PCRData(CleaningBase):
     Data cleaning of PCR dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - ISO3: ISO3 code
-                - Country: country/region name
-                - Province: province/prefecture/state name
-                - Tests: the number of tests
+        arguments defined for CleaningBase class except for @variables
         interval (int): expected update interval of the number of confirmed cases and tests [days]
         min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
-        citation (str): citation
+
+    Note:
+        @variables are Tests (the number of tests) and Confirmed (the number of confirmed cases).
+
     """
     # Daily values
     T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 
-    def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
+    def __init__(self, interval=2, min_pcr_tests=100, **kwargs):
         variables = [self.TESTS, self.C]
-        super().__init__(filename=filename, data=data, citation=citation, variables=variables)
+        super().__init__(variables=variables, **kwargs)
         # Settings
         self.interval = self._ensure_natural_int(interval, name="interval")
         self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
@@ -55,38 +49,33 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._cleaned_df.loc[:, self._raw_cols]
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC).drop(self._LOC, axis=1)
         return df.drop(self.ISO3, axis=1)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
-        This method overwrites super()._cleaning() method.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pd.Timestamp): Observation date
-                    - ISO3 (str): ISO3 code
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = self._raw.copy()
-        df = df.loc[:, self._raw_cols].reset_index(drop=True)
+        df = raw.copy()
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Values
         df = df.dropna(subset=[self.TESTS, self.C], how="any")
         for col in [self.TESTS, self.C]:
-            df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
-        # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+            df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         return df
 
     @classmethod
@@ -165,7 +154,7 @@ class PCRData(CleaningBase):
         # Add the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self._LOC_COLS] = df[self._LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
@@ -396,26 +385,16 @@ class PCRData(CleaningBase):
         # Result
         return check_zero and check_missing and check_unique
 
-    def _subset_by_area(self, country, province):
-        """
-        Return the subset for the area.
-
-        Args:
-            country (str): country name
-            province (str): province name or "-"
-        """
-        df = self._cleaned_df.copy()
-        return df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
-
     def _subset_select(self, country, province):
         """
-        Return suset if available.
+        Return subset if available.
 
         Args:
             country (str): country name
             province (str): province name or "-"
         """
-        df = self._subset_by_area(country, province)
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
+        df = df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
         if self._pcr_check_preconditions(df):
             return df
         # Failed in retrieving sufficient data
@@ -473,7 +452,7 @@ class PCRData(CleaningBase):
         if not show_figure:
             return df
         # Create figure
-        area = self.area_name(country, province=province)
+        area = self.area_name(geo=None, country=country, province=province)
         comp_status = "\nwith partially complemented tests data" if is_complemented else ""
         line_plot(
             df.set_index(self.DATE)[self.PCR_RATE],
@@ -485,11 +464,12 @@ class PCRData(CleaningBase):
         )
         return df
 
-    def subset(self, country, province=None, start_date=None, end_date=None):
+    def subset(self, geo=None, country=None, province=None, start_date=None, end_date=None):
         """
         Return subset of the country/province and start/end date.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name or ISO3 code
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
@@ -504,7 +484,15 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Tests_diff (int): daily number of tests on date
                     - Confirmed (int): the number of confirmed cases
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
+        if isinstance(geo, str):
+            country = geo
         country_alias = self.ensure_country_name(country)
         df = self._subset_select(country=country_alias, province=province or self.NA)
         # Calculate Tests_diff

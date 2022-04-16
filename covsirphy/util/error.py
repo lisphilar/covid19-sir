@@ -37,6 +37,7 @@ class SubsetNotFoundError(KeyError, ValueError):
     Error when subset was failed with specified arguments.
 
     Args:
+        geo (tuple(list[str] or tuple(str) or str) or str): location names for the layers to filter or None (all data at the top level)
         country (str): country name
         country_alias (str or None): country name used in the dataset
         province (str or None): province name
@@ -46,9 +47,12 @@ class SubsetNotFoundError(KeyError, ValueError):
         message (str or None): the other messages
     """
 
-    def __init__(self, country, country_alias=None, province=None,
+    def __init__(self, geo=None, country=None, country_alias=None, province=None,
                  start_date=None, end_date=None, date=None, message=None):
-        self.area = self._area(country, country_alias, province)
+        if geo is None:
+            self.area = self._area(country, country_alias, province)
+        else:
+            self.area = ", ".join([geo] if isinstance(geo, str) else [info for info in geo if info is not None])
         self.date = self._date(start_date, end_date, date)
         self.message = "" if message is None else f" {message}"
 
@@ -169,8 +173,8 @@ class PCRIncorrectPreconditionError(KeyError):
         """
         if province == "-":
             province = None
-        country_str = (" in country " + country) if not province else ""
-        province_str = "" if province is None else (" in province " + province)
+        country_str = "" if province else f" in country {country}"
+        province_str = "" if province is None else f" in province {province}"
         return f"{province_str}{country_str}"
 
 
@@ -219,7 +223,7 @@ class UnExpectedReturnValueError(ValueError):
     Args:
         name (str): argument name
         value (object): value user applied or None (will not be shown)
-        plural (bool): whether prulal or not
+        plural (bool): whether plural or not
         message (str or None): the other messages
     """
 

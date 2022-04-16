@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -12,17 +11,7 @@ class MobilityData(CleaningBase):
     Data cleaning of mobility dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - Country: country/region name
-                - ISO3: ISO 3166-1 alpha-3, like JPN
-                - Province: province/prefecture/state name
-                - variables defined by @variables
-        citation (str or None): citation or None (empty)
+        arguments defined for CleaningBase class except for @variables
         variables (list[str] or None): variables to parse or None (use default variables listed as follows)
             - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
             - Mobility_parks: % to baseline in visits (parks etc.)
@@ -30,9 +19,6 @@ class MobilityData(CleaningBase):
             - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
             - Mobility_residential: % to baseline in visits (places of residence)
             - Mobility_workplaces: % to baseline in visits (places of work)
-
-    Note:
-        Either @filename (high priority) or @data must be specified.
 
     Note:
         The default categories of places are listed in covid-19-open-data.
@@ -47,65 +33,35 @@ class MobilityData(CleaningBase):
         "Mobility_workplaces",
     ]
 
-    def __init__(self, filename=None, data=None, citation=None, variables=None):
+    def __init__(self, variables=None, **kwargs):
         self._variables = variables or self._MOBILITY_VARS[:]
-        super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)
+        super().__init__(variables=self._variables, **kwargs)
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
+                    - Location_ID (str): location identifiers
                     - Date (pandas.Timestamp): Observation date
-                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
                     - variables defined by MobilityData(variables)
         """
-        df = self._raw.copy()
+        df = raw.copy()
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(df, name="the raw data", columns=self._raw_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=self._subset_cols)
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm int type
         for col in self._variables:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(100).astype(np.int64)
-        # Update data types to reduce memory
-        cat_cols = [self.ISO3, self.COUNTRY, self.PROVINCE]
-        df[cat_cols] = df[cat_cols].astype("category")
-        return df.loc[:, self._raw_cols]
-
-    def subset(self, country, province=None):
-        """
-        Create a subset for a country.
-
-        Args:
-            country (str): country name or ISO 3166-1 alpha-3, like JPN
-            province (str): province name
-
-        Raises:
-            covsirphy.SubsetNotFoundError: no records were found
-
-        Returns:
-            pandas.DataFrame
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - variables defined by MobilityData(variables)
-        """
-        country_arg = country
-        country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country, province=province)
-        except SubsetNotFoundError:
-            raise SubsetNotFoundError(country=country_arg, country_alias=country, province=province) from None
-        df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self._subset_cols]
+        return df
 
     def total(self):
         """

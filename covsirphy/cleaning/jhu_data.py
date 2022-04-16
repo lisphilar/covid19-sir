@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
@@ -14,36 +15,23 @@ class JHUData(CleaningBase):
     Data cleaning of JHU-style dataset.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        data (pandas.DataFrame or None):
-            Index
-                reset index
-            Columns
-                - Date: Observation date
-                - ISO3: ISO3 code
-                - Country: country/region name
-                - Province: province/prefecture/state name
-                - Confirmed: the number of confirmed cases
-                - Fatal: the number of fatal cases
-                - Recovered: the number of recovered cases
-                - Population: population values
-        citation (str or None): citation or None (empty)
-
+        arguments defined for CleaningBase class except for @variables
     Note:
-        Either @filename (high priority) or @data must be specified.
+        @variable is Confirmed (the number of confirmed cases), Fatal (the number of fatal cases),
+        Recovered (the number of recovered cases) and Population (population values).
 
     Note:
         The number of infected cases will be (re-)calculated when data cleaning automatically.
     """
-    # For JHUData.from_dataframe()
+    # For JHUData.from_dataframe(), deprecated
     _RAW_COLS_DEFAULT = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R, CleaningBase.N
     ]
 
-    def __init__(self, filename=None, data=None, citation=None):
+    def __init__(self, **kwargs):
         variables = [self.C, self.CI, self.F, self.R, self.N]
-        super().__init__(filename=filename, data=data, citation=citation, variables=variables)
+        super().__init__(variables=variables, **kwargs)
         # Recovery period
         self._recovery_period = None
 
@@ -71,10 +59,8 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - ISO3: ISO3 code
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
+                    - Date (pandas.Timestamp): observation date
+                    - (pandas.Category): defined by CleaningBase(layers)
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -82,48 +68,43 @@ class JHUData(CleaningBase):
                     - Population: population values
         """
         if "population" in kwargs.keys():
-            raise ValueError(
-                "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        df = self._cleaned_df.copy()
+            raise ValueError("@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
+        df = self._loc_df.merge(self._value_df, how="right")
+        df[self._layers] = df[self._layers].astype("category")
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        return df
+        return df.loc[:, self._raw_cols]
 
-    def _cleaning(self):
+    def _cleaning(self, raw):
         """
-        Perform data cleaning of the raw data.
+        Perform data cleaning of the values of the raw data (without location information).
+
+        Args:
+            pandas.DataFrame: raw data
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - ISO3 (str): ISO3 code
-                    - Country (pandas.Category): country/region name
-                    - Province (pandas.Category): province/prefecture/state name
+                    - Location_ID (str): location identifiers
+                    - Date (pd.Timestamp): observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
                     - Population (int): population values or 0 (when raw data is 0 values)
         """
-        df = self._raw.loc[:, self._raw_cols]
+        df = raw.copy()
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
-        try:
+        with contextlib.suppress(TypeError):
             df[self.DATE] = df[self.DATE].dt.tz_convert(None)
-        except TypeError:
-            pass
-        # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
         # Values
         for col in [self.C, self.F, self.R, self.N]:
-            df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
+            df[col] = df.groupby(self._LOC)[col].ffill().fillna(0).astype(np.int64)
         # Calculate Infected
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
-        # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
-        return df.loc[:, self._raw_cols]
+        return df
 
     @deprecate("JHUData.replace()", version="2.21.0-xi-fu1")
     def replace(self, country_data):
@@ -157,7 +138,7 @@ class JHUData(CleaningBase):
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
         # Update data types to reduce memory
-        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        df[self._LOC_COLS] = df[self._LOC_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
@@ -204,12 +185,13 @@ class JHUData(CleaningBase):
             return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R]]
         return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R, self.S]]
 
-    def subset(self, country, province=None, start_date=None, end_date=None,
+    def subset(self, geo=None, country=None, province=None, start_date=None, end_date=None,
                population=None, recovered_min=1):
         """
         Return the subset of dataset.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
             country (str): country name or ISO3 code
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
@@ -232,26 +214,27 @@ class JHUData(CleaningBase):
         Note:
             If @population (high priority) is not None or population values are registered in subset,
             the number of susceptible cases will be calculated.
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
-        country_alias = self.ensure_country_name(country)
+        subset_arg_dict = {
+            "geo": geo, "country": country, "province": province, "start_date": start_date, "end_date": end_date}
         # Subset with area, start/end date
         try:
-            subset_df = super().subset(
-                country=country, province=province, start_date=start_date, end_date=end_date)
+            subset_df = super().subset(**subset_arg_dict)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
+            raise SubsetNotFoundError(**subset_arg_dict) from None
         # Calculate Susceptible
         df = self._calculate_susceptible(subset_df, population)
         # Select records where Recovered >= recovered_min
         recovered_min = self._ensure_natural_int(recovered_min, name="recovered_min", include_zero=True)
         df = df.loc[df[self.R] >= recovered_min, :].reset_index(drop=True)
         if df.empty:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date,
-                message=f"with 'Recovered >= {recovered_min}'") from None
+            raise SubsetNotFoundError(**subset_arg_dict, message=f"with 'Recovered >= {recovered_min}'") from None
         return df
 
     @deprecate("JHUData.to_sr()", version="2.17.0-zeta")
@@ -305,7 +288,7 @@ class JHUData(CleaningBase):
                     - Infected: the number of currently infected cases
                     - Fatal: the number of fatal cases
                     - Recovered: the number of recovered cases
-                    - Popupation: population values (optional)
+                    - Population: population values (optional)
             directory (str): directory to save geography information (for .map() method)
 
         Returns:
@@ -337,9 +320,7 @@ class JHUData(CleaningBase):
                     - Recovered per Confirmed (int)
                     - Fatal per (Fatal or Recovered) (int)
         """
-        df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.NA]
-        df = df.groupby(self.DATE).sum()
+        df = self.layer(geo=None).groupby(self.DATE).sum()
         total_series = df.loc[:, self.C]
         r_cols = self.RATE_COLUMNS[:]
         df[r_cols[0]] = df[self.F] / total_series
@@ -363,7 +344,7 @@ class JHUData(CleaningBase):
         Returns:
             list[str]: list of country names
         """
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         df = df.loc[df[self.PROVINCE] == self.NA]
         # All countries
         all_set = set((df[self.COUNTRY].unique()))
@@ -374,7 +355,7 @@ class JHUData(CleaningBase):
         # Selectable countries
         comp_ok_list = [
             country for country in all_set - raw_ok_set
-            if not self.subset_complement(country=country, **kwargs)[0].empty]
+            if not self.subset_complement(geo=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
     @deprecate("JHUData.calculate_closing_period()")
@@ -389,7 +370,7 @@ class JHUData(CleaningBase):
             If no records we can use for calculation were registered, 12 [days] will be applied.
         """
         # Get cleaned dataset at country level
-        df = self._cleaned_df.copy()
+        df = self._loc_df.merge(self._value_df, how="right", on=self._LOC)
         df = df.loc[df[self.PROVINCE] == self.NA]
         # Select records of countries where recovered values are reported
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
@@ -423,8 +404,7 @@ class JHUData(CleaningBase):
         """
         default = 17
         # Get valid data for calculation
-        df = self._cleaned_df.copy()
-        df = df.loc[df[self.PROVINCE] == self.NA]
+        df = self.layer(geo=None)
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
         # If no records were found the default value will be returned
         if df.empty:
@@ -485,15 +465,16 @@ class JHUData(CleaningBase):
             return -1
         return df["Elapsed"].mode().mean()
 
-    def subset_complement(self, country, province=None,
+    def subset_complement(self, geo=None, country=None, province=None,
                           start_date=None, end_date=None, population=None, **kwargs):
         """
         Return the subset of dataset and complement recovered data, if necessary.
         Records with Recovered > 0 will be selected.
 
         Args:
-            country(str): country name or ISO3 code
-            province(str or None): province name
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
+            country (str): country name or ISO3 code
+            province (str or None): province name
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
             population(int or None): population value
@@ -516,14 +497,20 @@ class JHUData(CleaningBase):
         Note:
             If @population (high priority) is not None or population values are registered in subset,
             the number of susceptible cases will be calculated.
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
+        subset_arg_dict = {
+            "geo": geo, "country": country, "province": province, "start_date": start_date, "end_date": end_date}
         # Subset with area
-        country_alias = self.ensure_country_name(country)
         try:
-            subset_df = super().subset(country=country, province=province, start_date=None, end_date=None)
+            subset_df = super().subset(**subset_arg_dict)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province) from None
+            raise SubsetNotFoundError(**subset_arg_dict) from None
         # Complement, if necessary
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
@@ -534,9 +521,7 @@ class JHUData(CleaningBase):
         if end_date is not None:
             df = df.loc[df[self.DATE] <= self._ensure_date(end_date, name="end_date")]
         if df.empty:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
+            raise SubsetNotFoundError(**subset_arg_dict) from None
         # Calculate Susceptible
         df.loc[:, self.N] = subset_df.loc[:, self.N]
         df = self._calculate_susceptible(df, population)
@@ -546,14 +531,15 @@ class JHUData(CleaningBase):
         df = df.loc[df[self.R] > 0, :].reset_index(drop=True)
         return (df, is_complemented)
 
-    def records(self, country, province=None, start_date=None, end_date=None, population=None,
+    def records(self, geo=None, country=None, province=None, start_date=None, end_date=None, population=None,
                 auto_complement=True, **kwargs):
         """
         JHU-style dataset for the area from the start date to the end date.
         Records with Recovered > 0 will be selected.
 
         Args:
-            country(str): country name or ISO3 code
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
+            country (str): country name or ISO3 code
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
@@ -585,10 +571,15 @@ class JHUData(CleaningBase):
 
         Note:
             If necessary and @auto_complement is True, complement recovered data.
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
+
+        Note:
+            @country and @province were deprecated and please use @geo.
         """
-        country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
-            "country": country, "province": province,
+            "geo": geo, "country": country, "province": province,
             "start_date": start_date, "end_date": end_date, "population": population,
         }
         if auto_complement:
@@ -599,17 +590,17 @@ class JHUData(CleaningBase):
             return (self.subset(**subset_arg_dict), False)
         except ValueError:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
+                geo=geo, country=country, province=province,
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
 
-    def show_complement(self, country=None, province=None,
-                        start_date=None, end_date=None, **kwargs):
+    def show_complement(self, geo=None, country=None, province=None, start_date=None, end_date=None, **kwargs):
         """
         To monitor effectivity and safety of complement on JHU subset,
         we need to know what kind of complement was done for JHU subset
         for each country (if country/countries specified) or for all countries.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
             country (str or list[str] or None): country/countries name or None (all countries)
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
@@ -617,7 +608,6 @@ class JHUData(CleaningBase):
             kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
 
         Raises:
-            ValueError: @province was specified when @country is not a string
             covsirphy.SubsetNotFoundError: No records were registered for the area/dates
 
         Returns:
@@ -626,41 +616,40 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - country (str): country name
-                    - province (str): province name
+                    - (str): location information
                     - Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise
                     - Monotonic_fatal (bool): True if applied for fatal cases or False otherwise
                     - Monotonic_recovered (bool): True if applied for recovered or False otherwise
                     - Full_recovered (bool): True if applied for recovered or False otherwise
                     - Partial_recovered (bool): True if applied for recovered or False otherwise
+
+        Note:
+            @country and @province were deprecated and please use @geo.
+
+        Note:
+            Please refer to Geometry.filter() for more information regarding @geo argument.
         """
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
-        # Area name
-        if country is None:
-            country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
-        province = province or self.NA
-        if not isinstance(country, str) and province != self.NA:
-            raise ValueError("@province cannot be specified when @country is not a string.")
-        if not isinstance(country, list):
-            country = [country]
-        # Create complement handler
         handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
-        # Check each country
-        complement_df = pd.DataFrame(
-            columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
-        complement_df.set_index(self.COUNTRY, inplace=True)
-        for cur_country in country:
-            try:
-                subset_df = super().subset(
-                    country=cur_country, province=province, start_date=start_date, end_date=end_date)
-            except SubsetNotFoundError:
-                raise SubsetNotFoundError(
-                    country=cur_country, province=province,
-                    start_date=start_date, end_date=end_date) from None
-            * _, complement_dict = handler.run(subset_df)
-            complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
-            complement_df.loc[cur_country] = [province, *complement_dict_values]
-        return complement_df.reset_index()
+        # Locations
+        locations = self._to_location_identifiers(
+            geo=geo, country=country, province=province, method="layer" if geo is None else "filter")
+        # Get data between start date and end date
+        value_df = self._value_df.copy()
+        series = value_df[self.DATE].copy()
+        start_obj = self._ensure_date(start_date, name="start_date", default=series.min())
+        end_obj = self._ensure_date(end_date, name="end_date", default=series.max())
+        value_df = value_df.loc[(start_obj <= series) & (series <= end_obj), :]
+        # Check result of each locations
+        comp_df = pd.DataFrame(columns=JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
+        for locations in locations:
+            subset_df = value_df.loc[value_df[self._LOC] == locations]
+            *_, complement_dict = handler.run(subset_df)
+            comp_df.loc[locations] = pd.Series(complement_dict.values(), dtype=bool).values
+        # Combine with location data
+        df = self._loc_df.merge(comp_df, how="right", left_on=self._LOC, right_index=True)
+        df = df.drop(self._LOC, axis=1).reset_index(drop=True)
+        return df.drop(self.ISO3, axis=1) if {self.ISO3, self.COUNTRY}.issubset(df) else df
 
     def map(self, country=None, variable="Confirmed", date=None, **kwargs):
         """
@@ -682,8 +671,6 @@ class JHUData(CleaningBase):
         title = f"{country_str}: the number of {variable.lower()} cases on {date_str}"
         # Global map
         if country is None:
-            return self._colored_map_global(
-                variable=variable, title=title, date=date, **kwargs)
+            return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)
         # Country-specific map
-        return self._colored_map_country(
-            country=country, variable=variable, title=title, date=date, **kwargs)
+        return self._colored_map_country(country=country, variable=variable, title=title, date=date, **kwargs)
