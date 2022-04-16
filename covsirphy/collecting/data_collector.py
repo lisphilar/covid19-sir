@@ -14,13 +14,6 @@ class DataCollector(Term):
         layers (list[str] or None): list of layers of geographic information or None (["Country", "Province", "City"])
     """
     _ID = "Location_ID"
-    # Default file titles of the downloaded datasets
-    TITLE_DICT = {
-        "covid19dh": "covid19dh",
-        "owid": "ourworldindata",
-        "google": "google_cloud_platform",
-        "japan": "covid_japan",
-    }
 
     def __init__(self, layers=None):
         # Location data
@@ -126,3 +119,51 @@ class DataCollector(Term):
         geography = Geography(layers=self._layers)
         df = geography.filter(data=all_df, geo=geo)
         return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
+
+    def auto(self, iso3=None, directory="input", update_interval=12, basename_dict=None, verbose=1):
+        """Download datasets from remote servers automatically.
+
+        Args:
+            iso3 (str or None): ISO3 code of country that must be included or None (all available countries)
+            directory (str or pathlib.Path): directory to save downloaded datasets
+            update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
+            basename_dict (dict[str, str]): basename of downloaded CSV files,
+                "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
+                "owid": Our World In Data (default: ourworldindata.csv),
+                "google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
+                "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
+            verbose (int): level of verbosity when downloading
+
+        Returns:
+            covsirphy.DataCollector: self
+
+        Note:
+            If @update_interval (not None) hours have passed since the last update of downloaded datasets,
+            the dawnloaded datasets will be updated automatically.
+
+        Note:
+            If @verbose is 0, no description will be shown.
+            If @verbose is 1 or larger, URL and database name will be shown.
+            If @verbose is 2, detailed citation list will be show, if available.
+        """
+        self._ensure_natural_int(update_interval, name="update_interval", include_zero=True, none_ok=True)
+        self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        # Filenames to save remote datasets
+        TITLE_DICT = {
+            "covid19dh": "covid19dh",
+            "owid": "ourworldindata",
+            "google": "google_cloud_platform",
+            "japan": "covid_japan",
+        }
+        filer = Filer(directory=directory, prefix=None, suffix=None, numbering=None)
+        file_dict = {
+            k: filer.csv(title=(basename_dict or {}).get(k, v))["path_or_buf"] for (k, v) in TITLE_DICT.items()}
+        # COVID-19 Data Hub
+        self.manual(data=self._auto_covid19dh(iso3=iso3, local_file=file_dict["covid19dh"]), date="date")
+        # Our World In Data
+        # Google Cloud Plat Form
+        # Japan dataset via CovsirPhy project
+        return self
+
+    def _auto_covid19dh(**kwargs):
+        pass
