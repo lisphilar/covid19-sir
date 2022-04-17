@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import country_converter as coco
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.util.filer import Filer
@@ -11,13 +12,19 @@ class DataCollector(Term):
     """Class for collecting data for the specified location.
 
     Args:
-        layers (list[str] or None): list of layers of geographic information or None (["Country", "Province", "City"])
+        layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
+        country (str or None): layer name of countries or None (countries are not included in the layers)
+
+    Note:
+        Country level data specified with @country will be stored with ISO3 codes.
     """
     _ID = "Location_ID"
 
-    def __init__(self, layers=None):
+    def __init__(self, layers=None, country="ISO3"):
+        # Countries will be specified with ISO3 codes and this requires conversion
+        self._country = None if country is None else str(country)
         # Location data
-        self._layers = self._ensure_list(target=layers or [Term.COUNTRY, Term.PROVINCE, Term.CITY], name="layers")
+        self._layers = self._ensure_list(target=layers or [self._country, Term.PROVINCE, Term.CITY], name="layers")
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
         self._rec_df = pd.DataFrame(columns=[self._ID, self.DATE])
@@ -79,12 +86,17 @@ class DataCollector(Term):
             covsirphy.DataCollector: self
         """
         df = self._ensure_dataframe(target=data, name="data", columns=[*self._layers, date])
+        # Convert date type
         df.rename(columns={date: self.DATE}, inplace=True)
         df[self.DATE] = pd.to_datetime(df[self.DATE], **kwargs)
+        # Convert country names to ISO3 codes
+        if self._country is not None:
+            df.loc[:, self._country] = df[self._country].apply(self._to_iso3)
         # Locations
         loc_df = self._loc_df.merge(df, how="left", on=self._layers, ignore_index=True)
-        loc_df.loc[loc_df[self._ID].isna(), self._ID] = "id" + loc_df[loc_df[self._ID].isna()].index.astype("str")
-        self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]]
+        loc_df.loc[loc_df[self._ID].isna(), self._ID] = f"id{len(loc_df)}-" + \
+            loc_df[loc_df[self._ID].isna()].index.astype("str")
+        self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]].fillna(self.NA)
         # Records
         columns = [self._ID, self.DATE, *self._ensure_list(target=variables or None, name=variables)]
         df = df.merge(self._loc_df, how="left", on=self._layers)
@@ -94,6 +106,22 @@ class DataCollector(Term):
         citation_dict = {col: self._citation_dict.get(col, []) + (citations or "my own dataset") for col in variables}
         self._citation_dict.update(citation_dict)
         return self
+
+    @staticmethod
+    def _to_iso3(name):
+        """Convert country name to ISO3 codes.
+
+        Args:
+            name (str or list[str]): country name(s)
+
+        Returns:
+            str or list[str]: ISO3 code(s) or as-is when not found
+
+        Note:
+            "UK" will be converted to "GBR".
+        """
+        names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
+        return coco.convert(names, to="ISO3", not_found=None)
 
     def collect(self, geo=None, variables=None):
         """Collect necessary data from remote server and local data.
@@ -114,10 +142,15 @@ class DataCollector(Term):
             Please refer to covsirphy.Geography.filter() regarding @geo argument.
 
         """
+        geo_converted = [geo] if isinstance(geo, str) else (geo or [None]).copy()
+        geo_converted += [None] * (len(self._layers) - len(geo_converted))
+        if self._country is not None:
+            geo_converted = [
+                self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
         # Collect data of the area
         all_df = self.all(variables=variables)
         geography = Geography(layers=self._layers)
-        df = geography.filter(data=all_df, geo=geo)
+        df = geography.filter(data=all_df, geo=geo_converted)
         return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
 
     def auto(self, iso3=None, directory="input", update_interval=12, basename_dict=None, verbose=1):
