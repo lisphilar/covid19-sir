@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import contextlib
+from covsirphy.util.term import Term
 
 
-class Geography(object):
+class Geography(Term):
     """
     Class to manipulate geography data.
 

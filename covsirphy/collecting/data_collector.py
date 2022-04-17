@@ -4,7 +4,7 @@
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.util.filer import Filer
-from covsirphy.util.geography import Geography
+from covsirphy.collecting.geography import Geography
 
 
 class DataCollector(Term):

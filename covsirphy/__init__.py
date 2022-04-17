@@ -23,7 +23,6 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term, Word
-from covsirphy.util.geography import Geography
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.visualization.colored_map import ColoredMap
@@ -49,6 +48,7 @@ from covsirphy.cleaning.mobility_data import MobilityData
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
 # collecting
+from covsirphy.collecting.geography import Geography
 from covsirphy.collecting.data_collector import DataCollector
 # trend
 from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
@@ -110,7 +110,6 @@ __all__ = [
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
-    "Geography",
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
@@ -120,7 +119,7 @@ __all__ = [
     # loading
     "DataLoader",
     # collecting
-    "DataCollector",
+    "Geography", "DataCollector",
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
