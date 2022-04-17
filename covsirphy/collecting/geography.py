@@ -124,10 +124,7 @@ class Geography(Term):
         if len(geo_converted) > len(self._layers):
             raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
         *geo_formars, geo_last = geo_converted
-        try:
-            df = self.layer(data=data, geo=geo_formars or None)
-        except TypeError as e:
-            raise e from None
+        df = self.layer(data=data, geo=geo_formars or None)
         if not isinstance(geo_last, (str, list, tuple)):
             raise TypeError(
                 f"The last value of @geo must be a list[str] or tuple(str) or str, but {geo_last} was applied.")
