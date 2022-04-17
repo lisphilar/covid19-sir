@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import contextlib
+from copy import deepcopy
 from covsirphy.util.term import Term
 
 
@@ -28,7 +29,7 @@ class Geography(Term):
                     - Date (pandas.Timestamp): observation date
                     - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
-            geo (tuple(list[str] or tuple(str) or str) or None): location names to filter or None (top-level layer)
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
 
         Raises:
             TypeError: @geo has un-expected types
@@ -41,7 +42,7 @@ class Geography(Term):
             When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
 
         Note:
-            When `geo=("Japan",)`, returns province-level data in Japan.
+            When `geo=("Japan",)` or `geo="Japan"`, returns province-level data in Japan.
 
         Note:
             When `geo=(["Japan", "UK"],)`, returns province-level data in Japan and UK.
@@ -52,11 +53,13 @@ class Geography(Term):
         Note:
             When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns city-level data in Tokyo/Japan and Kanagawa/Japan.
         """
-        if geo is not None and not isinstance(geo, (list, tuple)):
-            raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
+        if geo is not None and not isinstance(geo, (list, tuple, str)):
+            raise TypeError(
+                f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
+        geo_converted = (geo,) if (geo is None or isinstance(geo, str)) else deepcopy(geo)
         self._ensure_dataframe(target=data, name="data", columns=self._layers, empty_ok=False)
         df = data.copy()
-        for (i, sel) in enumerate(geo or (None,)):
+        for (i, sel) in enumerate(geo_converted):
             if sel is None:
                 return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
             if not isinstance(sel, (str, list, tuple)):
@@ -64,7 +67,7 @@ class Geography(Term):
             if i >= len(self._layers):
                 raise ValueError(f"The length of @geo must be smaller than that of layers, but {geo} was applied.")
             df = df.loc[df[self._layers[i]].isin([sel] if isinstance(sel, str) else sel)]
-            if i == len(geo) - 1 and i < len(self._layers) - 1:
+            if i == len(geo_converted) - 1 and i < len(self._layers) - 1:
                 df = df.loc[df[self._layers[i + 1]] != self.NA]
                 with contextlib.suppress(IndexError):
                     df = df.loc[df[self._layers[i + 2]] == self.NA]
@@ -82,7 +85,7 @@ class Geography(Term):
                     - Date (pandas.Timestamp): observation date
                     - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
-            geo (tuple(list[str] or tuple(str) or str)): location names for the layers to filter or None (all data at the top level)
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
 
         Raises:
             TypeError: @geo has un-expected types
@@ -95,7 +98,7 @@ class Geography(Term):
             When `geo=None` or `geo=(None,)`, returns all country-level data, assuming we have country/provonce/city as layers here.
 
         Note:
-            When `geo=("Japan",)`, returns country-level data in Japan.
+            When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
 
         Note:
             When `geo=(["Japan", "UK"],)`, returns country-level data of Japan and UK.
@@ -114,17 +117,19 @@ class Geography(Term):
         """
         if geo is None or geo == (None,):
             return self.layer(data=data, geo=None)
-        if not isinstance(geo, (list, tuple)):
-            raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
-        if len(geo) > len(self._layers):
+        if not isinstance(geo, (list, tuple, str)):
+            raise TypeError(
+                f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
+        geo_converted = (geo,) if isinstance(geo, str) else deepcopy(geo)
+        if len(geo_converted) > len(self._layers):
             raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
-        *geo_formars, geo_last = geo
+        *geo_formars, geo_last = geo_converted
         try:
-            df = self.layer(data=data, geo=geo_formars)
+            df = self.layer(data=data, geo=geo_formars or None)
         except TypeError as e:
             raise e from None
         if not isinstance(geo_last, (str, list, tuple)):
             raise TypeError(
                 f"The last value of @geo must be a list[str] or tuple(str) or str, but {geo_last} was applied.")
         selectors = [geo_last] if isinstance(geo_last, str) else geo_last
-        return df.loc[df[self._layers[len(geo) - 1]].isin(selectors)].reset_index(drop=True)
+        return df.loc[df[self._layers[len(geo_converted) - 1]].isin(selectors)].reset_index(drop=True)
