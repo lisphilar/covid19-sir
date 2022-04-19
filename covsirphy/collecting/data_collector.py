@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from itertools import zip_longest
 import country_converter as coco
 import pandas as pd
 from covsirphy.util.term import Term
@@ -18,6 +17,9 @@ class DataCollector(Term):
         update_interval (int): update interval of downloading dataset
         verbose (int): level of verbosity when downloading
 
+    Raises:
+        ValueError: @layers has duplicates
+
     Note:
         Country level data specified with @country will be stored with ISO3 codes.
 
@@ -30,7 +32,24 @@ class DataCollector(Term):
         If @verbose is 1 or larger, URL and database name will be shown.
         If @verbose is 2, detailed citation list will be show, if available.
     """
+    # Internal term
     _ID = "Location_ID"
+    # OxCGRT Indicators
+    _OXCGRT_COLS_RAW = [
+        "school_closing",
+        "workplace_closing",
+        "cancel_events",
+        "gatherings_restrictions",
+        "transport_closing",
+        "stay_home_restrictions",
+        "internal_movement_restrictions",
+        "international_movement_restrictions",
+        "information_campaigns",
+        "testing_policy",
+        "contact_tracing",
+        "stringency_index",
+    ]
+    OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW]
 
     def __init__(self, layers=None, country="ISO3", update_interval=12, verbose=1):
         self._update_interval = self._ensure_natural_int(update_interval, name="update_interval", include_zero=True)
@@ -39,6 +58,8 @@ class DataCollector(Term):
         self._country = None if country is None else str(country)
         # Location data
         self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
+        if len(set(self._layers)) != len(self._layers):
+            raise ValueError(f"@layer has duplicates, {self._layers}")
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
         self._rec_df = pd.DataFrame(columns=[self._ID, self.DATE])
@@ -60,7 +81,8 @@ class DataCollector(Term):
                     - Date (pandas.Timestamp): observation dates
                     - columns defined by @variables
         """
-        df = self._loc_df.merge(self._rec_df, how="right", on=self._ID, ignore_index=True).reset_index(drop=True)
+        df = self._loc_df.merge(self._rec_df, how="right", on=self._ID).drop(self._ID, axis=1)
+        df = df.sort_values([*self._layers, self.DATE], ignore_index=True)
         if variables is None:
             return df
         all_variables = df.columns.tolist()
@@ -77,10 +99,11 @@ class DataCollector(Term):
         Returns:
             list[str]: citation list
         """
-        columns = self._ensure_list(target=variables or None, name="variables")
+        all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self.DATE)]
+        columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
-    def manual(self, data, date="Date", variables=None, citations=None, **kwargs):
+    def manual(self, data, date="Date", data_layers=None, variables=None, citations=None, **kwargs):
         """Add data manually.
 
         Args:
@@ -88,38 +111,103 @@ class DataCollector(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by covsirphy.DataCollector(layers)
+                    - columns defined by @data_layers
                     - columns defined by @date
                     - columns defined by @variables
             date (str): column name of date
+            data_layers (list[str]): layers of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
-            citations (list[str] or None): citations of the dataset or None (["my own dataset"])
+            citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
             **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
+
+        Raises:
+            ValueError: @data_layers has duplicates
 
         Returns:
             covsirphy.DataCollector: self
         """
-        df = self._ensure_dataframe(target=data, name="data", columns=[*self._layers, date])
+        if len(set(data_layers)) != len(data_layers):
+            raise ValueError(f"@layer has duplicates, {data_layers}")
+        df = self._ensure_dataframe(
+            target=data, name="data", columns=[*(data_layers or self._layers), date, *(variables or [])])
         # Convert date type
         df.rename(columns={date: self.DATE}, inplace=True)
         df[self.DATE] = pd.to_datetime(df[self.DATE], **kwargs)
         # Convert country names to ISO3 codes
-        if self._country is not None:
+        if self._country is not None and self._country in df:
             df.loc[:, self._country] = df[self._country].apply(self._to_iso3)
+        # Prepare necessary layers
+        if data_layers is not None and data_layers != self._layers:
+            df = self._prepare_layers(df, data_layers=data_layers)
         # Locations
-        loc_df = self._loc_df.merge(df, how="left", on=self._layers, ignore_index=True)
+        loc_df = self._loc_df.merge(df, how="right", on=self._layers)
+        loc_df.drop_duplicates(subset=self._layers, keep="first", ignore_index=True, inplace=True)
         loc_df.loc[loc_df[self._ID].isna(), self._ID] = f"id{len(loc_df)}-" + \
             loc_df[loc_df[self._ID].isna()].index.astype("str")
         self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]].fillna(self.NA)
         # Records
-        columns = [self._ID, self.DATE, *self._ensure_list(target=variables or None, name=variables)]
+        columns = [self._ID, self.DATE, *self._ensure_list(target=variables or [], name="variables")]
         df = df.merge(self._loc_df, how="left", on=self._layers)
         df = df.loc[:, columns].reset_index(drop=True)
         self._rec_df = pd.concat([self._rec_df, df], axis=0, ignore_index=True)
         # Citations
-        citation_dict = {col: self._citation_dict.get(col, []) + (citations or "my own dataset") for col in variables}
+        new_citations = self._ensure_list(
+            [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), name="citations")
+        citation_dict = {col: self._citation_dict.get(col, []) + new_citations for col in variables}
         self._citation_dict.update(citation_dict)
         return self
+
+    def _prepare_layers(self, data, data_layers):
+        """Prepare necessary layers, adding NAs and renaming layers.
+
+        Args:
+            data (pandas.DataFrame): local dataset
+                Index
+                    reset index
+                Columns
+                    - columns defined by @data_layers
+                    - the other columns
+            data_layers (list[str]): layers of the data
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - columns defined by DataCollector(layers)
+                    - the other columns
+        """
+        expected, actual = [], []
+        for layer in self._layers:
+            current = [data_layer for data_layer in data_layers if data_layer not in actual]
+            if layer in current:
+                new = current[:current.index(layer) + 1]
+                expected.extend([None for _ in range(len(new) - 1)] + [layer])
+                actual.extend(new)
+            else:
+                expected.append(layer)
+                actual.append(None)
+        not_included = [data_layer for data_layer in data_layers if data_layer not in actual]
+        expected += [None for _ in range(len(not_included))]
+        actual += not_included
+        for (i, (e, a)) in enumerate(zip(expected[:], actual[:]), start=1):
+            if i == len(expected):
+                break
+            if e is not None and expected[i] is None and a is None and actual[i] is not None:
+                expected[i - 1:i + 1] = [e]
+                actual[i - 1:i + 1] = [actual[i]]
+        for (layer, data_layer) in zip(expected, actual):
+            if data_layer is None:
+                data.loc[:, layer] = self.NA
+                if self._verbose:
+                    print(f"[INFO] New layer {layer} was added to the data with NAs.")
+                continue
+            if layer is None or layer == data_layer:
+                continue
+            data.rename(columns={data_layer: layer}, inplace=True)
+            if self._verbose:
+                print(f"[INFO] layer name {data_layer} was renamed to {layer}.")
+        return data
 
     @staticmethod
     def _to_iso3(name):
@@ -212,8 +300,10 @@ class DataCollector(Term):
                     Index
                         reset index
                     Columns
-                        - (str): layers defined by DataCollector(layers) argument
-                        - date (pandas.Timestamp): observation dates
+                        - Date (pandas.Timestamp): observation dates
+                        - ISO3 (str): ISO3 codes of countries
+                        - Province (str): province/prefecture/state name
+                        - City (str): city name
                         - Confirmed (numpy.int64): the number of confirmed cases
                         - Fatal (numpy.int64): the number of fatal cases
                         - Recovered (numpy.int64): the number of recovered cases
@@ -230,11 +320,14 @@ class DataCollector(Term):
                         - Testing_policy (numpy.int64): one of the OxCGRT indicator
                         - Contact_tracing (numpy.int64): one of the OxCGRT indicator
                         - Stringency_index (numpy.int64): one of the OxCGRT indicator
+                - data_layers (list[str]): ["ISO3", "Province", "City"]
                 - citations (list[str]): citation of COVID-19 Data Hub
         """
         col_dict = {
             "date": self.DATE, "iso_alpha_3": self.ISO3,
+            "administrative_area_level_2": self.PROVINCE, "administrative_area_level_3": self.CITY,
             "confirmed": self.C, "deaths": self.F, "recovered": self.R, "tests": self.TESTS, "population": self.N,
+            **dict(zip(self._OXCGRT_COLS_RAW, self.OXCGRT_VARS)),
         }
         # Get raw data from server
         if iso3 is None:
@@ -244,18 +337,7 @@ class DataCollector(Term):
         df = pd.read_csv(
             url, header=0, use_cols=list(col_dict.values()), parse_dates="date", date_parser=lambda x: pd.datetime.strptime(x, "%Y-%m-%d"))
         df.rename(columns=col_dict, inplace=True)
-        # Perform sequence alignment with layers
-        dh_layers = [self.ISO3, "administrative_area_level_2", "administrative_area_level_3"]
-        if self._country == self.ISO3:
-            defined_lower_layers = self._layers[self._layers.index(self.ISO3) + 1:]
-            for (admin_level, layer) in zip_longest([self.PROVINCE, self.CITY], defined_lower_layers):
-                if admin_level is None:
-                    break
-                if layer is None:
-                    df = df.loc[df[admin_level].isna()]
-                    break
-                df.rename(columns={admin_level: layer}, inplace=True)
-        else:
-            df.rename(columns={admin_level: layer for (admin_level, layer) in zip_longest()}, inplace=True)
-        for layer in self._layers:
-            df.loc[:, layer] = df[layer].fillna(self.NA)
+        citation = '(Secondary source)' \
+            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
+            ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.'
+        return {"data": df, "data_layers": [self.ISO3, self.PROVINCE, self.CITY], "citations": citation}
