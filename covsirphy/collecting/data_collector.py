@@ -203,10 +203,12 @@ class DataCollector(Term):
                     print(f"[INFO] New layer {layer} was added to the data with NAs.")
                 continue
             if layer is None or layer == data_layer:
+                if layer is None and self._verbose:
+                    print(f"[INFO] {data_layer} layer will be ignored.")
                 continue
             data.rename(columns={data_layer: layer}, inplace=True)
             if self._verbose:
-                print(f"[INFO] layer name {data_layer} was renamed to {layer}.")
+                print(f"[INFO] {data_layer} layer was renamed to {layer}.")
         return data
 
     @staticmethod
