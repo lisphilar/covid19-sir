@@ -39,6 +39,9 @@ class Geography(Term):
             pandas.DataFrame: as-is @data
 
         Note:
+           Note that records with NAs as country names will be always removed.
+
+        Note:
             When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
 
         Note:
@@ -58,7 +61,7 @@ class Geography(Term):
                 f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
         geo_converted = (geo,) if (geo is None or isinstance(geo, str)) else deepcopy(geo)
         self._ensure_dataframe(target=data, name="data", columns=self._layers, empty_ok=False)
-        df = data.copy()
+        df = data.loc[data[self._layers[0]] != self.NA]
         for (i, sel) in enumerate(geo_converted):
             if sel is None:
                 return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
@@ -93,6 +96,9 @@ class Geography(Term):
 
         Returns:
             pandas.DataFrame: as-is @data
+
+        Note:
+           Note that records with NAs as country names will be always removed.
 
         Note:
             When `geo=None` or `geo=(None,)`, returns all country-level data, assuming we have country/provonce/city as layers here.
