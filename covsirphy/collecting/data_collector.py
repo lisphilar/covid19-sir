@@ -178,7 +178,35 @@ class DataCollector(Term):
                     - the other columns
         """
         df = data.copy()
-        # Sequence alignment: [A, B, C], [A, C] -> [A, B, C], [A, None, C]
+        expected, actual = self._align_layers(data_layers)
+        # Adjust layer names and records
+        for (layer, data_layer) in zip(expected, actual):
+            if data_layer is None:
+                df.loc[:, layer] = self.NA
+                self._print_v0(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
+            elif layer is None:
+                if data_layer == actual[-1]:
+                    df.loc[df[data_layer] == self.NA, self._layers] = self.NA
+                    self._print_v0(f"\t[INFO] Records which have NAs at '{data_layer}' layer was disabled.")
+                df = df.drop(data_layer, axis=1)
+                self._print_v0(f"\t[INFO] '{data_layer}' layer was removed.")
+            elif layer != data_layer:
+                df.rename(columns={data_layer: layer}, inplace=True)
+                self._print_v0(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
+        return df.reset_index()
+
+    def _align_layers(self, data_layers):
+        """Perform sequence alignment of the layers of new data with the layers defined by DataCollector(layers).
+
+        Args:
+            data_layers (list[str]): layers of the data
+
+        Returns:
+            tuple(list[str], list[str]): list of aligned layers, that of defined and that of new data
+
+        Note:
+            Example of sequence alignment: [A, B, C], [A, C] -> [A, B, C], [A, None, C]
+        """
         expected, actual = [], []
         for layer in self._layers:
             current = [data_layer for data_layer in data_layers if data_layer not in actual]
@@ -198,28 +226,16 @@ class DataCollector(Term):
             if e is not None and expected[i] is None and a is None and actual[i] is not None:
                 expected[i - 1:i + 1] = [e]
                 actual[i - 1:i + 1] = [actual[i]]
-        # Adjust layer names and records
-        for (layer, data_layer) in zip(expected, actual):
-            if data_layer is None:
-                df.loc[:, layer] = self.NA
-                if self._verbose:
-                    print(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
-                continue
-            if layer is None:
-                if data_layer == actual[-1]:
-                    df.loc[df[data_layer] == self.NA, self._layers] = self.NA
-                    if self._verbose:
-                        print(f"\t[INFO] Records which have NAs at '{data_layer}' layer was disabled.")
-                df = df.drop(data_layer, axis=1)
-                if self._verbose:
-                    print(f"\t[INFO] '{data_layer}' layer was removed.")
-                continue
-            if layer == data_layer:
-                continue
-            df.rename(columns={data_layer: layer}, inplace=True)
-            if self._verbose:
-                print(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
-        return df.reset_index()
+        return expected, actual
+
+    def _print_v0(self, sentence):
+        """Stdout the sentence when the verbosity level was set to 1 or higher.
+
+        Args:
+            sentence (str): the sentence to stdout
+        """
+        if self._verbose:
+            print(sentence)
 
     @staticmethod
     def _to_iso3(name):
