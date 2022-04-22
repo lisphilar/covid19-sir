@@ -81,8 +81,5 @@ class TestDataCollector(object):
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
         all_df["Confirmed"] = np.arange(len(all_df)).astype("float64")
         all_df = all_df.sort_values([*layers, Term.DATE], ignore_index=True)
-        print(raw)
-        print(all_df)
-        print(collector.all())
         assert collector.all().equals(all_df)
         assert collector.citations() == ["Manual"]
