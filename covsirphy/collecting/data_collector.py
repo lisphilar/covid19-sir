@@ -4,7 +4,6 @@
 import country_converter as coco
 import pandas as pd
 from covsirphy.util.term import Term
-from covsirphy.util.filer import Filer
 from covsirphy.collecting.geography import Geography
 
 
@@ -34,6 +33,7 @@ class DataCollector(Term):
     """
     # Internal term
     _ID = "Location_ID"
+    _GOOGLE_ID = "Google_ID"
     # OxCGRT Indicators
     _OXCGRT_COLS_RAW = [
         "school_closing",
@@ -50,6 +50,16 @@ class DataCollector(Term):
         "stringency_index",
     ]
     OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW]
+    # Mobility indicators
+    _MOBILITY_COLS_RAW = [
+        "mobility_grocery_and_pharmacy",
+        "mobility_parks",
+        "mobility_transit_stations",
+        "mobility_retail_and_recreation",
+        "mobility_residential",
+        "mobility_workplaces",
+    ]
+    MOBILITY_VARS = [v.capitalize() for v in _MOBILITY_COLS_RAW]
 
     def __init__(self, layers=None, country="ISO3", update_interval=12, verbose=1):
         self._update_interval = self._ensure_natural_int(update_interval, name="update_interval", include_zero=True)
@@ -283,44 +293,48 @@ class DataCollector(Term):
         df = geography.filter(data=all_df, geo=geo_converted)
         return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
 
-    def auto(self, iso3=None, directory="input", basename_dict=None):
+    def auto(self, iso3=None):
         """Download datasets from remote servers automatically.
 
         Args:
             iso3 (str or None): ISO3 code of country that must be included or None (all available countries)
-            directory (str or pathlib.Path): directory to save downloaded datasets
-            basename_dict (dict[str, str]): basename of downloaded CSV files,
-                "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
-                "owid": Our World In Data (default: ourworldindata.csv),
-                "google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
-                "japan": COVID-19 Dataset in Japan (default: covid_japan.csv).
 
         Returns:
             covsirphy.DataCollector: self
         """
-        # Filenames to save remote datasets
-        TITLE_DICT = {
-            "covid19dh": "covid19dh",
-            "owid": "ourworldindata",
-            "google": "google_cloud_platform",
-            "japan": "covid_japan",
-        }
-        filer = Filer(directory=directory, prefix=None, suffix=None, numbering=None)
-        file_dict = {
-            k: filer.csv(title=(basename_dict or {}).get(k, v))["path_or_buf"] for (k, v) in TITLE_DICT.items()}
         # COVID-19 Data Hub
-        self.manual(**self._auto_covid19dh(iso3=iso3, path=file_dict["covid19dh"]))
-        # Our World In Data
+        dh_dict = self._auto_covid19dh(iso3=iso3)
+        place_df = dh_dict.pop("places")
+        self.manual(**dh_dict)
         # Google Cloud Plat Form
-        # Japan dataset via CovsirPhy project
+        self.manual(**self._auto_google(place_df=place_df))
+        # Our World In Data
+        self.manual(**self._auto_owid())
+        # Japan dataset in CovsirPhy project
+        if iso3 == "JPN":
+            self.manual(**self._auto_cs_japan())
         return self
 
-    def _auto_covid19dh(self, iso3, path):
-        """Prepare records of the number of confirmed/fatal/recovered cases, the number of PCR tests and OXCGRT indicators.
+    def _read_csv(self, filepath_or_buffer, col_dict, date="date", date_format="%Y-%m-%d"):
+        """Read CSV data.
+
+        Args:
+            filepath_or_buffer (str, path object or file-like object): file path or URL
+            col_dict (dict[str, str]): dictionary to convert column names
+            date (str): column name of date
+            date_format (str): format of date column, like %Y-%m-%d
+        """
+        df = pd.read_csv(
+            filepath_or_buffer, header=0, use_cols=list(col_dict.keys()),
+            parse_dates=date, date_parser=lambda x: pd.datetime.strptime(x, date_format))
+        return df.rename(columns=col_dict)
+
+    def _auto_covid19dh(self, iso3):
+        """Download records from "COVID-19 Data Hub" server.
+        https://covid19datahub.io/
 
         Args:
             iso3 (str or None): ISO3 code of country that must be included or None (all available countries)
-            path (str): path of the CSV file to save dataset in local environment
 
         Returns:
             dict[str, pandas.DataFrame or str or list[str]]]
@@ -329,7 +343,7 @@ class DataCollector(Term):
                         reset index
                     Columns
                         - Date (pandas.Timestamp): observation dates
-                        - ISO3 (str): ISO3 codes of countries
+                        - self._country (str) or ISO3 (str): ISO3 codes of countries
                         - Province (str): province/prefecture/state name
                         - City (str): city name
                         - Confirmed (numpy.int64): the number of confirmed cases
@@ -348,13 +362,27 @@ class DataCollector(Term):
                         - Testing_policy (numpy.int64): one of the OxCGRT indicator
                         - Contact_tracing (numpy.int64): one of the OxCGRT indicator
                         - Stringency_index (numpy.int64): one of the OxCGRT indicator
-                - data_layers (list[str]): ["ISO3", "Province", "City"]
-                - citations (list[str]): citation of COVID-19 Data Hub
+                - data_layers (list[str]): [self._country (str) or "ISO3", "Province", "City"]
+                - citations (list[str]): citation of "COVID-19 Data Hub"
+                - place_data (pandas.DataFrame):
+                    Index
+                        reset index
+                    Columns
+                        - self._country (str) or ISO3 (str): ISO3 codes of countries
+                        - Province (str): province/prefecture/state name
+                        - City (str): city name
+                        - Google_ID (str): the place_id used in Google Mobility Reports.
+
+        Note:
+            Regarding Google_ID, refer to https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-index.md
+             and https://www.google.com/covid19/mobility/
         """
+        country = self._country or self.ISO3
         col_dict = {
-            "date": self.DATE, "iso_alpha_3": self.ISO3,
+            "date": self.DATE, "iso_alpha_3": country,
             "administrative_area_level_2": self.PROVINCE, "administrative_area_level_3": self.CITY,
             "confirmed": self.C, "deaths": self.F, "recovered": self.R, "tests": self.TESTS, "population": self.N,
+            "key_google_mobility": self._GOOGLE_ID,
             **dict(zip(self._OXCGRT_COLS_RAW, self.OXCGRT_VARS)),
         }
         # Get raw data from server
@@ -362,10 +390,181 @@ class DataCollector(Term):
             url = "https://storage.covid19datahub.io/level/1.csv.zip"
         else:
             url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
-        df = pd.read_csv(
-            url, header=0, use_cols=list(col_dict.values()), parse_dates="date", date_parser=lambda x: pd.datetime.strptime(x, "%Y-%m-%d"))
-        df.rename(columns=col_dict, inplace=True)
+        df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
+        # Citation
         citation = '(Secondary source)' \
             ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
             ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.'
-        return {"data": df, "data_layers": [self.ISO3, self.PROVINCE, self.CITY], "citations": citation}
+        # Google IDs
+        place_df = df[[country, self.PROVINCE, self.CITY, self._GOOGLE_ID]].drop_duplicates(ignore_index=True)
+        df.drop(self._GOOGLE_ID, axis=1, inplace=True)
+        return {"data": df, "data_layers": [country, self.PROVINCE, self.CITY], "citations": citation, "place_data": place_df}
+
+    def _auto_google(self, place_df):
+        """Download records from "Google Cloud Platform - COVID-19 Open-Data" server.
+        https://github.com/GoogleCloudPlatform/covid-19-open-data
+
+        Args:
+            place_data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - self._country (str) or ISO3 (str): ISO3 codes of countries
+                    - Province (str): province/prefecture/state name
+                    - City (str): city name
+                    - Google_ID (str): the place_id used in Google Mobility Reports.
+
+        Returns:
+            dict[str, pandas.DataFrame or str or list[str]]]
+                - data (pandas.DataFrame):
+                    Index
+                        reset index
+                    Columns
+                        - Date (pandas.Timestamp): observation dates
+                        - self._country (str) or ISO3 (str): ISO3 codes of countries
+                        - Province (str): province/prefecture/state name
+                        - City (str): city name
+                        - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
+                        - Mobility_parks: % to baseline in visits (parks etc.)
+                        - Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
+                        - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
+                        - Mobility_residential: % to baseline in visits (places of residence)
+                        - Mobility_workplaces: % to baseline in visits (places of work)
+                - data_layers (list[str]): [self._country (str) or "ISO3", "Province", "City"]
+                - citations (list[str]): citation of "Google Cloud Platform - COVID-19 Open-Data"
+        """
+        # Convert place_id to location_key
+        index_url = "https://storage.googleapis.com/covid19-open-data/v3/index.csv"
+        key_df = self._read_csv(
+            index_url, col_dict=dict.fromkeys(["location_key", "place_id"]), date=None, date_format=None)
+        key_dict = key_df.set_index("place_id").to_dict()
+        keys = [key_dict.get(place) for place in place_df[self._GOOGLE_ID].unique()]
+        # Get records
+        col_dict = {
+            "date": self.DATE, "place_id": self._GOOGLE_ID, **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
+        dataframes = []
+        for key in keys:
+            if key is None:
+                continue
+            url = f"https://storage.googleapis.com/covid19-open-data/v3/location/{key}.csv"
+            new_df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
+            dataframes.append(new_df)
+        # Arrange data
+        df = pd.concat(dataframes, axis=0, ignore_index=True)
+        df = (df.set_index([self._ID, self._GOOGLE_ID]) + 100).reset_index()
+        df = df.merge(place_df, how="left", on=self._GOOGLE_ID).drop(self._GOOGLE_ID, axis=1)
+        # Citation
+        citation = "O. Wahltinez and others (2020)," \
+            " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
+            " Work in progress, https://goo.gle/covid-19-open-data"
+        return {"data": df, "data_layers": [self._country or self.ISO3, self.PROVINCE, self.CITY], "citations": citation}
+
+    def _auto_owid(self):
+        """Download records from "Our World In Data" server.
+        https://github.com/owid/covid-19-data/tree/master/public/data
+        https://ourworldindata.org/coronavirus
+
+        Returns:
+            dict[str, pandas.DataFrame or str or list[str]]]
+                - data (pandas.DataFrame):
+                    Index
+                        reset index
+                    Columns
+                        - Date (pandas.Timestamp): observation dates
+                        - self._country (str) or ISO3 (str): ISO3 codes of countries
+                        - Vaccinations (int): cumulative number of vaccinations
+                        - Vaccinations_boosters (int): cumulative number of booster vaccinations
+                        - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                        - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                        - Tests: the number of tests
+                - data_layers (list[str]): [self._country (str) or "ISO3"]
+                - citations (list[str]): citation of "Our World In Data"
+        """
+        country = self._country or self.ISO3
+        # Vaccinations
+        v_col_dict = {
+            "date": self.DATE, "iso_code": country,
+            "total_vaccinations": self.VAC, "total_boosters": self.VAC_BOOSTERS,
+            "people_vaccinated": self.V_ONCE, "people_fully_vaccinated": self.V_FULL,
+        }
+        URL_V = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv"
+        v_df = self._read_csv(URL_V, col_dict=v_col_dict, date="date", date_format="%Y-%m-%d")
+        # PCR tests
+        p_col_dict = {
+            "Date": self.DATE, "ISO code": country, "Cumulative total": self.TESTS, }
+        URL_P = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv"
+        p_df = self._read_csv(URL_P, col_dict=p_col_dict, date="Date", date_format="%Y-%m-%d")
+        # Merge datasets
+        df = v_df.merge(p_df, how="outer", on=[country, self.DATE])
+        df = df.loc[~df[country].str.contains("OWID_")]
+        # Citation
+        citation = "Hasell, J., Mathieu, E., Beltekian, D. et al." \
+            " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
+            " https://doi.org/10.1038/s41597-020-00688-8"
+        return {"data": df, "data_layers": [country], "citations": citation}
+
+    def _auto_cs_japan(self):
+        """Download records from "CovsirPhy project - COVID-19 Dataset in Japan" server.
+        https://github.com/lisphilar/covid19-sir/tree/master/data
+
+        Returns:
+            dict[str, pandas.DataFrame or str or list[str]]]
+                - data (pandas.DataFrame):
+                    Index
+                        reset index
+                    Columns
+                        - Date (pandas.Timestamp): observation dates
+                        - self._country (str) or ISO3 (str): "JPN"
+                        - Prefecture (str): '-' (country level), 'Entering' or province names
+                        - Confirmed (int): the number of confirmed cases
+                        - Fatal (int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases
+                        - Tests (int): the number of tested persons
+                        - Moderate (int): the number of cases who requires hospitalization but not severe
+                        - Severe (int): the number of severe cases
+                        - Vaccinations (int): cumulative number of vaccinations
+                        - Vaccinations_boosters (int): cumulative number of booster vaccinations
+                        - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                        - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                - data_layers (list[str]): [self._country (str) or "ISO3", "Prefecture"]
+                - citations (list[str]): citation of "CovsirPhy project - COVID-19 Dataset in Japan"
+        """
+        country = self._country or self.ISO3
+        prefecture = "Prefecture"
+        GITHUB_URL = "https://raw.githubusercontent.com"
+        URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
+        URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
+        # Country-level data
+        c_col_dict = {
+            "Date": self.DATE, "Location": "Location",
+            "Positive": self.C, "Fatal": self.F, "Discharged": self.R, "Tested": self.TESTS,
+            "Hosp_require": "Hosp_require", "Hosp_severe": self.SEVERE,
+            "Vaccinated_1st": "Vaccinated_1st", "Vaccinated_2nd": "Vaccinated_2nd", "Vaccinated_3rd": "Vaccinated_3rd",
+        }
+        c_df = self.read_csv(URL_C, use_cols=c_col_dict, date="Date", date_format="%Y-%m-%d")
+        c_df = c_df.groupby(self.DATE).sum().reset_index()
+        c_df[prefecture] = self.NA
+        # Prefecture-level data
+        p_col_dict = {
+            "Date": self.DATE, "Prefecture": prefecture,
+            "Positive": self.C, "Fatal": self.F, "Discharged": self.R, "Tested": self.TESTS,
+            "Hosp_require": "Hosp_require", "Hosp_severe": self.SEVERE,
+        }
+        p_df = self.read_csv(URL_P, use_cols=p_col_dict, date="Date", date_format="%Y-%m-%d")
+        # Concatenate datasets
+        df = pd.concat([c_df, p_df], axis=1, ignore_index=True, sort=True)
+        df[country] = "JPN"
+        df[self.MODERATE] = df["Hosp_require"] - df[self.SEVERE]
+        df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
+        df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
+        df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
+        df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
+        columns = [
+            self.DATE, country, prefecture, self.C, self.F, self.R, self.TESTS,
+            self.MODERATE, self.SEVERE, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL,
+        ]
+        df = df.loc[:, columns]
+        # Citation
+        citation = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
+            "https://github.com/lisphilar/covid19-sir/data/japan"
+        return {"data": df, "data_layers": [country, prefecture], "citations": citation}
