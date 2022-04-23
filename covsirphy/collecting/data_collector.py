@@ -292,6 +292,8 @@ class DataCollector(Term):
             geo_converted = [
                 self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
         all_df = self.all(variables=variables)
+        if all_df.empty:
+            return all_df
         geography = Geography(layers=self._layers)
         df = geography.filter(data=all_df, geo=geo_converted)
         return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
