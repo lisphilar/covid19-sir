@@ -91,8 +91,10 @@ class DataCollector(Term):
                     - Date (pandas.Timestamp): observation dates
                     - columns defined by @variables
         """
+        identifiers = [*self._layers, self.DATE]
         df = self._loc_df.merge(self._rec_df, how="right", on=self._ID).drop(self._ID, axis=1)
-        df = df.sort_values([*self._layers, self.DATE], ignore_index=True)
+        df = df.sort_values(identifiers, ignore_index=True)
+        df = df.loc[:, [*identifiers, *sorted(set(df.columns) - set(identifiers), key=df.columns.tolist().index)]]
         if variables is None:
             return df
         all_variables = df.columns.tolist()
