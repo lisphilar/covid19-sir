@@ -252,14 +252,16 @@ class DataCollector(Term):
         """Convert country name to ISO3 codes.
 
         Args:
-            name (str or list[str]): country name(s)
+            name (str or list[str] or None): country name(s)
 
         Returns:
-            str or list[str]: ISO3 code(s) or as-is when not found
+            str or list[str] or None: ISO3 code(s) or as-is when not found
 
         Note:
             "UK" will be converted to "GBR".
         """
+        if name is None:
+            return None
         names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
         return coco.convert(names, to="ISO3", not_found=None)
 
