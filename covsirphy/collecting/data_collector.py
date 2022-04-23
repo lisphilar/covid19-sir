@@ -395,6 +395,7 @@ class DataCollector(Term):
             **dict(zip(self._OXCGRT_COLS_RAW, self.OXCGRT_VARS)),
         }
         # Get raw data from server
+        self._print_v0("Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/")
         if iso3 is None:
             url = "https://storage.covid19datahub.io/level/1.csv.zip"
         else:
@@ -443,6 +444,8 @@ class DataCollector(Term):
                 - citations (list[str]): citation of "Google Cloud Platform - COVID-19 Open-Data"
         """
         country = self._country or self.ISO3
+        self._print_v0(
+            "Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data")
         # Convert place_id to location_key
         index_url = "https://storage.googleapis.com/covid19-open-data/v3/index.csv"
         key_df = self._read_csv(
@@ -495,6 +498,7 @@ class DataCollector(Term):
                 - citations (list[str]): citation of "Our World In Data"
         """
         country = self._country or self.ISO3
+        self._print_v0("Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/")
         # Vaccinations
         v_col_dict = {
             "date": self.DATE, "iso_code": country,
@@ -543,6 +547,7 @@ class DataCollector(Term):
                 - data_layers (list[str]): [self._country (str) or "ISO3", "Prefecture"]
                 - citations (list[str]): citation of "CovsirPhy project - COVID-19 Dataset in Japan"
         """
+        self._print_v0("Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan")
         country = self._country or self.ISO3
         prefecture = "Prefecture"
         GITHUB_URL = "https://raw.githubusercontent.com"
