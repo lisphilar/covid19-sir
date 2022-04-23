@@ -263,8 +263,8 @@ class DataCollector(Term):
         names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
         return coco.convert(names, to="ISO3", not_found=None)
 
-    def collect(self, geo=None, variables=None):
-        """Collect necessary data from remote server and local data.
+    def subset(self, geo=None, variables=None):
+        """Create a subset with the geographic information.
 
         Args:
             geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
@@ -281,13 +281,14 @@ class DataCollector(Term):
         Note:
             Please refer to covsirphy.Geography.filter() regarding @geo argument.
 
+        Note:
+            Layers will be dropped from the dataframe.
         """
         geo_converted = [geo] if isinstance(geo, str) else (geo or [None]).copy()
         geo_converted += [None] * (len(self._layers) - len(geo_converted))
         if self._country is not None:
             geo_converted = [
                 self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
-        # Collect data of the area
         all_df = self.all(variables=variables)
         geography = Geography(layers=self._layers)
         df = geography.filter(data=all_df, geo=geo_converted)
