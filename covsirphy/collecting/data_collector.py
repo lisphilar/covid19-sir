@@ -159,7 +159,7 @@ class DataCollector(Term):
         columns = [self._ID, self.DATE, *self._ensure_list(target=variables or [], name="variables")]
         df = df.merge(self._loc_df, how="left", on=self._layers)
         df = df.loc[:, columns].reset_index(drop=True)
-        self._rec_df = pd.concat([self._rec_df, df], axis=0, ignore_index=True)
+        self._rec_df = self._rec_df.combine_first(df)
         # Citations
         new_citations = self._ensure_list(
             [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), name="citations")
@@ -298,15 +298,19 @@ class DataCollector(Term):
         df = geography.filter(data=all_df, geo=geo_converted)
         return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
 
-    def auto(self, iso3=None):
-        """Download datasets from remote servers automatically.
+    def auto(self, geo=None):
+        """Download datasets of the country specified with geographic information from remote servers automatically.
 
         Args:
-            iso3 (str or None): ISO3 code of country that must be included or None (all available countries)
+            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
 
         Returns:
             covsirphy.DataCollector: self
         """
+        if geo is None or self._country is None:
+            iso3 = None
+        else:
+            iso3 = geo if isinstance(geo, str) else geo[self._layers.index(self._country)]
         # COVID-19 Data Hub
         dh_dict = self._auto_covid19dh(iso3=iso3)
         place_df = dh_dict.pop("places")
@@ -438,6 +442,7 @@ class DataCollector(Term):
                 - data_layers (list[str]): [self._country (str) or "ISO3", "Province", "City"]
                 - citations (list[str]): citation of "Google Cloud Platform - COVID-19 Open-Data"
         """
+        country = self._country or self.ISO3
         # Convert place_id to location_key
         index_url = "https://storage.googleapis.com/covid19-open-data/v3/index.csv"
         key_df = self._read_csv(
@@ -447,22 +452,26 @@ class DataCollector(Term):
         # Get records
         col_dict = {
             "date": self.DATE, "place_id": self._GOOGLE_ID, **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
-        dataframes = []
-        for key in keys:
-            if key is None:
-                continue
-            url = f"https://storage.googleapis.com/covid19-open-data/v3/location/{key}.csv"
-            new_df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
-            dataframes.append(new_df)
+        if place_df[country].nunique() == 1:
+            dataframes = []
+            for key in keys:
+                if key is None:
+                    continue
+                url = f"https://storage.googleapis.com/covid19-open-data/v3/location/{key}.csv"
+                new_df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
+                dataframes.append(new_df)
+            df = pd.concat(dataframes, axis=0, ignore_index=True)
+        else:
+            url = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
+            df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
         # Arrange data
-        df = pd.concat(dataframes, axis=0, ignore_index=True)
         df = (df.set_index([self._ID, self._GOOGLE_ID]) + 100).reset_index()
         df = df.merge(place_df, how="left", on=self._GOOGLE_ID).drop(self._GOOGLE_ID, axis=1)
         # Citation
         citation = "O. Wahltinez and others (2020)," \
             " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
             " Work in progress, https://goo.gle/covid-19-open-data"
-        return {"data": df, "data_layers": [self._country or self.ISO3, self.PROVINCE, self.CITY], "citations": citation}
+        return {"data": df, "data_layers": [country, self.PROVINCE, self.CITY], "citations": citation}
 
     def _auto_owid(self):
         """Download records from "Our World In Data" server.
