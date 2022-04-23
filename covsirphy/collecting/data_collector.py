@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
+from io import BytesIO
+import time
+import urllib
+from zipfile import ZipFile
 import country_converter as coco
 import pandas as pd
+import requests
 from covsirphy.util.term import Term
 from covsirphy.collecting.geography import Geography
 
@@ -27,9 +33,8 @@ class DataCollector(Term):
         the dawnloaded datasets will be updated automatically.
 
     Note:
-        If @verbose is 0, no description will be shown.
+        If @verbose is 0, no descriptions will be shown.
         If @verbose is 1 or larger, URL and database name will be shown.
-        If @verbose is 2, detailed citation list will be show, if available.
     """
     # Internal term
     _ID = "Location_ID"
@@ -122,17 +127,29 @@ class DataCollector(Term):
         Note:
             Layers will be dropped from the dataframe.
         """
-        geo_converted = [geo] if isinstance(geo, str) else (geo or [None]).copy()
-        geo_converted += [None] * (len(self._layers) - len(geo_converted))
-        if self._country is not None:
-            geo_converted = [
-                self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
+        geo_converted = self._geo_with_iso3(geo=geo)
         all_df = self.all(variables=variables)
         if all_df.empty:
             return all_df
         geography = Geography(layers=self._layers)
         df = geography.filter(data=all_df, geo=geo_converted)
-        return df.drop(self._layers, axis=1).groupby(self.DATE).sum().reset_index()
+        return df.drop(self._layers, axis=1).groupby(self.DATE).first().reset_index()
+
+    def _geo_with_iso3(self, geo=None):
+        """Update the geographic information, converting country names to ISO3 codes.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
+
+        Returns:
+            list[str] or tuple(str) or str): location names defined in covsirphy.Geography class
+        """
+        geo_converted = [geo] if isinstance(geo, str) else (geo or [None]).copy()
+        geo_converted += [None] * (len(self._layers) - len(geo_converted))
+        if self._country is not None:
+            geo_converted = [
+                self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
+        return [info for info in geo_converted if info is not None]
 
     def citations(self, variables=None):
         """
@@ -148,7 +165,7 @@ class DataCollector(Term):
         columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
-    def manual(self, data, date="Date", data_layers=None, variables=None, citations=None, **kwargs):
+    def manual(self, data, date="Date", data_layers=None, variables=None, citations=None, convert_iso3=True, **kwargs):
         """Add data manually.
 
         Args:
@@ -163,6 +180,7 @@ class DataCollector(Term):
             data_layers (list[str]): layers of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
+            convert_iso3 (bool): whether convert country names to ISO3 codes or not
             **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
 
         Raises:
@@ -173,32 +191,36 @@ class DataCollector(Term):
         """
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
-        df = self._ensure_dataframe(
+        self._ensure_dataframe(
             target=data, name="data", columns=[*(data_layers or self._layers), date, *(variables or [])])
+        df = data.copy()
         # Convert date type
         df.rename(columns={date: self.DATE}, inplace=True)
         df[self.DATE] = pd.to_datetime(df[self.DATE], **kwargs)
         # Convert country names to ISO3 codes
-        if self._country is not None and self._country in df:
+        if convert_iso3 and self._country is not None and self._country in df:
             df.loc[:, self._country] = df[self._country].apply(self._to_iso3)
-        # Prepare necessary layers
+        # Prepare necessary layers and fill in None with "NA"
         if data_layers is not None and data_layers != self._layers:
             df = self._prepare_layers(df, data_layers=data_layers)
+        df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
         # Locations
-        loc_df = self._loc_df.merge(df, how="right", on=self._layers)
+        loc_df = df.loc[:, self._layers]
+        loc_df = pd.concat([self._loc_df, loc_df], axis=0, ignore_index=True)
         loc_df.drop_duplicates(subset=self._layers, keep="first", ignore_index=True, inplace=True)
         loc_df.loc[loc_df[self._ID].isna(), self._ID] = f"id{len(loc_df)}-" + \
             loc_df[loc_df[self._ID].isna()].index.astype("str")
-        self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]].fillna(self.NA)
+        self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]]
         # Records
-        columns = [self._ID, self.DATE, *self._ensure_list(target=variables or [], name="variables")]
-        df = df.merge(self._loc_df, how="left", on=self._layers)
-        df = df.loc[:, columns].reset_index(drop=True)
-        self._rec_df = self._rec_df.combine_first(df)
+        df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1)
+        if variables is not None:
+            columns = [self._ID, self.DATE, *self._ensure_list(target=variables, name="variables")]
+            df = df.loc[:, columns]
+        self._rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns))).combine_first(df)
         # Citations
         new_citations = self._ensure_list(
             [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), name="citations")
-        citation_dict = {col: self._citation_dict.get(col, []) + new_citations for col in variables}
+        citation_dict = {col: self._citation_dict.get(col, []) + new_citations for col in variables or df.columns}
         self._citation_dict.update(citation_dict)
         return self
 
@@ -238,7 +260,7 @@ class DataCollector(Term):
             elif layer != data_layer:
                 df.rename(columns={data_layer: layer}, inplace=True)
                 self._print_v0(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
-        return df.reset_index()
+        return df.reset_index(drop=True)
 
     def _align_layers(self, data_layers):
         """Perform sequence alignment of the layers of new data with the layers defined by DataCollector(layers).
@@ -282,8 +304,8 @@ class DataCollector(Term):
         if self._verbose:
             print(sentence)
 
-    @staticmethod
-    def _to_iso3(name):
+    @classmethod
+    def _to_iso3(cls, name):
         """Convert country name to ISO3 codes.
 
         Args:
@@ -295,7 +317,7 @@ class DataCollector(Term):
         Note:
             "UK" will be converted to "GBR".
         """
-        if name is None:
+        if name is None or name == cls.NA:
             return None
         names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
         return coco.convert(names, to="ISO3", not_found=None)
@@ -310,19 +332,23 @@ class DataCollector(Term):
             covsirphy.DataCollector: self
         """
         if geo is None or self._country is None:
-            iso3 = None
+            iso3, geo_converted = None, deepcopy(geo)
         else:
-            iso3 = geo if isinstance(geo, str) else geo[self._layers.index(self._country)]
+            geo_converted = self._geo_with_iso3(geo=geo)
+            name = geo_converted if isinstance(geo_converted, str) else geo_converted[self._layers.index(self._country)]
+            iso3 = self._to_iso3(name)
         # COVID-19 Data Hub
         dh_dict = self._auto_covid19dh(iso3=iso3)
-        place_df = dh_dict.pop("places")
+        place_df = dh_dict.pop("place_data").fillna(self.NA)
+        geography = Geography(layers=[self._country or self.ISO3, self.PROVINCE, self.CITY])
+        sel_df = geography.filter(data=place_df, geo=geo_converted)
         self.manual(**dh_dict)
         # Google Cloud Plat Form
-        self.manual(**self._auto_google(place_df=place_df))
+        self.manual(**self._auto_google(place_df=sel_df))
         # Our World In Data
         self.manual(**self._auto_owid())
         # Japan dataset in CovsirPhy project
-        if iso3 == "JPN":
+        if iso3 == "JPN" or iso3 is None:
             self.manual(**self._auto_cs_japan())
         return self
 
@@ -335,9 +361,21 @@ class DataCollector(Term):
             date (str): column name of date
             date_format (str): format of date column, like %Y-%m-%d
         """
-        df = pd.read_csv(
-            filepath_or_buffer, header=0, usecols=list(col_dict.keys()),
-            parse_dates=date, date_parser=lambda x: pd.datetime.strptime(x, date_format))
+        read_dict = {
+            "header": 0, "usecols": list(col_dict.keys()),
+            "parse_dates": None if date is None else [date], "date_parser": lambda x: pd.datetime.strptime(x, date_format)
+        }
+        try:
+            df = pd.read_csv(filepath_or_buffer, **read_dict)
+        except urllib.error.HTTPError:
+            try:
+                df = pd.read_csv(filepath_or_buffer, storage_options={"User-Agent": "Mozilla/5.0"}, **read_dict)
+            except TypeError:
+                # When pandas < 1.2: note that pandas v1.2.0 requires Python >= 3.7.1
+                r = requests.get(url=filepath_or_buffer, headers={"User-Agent": "Mozilla/5.0"})
+                z = ZipFile(BytesIO(r.content))
+                with z.open(z.namelist()[0], "r") as fh:
+                    df = pd.read_csv(BytesIO(fh.read()), **read_dict)
         return df.rename(columns=col_dict)
 
     def _auto_covid19dh(self, iso3):
@@ -375,6 +413,7 @@ class DataCollector(Term):
                         - Stringency_index (numpy.int64): one of the OxCGRT indicator
                 - data_layers (list[str]): [self._country (str) or "ISO3", "Province", "City"]
                 - citations (list[str]): citation of "COVID-19 Data Hub"
+                - convert_iso3 (bool): False to avoid re-conversion of ISO3 codes
                 - place_data (pandas.DataFrame):
                     Index
                         reset index
@@ -389,6 +428,7 @@ class DataCollector(Term):
              and https://www.google.com/covid19/mobility/
         """
         country = self._country or self.ISO3
+        layers = [country, self.PROVINCE, self.CITY]
         col_dict = {
             "date": self.DATE, "iso_alpha_3": country,
             "administrative_area_level_2": self.PROVINCE, "administrative_area_level_3": self.CITY,
@@ -403,14 +443,14 @@ class DataCollector(Term):
         else:
             url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
+        df.loc[df[country].isna(), country] = self.NA
         # Citation
-        citation = '(Secondary source)' \
-            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
+        citation = ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
             ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.'
         # Google IDs
-        place_df = df[[country, self.PROVINCE, self.CITY, self._GOOGLE_ID]].drop_duplicates(ignore_index=True)
+        place_df = df[[*layers, self._GOOGLE_ID]].drop_duplicates(ignore_index=True)
         df.drop(self._GOOGLE_ID, axis=1, inplace=True)
-        return {"data": df, "data_layers": [country, self.PROVINCE, self.CITY], "citations": citation, "place_data": place_df}
+        return {"data": df, "data_layers": layers, "citations": citation, "convert_iso3": False, "place_data": place_df}
 
     def _auto_google(self, place_df):
         """Download records from "Google Cloud Platform - COVID-19 Open-Data" server.
@@ -444,20 +484,22 @@ class DataCollector(Term):
                         - Mobility_workplaces: % to baseline in visits (places of work)
                 - data_layers (list[str]): [self._country (str) or "ISO3", "Province", "City"]
                 - citations (list[str]): citation of "Google Cloud Platform - COVID-19 Open-Data"
+                - convert_iso3 (bool): False to avoid re-conversion of ISO3 codes
         """
         country = self._country or self.ISO3
+        data_layers = [country, self.PROVINCE, self.CITY]
         self._print_v0(
             "Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data")
         # Convert place_id to location_key
         index_url = "https://storage.googleapis.com/covid19-open-data/v3/index.csv"
         key_df = self._read_csv(
-            index_url, col_dict=dict.fromkeys(["location_key", "place_id"]), date=None, date_format=None)
-        key_dict = key_df.set_index("place_id").to_dict()
+            index_url, col_dict={"location_key": "location_key", "place_id": self._GOOGLE_ID}, date=None, date_format=None)
+        key_dict = key_df.set_index(self._GOOGLE_ID)["location_key"].to_dict()
         keys = [key_dict.get(place) for place in place_df[self._GOOGLE_ID].unique()]
         # Get records
         col_dict = {
-            "date": self.DATE, "place_id": self._GOOGLE_ID, **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
-        if place_df[country].nunique() == 1:
+            "date": self.DATE, "location_key": "location_key", **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
+        if place_df.empty or place_df[country].nunique() == 1:
             dataframes = []
             for key in keys:
                 if key is None:
@@ -465,18 +507,21 @@ class DataCollector(Term):
                 url = f"https://storage.googleapis.com/covid19-open-data/v3/location/{key}.csv"
                 new_df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
                 dataframes.append(new_df)
+                time.sleep(0.5)
             df = pd.concat(dataframes, axis=0, ignore_index=True)
         else:
             url = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
             df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
         # Arrange data
-        df = (df.set_index([self._ID, self._GOOGLE_ID]) + 100).reset_index()
-        df = df.merge(place_df, how="left", on=self._GOOGLE_ID).drop(self._GOOGLE_ID, axis=1)
+        df = df.merge(key_df, how="left", on="location_key")
+        df = df.merge(place_df, how="left", on=self._GOOGLE_ID).drop(["location_key", self._GOOGLE_ID], axis=1)
+        df = df.dropna(how="any", subset=self.MOBILITY_VARS, axis=0)
+        df = (df.set_index([*data_layers, self.DATE]) + 100).reset_index()
         # Citation
         citation = "O. Wahltinez and others (2020)," \
             " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
             " Work in progress, https://goo.gle/covid-19-open-data"
-        return {"data": df, "data_layers": [country, self.PROVINCE, self.CITY], "citations": citation}
+        return {"data": df, "data_layers": data_layers, "citations": citation, "convert_iso3": False}
 
     def _auto_owid(self):
         """Download records from "Our World In Data" server.
@@ -498,6 +543,7 @@ class DataCollector(Term):
                         - Tests: the number of tests
                 - data_layers (list[str]): [self._country (str) or "ISO3"]
                 - citations (list[str]): citation of "Our World In Data"
+                - convert_iso3 (bool): False to avoid re-conversion of ISO3 codes
         """
         country = self._country or self.ISO3
         self._print_v0("Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/")
@@ -521,7 +567,7 @@ class DataCollector(Term):
         citation = "Hasell, J., Mathieu, E., Beltekian, D. et al." \
             " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
             " https://doi.org/10.1038/s41597-020-00688-8"
-        return {"data": df, "data_layers": [country], "citations": citation}
+        return {"data": df, "data_layers": [country], "citations": citation, "convert_iso3": False}
 
     def _auto_cs_japan(self):
         """Download records from "CovsirPhy project - COVID-19 Dataset in Japan" server.
@@ -535,7 +581,8 @@ class DataCollector(Term):
                     Columns
                         - Date (pandas.Timestamp): observation dates
                         - self._country (str) or ISO3 (str): "JPN"
-                        - Prefecture (str): '-' (country level), 'Entering' or province names
+                        - Prefecture (str): '-' (country level) or prefecture names
+                        - City (str): '-' (NA)
                         - Confirmed (int): the number of confirmed cases
                         - Fatal (int): the number of fatal cases
                         - Recovered (int): the number of recovered cases
@@ -546,12 +593,14 @@ class DataCollector(Term):
                         - Vaccinations_boosters (int): cumulative number of booster vaccinations
                         - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
                         - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
-                - data_layers (list[str]): [self._country (str) or "ISO3", "Prefecture"]
+                - data_layers (list[str]): [self._country (str) or "ISO3", "Prefecture", "City"]
                 - citations (list[str]): citation of "CovsirPhy project - COVID-19 Dataset in Japan"
+                - convert_iso3 (bool): False to avoid re-conversion of ISO3 codes
         """
         self._print_v0("Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan")
         country = self._country or self.ISO3
         prefecture = "Prefecture"
+        data_layers = [country, prefecture, self.CITY]
         GITHUB_URL = "https://raw.githubusercontent.com"
         URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
         URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
@@ -562,7 +611,7 @@ class DataCollector(Term):
             "Hosp_require": "Hosp_require", "Hosp_severe": self.SEVERE,
             "Vaccinated_1st": "Vaccinated_1st", "Vaccinated_2nd": "Vaccinated_2nd", "Vaccinated_3rd": "Vaccinated_3rd",
         }
-        c_df = self.read_csv(URL_C, use_cols=c_col_dict, date="Date", date_format="%Y-%m-%d")
+        c_df = self._read_csv(URL_C, col_dict=c_col_dict, date="Date", date_format="%Y-%m-%d")
         c_df = c_df.groupby(self.DATE).sum().reset_index()
         c_df[prefecture] = self.NA
         # Prefecture-level data
@@ -571,21 +620,22 @@ class DataCollector(Term):
             "Positive": self.C, "Fatal": self.F, "Discharged": self.R, "Tested": self.TESTS,
             "Hosp_require": "Hosp_require", "Hosp_severe": self.SEVERE,
         }
-        p_df = self.read_csv(URL_P, use_cols=p_col_dict, date="Date", date_format="%Y-%m-%d")
+        p_df = self._read_csv(URL_P, col_dict=p_col_dict, date="Date", date_format="%Y-%m-%d")
         # Concatenate datasets
-        df = pd.concat([c_df, p_df], axis=1, ignore_index=True, sort=True)
+        df = pd.concat([c_df, p_df], axis=0, ignore_index=True, sort=True)
         df[country] = "JPN"
+        df[self.CITY] = self.NA
         df[self.MODERATE] = df["Hosp_require"] - df[self.SEVERE]
         df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
         df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
         df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
         columns = [
-            self.DATE, country, prefecture, self.C, self.F, self.R, self.TESTS,
+            self.DATE, *data_layers, self.C, self.F, self.R, self.TESTS,
             self.MODERATE, self.SEVERE, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL,
         ]
         df = df.loc[:, columns]
         # Citation
         citation = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
-        return {"data": df, "data_layers": [country, prefecture], "citations": citation}
+        return {"data": df, "data_layers": data_layers, "citations": citation, "convert_iso3": False}

@@ -61,7 +61,9 @@ class Geography(Term):
                 f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
         geo_converted = (geo,) if (geo is None or isinstance(geo, str)) else deepcopy(geo)
         self._ensure_dataframe(target=data, name="data", columns=self._layers, empty_ok=False)
-        df = data.loc[data[self._layers[0]] != self.NA]
+        df = data.copy()
+        df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
+        df = df.loc[df[self._layers[0]] != self.NA]
         for (i, sel) in enumerate(geo_converted):
             if sel is None:
                 return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
