@@ -336,7 +336,7 @@ class DataCollector(Term):
             date_format (str): format of date column, like %Y-%m-%d
         """
         df = pd.read_csv(
-            filepath_or_buffer, header=0, use_cols=list(col_dict.keys()),
+            filepath_or_buffer, header=0, usecols=list(col_dict.keys()),
             parse_dates=date, date_parser=lambda x: pd.datetime.strptime(x, date_format))
         return df.rename(columns=col_dict)
 
