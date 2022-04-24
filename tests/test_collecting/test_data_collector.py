@@ -16,6 +16,7 @@ class TestDataCollector(object):
         assert all_df.empty
         assert set(all_df.columns) == {"Date", "ISO3", "Province"}
         assert not collector.citations()
+        assert collector.subset().empty
 
     @pytest.mark.parametrize(
         "country, layers, data_dict, all_dict",
@@ -31,6 +32,12 @@ class TestDataCollector(object):
                 ["ISO3", "Province", "City"],
                 {"ISO3": ["JPN", "JPN"], "Province": ["-", "Tokyo"]},
                 {"ISO3": ["JPN", "JPN"], "Province": ["-", "Tokyo"], "City": ["-", "-"]}
+            ),
+            (
+                "ISO3",
+                ["ISO3", "Province"],
+                {"ISO3": ["JPN", "JPN"], "Prefecture": ["-", "Tokyo"]},
+                {"ISO3": ["JPN", "JPN"], "Province": ["-", "Tokyo"]}
             ),
             (
                 "ISO3",
@@ -65,7 +72,7 @@ class TestDataCollector(object):
             ),
         )
     )
-    def test_manual_only(self, country, layers, data_dict, all_dict):
+    def test_manual(self, country, layers, data_dict, all_dict):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
         raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
@@ -79,7 +86,25 @@ class TestDataCollector(object):
         # All data
         all_df = pd.concat([pd.DataFrame(all_dict), pd.DataFrame(all_dict)], axis=0, ignore_index=True)
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
-        all_df["Confirmed"] = np.arange(len(all_df)).astype("float64")
+        all_df["Confirmed"] = np.arange(len(all_df))
         all_df = all_df.sort_values([*layers, Term.DATE], ignore_index=True)
         assert collector.all().equals(all_df)
         assert collector.citations() == ["Manual"]
+
+    @pytest.mark.parametrize(
+        "layers, geo",
+        [
+            (["ISO3", "Province"], None),
+            (["Continent", "Prefecture"], "Tokyo"),
+            (["ISO3", "Prefecture"], "Japan"),
+            (["ISO3", "Prefecture"], ("Japan", "Tokyo")),
+            (["ISO3", "Province"], "United Kingdom"),
+        ]
+    )
+    def test_auto(self, layers, geo):
+        collector = DataCollector(layers=layers)
+        collector.auto(geo=geo)
+        df = collector.subset(geo=geo)
+        assert not df.empty
+        assert isinstance(collector.citations, list)
+        raise NotImplementedError
