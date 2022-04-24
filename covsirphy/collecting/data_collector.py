@@ -213,7 +213,7 @@ class DataCollector(Term):
             loc_df[loc_df[self._ID].isna()].index.astype("str")
         self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]]
         # Records
-        df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1)
+        df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1).dropna()
         if variables is not None:
             columns = [self._ID, self.DATE, *self._ensure_list(target=variables, name="variables")]
             df = df.loc[:, columns]
