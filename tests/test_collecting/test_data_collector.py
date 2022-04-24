@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from covsirphy import Term, DataCollector
+from covsirphy import Term, DataCollector, Filer
 
 
 class TestDataCollector(object):
@@ -94,16 +94,18 @@ class TestDataCollector(object):
     @pytest.mark.parametrize(
         "layers, geo",
         [
-            (["ISO3", "Province"], None),
-            (["Continent", "Prefecture"], "Tokyo"),
             (["ISO3", "Prefecture"], "Japan"),
             (["ISO3", "Prefecture"], ("Japan", "Tokyo")),
+            (["ISO3", "Province"], None),
             (["ISO3", "Province"], "United Kingdom"),
+            (["Continent", "Prefecture"], ("Asia", "Tokyo")),
         ]
     )
     def test_auto(self, layers, geo):
+        filer = Filer(directory="input")
+        cache = filer.csv(title="downloaded_dataset")["path_or_buf"]
         collector = DataCollector(layers=layers)
-        collector.auto(geo=geo)
+        collector.auto(geo=geo, cache=cache)
         df = collector.subset(geo=geo)
         assert not df.empty
         assert isinstance(collector.citations(), list)
