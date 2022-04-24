@@ -106,5 +106,4 @@ class TestDataCollector(object):
         collector.auto(geo=geo)
         df = collector.subset(geo=geo)
         assert not df.empty
-        assert isinstance(collector.citations, list)
-        raise NotImplementedError
+        assert isinstance(collector.citations(), list)
