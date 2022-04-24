@@ -145,7 +145,7 @@ class DataCollector(Term):
         Returns:
             list[str] or tuple(str) or str): location names defined in covsirphy.Geography class
         """
-        geo_converted = [geo] if isinstance(geo, str) else deepcopy(geo or [None])
+        geo_converted = [geo] if isinstance(geo, str) else list(geo or [None])
         geo_converted += [None] * (len(self._layers) - len(geo_converted))
         if self._country is not None:
             geo_converted = [
