@@ -413,7 +413,7 @@ class DataCollector(Term):
                 z = ZipFile(BytesIO(r.content))
                 with z.open(z.namelist()[0], "r") as fh:
                     df = pd.read_csv(BytesIO(fh.read()), **read_dict)
-        return df.rename(columns=col_dict)
+        return df if col_dict is None else df.rename(columns=col_dict)
 
     def _auto_covid19dh(self, iso3):
         """Download records from "COVID-19 Data Hub" server.
