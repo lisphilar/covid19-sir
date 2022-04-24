@@ -501,22 +501,22 @@ class DataCollector(Term):
             "date": self.DATE, "location_key": "location_key", **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
         if place_df.empty or place_df[country].nunique() == 1:
             dataframes = []
-            for key in keys:
+            for (i, key) in enumerate(keys):
                 if key is None:
                     continue
+                if i > 0:
+                    time.sleep(0.5)
                 url = f"https://storage.googleapis.com/covid19-open-data/v3/location/{key}.csv"
                 new_df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
                 dataframes.append(new_df)
-                time.sleep(0.5)
             df = pd.concat(dataframes, axis=0, ignore_index=True)
         else:
             url = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
             df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
         # Arrange data
-        df = df.merge(key_df, how="left", on="location_key")
-        df = df.merge(place_df, how="left", on=self._GOOGLE_ID).drop(["location_key", self._GOOGLE_ID], axis=1)
-        df = df.dropna(how="any", subset=self.MOBILITY_VARS, axis=0)
-        df = (df.set_index([*data_layers, self.DATE]) + 100).reset_index()
+        key_place_df = place_df.merge(key_df, how="right", on=self._GOOGLE_ID)
+        df = (df.set_index(["location_key", self.DATE]) + 100).dropna(how="any", axis=0).reset_index()
+        df = df.merge(key_place_df, how="left", on="location_key").drop(["location_key", self._GOOGLE_ID], axis=1)
         # Citation
         citation = "O. Wahltinez and others (2020)," \
             " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
