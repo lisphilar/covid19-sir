@@ -149,7 +149,7 @@ class DataCollector(Term):
         if self._country is not None:
             geo_converted = [
                 self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
-        return [info for info in geo_converted if info is not None]
+        return [info for info in geo_converted if info is not None] or None
 
     def citations(self, variables=None):
         """
