@@ -3,6 +3,7 @@
 
 from copy import deepcopy
 from io import BytesIO
+from pathlib import Path
 import time
 import urllib
 from zipfile import ZipFile
@@ -322,21 +323,25 @@ class DataCollector(Term):
         names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
         return coco.convert(names, to="ISO3", not_found=None)
 
-    def auto(self, geo=None):
+    def auto(self, geo=None, cache=None):
         """Download datasets of the country specified with geographic information from remote servers automatically.
 
         Args:
             geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
+            cache (str or pathlib.Path or None): filepath to save the datasets in the local environment or None (always download)
 
         Returns:
             covsirphy.DataCollector: self
         """
-        if geo is None or self._country is None:
+        if geo is None or self._country is None or self._country not in self._layers:
             iso3, geo_converted = None, deepcopy(geo)
         else:
             geo_converted = self._geo_with_iso3(geo=geo)
             name = geo_converted if isinstance(geo_converted, str) else geo_converted[self._layers.index(self._country)]
             iso3 = self._to_iso3(name)
+        # Use cache file
+        if cache is not None and Path(cache).exists() and self._read_saved():
+            return self
         # COVID-19 Data Hub
         dh_dict = self._auto_covid19dh(iso3=iso3)
         place_df = dh_dict.pop("place_data").fillna(self.NA)
@@ -350,19 +355,49 @@ class DataCollector(Term):
         # Japan dataset in CovsirPhy project
         if iso3 == "JPN" or iso3 is None:
             self.manual(**self._auto_cs_japan())
+        # Save cache
+        if cache is not None:
+            self.all().to_csv(cache, index=False, date_format="%Y-%m-%d")
         return self
+
+    def _read_saved(self, geo, cache):
+        """Read saved cache file if usable.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
+            cache (str or pathlib.Path): filepath to save the datasets in the local environment
+
+        Returns:
+            bool: whether usable or not
+        """
+        cached_df = self._read_csv(cache, col_dict=None)
+        if not {*self._layers, self.DATE}.issubset(cached_df.columns):
+            return False
+        cached_df[self.DATE] = pd.to_datetime(cached_df[self.DATE], format="%Y-%m-%d")
+        # Global data
+        if geo is None:
+            if cached_df[self._layers[0]].nunique() > 1:
+                self.manual(data=cached_df, date=self.DATE, citations=str(cache), convert_iso3=False)
+            return True
+        # Local data
+        cached_geography = Geography(layers=self._layers)
+        cached_sel_df = cached_geography.filter(data=cached_df, geo=geo)
+        if not cached_sel_df.empty:
+            self.manual(data=cached_df, date=self.DATE, citations=str(cache), convert_iso3=False)
+            return True
+        return False
 
     def _read_csv(self, filepath_or_buffer, col_dict, date="date", date_format="%Y-%m-%d"):
         """Read CSV data.
 
         Args:
             filepath_or_buffer (str, path object or file-like object): file path or URL
-            col_dict (dict[str, str]): dictionary to convert column names
+            col_dict (dict[str, str] or None): dictionary to convert column names or None (not perform conversion)
             date (str): column name of date
             date_format (str): format of date column, like %Y-%m-%d
         """
         read_dict = {
-            "header": 0, "usecols": list(col_dict.keys()),
+            "header": 0, "usecols": None if col_dict is None else list(col_dict.keys()),
             "parse_dates": None if date is None else [date], "date_parser": lambda x: pd.datetime.strptime(x, date_format)
         }
         try:
