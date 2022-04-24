@@ -217,7 +217,9 @@ class DataCollector(Term):
         if variables is not None:
             columns = [self._ID, self.DATE, *self._ensure_list(target=variables, name="variables")]
             df = df.loc[:, columns]
-        self._rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns))).combine_first(df)
+        rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns)))
+        rec_df = rec_df.set_index([self._ID, self.DATE]).combine_first(df.set_index([self._ID, self.DATE]))
+        self._rec_df = rec_df.reset_index()
         # Citations
         new_citations = self._ensure_list(
             [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), name="citations")
