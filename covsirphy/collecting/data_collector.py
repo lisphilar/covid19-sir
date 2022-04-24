@@ -370,7 +370,7 @@ class DataCollector(Term):
         Returns:
             bool: whether usable or not
         """
-        cached_df = self._read_csv(cache, col_dict=None)
+        cached_df = self._read_csv(cache, col_dict=None, date=None, date_format=None)
         if not {*self._layers, self.DATE}.issubset(cached_df.columns):
             return False
         cached_df[self.DATE] = pd.to_datetime(cached_df[self.DATE], format="%Y-%m-%d")
