@@ -340,7 +340,7 @@ class DataCollector(Term):
             name = geo_converted if isinstance(geo_converted, str) else geo_converted[self._layers.index(self._country)]
             iso3 = self._to_iso3(name)
         # Use cache file
-        if cache is not None and Path(cache).exists() and self._read_saved():
+        if cache is not None and Path(cache).exists() and self._read_saved(geo=geo, cache=cache):
             return self
         # COVID-19 Data Hub
         dh_dict = self._auto_covid19dh(iso3=iso3)
