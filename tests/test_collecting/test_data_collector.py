@@ -49,7 +49,7 @@ class TestDataCollector(object):
                 "ISO3",
                 ["ISO3", "Province"],
                 {"ISO3": ["JPN", "JPN", "JPN"], "Province": ["-", "Tokyo", "Tokyo"], "City": ["-", "-", "Chiyoda"]},
-                {"ISO3": ["-", "-", "JPN"], "Province": ["-", "-", "Tokyo"]}
+                {"ISO3": ["JPN", "JPN", "-"], "Province": ["-", "Tokyo", "-"]}
             ),
             (
                 "ISO3",
@@ -98,7 +98,6 @@ class TestDataCollector(object):
             (["ISO3", "Prefecture"], ("Japan", "Tokyo")),
             (["ISO3", "Province"], None),
             (["ISO3", "Province"], "United Kingdom"),
-            (["Continent", "ISO3", "Prefecture"], ("Asia", "Japan", "Tokyo")),
         ]
     )
     def test_auto(self, layers, geo):
