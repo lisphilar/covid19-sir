@@ -98,7 +98,7 @@ class TestDataCollector(object):
             (["ISO3", "Prefecture"], ("Japan", "Tokyo")),
             (["ISO3", "Province"], None),
             (["ISO3", "Province"], "United Kingdom"),
-            (["Continent", "Prefecture"], ("Asia", "Tokyo")),
+            (["Continent", "ISO3", "Prefecture"], ("Asia", "Japan", "Tokyo")),
         ]
     )
     def test_auto(self, layers, geo):
