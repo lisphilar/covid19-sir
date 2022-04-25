@@ -256,8 +256,8 @@ class DataCollector(Term):
                 self._print_v0(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
             elif layer is None:
                 if data_layer == actual[-1]:
-                    df.loc[df[data_layer] == self.NA, self._layers] = self.NA
-                    self._print_v0(f"\t[INFO] Records which have NAs at '{data_layer}' layer was disabled.")
+                    df.loc[df[data_layer] != self.NA, self._layers] = self.NA
+                    self._print_v0(f"\t[INFO] Records which has actual values at '{data_layer}' layer were disabled.")
                 df = df.drop(data_layer, axis=1)
                 self._print_v0(f"\t[INFO] '{data_layer}' layer was removed.")
             elif layer != data_layer:
@@ -536,7 +536,7 @@ class DataCollector(Term):
         # Get records
         col_dict = {
             "date": self.DATE, "location_key": "location_key", **dict(zip(self._MOBILITY_COLS_RAW, self.MOBILITY_VARS))}
-        if place_df.empty or place_df[country].nunique() == 1:
+        if keys and (place_df.empty or place_df[country].nunique() == 1):
             dataframes = []
             for (i, key) in enumerate(keys):
                 if key is None:
@@ -550,6 +550,8 @@ class DataCollector(Term):
         else:
             url = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
             df = self._read_csv(url, col_dict=col_dict, date="date", date_format="%Y-%m-%d")
+            # Use country-level data
+            df = df.loc[df["location_key"].str.len() == 2]
         # Arrange data
         key_place_df = place_df.merge(key_df, how="right", on=self._GOOGLE_ID)
         df = (df.set_index(["location_key", self.DATE]) + 100).dropna(how="any", axis=0).reset_index()
