@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import Geography, Term
+from covsirphy import Term, Geography
 
 
 class TestGeography(object):
@@ -11,14 +11,14 @@ class TestGeography(object):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.DataFrame(
             {
-                Term.COUNTRY: [*["UK" for _ in range(4)], *["Japan" for _ in range(10)]],
+                Term.COUNTRY: [Term.NA, Term.NA, *["UK" for _ in range(4)], *["Japan" for _ in range(10)]],
                 Term.PROVINCE: [
-                    "England", "England", *[Term.NA for _ in range(4)],
+                    Term.NA, Term.NA, "England", "England", *[Term.NA for _ in range(4)],
                     *["Tokyo" for _ in range(4)], *["Kanagawa" for _ in range(4)]],
                 Term.CITY: [
-                    *[Term.NA for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
-                Term.DATE: [day0, day1] * 7,
-                Term.C: range(14),
+                    *[Term.NA for _ in range(10)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
+                Term.DATE: [day0, day1] * 8,
+                Term.C: range(16),
             }
         )
         geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
@@ -29,22 +29,23 @@ class TestGeography(object):
                 Term.PROVINCE: [Term.NA for _ in range(4)],
                 Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
-                Term.C: [2, 3, 4, 5],
+                Term.C: [4, 5, 6, 7],
             }
         )
         assert geography.layer(data=raw, geo=None).equals(df)
         assert geography.layer(data=raw, geo=(None,)).equals(df)
-        # When `geo=("Japan",)`, returns province-level data in Japan.
+        # When `geo=("Japan",)` or `geo="Japan"`, returns province-level data in Japan.
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["Japan" for _ in range(2)],
                 Term.PROVINCE: ["Tokyo", "Tokyo"],
                 Term.CITY: [Term.NA for _ in range(2)],
                 Term.DATE: [day0, day1],
-                Term.C: [6, 7],
+                Term.C: [8, 9],
             }
         )
         assert geography.layer(data=raw, geo=("Japan",)).equals(df)
+        assert geography.layer(data=raw, geo="Japan").equals(df)
         # When `geo=(["Japan", "UK"],)`, returns province-level data in Japan and UK.
         df = pd.DataFrame(
             {
@@ -52,7 +53,7 @@ class TestGeography(object):
                 Term.PROVINCE: ["England", "England", "Tokyo", "Tokyo"],
                 Term.CITY: [Term.NA for _ in range(4)],
                 Term.DATE: [day0, day1] * 2,
-                Term.C: [0, 1, 6, 7],
+                Term.C: [2, 3, 8, 9],
             }
         )
         assert geography.layer(data=raw, geo=(["Japan", "UK"],)).equals(df)
@@ -63,7 +64,7 @@ class TestGeography(object):
                 Term.PROVINCE: ["Kanagawa" for _ in range(4)],
                 Term.CITY: ["Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
                 Term.DATE: [day0, day1] * 2,
-                Term.C: [10, 11, 12, 13],
+                Term.C: [12, 13, 14, 15],
             }
         )
         assert geography.layer(data=raw, geo=("Japan", "Kanagawa")).equals(df)
@@ -74,13 +75,13 @@ class TestGeography(object):
                 Term.PROVINCE: ["Tokyo", "Tokyo", *["Kanagawa" for _ in range(4)]],
                 Term.CITY: ["Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
                 Term.DATE: [day0, day1] * 3,
-                Term.C: [8, 9, 10, 11, 12, 13],
+                Term.C: [10, 11, 12, 13, 14, 15],
             }
         )
         assert geography.layer(data=raw, geo=("Japan", ["Tokyo", "Kanagawa"])).equals(df)
         # Errors
         with pytest.raises(TypeError):
-            geography.layer(data=raw, geo="a")
+            geography.layer(data=raw, geo=1)
         with pytest.raises(TypeError):
             geography.layer(data=raw, geo=(1,))
         with pytest.raises(ValueError):
@@ -90,14 +91,14 @@ class TestGeography(object):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.DataFrame(
             {
-                Term.COUNTRY: [*["UK" for _ in range(4)], *["Japan" for _ in range(10)]],
+                Term.COUNTRY: [*["UK" for _ in range(4)], *["Japan" for _ in range(10)], Term.NA, Term.NA],
                 Term.PROVINCE: [
                     "England", "England", *[Term.NA for _ in range(4)],
-                    *["Tokyo" for _ in range(4)], *["Kanagawa" for _ in range(4)]],
+                    *["Tokyo" for _ in range(4)], *["Kanagawa" for _ in range(4)], Term.NA, Term.NA],
                 Term.CITY: [
-                    *[Term.NA for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki"],
-                Term.DATE: [day0, day1] * 7,
-                Term.C: range(14),
+                    *[Term.NA for _ in range(8)], "Chiyoda", "Chiyoda", "Yokohama", "Yokohama", "Kawasaki", "Kawasaki", Term.NA, Term.NA],
+                Term.DATE: [day0, day1] * 8,
+                Term.C: range(16),
             }
         )
         geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
@@ -113,7 +114,7 @@ class TestGeography(object):
         )
         assert geography.filter(data=raw, geo=None).equals(df)
         assert geography.filter(data=raw, geo=(None,)).equals(df)
-        # When `geo = ("Japan",)`, returns country-level data in Japan.
+        # When `geo = ("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
         df = pd.DataFrame(
             {
                 Term.COUNTRY: ["Japan", "Japan"],
@@ -124,6 +125,7 @@ class TestGeography(object):
             }
         )
         assert geography.filter(data=raw, geo=("Japan",)).equals(df)
+        assert geography.filter(data=raw, geo="Japan").equals(df)
         # When `geo = (["Japan", "UK"],)`, returns country-level data of Japan and UK.
         df = pd.DataFrame(
             {
@@ -182,7 +184,7 @@ class TestGeography(object):
         assert geography.filter(data=raw, geo=("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])).equals(df)
         # Errors
         with pytest.raises(TypeError):
-            geography.filter(data=raw, geo="a")
+            geography.filter(data=raw, geo=1)
         with pytest.raises(TypeError):
             geography.filter(data=raw, geo=(1,))
         with pytest.raises(ValueError):
