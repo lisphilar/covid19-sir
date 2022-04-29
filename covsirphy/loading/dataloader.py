@@ -31,6 +31,7 @@ class DataLoader(Term):
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
         update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
+        countries (list[str] or str or None): country name(s) of datasets to downloaded when @update_interval is an integer
         basename_dict (dict[str, str]): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
             "owid": Our World In Data (default: ourworldindata.csv),
@@ -52,7 +53,7 @@ class DataLoader(Term):
         If @verbose is 2, detailed citation list will be show, if available.
     """
 
-    def __init__(self, directory="input", update_interval=12, basename_dict=None, verbose=1):
+    def __init__(self, directory="input", update_interval=12, countries=None, basename_dict=None, verbose=1):
         # Directory
         try:
             self.dir_path = Path(directory)
@@ -62,6 +63,12 @@ class DataLoader(Term):
             update_interval, name="update_interval", include_zero=True, none_ok=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
+        # Country names for automated downloading: None (all countries) or list[str]
+        if countries is None:
+            self._iso3_codes = None
+        else:
+            self._iso3_codes = self._ensure_list(
+                self._to_iso3([countries] if isinstance(countries, str) else countries), name="countries")
         # Dictionary of filenames to save remote datasets
         filename_dict = {
             "covid19dh": "covid19dh.csv",
