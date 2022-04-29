@@ -84,7 +84,7 @@ class DataLoader(Term):
         # Verbosity
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Column names to identify records
-        self._id_cols = [self.COUNTRY, self.PROVINCE, self.DATE]
+        self._id_cols = [self.ISO3, self.PROVINCE, self.DATE]
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
         self._local_citations = []
@@ -291,7 +291,7 @@ class DataLoader(Term):
         self._local_df = self._local_df.assign(**kwargs)
         return self
 
-    def lock(self, date, country, province, iso3=None,
+    def lock(self, date, country=None, province=None, iso3=None,
              confirmed=None, fatal=None, recovered=None, population=None, tests=None,
              product=None, vaccinations=None, vaccinations_boosters=None, vaccinated_once=None, vaccinated_full=None,
              oxcgrt_variables=None, mobility_variables=None):
@@ -300,8 +300,8 @@ class DataLoader(Term):
 
         Args:
             date (str): column name for dates
-            country (str): country names (top level administration)
-            procvince (str): province names (2nd level administration)
+            country (str or None): country names (top level administration)
+            procvince (str or None): province names (2nd level administration)
             iso3 (str or None): ISO3 codes
             confirmed (str or None): the number of confirmed cases
             fatal (str or None): the number of fatal cases
@@ -315,6 +315,9 @@ class DataLoader(Term):
             vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
             oxcgrt_variables (list[str] or None): list of variables for OxCGRTData
             mobility_variables (list[str] or None): list of variables for MobilityData
+
+        Raises:
+            ValueError: neither @country nor @iso3 is not specified
 
         Returns:
             covsirphy.DataLoader: self
@@ -331,13 +334,13 @@ class DataLoader(Term):
         self._mobility_cols = mobility_variables or _GoogleOpenData.MOBILITY_VARS[:]
         # All variables
         variables = [
-            self.ISO3, self.C, self.F, self.R, self.N, self.TESTS,
+            self.COUNTRY, self.C, self.F, self.R, self.N, self.TESTS,
             self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL,
             *self._oxcgrt_cols, *self._mobility_cols,
         ]
-        id_dict = {date: self.DATE, country: self.COUNTRY, province: self.PROVINCE}
+        id_dict = {date: self.DATE, iso3: self.ISO3, province: self.PROVINCE}
         rename_dict = {
-            **id_dict, iso3: self.ISO3,
+            **id_dict, country: self.COUNTRY,
             confirmed: self.C, fatal: self.F, recovered: self.R, population: self.N,
             tests: self.TESTS, product: self.PRODUCT, vaccinations: self.VAC, vaccinations_boosters: self.VAC_BOOSTERS,
             vaccinated_once: self.V_ONCE, vaccinated_full: self.V_FULL,
@@ -345,21 +348,24 @@ class DataLoader(Term):
         # Local database
         df = self._local_df.rename(columns=rename_dict)
         df = df.reindex(columns=[*self._id_cols, *variables])
+        if country is not None and iso3 is None:
+            df[self.ISO3] = self._to_iso3(df[self.COUNTRY])
         if df.empty:
             citation_dict = dict.fromkeys(variables, [])
         else:
             df[self.DATE] = pd.to_datetime(df[self.DATE])
             citation_dict = {v: self._local_citations if v in df else [] for v in variables}
             df = df.pivot_table(
-                values=variables, index=self.DATE, columns=[self.COUNTRY, self.PROVINCE], aggfunc="first")
+                values=variables, index=self.DATE, columns=[self.ISO3, self.PROVINCE], aggfunc="first")
             df = df.resample("D").first().ffill().bfill()
             df = df.stack().stack().reset_index()
         # With Remote datasets
         if self.update_interval is not None:
             df = df.set_index(self._id_cols)
             # COVID-19 Dataset in Japan
-            japan_filename = self._filename_dict["japan"]
-            df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
+            if self._iso3_codes is None or "JPN" in self._iso3_codes:
+                japan_filename = self._filename_dict["japan"]
+                df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
             # COVID19 Data Hub
             dh_filename = self._filename_dict["covid19dh"]
             df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
@@ -376,7 +382,6 @@ class DataLoader(Term):
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
         self._set_date_location(df)
-        df[self.ISO3] = df[self.ISO3].fillna(self.NA)
         self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
         self._locked_citation_dict = citation_dict.copy()
         return self
@@ -455,6 +460,7 @@ class DataLoader(Term):
             data (pandas.DataFrame): dataframe to update (itself will be updated)
         """
         data[self.DATE] = pd.to_datetime(data[self.DATE])
+        data[self.ISO3] = data[self.ISO3].fillna(self.NA)
         data[self.COUNTRY] = data[self.COUNTRY].fillna(self.NA)
         data[self.PROVINCE] = data[self.PROVINCE].fillna(self.NA)
 

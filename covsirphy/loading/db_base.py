@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import pandas as pd
 from covsirphy.util.term import Term
@@ -23,8 +24,9 @@ class _RemoteDatabase(Term):
         # Filepath to save files
         try:
             self.filepath = Path(filename)
-        except TypeError:
-            raise TypeError(f"@filename should be a path-like object, but {filename} was applied.")
+        except TypeError as e:
+            raise TypeError(f"@filename should be a path-like object, but {filename} was applied.") from e
+
         self.filepath.parent.mkdir(exist_ok=True, parents=True)
         # List of primary sources
         self.primary_list = []
@@ -48,11 +50,8 @@ class _RemoteDatabase(Term):
         """
         # Read local file if available and usable
         if not force and self.filepath.exists():
-            try:
+            with contextlib.suppress(ValueError):
                 return self._ensure_dataframe(self.read(), columns=self.saved_cols)
-            except ValueError:
-                # ValueError: Usecols do not match columns
-                pass
         # Download dataset from server
         df = self.download(verbose=verbose)
         df = df.rename(columns=self.COL_DICT)

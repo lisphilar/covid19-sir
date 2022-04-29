@@ -4,6 +4,7 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 import math
+import warnings
 import country_converter as coco
 import numpy as np
 import pandas as pd
@@ -240,8 +241,8 @@ class Term(object):
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
             number = int(target)
-        except TypeError:
-            raise TypeError(f"{s} and not converted to integer.")
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
         if number != target:
             raise ValueError(f"{s}. |{target} - {number}| > 0")
         min_value = 0 if include_zero else 1
@@ -564,17 +565,24 @@ class Term(object):
             name (str or list[str] or None): country name(s)
 
         Returns:
-            str or list[str]: ISO3 code(s)
+            list[str]: ISO3 code(s)
         Note:
             "UK" will be converted to "GBR".
 
         Note:
-            When the country was not found or None, it will be converted to '---' with stdout with coco_convert package.
+            When the country was not found or None, it will not be converted with stdout with coco_convert package.
+
+        Examples:
+            >>> Term._to_iso3("Japan")
+            ['JPN']
+            >>> Term._to_iso3(["Japan", "UK", "Moon", None])
+            Moon not found in regex
+            ['JPN', 'GBR', 'Moon', '---']
         """
+        warnings.simplefilter("ignore", FutureWarning)
         names = [name] if (isinstance(name, str) or name is None) else name
         special_dict = {"UK": "GBR", None: cls.NA * 3, }
-        names = [special_dict.get(elem, elem) for elem in names]
-        return coco.convert(names, to="ISO3", not_found=cls.NA * 3)
+        return [special_dict.get(elem) if elem in special_dict else coco.convert(elem, to="ISO3", not_found=elem) for elem in names]
 
 
 class Word(Term):
