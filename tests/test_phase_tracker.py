@@ -56,10 +56,8 @@ class TestPhaseTracker(object):
         assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Mar2021")
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_trend(self, jhu_data, population_data, country, imgfile):
-        population = population_data.value(country=country)
-        records_df, _ = jhu_data.records(
-            country=country, start_date="01May2020", population=population)
+    def test_trend(self, jhu_data, country, imgfile):
+        records_df, _ = jhu_data.records(country=country, start_date="01May2020")
         # Create tracker -> no phases
         tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Define phases with S-R trend analysis
@@ -75,10 +73,8 @@ class TestPhaseTracker(object):
     @pytest.mark.parametrize("model", [SIRF])
     @pytest.mark.parametrize("tau", [720, None])
     @pytest.mark.parametrize("metric", ["RMSLE"])
-    def test_estimate(self, jhu_data, population_data, country, model, tau, metric):
-        population = population_data.value(country=country)
-        records_df, _ = jhu_data.records(
-            country=country, start_date="01Nov2020", population=population)
+    def test_estimate(self, jhu_data, country, model, tau, metric):
+        records_df, _ = jhu_data.records(country=country, start_date="01Nov2020", auto_complement=False)
         # Create tracker -> no phases
         tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Define phases with S-R trend analysis
@@ -107,10 +103,8 @@ class TestPhaseTracker(object):
     @pytest.mark.parametrize("country", ["Japan"])
     @pytest.mark.parametrize("model", [SIRF])
     @pytest.mark.parametrize("tau", [720])
-    def test_set_ode(self, jhu_data, population_data, country, model, tau):
-        population = population_data.value(country=country)
-        records_df, _ = jhu_data.records(
-            country=country, start_date="01Nov2020", population=population)
+    def test_set_ode(self, jhu_data, country, model, tau):
+        records_df, _ = jhu_data.records(country=country, start_date="01Nov2020")
         # Create tracker -> no phases
         tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Define phases with S-R trend analysis
@@ -137,10 +131,8 @@ class TestPhaseTracker(object):
         assert not track_df[Term.SUB_COLUMNS].isna().sum().sum()
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_parse_range(self, jhu_data, population_data, country):
-        population = population_data.value(country=country)
-        records_df, _ = jhu_data.records(
-            country=country, start_date="01May2020", population=population)
+    def test_parse_range(self, jhu_data, country):
+        records_df, _ = jhu_data.records(country=country, start_date="01May2020")
         # Create tracker -> no phases
         today = pd.to_datetime("31Dec2020")
         tracker = PhaseTracker(data=records_df, today=today, area=country)
