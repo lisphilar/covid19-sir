@@ -47,7 +47,7 @@ class DataLoader(Term):
         So, they are not influenced by @update_interval.
 
     Note:
-        If @verbose is 0, no discription will be shown.
+        If @verbose is 0, no descriptions will be shown.
         If @verbose is 1 or larger, URL and database name will be shown.
         If @verbose is 2, detailed citation list will be show, if available.
     """
@@ -76,7 +76,7 @@ class DataLoader(Term):
         self._filename_dict = filename_dict.copy()
         # Verbosity
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
-        # Column names to indentify records
+        # Column names to identify records
         self._id_cols = [self.COUNTRY, self.PROVINCE, self.DATE]
         # Datasets retrieved from local files
         self._local_df = pd.DataFrame()
@@ -268,7 +268,7 @@ class DataLoader(Term):
 
     def assign(self, **kwargs):
         """
-        Assgn new columns to the dataset retrieved from local files.
+        Assign new columns to the dataset retrieved from local files.
 
         Args:
             kwargs: keyword arguments of pandas.DataFrame.assign().
@@ -462,9 +462,9 @@ class DataLoader(Term):
             verbose (int): level of verbosity
         """
         if basename is not None:
-            raise TypeError("@basename argument was deprecated. Please use DataLoader(bansename_dict)")
+            raise TypeError("@basename argument was deprecated. Please use DataLoader(basename_dict)")
         if basename_owid is not None:
-            raise TypeError("@basename_owid argument was deprecated. Please use DataLoader(bansename_dict)")
+            raise TypeError("@basename_owid argument was deprecated. Please use DataLoader(basename_dict)")
         if local_file is not None:
             raise TypeError("local_file argument was deprecated. Please use DataLoader.read_csv().")
         if verbose is not None:
