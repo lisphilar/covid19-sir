@@ -4,6 +4,7 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 import math
+import country_converter as coco
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, UnExpectedValueError
@@ -554,6 +555,26 @@ class Term(object):
                 raise KeyError(f"Value of {param} was not specified with keyword arguments.")
             self._ensure_instance(kwargs[param], value_type, name=f"{param} value")
         return {param: kwargs[param] for param in arg_list}
+
+    @classmethod
+    def _to_iso3(cls, name):
+        """Convert country name(s) to ISO3 codes.
+
+        Args:
+            name (str or list[str] or None): country name(s)
+
+        Returns:
+            str or list[str]: ISO3 code(s)
+        Note:
+            "UK" will be converted to "GBR".
+
+        Note:
+            When the country was not found or None, it will be converted to '---' with stdout with coco_convert package.
+        """
+        names = [name] if (isinstance(name, str) or name is None) else name
+        special_dict = {"UK": "GBR", None: cls.NA * 3, }
+        names = [special_dict.get(elem, elem) for elem in names]
+        return coco.convert(names, to="ISO3", not_found=cls.NA * 3)
 
 
 class Word(Term):

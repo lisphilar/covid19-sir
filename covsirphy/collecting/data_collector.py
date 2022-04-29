@@ -7,7 +7,6 @@ from pathlib import Path
 import time
 import urllib
 from zipfile import ZipFile
-import country_converter as coco
 import pandas as pd
 import requests
 from covsirphy.util.term import Term
@@ -306,24 +305,6 @@ class DataCollector(Term):
         """
         if self._verbose:
             print(sentence)
-
-    @classmethod
-    def _to_iso3(cls, name):
-        """Convert country name to ISO3 codes.
-
-        Args:
-            name (str or list[str] or None): country name(s)
-
-        Returns:
-            str or list[str] or None: ISO3 code(s) or as-is when not found
-
-        Note:
-            "UK" will be converted to "GBR".
-        """
-        if name is None or name == cls.NA:
-            return None
-        names = ["GBR" if elem == "UK" else elem for elem in ([name] if isinstance(name, str) else name)]
-        return coco.convert(names, to="ISO3", not_found=None)
 
     def auto(self, geo=None, cache=None):
         """Download datasets of the country specified with geographic information from remote servers automatically.
