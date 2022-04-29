@@ -584,6 +584,23 @@ class Term(object):
         special_dict = {"UK": "GBR", None: cls.NA * 3, }
         return [special_dict.get(elem) if elem in special_dict else coco.convert(elem, to="ISO3", not_found=elem) for elem in names]
 
+    def _value_included(self, target, value_dict, **kwargs):
+        """
+        Return whether all expected values are included in the columns or not.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            value_dict (dict[str, object]): dictionary of values which must be included in the column
+            **kwargs: additional keyword arguments of ._ensure_dataframe()
+
+        Returns:
+            bool: whether all values (specified in @value_dict) are included or not
+        """
+        self._ensure_dataframe(target=target, **kwargs)
+        if not set(value_dict.keys()).issubset(target.columns):
+            return False
+        return all(value in target[col].unique() for (col, value) in value_dict.items())
+
 
 class Word(Term):
     @ deprecate(old="Word()", new="Term()")

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
-import covid19dh
+from io import BytesIO, StringIO
+import urllib
+from zipfile import ZipFile
 import pandas as pd
+import requests
 from covsirphy.util.term import Term
 from covsirphy.loading.db_base import _RemoteDatabase
 
@@ -14,6 +16,7 @@ class _COVID19dh(_RemoteDatabase):
 
     Args:
         filename (str): CSV filename to save records
+        iso3 (str or None): ISO3 code of the country which must be included in the dataset or None (all available countries)
     """
     # Citation
     CITATION = '(Secondary source)' \
@@ -71,9 +74,7 @@ class _COVID19dh(_RemoteDatabase):
         # Download datasets
         if verbose:
             print("Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/")
-        c_df, p_df, self.primary_list = self._download()
-        # Merge the datasets
-        df = pd.concat([c_df, p_df], axis=0, ignore_index=True)
+        df, self.primary_list = self._download()
         # Perform pre-processing
         df = self._preprocessing(df)
         # Show citation list
@@ -91,32 +92,35 @@ class _COVID19dh(_RemoteDatabase):
 
         Returns:
             tuple:
-                pandas.DataFrame: dataset at country level
-                pandas.DataFrame: dataset at province level
+                pandas.DataFrame: raw dataset
                 str: the list of primary sources
 
         Note:
             For some countries, province-level data is included.
         """
-        warnings.simplefilter("ignore", ResourceWarning)
-        levels = [f"administrative_area_level_{i}" for i in range(1, 4)]
-        # Level 1 (country/region)
-        c_raw, c_cite = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
-        c_df = c_raw.groupby(levels[0]).ffill()
-        for num in range(3):
-            c_df.loc[:, levels[num]] = c_raw[levels[num]]
-        # Level 2 (province/state)
-        p_raw, p_cite = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
-        p_df = p_raw.groupby(levels[:2]).ffill()
-        for num in range(3):
-            p_df.loc[:, levels[num]] = p_raw[levels[num]]
+        if self._iso3 is None:
+            url = "https://storage.covid19datahub.io/level/1.csv.zip"
+        else:
+            url = f"https://storage.covid19datahub.io/country/{self._iso3}.csv.zip"
+        raw = self._read_csv(url, col_dict=None, date="date", date_format="%Y-%m-%d")
+        raw = raw.groupby("id").ffill()
+        # Remove city-level data
+        raw = raw.loc[raw["administrative_area_level_3"].isna()]
         # Citation
-        cite = pd.concat([c_cite, p_cite], axis=0, ignore_index=True)
-        cite = cite.loc[:, ["title", "year", "url"]]
+        c_url = "https://storage.covid19datahub.io/src.csv"
+        try:
+            cite = pd.read_csv(c_url, storage_options={"User-Agent": "Mozilla/5.0"})
+        except TypeError:
+            # When pandas < 1.2: note that pandas v1.2.0 requires Python >= 3.7.1
+            r = requests.get(url=c_url, headers={"User-Agent": "Mozilla/5.0"})
+            cite = pd.read_csv(StringIO(r.text))
+        if self._iso3 is not None:
+            cite = cite.loc[cite["iso_alpha_3"] == self._iso3]
+        cite = cite.loc[cite["data_type"].isin(self.COL_DICT.keys())]
+        cite = cite.loc[:, ["title", "year", "url"]].drop_duplicates(subset="title")
         cite = cite.sort_values(["year", "url"], ascending=[False, True])
-        cite.drop_duplicates(subset="title", inplace=True)
         series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
-        return (c_df, p_df, "\n".join(series.tolist()))
+        return (raw, "\n".join(series.tolist()))
 
     def _preprocessing(self, raw):
         """
@@ -176,3 +180,29 @@ class _COVID19dh(_RemoteDatabase):
         for ship in ships:
             df.loc[df[c] == ship, [c, p]] = [self.OTHERS, ship]
         return df
+
+    def _read_csv(self, filepath_or_buffer, col_dict, date="date", date_format="%Y-%m-%d"):
+        """Read CSV data.
+
+        Args:
+            filepath_or_buffer (str, path object or file-like object): file path or URL
+            col_dict (dict[str, str] or None): dictionary to convert column names or None (not perform conversion)
+            date (str): column name of date
+            date_format (str): format of date column, like %Y-%m-%d
+        """
+        read_dict = {
+            "header": 0, "usecols": None if col_dict is None else list(col_dict.keys()),
+            "parse_dates": None if date is None else [date], "date_parser": lambda x: pd.datetime.strptime(x, date_format)
+        }
+        try:
+            df = pd.read_csv(filepath_or_buffer, **read_dict)
+        except urllib.error.HTTPError:
+            try:
+                df = pd.read_csv(filepath_or_buffer, storage_options={"User-Agent": "Mozilla/5.0"}, **read_dict)
+            except TypeError:
+                # When pandas < 1.2: note that pandas v1.2.0 requires Python >= 3.7.1
+                r = requests.get(url=filepath_or_buffer, headers={"User-Agent": "Mozilla/5.0"})
+                z = ZipFile(BytesIO(r.content))
+                with z.open(z.namelist()[0], "r") as fh:
+                    df = pd.read_csv(BytesIO(fh.read()), **read_dict)
+        return df if col_dict is None else df.rename(columns=col_dict)

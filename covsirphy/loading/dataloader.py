@@ -4,7 +4,6 @@
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import warnings
-import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
@@ -31,7 +30,7 @@ class DataLoader(Term):
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
         update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
-        countries (list[str] or str or None): country name(s) of datasets to downloaded when @update_interval is an integer
+        country (str or None): country name of datasets to downloaded when @update_interval is an integer
         basename_dict (dict[str, str]): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
             "owid": Our World In Data (default: ourworldindata.csv),
@@ -53,7 +52,7 @@ class DataLoader(Term):
         If @verbose is 2, detailed citation list will be show, if available.
     """
 
-    def __init__(self, directory="input", update_interval=12, countries=None, basename_dict=None, verbose=1):
+    def __init__(self, directory="input", update_interval=12, country=None, basename_dict=None, verbose=1):
         # Directory
         try:
             self.dir_path = Path(directory)
@@ -64,11 +63,7 @@ class DataLoader(Term):
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
         # Country names for automated downloading: None (all countries) or list[str]
-        if countries is None:
-            self._iso3_codes = None
-        else:
-            self._iso3_codes = self._ensure_list(
-                self._to_iso3([countries] if isinstance(countries, str) else countries), name="countries")
+        self._iso3_code = None if country is None else self._to_iso3(country)[0]
         # Dictionary of filenames to save remote datasets
         filename_dict = {
             "covid19dh": "covid19dh.csv",
@@ -363,7 +358,7 @@ class DataLoader(Term):
         if self.update_interval is not None:
             df = df.set_index(self._id_cols)
             # COVID-19 Dataset in Japan
-            if self._iso3_codes is None or "JPN" in self._iso3_codes:
+            if self._iso3_code is None or self._iso3_code == "JPN":
                 japan_filename = self._filename_dict["japan"]
                 df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
             # COVID19 Data Hub
@@ -381,7 +376,7 @@ class DataLoader(Term):
         # Complete database lock
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
-        self._set_date_location(df)
+        df = self._set_date_location(df).reset_index()
         self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
         self._locked_citation_dict = citation_dict.copy()
         return self
@@ -436,20 +431,15 @@ class DataLoader(Term):
             tuple(pandas.DataFrame, list[str], _RemoteDatabase):
                 updated database, citations and the handler
         """
-        df = current_df.reset_index()
-        self._set_date_location(df)
-        df = df.set_index(self._id_cols)
-        cite_dict = citation_dict.copy()
+        df = self._set_date_location(current_df)
         # Get the remote dataset
         force = self._download_necessity(filename)
-        handler = remote_handler(filename)
-        remote_df = handler.to_dataframe(force=force, verbose=self._verbose)
-        self._set_date_location(remote_df)
-        remote_df = remote_df.set_index(self._id_cols)
+        handler = remote_handler(filename, self._iso3_code)
+        remote_df = self._set_date_location(handler.to_dataframe(force=force, verbose=self._verbose))
         # Update the current database
-        df = df.replace(0, np.nan).combine_first(remote_df).reset_index().set_index(self._id_cols)
+        df = df.combine_first(remote_df)
         # Update citations
-        cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in cite_dict.items()}
+        cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in citation_dict.items()}
         return (df, cite_dict, handler)
 
     def _set_date_location(self, data):
@@ -458,11 +448,21 @@ class DataLoader(Term):
 
         Args:
             data (pandas.DataFrame): dataframe to update (itself will be updated)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date, ISO3, Province
+                Columns
+                    as-is
         """
-        data[self.DATE] = pd.to_datetime(data[self.DATE])
-        data[self.ISO3] = data[self.ISO3].fillna(self.NA)
-        data[self.COUNTRY] = data[self.COUNTRY].fillna(self.NA)
-        data[self.PROVINCE] = data[self.PROVINCE].fillna(self.NA)
+        df = data.reset_index()
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
+        df[self.ISO3] = df[self.ISO3].fillna(self.NA)
+        if self.COUNTRY in df:
+            df[self.COUNTRY] = df[self.COUNTRY].fillna(self.NA)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
+        return df.set_index(self._id_cols)
 
     def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
         """
