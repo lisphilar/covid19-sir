@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import pytest
 import warnings
 from covsirphy import CleaningBase, Word, Population, SubsetNotFoundError
@@ -20,15 +21,11 @@ class TestCleaningBase(object):
     @pytest.mark.parametrize("country", [None, "Japan"])
     def test_layer(self, data, country):
         # Country level data
-        try:
+        with contextlib.suppress(NotImplementedError):
             data.layer(country=None)
-        except NotImplementedError:
-            pass
         # Province level data
-        try:
+        with contextlib.suppress(NotImplementedError):
             data.layer(country=country)
-        except NotImplementedError:
-            pass
 
     @pytest.mark.parametrize("country", ["Moon"])
     def test_layer_error(self, japan_data, country):
