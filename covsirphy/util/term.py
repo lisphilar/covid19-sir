@@ -566,6 +566,7 @@ class Term(object):
 
         Returns:
             list[str]: ISO3 code(s)
+
         Note:
             "UK" will be converted to "GBR".
 

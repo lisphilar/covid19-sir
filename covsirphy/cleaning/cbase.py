@@ -232,7 +232,8 @@ class CleaningBase(Term):
             str: ISO3 code or "---" (when unknown)
         """
         name = self.ensure_country_name(country) if check_data else country
-        return self._to_iso3(name)[0]
+        iso3 = self._to_iso3(name)[0]
+        return self.NA * 3 if iso3 is None or iso3 == country else iso3
 
     @classmethod
     def area_name(cls, country, province=None):
