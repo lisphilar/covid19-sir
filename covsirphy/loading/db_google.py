@@ -15,6 +15,7 @@ class _GoogleOpenData(_RemoteDatabase):
 
     Args:
         filename (str): CSV filename to save records
+        iso3 (str or None): ISO3 code of the country which must be included in the dataset or None (all available countries)
     """
     # URL for mobility data
     URL_M = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
@@ -37,9 +38,8 @@ class _GoogleOpenData(_RemoteDatabase):
     MOBILITY_VARS = [v.capitalize() for v in _MOBILITY_COLS_RAW_INT]
     COL_DICT = {
         "date": Term.DATE,
-        "country_name": Term.COUNTRY,
-        Term.PROVINCE: Term.PROVINCE,
         "iso_3166_1_alpha_3": Term.ISO3,
+        Term.PROVINCE: Term.PROVINCE,
         **{v: v.capitalize() for v in _MOBILITY_COLS_RAW_INT},
     }
 
@@ -65,20 +65,14 @@ class _GoogleOpenData(_RemoteDatabase):
         if verbose:
             print("Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data")
         # Index
-        i_cols = ["location_key", "country_name", "subregion1_name", "subregion2_name", "iso_3166_1_alpha_3"]
+        i_cols = ["location_key", "iso_3166_1_alpha_3", "subregion1_name", "subregion2_name"]
         i_df = pd.read_csv(self.URL_I, usecols=i_cols)
         # Mobility
         m_df = pd.read_csv(self.URL_M)
         m_df = (m_df.set_index(["date", "location_key"]) + 100).reset_index()
         # Combine data
         df = m_df.merge(i_df, how="left", on="location_key")
-        # Location (country/province)
+        # Location (iso3/province): remove city-level data
         df = df.loc[df["subregion2_name"].isna()]
         df[self.PROVINCE] = df["subregion1_name"].fillna(self.NA).apply(unidecode)
-        df["country_name"] = df["country_name"].replace(
-            {
-                # CIV
-                "Ivory Coast": "Cote d'Ivoire",
-            }
-        )
         return df

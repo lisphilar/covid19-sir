@@ -71,7 +71,7 @@ class TestExampleData(object):
         snl.register(example_data)
         # Check records
         record_df = snl.records(variables="CFR")
-        assert set(record_df.columns) == set([Term.DATE, Term.C, Term.F, Term.R])
+        assert set(record_df.columns) == {Term.DATE, Term.C, Term.F, Term.R}
         # Add a past phase to 31Jan2020 with parameter values
         snl.add(model=SIRF, **SIRF.EXAMPLE["param_dict"])
         # Check summary

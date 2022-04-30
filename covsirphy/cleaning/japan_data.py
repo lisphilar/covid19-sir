@@ -21,6 +21,7 @@ class JapanData(CleaningBase):
         Columns of JapanData.cleaned():
             - Date (pandas.TimeStamp): date
             - Country (pandas.Category): 'Japan'
+            - ISO3: ISO3 code
             - Province (pandas.Category): '-' (country level), 'Entering' or province names
             - Confirmed (int): the number of confirmed cases
             - Infected (int): the number of currently infected cases
@@ -49,7 +50,7 @@ class JapanData(CleaningBase):
         CleaningBase.VAC, CleaningBase.VAC_BOOSTERS, CleaningBase.V_ONCE, CleaningBase.V_FULL,
     ]
     JAPAN_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PROVINCE,
         *JAPAN_VALUE_COLS,
     ]
     # Meta data
@@ -201,6 +202,7 @@ class JapanData(CleaningBase):
         df[self.JAPAN_VALUE_COLS] = df[self.JAPAN_VALUE_COLS].fillna(0).astype(np.int64)
         # Country
         df[self.COUNTRY] = "Japan"
+        df[self.ISO3] = "JPN"
         # Update data types to reduce memory
         df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df.loc[:, self.JAPAN_COLS]
@@ -342,13 +344,14 @@ class JapanData(CleaningBase):
         clean_df = self.cleaned()
         clean_df = clean_df.loc[clean_df[self.PROVINCE] != self.NA]
         total_df = clean_df.groupby(self.DATE).sum().reset_index()
-        total_df[self.COUNTRY] = self._country
+        total_df[self.COUNTRY] = "Japan"
+        total_df[self.ISO3] = "JPN"
         total_df[self.PROVINCE] = self.NA
         # Add/overwrite country level data
         df = clean_df.loc[clean_df[self.PROVINCE] != self.NA]
         df = pd.concat([df, total_df], ignore_index=True, sort=True)
         df[[self.COUNTRY, self.PROVINCE]] = df[[self.COUNTRY, self.PROVINCE]].astype("category")
-        self._cleaned_df = df.loc[:, self.COLUMNS]
+        self._cleaned_df = df.loc[:, self.JAPAN_COLS]
         return self
 
     def map(self, country=None, variable="Confirmed", date=None, **kwargs):
@@ -367,7 +370,7 @@ class JapanData(CleaningBase):
         if country is not None:
             raise NotImplementedError("@country cannot be specified, always None.")
         # Date
-        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
+        date_str = date or self._cleaned_df[self.DATE].max().strftime(self.DATE_FORMAT)
         title = f"{self._country}: the number of {variable.lower()} cases on {date_str}"
         # Country-specific map
         return self._colored_map_country(

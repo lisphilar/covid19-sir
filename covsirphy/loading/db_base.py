@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import pandas as pd
 from covsirphy.util.term import Term
@@ -12,6 +13,7 @@ class _RemoteDatabase(Term):
 
     Args:
         filename (str): CSV filename to save records
+        iso3 (str or None): ISO3 code of the country which must be included in the dataset or None (all available countries)
     """
     # Citation
     CITATION = ""
@@ -19,13 +21,16 @@ class _RemoteDatabase(Term):
     # {"name in database": "name defined in Term class"}
     COL_DICT = {}
 
-    def __init__(self, filename):
+    def __init__(self, filename, iso3):
         # Filepath to save files
         try:
             self.filepath = Path(filename)
-        except TypeError:
-            raise TypeError(f"@filename should be a path-like object, but {filename} was applied.")
+        except TypeError as e:
+            raise TypeError(f"@filename should be a path-like object, but {filename} was applied.") from e
+
         self.filepath.parent.mkdir(exist_ok=True, parents=True)
+        # Country
+        self._iso3 = None if iso3 is None else str(iso3)
         # List of primary sources
         self.primary_list = []
         # List of column names (defined in Term class)
@@ -48,11 +53,12 @@ class _RemoteDatabase(Term):
         """
         # Read local file if available and usable
         if not force and self.filepath.exists():
-            try:
-                return self._ensure_dataframe(self.read(), columns=self.saved_cols)
-            except ValueError:
-                # ValueError: Usecols do not match columns
-                pass
+            with contextlib.suppress(ValueError):
+                df = self._ensure_dataframe(self.read(), columns=self.saved_cols)
+                if self._iso3 is None and df[self.ISO3].nunique() > 1:
+                    return df
+                if self._iso3 is not None and self._value_included(df, value_dict={self.ISO3: self._iso3}):
+                    return df
         # Download dataset from server
         df = self.download(verbose=verbose)
         df = df.rename(columns=self.COL_DICT)

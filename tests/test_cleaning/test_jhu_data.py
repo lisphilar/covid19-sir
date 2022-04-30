@@ -4,8 +4,7 @@
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import SubsetNotFoundError, Term, JHUData
-from covsirphy import JHUDataComplementHandler
+from covsirphy import SubsetNotFoundError, Term, JHUDataComplementHandler
 
 
 class TestJHUData(object):
@@ -14,8 +13,7 @@ class TestJHUData(object):
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
-        assert set(df.columns) == set([*Term.COLUMNS, Term.ISO3, Term.N])
-        assert isinstance(JHUData.from_dataframe(df), JHUData)
+        assert set(df.columns) == {*Term.COLUMNS, Term.ISO3, Term.N}
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, jhu_data, country):
@@ -46,7 +44,7 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["Netherlands", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        if country in set(["Netherlands"]):
+        if country in {"Netherlands"}:
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
@@ -74,39 +72,36 @@ class TestJHUData(object):
             jhu_data.records(country=country, auto_complement=False)
 
     @pytest.mark.parametrize(
-        "applied, expected, iso3",
+        "applied, iso3",
         [
-            ("Congo", "Republic of the Congo", "COG"),
-            ("Democratic Congo", "Democratic Republic of the Congo", "COD"),
-            ("GR", "Greece", "GRC"),
-            ("gr", "Greece", "GRC"),
-            ("GRC", "Greece", "GRC"),
-            ("Greece", "Greece", "GRC"),
-            ("GREECE", "Greece", "GRC"),
-            ("gre", "error", "GRC"),
-            ("Ivory Coast", "Cote d'Ivoire", "CIV"),
-            ("Korea, South", "South Korea", "KOR"),
-            ("UK", "United Kingdom", "GBR"),
-            ("US", "United States", "USA"),
-            ("USA", "United States", "USA"),
-            ("VAT", "Holy See", "VAT"),
+            ("Congo", "COG"),
+            ("Democratic Congo", "COD"),
+            ("GR", "GRC"),
+            ("gr", "GRC"),
+            ("GRC", "GRC"),
+            ("Greece", "GRC"),
+            ("GREECE", "GRC"),
+            ("gre", "error"),
+            ("Ivory Coast", "CIV"),
+            ("Korea, South", "KOR"),
+            ("UK", "GBR"),
+            ("US", "USA"),
+            ("USA", "USA"),
+            ("Holy See", "VAT"),
         ]
     )
-    def test_country_name(self, jhu_data, applied, expected, iso3):
-        if expected == "error":
+    def test_country_name(self, jhu_data, applied, iso3):
+        if iso3 == "error":
             with pytest.raises(KeyError):
                 jhu_data.ensure_country_name(applied)
         else:
-            response = jhu_data.ensure_country_name(applied)
-            assert response == expected
-            assert jhu_data.country_to_iso3(response) == iso3
+            assert jhu_data.ensure_country_name(applied) == iso3
 
     @pytest.mark.parametrize(
         "country, province",
         [
             ("Greece", None),
             (["Greece", "Japan"], None),
-            (None, None),
             # raise ValueError
             (["Greece", "Japan"], "Tokyo"),
             # raise SubsetNotFoundError
