@@ -371,9 +371,11 @@ class JHUData(CleaningBase):
         if not complement:
             return sorted(raw_ok_set)
         # Selectable countries
-        comp_ok_list = [
-            country for country in all_set - raw_ok_set
-            if not self.subset_complement(country=country, **kwargs)[0].empty]
+        comp_ok_list = []
+        for country in all_set - raw_ok_set:
+            with contextlib.suppress(SubsetNotFoundError):
+                self.subset_complement(country=country, **kwargs)
+                comp_ok_list.append(country)
         return sorted(raw_ok_set | set(comp_ok_list))
 
     @deprecate("JHUData.calculate_closing_period()")

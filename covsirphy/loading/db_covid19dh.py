@@ -163,7 +163,7 @@ class _COVID19dh(_RemoteDatabase):
             Data types are not confirmed.
         """
         df = raw.copy()
-        c, p = "administrative_area_level_1", "administrative_area_level_2"
+        c, p, iso = "administrative_area_level_1", "administrative_area_level_2", "iso_alpha_3"
         # Country
         df[c] = df[c].replace(
             {
@@ -178,7 +178,7 @@ class _COVID19dh(_RemoteDatabase):
         # Set 'Others' as the country name of cruise ships
         ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
         for ship in ships:
-            df.loc[df[c] == ship, [c, p]] = [self.OTHERS, ship]
+            df.loc[df[c] == ship, [c, p, iso]] = [self.OTHERS, ship, self.OTHERS]
         return df
 
     def _read_csv(self, filepath_or_buffer, col_dict, date="date", date_format="%Y-%m-%d"):
