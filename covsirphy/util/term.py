@@ -4,6 +4,8 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 import math
+import warnings
+import country_converter as coco
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, UnExpectedValueError
@@ -239,8 +241,8 @@ class Term(object):
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
             number = int(target)
-        except TypeError:
-            raise TypeError(f"{s} and not converted to integer.")
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
         if number != target:
             raise ValueError(f"{s}. |{target} - {number}| > 0")
         min_value = 0 if include_zero else 1
@@ -554,6 +556,51 @@ class Term(object):
                 raise KeyError(f"Value of {param} was not specified with keyword arguments.")
             self._ensure_instance(kwargs[param], value_type, name=f"{param} value")
         return {param: kwargs[param] for param in arg_list}
+
+    @classmethod
+    def _to_iso3(cls, name):
+        """Convert country name(s) to ISO3 codes.
+
+        Args:
+            name (str or list[str] or None): country name(s)
+
+        Returns:
+            list[str]: ISO3 code(s)
+
+        Note:
+            "UK" will be converted to "GBR".
+
+        Note:
+            When the country was not found or None, it will not be converted with stdout with coco_convert package.
+
+        Examples:
+            >>> Term._to_iso3("Japan")
+            ['JPN']
+            >>> Term._to_iso3(["Japan", "UK", "Moon", None])
+            Moon not found in regex
+            ['JPN', 'GBR', 'Moon', '---']
+        """
+        warnings.simplefilter("ignore", FutureWarning)
+        names = [name] if (isinstance(name, str) or name is None) else name
+        special_dict = {"UK": "GBR", None: cls.NA * 3, }
+        return [special_dict.get(elem) if elem in special_dict else coco.convert(elem, to="ISO3", not_found=elem) for elem in names]
+
+    def _value_included(self, target, value_dict, **kwargs):
+        """
+        Return whether all expected values are included in the columns or not.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            value_dict (dict[str, object]): dictionary of values which must be included in the column
+            **kwargs: additional keyword arguments of ._ensure_dataframe()
+
+        Returns:
+            bool: whether all values (specified in @value_dict) are included or not
+        """
+        self._ensure_dataframe(target=target, **kwargs)
+        if not set(value_dict.keys()).issubset(target.columns):
+            return False
+        return all(value in target[col].unique() for (col, value) in value_dict.items())
 
 
 class Word(Term):
