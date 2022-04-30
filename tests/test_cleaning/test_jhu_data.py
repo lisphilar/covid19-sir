@@ -4,8 +4,7 @@
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import SubsetNotFoundError, Term, JHUData
-from covsirphy import JHUDataComplementHandler
+from covsirphy import SubsetNotFoundError, Term, JHUDataComplementHandler
 
 
 class TestJHUData(object):
@@ -15,7 +14,6 @@ class TestJHUData(object):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
         assert set(df.columns) == {*Term.COLUMNS, Term.ISO3, Term.N}
-        assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset(self, jhu_data, country):
