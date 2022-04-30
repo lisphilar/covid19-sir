@@ -77,10 +77,11 @@ class TestDataCollector(object):
         raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
         raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
         raw["Confirmed"] = list(range(len(raw)))
+        raw["Recovered"] = 0
         collector = DataCollector(layers=layers, country=country)
         with pytest.raises(ValueError):
             collector.manual(
-                data=raw, date="date", data_layers=["Country", "Country"], variables=["Confirmed"], citations="Manual")
+                data=raw, date="date", data_layers=["Country", "Country"], variables=["Confirmed", "Recovered"], citations="Manual")
         collector.manual(
             data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
         # All data
@@ -88,5 +89,29 @@ class TestDataCollector(object):
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
         all_df["Confirmed"] = np.arange(len(all_df))
         all_df = all_df.sort_values([*layers, Term.DATE], ignore_index=True)
-        assert collector.all().equals(all_df)
+        assert collector.all(variables=["Confirmed"]).equals(all_df)
         assert collector.citations() == ["Manual"]
+
+    @pytest.mark.parametrize(
+        "country, layers, geo, data_dict",
+        (
+            (
+                "ISO3",
+                ["ISO3", "Province", "City"],
+                ("JPN",),
+                {"ISO3": ["JPN", "JPN"], "Province": ["-", "Tokyo"], "City": ["-", "Chiyoda"]},
+            ),
+        )
+    )
+    def test_subset(self, country, layers, geo, data_dict):
+        day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
+        raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
+        raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
+        raw["Confirmed"] = list(range(len(raw)))
+        raw["Recovered"] = 0
+        collector = DataCollector(layers=layers, country=country)
+        collector.manual(
+            data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
+        # SUbset
+        sub_df = pd.DataFrame({Term.DATE: [day0, day1], "Confirmed": [0, 2]})
+        assert collector.subset(geo=geo, variables=["Confirmed"]).equals(sub_df)
