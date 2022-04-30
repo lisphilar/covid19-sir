@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from copy import deepcopy
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.collecting.geography import Geography
@@ -13,7 +12,6 @@ class DataCollector(Term):
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
-        update_interval (int): update interval of downloading dataset
         verbose (int): level of verbosity when downloading
 
     Raises:
@@ -23,45 +21,13 @@ class DataCollector(Term):
         Country level data specified with @country will be stored with ISO3 codes.
 
     Note:
-        If @update_interval hours have passed since the last update of downloaded datasets,
-        the dawnloaded datasets will be updated automatically.
-
-    Note:
         If @verbose is 0, no descriptions will be shown.
-        If @verbose is 1 or larger, URL and database name will be shown.
+        If @verbose is 1 or larger, details of layer adjustment will be shown.
     """
     # Internal term
     _ID = "Location_ID"
-    _GOOGLE_ID = "Google_ID"
-    # OxCGRT Indicators
-    _OXCGRT_COLS_RAW = [
-        "school_closing",
-        "workplace_closing",
-        "cancel_events",
-        "gatherings_restrictions",
-        "transport_closing",
-        "stay_home_restrictions",
-        "internal_movement_restrictions",
-        "international_movement_restrictions",
-        "information_campaigns",
-        "testing_policy",
-        "contact_tracing",
-        "stringency_index",
-    ]
-    OXCGRT_VARS = [v.capitalize() for v in _OXCGRT_COLS_RAW]
-    # Mobility indicators
-    _MOBILITY_COLS_RAW = [
-        "mobility_grocery_and_pharmacy",
-        "mobility_parks",
-        "mobility_transit_stations",
-        "mobility_retail_and_recreation",
-        "mobility_residential",
-        "mobility_workplaces",
-    ]
-    MOBILITY_VARS = [v.capitalize() for v in _MOBILITY_COLS_RAW]
 
-    def __init__(self, layers=None, country="ISO3", update_interval=12, verbose=1):
-        self._update_interval = self._ensure_natural_int(update_interval, name="update_interval", include_zero=True)
+    def __init__(self, layers=None, country="ISO3", verbose=1):
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
@@ -98,7 +64,7 @@ class DataCollector(Term):
             return df
         all_variables = df.columns.tolist()
         sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
-        return df.drop(list(set(all_variables) - set(sel_variables)), axis=1)
+        return df.loc[:, [*self._layers, self.DATE, *sel_variables]]
 
     def subset(self, geo=None, variables=None):
         """Create a subset with the geographic information.
@@ -299,30 +265,3 @@ class DataCollector(Term):
         """
         if self._verbose:
             print(sentence)
-
-    def auto(self, geo=None):
-        """Download datasets of the country specified with geographic information from remote servers automatically.
-
-        Args:
-            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
-
-        Returns:
-            covsirphy.DataCollector: self
-        """
-        if geo is None or self._country is None or self._country not in self._layers:
-            iso3, geo_converted = None, deepcopy(geo)
-        else:
-            geo_converted = self._geo_with_iso3(geo=geo)
-            name = geo_converted if isinstance(geo_converted, str) else geo_converted[self._layers.index(self._country)]
-            iso3 = self._to_iso3(name)
-        # COVID-19 Data Hub
-        dh_dict = self._auto_covid19dh(iso3=iso3)
-        place_df = dh_dict.pop("place_data").fillna(self.NA)
-        geography = Geography(layers=[self._country or self.ISO3, self.PROVINCE, self.CITY])
-        sel_df = geography.filter(data=place_df, geo=geo_converted)
-        self.manual(**dh_dict)
-        # Google Cloud Plat Form
-        self.manual(**self._auto_google(place_df=sel_df))
-        # Our World In Data
-        self.manual(**self._auto_owid())
-        return self
