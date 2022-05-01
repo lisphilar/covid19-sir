@@ -582,8 +582,11 @@ class Term(object):
         """
         warnings.simplefilter("ignore", FutureWarning)
         names = [name] if (isinstance(name, str) or name is None) else name
-        code_dict = {"UK": "GBR", None: cls.NA * 3, }
-        code_dict.update({elem: coco.convert(elem, to="ISO3", not_found=elem) for elem in set(names) - set(code_dict)})
+        code_dict = {"UK": "GBR", None: cls.NA * 3,} | {
+            elem: coco.convert(elem, to="ISO3", not_found=elem)
+            for elem in set(names) - set(code_dict)
+        }
+
         return [code_dict[elem] for elem in names]
 
     def _value_included(self, target, value_dict, **kwargs):
