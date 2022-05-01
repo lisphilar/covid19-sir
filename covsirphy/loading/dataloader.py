@@ -342,14 +342,14 @@ class DataLoader(Term):
             # Update citations
             citation_dict = {k: [*v, remote_dict[k]] if k in remote_df else v for (k, v) in citation_dict.items()}
         # Complete database lock
-        all_cols = [*self._id_cols, *variables, *list(df.columns)]
+        all_cols = [*self._id_cols, *variables, *df.columns.tolist()]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.ISO3] = df[self.ISO3].fillna(self.NA)
         if self.COUNTRY in df:
             df[self.COUNTRY] = df[self.COUNTRY].fillna(self.NA)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
-        self._locked_df = df.dropna(subset=self.DATE)
+        self._locked_df = df.dropna(subset=[self.DATE], axis=0)
         self._locked_citation_dict = citation_dict.copy()
         return self
 
