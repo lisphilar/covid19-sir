@@ -349,7 +349,7 @@ class DataLoader(Term):
         if self.COUNTRY in df:
             df[self.COUNTRY] = df[self.COUNTRY].fillna(self.NA)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
-        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        self._locked_df = df.dropna(subset=self.DATE)
         self._locked_citation_dict = citation_dict.copy()
         return self
 
