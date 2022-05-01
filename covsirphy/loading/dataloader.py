@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import warnings
 import pandas as pd
@@ -17,10 +16,9 @@ from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.cleaning.mobility_data import MobilityData
-from covsirphy.loading.db_cs_japan import _CSJapan
 from covsirphy.loading.db_covid19dh import _COVID19dh
-from covsirphy.loading.db_owid import _OWID
 from covsirphy.loading.db_google import _GoogleOpenData
+from covsirphy.loading.recommended import _Recommended
 
 
 class DataLoader(Term):
@@ -31,7 +29,7 @@ class DataLoader(Term):
         directory (str or pathlib.Path): directory to save downloaded datasets
         update_interval (int or None): update interval of downloading dataset or None (avoid downloading)
         country (str or None): country name of datasets to downloaded when @update_interval is an integer
-        basename_dict (dict[str, str]): basename of downloaded CSV files,
+        basename_dict (dict[str, str] or None): basename of downloaded CSV files,
             "covid19dh": COVID-19 Data Hub (default: covid19dh.csv),
             "owid": Our World In Data (default: ourworldindata.csv),
             "google: COVID-19 Open Data by Google Cloud Platform (default: google_cloud_platform.csv),
@@ -58,26 +56,25 @@ class DataLoader(Term):
             self.dir_path = Path(directory)
         except TypeError as e:
             raise TypeError(f"@directory should be a path-like object, but {directory} was applied.") from e
-        self.update_interval = self._ensure_natural_int(
-            update_interval, name="update_interval", include_zero=True, none_ok=True)
-        # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
-        # Country names for automated downloading: None (all countries) or list[str]
-        self._iso3_code = None if country is None else self._to_iso3(country)[0]
         # Dictionary of filenames to save remote datasets
-        filename_dict = {
+        file_dict = {
             "covid19dh": "covid19dh.csv",
             "owid": "ourworldindata.csv",
             "google": "google_cloud_platform.csv",
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
         }
-        filename_dict.update(
-            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in filename_dict.items()}
+        file_dict.update(
+            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in file_dict.items()}
         )
-        self._filename_dict = filename_dict.copy()
+        self._file_dict = file_dict.copy()
         # Verbosity
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        # Recommended datasets
+        self._use_recommended = update_interval is not None
+        self._recommended = None if update_interval is None else _Recommended(
+            update_interval=update_interval, country=country, file_dict=self._file_dict, verbose=self._verbose)
         # Column names to identify records
         self._id_cols = [self.ISO3, self.PROVINCE, self.DATE]
         # Datasets retrieved from local files
@@ -89,23 +86,6 @@ class DataLoader(Term):
         # Locked database
         self._locked_df = pd.DataFrame(columns=self._id_cols)
         self._locked_citation_dict = {}
-        # COVID-19 Data Hub
-        self._covid19dh_primary = []
-        # COVID-19 dataset in Japan
-        self._japan_data = None
-        # Explain changes
-        dep_pcf_file = self.dir_path.joinpath("ourworldindata_pcr.csv")
-        dep_vac_file = self.dir_path.joinpath("ourworldindata_vaccine.csv")
-        for filepath in [dep_pcf_file, dep_vac_file]:
-            if filepath.exists() and filepath not in self._filename_dict.values():
-                warnings.warn(
-                    "The following file might be created with covsirphy.DataLoader, "
-                    "but not used at this version as default. Please delete it.\n"
-                    f"{filepath}"
-                    "\n\nAt this version, ourworldindata.csv will be created.\n\n",
-                    DeprecationWarning,
-                    stacklevel=2
-                )
 
     @property
     def local(self):
@@ -355,114 +335,23 @@ class DataLoader(Term):
             df = df.resample("D").first().ffill().bfill()
             df = df.stack().stack().reset_index()
         # With Remote datasets
-        if self.update_interval is not None:
+        if self._use_recommended:
             df = df.set_index(self._id_cols)
-            # COVID-19 Dataset in Japan
-            if self._iso3_code is None or self._iso3_code == "JPN":
-                japan_filename = self._filename_dict["japan"]
-                df, citation_dict, _ = self._add_remote(df, _CSJapan, japan_filename, citation_dict)
-            # COVID19 Data Hub
-            dh_filename = self._filename_dict["covid19dh"]
-            df, citation_dict, dh_handler = self._add_remote(df, _COVID19dh, dh_filename, citation_dict)
-            self._covid19dh_primary = dh_handler.primary
-            # Our World In Data
-            owid_filename = self._filename_dict["owid"]
-            df, citation_dict, _ = self._add_remote(df, _OWID, owid_filename, citation_dict)
-            # COVID-19 Open Data by Google Cloud Platform
-            google_filename = self._filename_dict["google"]
-            df, citation_dict, _ = self._add_remote(df, _GoogleOpenData, google_filename, citation_dict)
-            # Reset index
-            df = df.reset_index()
+            remote_df, remote_dict = self._recommended.retrieve()
+            df = df.combine_first(remote_df.set_index(self._id_cols)).reset_index()
+            # Update citations
+            citation_dict = {k: [*v, remote_dict[k]] if k in remote_df else v for (k, v) in citation_dict.items()}
         # Complete database lock
         all_cols = [*self._id_cols, *variables, *list(df.columns)]
         df = df.reindex(columns=sorted(set(all_cols), key=all_cols.index))
-        df = self._set_date_location(df).reset_index()
-        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
-        self._locked_citation_dict = citation_dict.copy()
-        return self
-
-    @staticmethod
-    def _last_updated_local(path):
-        """
-        Return the date last updated of local file/directory.
-
-        Args:
-            path (str or pathlibPath): name of the file/directory
-
-        Returns:
-            (datetime.datetime): time last updated (UTC)
-        """
-        m_time = Path(path).stat().st_mtime
-        date = datetime.fromtimestamp(m_time)
-        return date.astimezone(timezone.utc).replace(tzinfo=None)
-
-    def _download_necessity(self, filename):
-        """
-        Return whether we need to get the data from remote servers or not,
-        comparing the last update of the files.
-
-        Args:
-            filename (str): filename of the local file
-
-        Returns:
-            (bool): whether we need to get the data from remote servers or not
-
-        Note:
-            If the last updated date is unknown, returns True.
-            If @self.update_interval hours have passed and the remote file was updated, return True.
-        """
-        if not Path(filename).exists():
-            return True
-        date_local = self._last_updated_local(filename)
-        time_limit = date_local + timedelta(hours=self.update_interval)
-        return datetime.now() > time_limit
-
-    def _add_remote(self, current_df, remote_handler, filename, citation_dict):
-        """
-        Update null elements of the current database with values in the same date/area in remote dataset.
-
-        Args:
-            current_df (pandas.DataFrame): the current database (index: Date, Country, Province)
-            remote_handler (covsirphy.loading.db_base._RemoteDatabase): remote database handler class object
-            filename (str): filename to save the dataframe retrieved from remote server
-            citation_dict (dict[str, list[str]]): dictionary of citation for each variable (column)
-
-        Returns:
-            tuple(pandas.DataFrame, list[str], _RemoteDatabase):
-                updated database, citations and the handler
-        """
-        df = self._set_date_location(current_df)
-        # Get the remote dataset
-        force = self._download_necessity(filename)
-        handler = remote_handler(filename, self._iso3_code)
-        remote_df = self._set_date_location(handler.to_dataframe(force=force, verbose=self._verbose))
-        # Update the current database
-        df = df.combine_first(remote_df)
-        # Update citations
-        cite_dict = {k: [*v, handler.CITATION] if k in remote_df else v for (k, v) in citation_dict.items()}
-        return (df, cite_dict, handler)
-
-    def _set_date_location(self, data):
-        """
-        Set date column and location columns.
-
-        Args:
-            data (pandas.DataFrame): dataframe to update (itself will be updated)
-
-        Returns:
-            pandas.DataFrame:
-                Index
-                    Date, ISO3, Province
-                Columns
-                    as-is
-        """
-        df = data.reset_index()
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df[self.ISO3] = df[self.ISO3].fillna(self.NA)
         if self.COUNTRY in df:
             df[self.COUNTRY] = df[self.COUNTRY].fillna(self.NA)
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA)
-        return df.set_index(self._id_cols)
+        self._locked_df = df.drop_duplicates(self._id_cols, keep="first", ignore_index=True)
+        self._locked_citation_dict = citation_dict.copy()
+        return self
 
     def _read_dep(self, basename=None, basename_owid=None, local_file=None, verbose=None):
         """
@@ -507,16 +396,16 @@ class DataLoader(Term):
         if variables is None:
             return (self._locked_df, [])
         citation_dict = self._locked_citation_dict.copy()
-        citations = [c for (v, line) in citation_dict.items() for c in line if v in variables]
+        citations = self.flatten([c for (v, line) in citation_dict.items() for c in line if v in variables])
         return (self._locked_df, sorted(set(citations), key=citations.index))
 
     @property
     def covid19dh_citation(self):
         """
-        Return the list of primary sources of COVID-19 Data Hub.
+        str: the list of primary sources of COVID-19 Data Hub.
         """
         self._auto_lock(variables=None)
-        return self._covid19dh_primary
+        return self._recommended.covid19dh_citation()
 
     def jhu(self, **kwargs):
         """
@@ -574,11 +463,8 @@ class DataLoader(Term):
             covsirphy.JapanData: dataset at country level in Japan
         """
         self._read_dep(**kwargs)
-        filename = self._filename_dict["japan"]
-        if self._japan_data is None:
-            force = True if self.update_interval is None else self._download_necessity(filename=filename)
-            self._japan_data = JapanData(filename=filename, force=force, verbose=self._verbose)
-        return self._japan_data
+        filename = self._file_dict["japan"]
+        return JapanData(filename=filename, force=True, verbose=self._verbose)
 
     @deprecate("DataLoader.linelist()", version="2.21.0-theta")
     def linelist(self, basename="linelist.csv", verbose=1):
@@ -594,8 +480,7 @@ class DataLoader(Term):
             covsirphy.LinelistData: linelist data
         """
         filename = self.dir_path.joinpath(basename)
-        force = self._download_necessity(filename=filename)
-        return LinelistData(filename=filename, force=force, verbose=verbose)
+        return LinelistData(filename=filename, force=True, verbose=verbose)
 
     def pcr(self, **kwargs):
         """
@@ -650,7 +535,7 @@ class DataLoader(Term):
             covsirphy.PopulationPyramidData: dataset regarding population pyramid
         """
         self._read_dep(**kwargs)
-        filename = self._filename_dict["wbdata_pyramid"]
+        filename = self._file_dict["wbdata_pyramid"]
         return PopulationPyramidData(filename=filename, force=False, verbose=self._verbose)
 
     def collect(self):
