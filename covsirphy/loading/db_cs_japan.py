@@ -62,7 +62,7 @@ class _CSJapan(_RemoteDatabase):
 
         # Download datasets
         if verbose:
-            print("Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan")
+            print("Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/")
         # Domestic/Airport/Returnee
         dar_value_cols = ["Positive", "Tested", "Discharged", "Fatal", "Hosp_require", "Hosp_severe"]
         dar_cols = [*dar_value_cols, "Date", "Location", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
