@@ -3,11 +3,10 @@
 
 import pandas as pd
 from covsirphy.util.term import Term
-from covsirphy.collecting.geography import Geography
 
 
-class DataCollector(Term):
-    """Class for collecting data for the specified location.
+class LayerAdjuster(Term):
+    """Class to adjust location layers of time-series data.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
@@ -52,7 +51,7 @@ class DataCollector(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by covsirphy.DataCollector(layers)
+                    - columns defined by covsirphy.LayerAdjuster(layers)
                     - Date (pandas.Timestamp): observation dates
                     - columns defined by @variables
         """
@@ -65,51 +64,6 @@ class DataCollector(Term):
         all_variables = df.columns.tolist()
         sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
         return df.loc[:, [*self._layers, self.DATE, *sel_variables]]
-
-    def subset(self, geo=None, variables=None):
-        """Create a subset with the geographic information.
-
-        Args:
-            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
-            variables (list[str] or None): list of variables to collect or None (all available variables)
-
-        Returns:
-            pandas.DataFrame:
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): observation dates
-                    - columns defined by @variables
-
-        Note:
-            Please refer to covsirphy.Geography.filter() regarding @geo argument.
-
-        Note:
-            Layers will be dropped from the dataframe.
-        """
-        geo_converted = self._geo_with_iso3(geo=geo)
-        all_df = self.all(variables=variables)
-        if all_df.empty:
-            return all_df
-        geography = Geography(layers=self._layers)
-        df = geography.filter(data=all_df, geo=geo_converted)
-        return df.drop(self._layers, axis=1).groupby(self.DATE).first().reset_index()
-
-    def _geo_with_iso3(self, geo=None):
-        """Update the geographic information, converting country names to ISO3 codes.
-
-        Args:
-            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
-
-        Returns:
-            list[str] or tuple(str) or str): location names defined in covsirphy.Geography class
-        """
-        geo_converted = [geo] if isinstance(geo, str) else list(geo or [None])
-        geo_converted += [None] * (len(self._layers) - len(geo_converted))
-        if self._country is not None:
-            geo_converted = [
-                self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
-        return [info for info in geo_converted if info is not None] or None
 
     def citations(self, variables=None):
         """
@@ -125,8 +79,8 @@ class DataCollector(Term):
         columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
-    def manual(self, data, date="Date", data_layers=None, variables=None, citations=None, convert_iso3=True, **kwargs):
-        """Add data manually.
+    def register(self, data, date="Date", data_layers=None, variables=None, citations=None, convert_iso3=True, **kwargs):
+        """Register new data.
 
         Args:
             data (pandas.DataFrame): local dataset or None (un-available)
@@ -147,7 +101,7 @@ class DataCollector(Term):
             ValueError: @data_layers has duplicates
 
         Returns:
-            covsirphy.DataCollector: self
+            covsirphy.LayerAdjuster: self
         """
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
@@ -203,7 +157,7 @@ class DataCollector(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by DataCollector(layers)
+                    - columns defined by LayerAdjuster(layers)
                     - the other columns
         """
         df = data.copy()
@@ -225,7 +179,7 @@ class DataCollector(Term):
         return df.reset_index(drop=True)
 
     def _align_layers(self, data_layers):
-        """Perform sequence alignment of the layers of new data with the layers defined by DataCollector(layers).
+        """Perform sequence alignment of the layers of new data with the layers defined by LayerAdjuster(layers).
 
         Args:
             data_layers (list[str]): layers of the data

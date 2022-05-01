@@ -31,6 +31,9 @@ from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
 from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
 from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
+# gis
+from covsirphy.gis.subset import SubsetManager
+from covsirphy.gis.layer import LayerAdjuster
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -47,9 +50,6 @@ from covsirphy.cleaning.mobility_data import MobilityData
 # loading
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
-# collecting
-from covsirphy.collecting.geography import Geography
-from covsirphy.collecting.data_collector import DataCollector
 # trend
 from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
@@ -113,13 +113,13 @@ __all__ = [
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
+    # gis
+    "SubsetManager", "LayerAdjuster",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
-    # collecting
-    "Geography", "DataCollector",
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode

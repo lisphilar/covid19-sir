@@ -6,7 +6,7 @@ from copy import deepcopy
 from covsirphy.util.term import Term
 
 
-class Geography(Term):
+class SubsetManager(Term):
     """
     Class to manipulate geography data.
 
@@ -27,7 +27,7 @@ class Geography(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `SubsetManager(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
 
@@ -88,7 +88,7 @@ class Geography(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `SubsetManager(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
 
