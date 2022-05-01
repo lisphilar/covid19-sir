@@ -76,7 +76,7 @@ class TestDataCollector(object):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
         raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
-        raw["Confirmed"] = list(range(len(raw)))
+        raw["Confirmed"] = np.arange(len(raw))
         raw["Recovered"] = 0
         collector = DataCollector(layers=layers, country=country)
         with pytest.raises(ValueError):
