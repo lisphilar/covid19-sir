@@ -74,7 +74,7 @@ class _COVID19dh(_RemoteDatabase):
         # Download datasets
         if verbose:
             print("Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/")
-        df, self.primary_list = self._download()
+        df = self._download()
         # Perform pre-processing
         df = self._preprocessing(df)
         # Show citation list
@@ -91,12 +91,7 @@ class _COVID19dh(_RemoteDatabase):
         Retrieve dataset and citation list from COVID-19 Data Hub.
 
         Returns:
-            tuple:
-                pandas.DataFrame: raw dataset
-                str: the list of primary sources
-
-        Note:
-            For some countries, province-level data is included.
+            pandas.DataFrame: raw dataset
         """
         if self._iso3 is None:
             url = "https://storage.covid19datahub.io/level/1.csv.zip"
@@ -105,8 +100,15 @@ class _COVID19dh(_RemoteDatabase):
         raw = self._read_csv(url, col_dict=None, date="date", date_format="%Y-%m-%d")
         raw = raw.groupby("id").ffill()
         # Remove city-level data
-        raw = raw.loc[raw["administrative_area_level_3"].isna()]
-        # Citation
+        return raw.loc[raw["administrative_area_level_3"].isna()]
+
+    def primary(self):
+        """
+        Retrieve citation list from COVID-19 Data Hub.
+
+        Returns:
+            str: the list of primary sources
+        """
         c_url = "https://storage.covid19datahub.io/src.csv"
         try:
             cite = pd.read_csv(c_url, storage_options={"User-Agent": "Mozilla/5.0"})
@@ -120,7 +122,7 @@ class _COVID19dh(_RemoteDatabase):
         cite = cite.loc[:, ["title", "year", "url"]].drop_duplicates(subset="title")
         cite = cite.sort_values(["year", "url"], ascending=[False, True])
         series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
-        return (raw, "\n".join(series.tolist()))
+        return "\n".join(series.tolist())
 
     def _preprocessing(self, raw):
         """
