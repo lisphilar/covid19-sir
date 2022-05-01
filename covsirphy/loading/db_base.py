@@ -31,8 +31,6 @@ class _RemoteDatabase(Term):
         self.filepath.parent.mkdir(exist_ok=True, parents=True)
         # Country
         self._iso3 = None if iso3 is None else str(iso3)
-        # List of primary sources
-        self.primary_list = []
         # List of column names (defined in Term class)
         self.saved_cols = list(self.COL_DICT.values())
 
@@ -95,10 +93,3 @@ class _RemoteDatabase(Term):
                     defined by .COL_DICT.values()
         """
         raise NotImplementedError
-
-    @property
-    def primary(self):
-        """
-        str: the list of primary sources.
-        """
-        return "\n".join(self.primary_list)
