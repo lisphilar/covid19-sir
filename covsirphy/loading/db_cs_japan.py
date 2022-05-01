@@ -13,6 +13,7 @@ class _CSJapan(_RemoteDatabase):
 
     Args:
         filename (str): CSV filename to save records
+        iso3 (str or None): ignored
     """
     # URL
     GITHUB_URL = "https://raw.githubusercontent.com"

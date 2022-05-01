@@ -395,20 +395,9 @@ class PCRData(CleaningBase):
         # Result
         return check_zero and check_missing and check_unique
 
-    def _subset_by_area(self, country, province):
-        """
-        Return the subset for the area.
-
-        Args:
-            country (str): country name
-            province (str): province name or "-"
-        """
-        df = self._cleaned_df.copy()
-        return df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
-
     def _subset_select(self, country, province):
         """
-        Return suset if available.
+        Return subset if available.
 
         Args:
             country (str): country name
