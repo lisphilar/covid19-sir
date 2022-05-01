@@ -5,6 +5,7 @@ from datetime import timedelta
 import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_handler import ODEHandler
@@ -46,6 +47,28 @@ class ExampleData(JHUData):
         self._start = self._ensure_date(start_date, name="start_date")
         self._population = None
         self._recovery_period = None
+
+    def ensure_country_name(self, country, errors="raise"):
+        """
+        Ensure that the country name is correct.
+
+        Args:
+            country (str): country name
+            errors (str): 'raise' or 'coerce'
+
+        Returns:
+            str: country name
+
+        Raises:
+            SubsetNotFoundError: no records were found for the country and @errors is 'raise'
+        """
+        df = self._cleaned_df.copy()
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
+        selectable_set = set(df[self.COUNTRY].unique())
+        if country in selectable_set:
+            return country
+        if errors == "raise":
+            raise SubsetNotFoundError(country=country)
 
     def _model_to_area(self, model=None, country=None, province=None):
         """
@@ -109,7 +132,7 @@ class ExampleData(JHUData):
         handler.add(end, param_dict=arg_dict[self.PARAM_DICT], y0_dict=arg_dict[self.Y0_DICT])
         restored_df = handler.simulate()
         # JHU-type records
-        restored_df[self.ISO3] = self.NA
+        restored_df[self.ISO3] = country
         restored_df[self.COUNTRY] = country
         restored_df[self.PROVINCE] = province
         restored_df[self.C] = restored_df[[self.CI, self.F, self.R]].sum(axis=1)

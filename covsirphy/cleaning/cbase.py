@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import warnings
-import country_converter as coco
 import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -24,8 +24,8 @@ class CleaningBase(Term):
                 reset index
             Columns
                 - Date: Observation date
-                - ISO3: ISO3 code (optional)
-                - Country: country/region name
+                - ISO3: ISO3 code
+                - Country: country/region name (optional)
                 - Province: province/prefecture/state name
                 - Confirmed: the number of confirmed cases
                 - Fatal: the number of fatal cases
@@ -183,35 +183,24 @@ class CleaningBase(Term):
             errors (str): 'raise' or 'coerce'
 
         Returns:
-            str: country name
+            str: ISO3 code
 
         Raises:
             SubsetNotFoundError: no records were found for the country and @errors is 'raise'
         """
+        iso3 = self._to_iso3(country)[0]
         df = self._cleaned_df.copy()
+        if self.ISO3 in df and iso3 in df[self.ISO3].unique():
+            return iso3
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
         selectable_set = set(df[self.COUNTRY].unique())
         # return country name as-is if selectable
         if country in selectable_set:
-            return country
-        # Convert country name
-        warnings.simplefilter("ignore", FutureWarning)
-        converted = coco.convert(country, to="name_short", not_found=None)
-        # Additional abbr
-        abbr_dict = {
-            "Congo Republic": "Republic of the Congo",
-            "DR Congo": "Democratic Republic of the Congo",
-            "UK": "United Kingdom",
-            "Vatican": "Holy See",
-        }
-        name = abbr_dict.get(converted, converted)
-        # Return the name if registered in the dataset
-        if name in selectable_set:
-            return name
+            return iso3
         if errors == "raise":
-            raise SubsetNotFoundError(country=country, country_alias=name)
+            raise SubsetNotFoundError(country=country, country_alias=iso3)
 
-    @deprecate("CleaningBase.iso3_to_country()", new="CleaningBase.ensure_country_name()")
+    @deprecate("CleaningBase.iso3_to_country()")
     def iso3_to_country(self, iso3_code):
         """
         Convert ISO3 code to country name if records are available.
@@ -227,6 +216,7 @@ class CleaningBase(Term):
         """
         return self.ensure_country_name(iso3_code)
 
+    @deprecate("CleaningBase.country_to_iso3()", new="CleaningBase.ensure_country_name()", version="2.24.0-gamma")
     def country_to_iso3(self, country, check_data=True):
         """
         Convert country name to ISO3 code if records are available.
@@ -242,7 +232,8 @@ class CleaningBase(Term):
             str: ISO3 code or "---" (when unknown)
         """
         name = self.ensure_country_name(country) if check_data else country
-        return coco.convert(name, to="ISO3", not_found="---")
+        iso3 = self._to_iso3(name)[0]
+        return self.NA * 3 if iso3 is None or iso3 == country else iso3
 
     @classmethod
     def area_name(cls, country, province=None):
@@ -289,20 +280,21 @@ class CleaningBase(Term):
             When @country is a country name, province level data in the selected country will be returned.
         """
         df = self._cleaned_df.copy()
-        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
-        if self.PROVINCE not in df:
-            df[self.PROVINCE] = self.NA
-        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
+        for col in [self.ISO3, self.COUNTRY, self.PROVINCE]:
+            df[col] = df[col].astype(str, errors="ignore")
         # Country level data
         if country is None:
-            df = df.loc[df[self.PROVINCE] == self.NA]
-            return df.drop(self.PROVINCE, axis=1).reset_index(drop=True)
+            if self.PROVINCE in df:
+                df = df.loc[df[self.PROVINCE] == self.NA].drop(self.PROVINCE, axis=1)
+            return df.reset_index(drop=True)
         # Province level data at the selected country
-        country_alias = self.ensure_country_name(country, errors="coerce")
-        df = df.loc[df[self.COUNTRY] == country_alias]
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.PROVINCE])
+        iso3 = self.ensure_country_name(country)
+        df = df.loc[df[self.ISO3] == iso3]
         if df.empty:
-            raise SubsetNotFoundError(country=country, country_alias=country_alias) from None
-        df = df.loc[df[self.PROVINCE] != self.NA]
+            raise SubsetNotFoundError(country=country, country_alias=iso3) from None
+        if self.PROVINCE in df:
+            df = df.loc[df[self.PROVINCE] != self.NA]
         return df.reset_index(drop=True)
 
     def _subset_by_area(self, country, province=None):
@@ -322,8 +314,8 @@ class CleaningBase(Term):
         # Country level
         if province is None or province == self.NA:
             df = self.layer(country=None)
-            country_alias = self.ensure_country_name(country)
-            df = df.loc[df[self.COUNTRY] == country_alias]
+            iso3 = self.ensure_country_name(country)
+            df = df.loc[df[self.ISO3] == iso3]
             return df.reset_index(drop=True)
         # Province level
         df = self.layer(country=country)
@@ -352,12 +344,12 @@ class CleaningBase(Term):
         Raises:
             SubsetNotFoundError: no records were found for the condition
         """
-        country_alias = self.ensure_country_name(country, errors="coerce")
+        iso3 = self.ensure_country_name(country, errors="coerce")
         try:
             df = self._subset_by_area(country=country, province=province)
         except SubsetNotFoundError:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province) from None
+                country=country, country_alias=iso3, province=province) from None
         df = df.drop([self.COUNTRY, self.ISO3, self.PROVINCE], axis=1, errors="ignore")
         # Subset with Start/end date
         if start_date is None and end_date is None:
@@ -369,7 +361,7 @@ class CleaningBase(Term):
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         if df.empty:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
+                country=country, country_alias=iso3, province=province,
                 start_date=start_date, end_date=end_date) from None
         return df.reset_index(drop=True)
 
@@ -402,22 +394,20 @@ class CleaningBase(Term):
                 Columns
                     without ISO3, Country, Province column
         """
-        country_alias = self.ensure_country_name(country)
+        iso3 = self.ensure_country_name(country)
         subset_arg_dict = {
             "country": country, "province": province, "start_date": start_date, "end_date": end_date}
         if auto_complement:
-            try:
+            with contextlib.suppress(NotImplementedError):
                 df, is_complemented = self.subset_complement(
                     **subset_arg_dict, **kwargs)
                 if not df.empty:
                     return (df, is_complemented)
-            except NotImplementedError:
-                pass
         try:
             return (self.subset(**subset_arg_dict), False)
         except SubsetNotFoundError:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
+                country=country, country_alias=iso3, province=province,
                 start_date=start_date, end_date=end_date) from None
 
     def countries(self):
@@ -472,12 +462,10 @@ class CleaningBase(Term):
         df = df.loc[df[self.COUNTRY] != self.OTHERS]
         # Recognize province as a region/country
         if self.PROVINCE in df:
-            try:
+            with contextlib.suppress(ValueError):
                 df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
                 df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
                 df.loc[df[self.PROVINCE] == "Greenland", self.AREA_ABBR_COLS] = ["GRL", "Greenland", self.NA]
-            except ValueError:
-                pass
         # Select country level data
         if self.PROVINCE in df.columns:
             df = df.loc[df[self.PROVINCE] == self.NA]
@@ -503,24 +491,24 @@ class CleaningBase(Term):
             kwargs: arguments of covsirphy.ColoredMap() and covsirphy.ColoredMap.plot()
         """
         df = self._cleaned_df.copy()
-        country_alias = self.ensure_country_name(country)
+        iso3 = self.ensure_country_name(country)
         # Check variable name
         if variable not in df.columns:
             candidates = [col for col in df.columns if col not in self.AREA_ABBR_COLS]
             raise UnExpectedValueError(name="variable", value=variable, candidates=candidates)
         # Select country-specific data
-        self._ensure_dataframe(df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
-        df = df.loc[df[self.COUNTRY] == country_alias]
+        self._ensure_dataframe(df, name="cleaned dataset", columns=[self.ISO3, self.PROVINCE])
+        df = df.loc[df[self.ISO3] == iso3]
         df = df.loc[df[self.PROVINCE] != self.NA]
         if df.empty:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, message="at province level")
+                country=country, country_alias=iso3, message="at province level")
         # Select date
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])
             df = df.loc[df[self.DATE] == pd.to_datetime(date)]
         df = df.groupby(self.PROVINCE).last().reset_index()
         # Plotting
-        df[self.COUNTRY] = country_alias
+        df[self.COUNTRY] = country
         df.rename(columns={variable: "Value"}, inplace=True)
         self._colored_map(title=title, data=df, level=self.PROVINCE, **kwargs)
