@@ -97,7 +97,7 @@ class VaccineData(CleaningBase):
             "people_vaccinated": self.V_ONCE,
             "people_fully_vaccinated": self.V_FULL,
         }
-        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - set(["vaccines"])))
+        rec_df = pd.read_csv(URL_REC, usecols=list(set(rename_dict) - {"vaccines"}))
         loc_df = pd.read_csv(URL_LOC, usecols=["location", "vaccines"])
         df = rec_df.merge(loc_df, how="left", on="location")
         df = df.rename(rename_dict, axis=1)
@@ -173,8 +173,8 @@ class VaccineData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         # Subset by country
-        country_alias = self.ensure_country_name(country)
-        df = df.loc[(df[self.COUNTRY] == country_alias) & (df[self.PROVINCE] == (province or self.NA))]
+        iso3 = self.ensure_country_name(country)
+        df = df.loc[(df[self.ISO3] == iso3) & (df[self.PROVINCE] == (province or self.NA))]
         # Subset by product name
         if product is not None:
             df = df.loc[df[self.PRODUCT] == product]
@@ -187,8 +187,7 @@ class VaccineData(CleaningBase):
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=product,
-                start_date=start_date, end_date=end_date)
+                country=country, country_alias=iso3, province=product, start_date=start_date, end_date=end_date)
         return df.loc[:, self._subset_cols].reset_index(drop=True)
 
     def records(self, country, product=None, start_date=None, end_date=None):
