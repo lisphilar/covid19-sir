@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 import pytest
 from covsirphy import Term, DataCollector
 
@@ -89,7 +90,7 @@ class TestDataCollector(object):
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
         all_df["Confirmed"] = np.arange(len(all_df))
         all_df = all_df.sort_values([*layers, Term.DATE], ignore_index=True)
-        assert collector.all(variables=["Confirmed"]).equals(all_df)
+        assert_frame_equal(collector.all(variables=["Confirmed"]), all_df, check_dtype=False)
         assert collector.citations() == ["Manual"]
 
     @pytest.mark.parametrize(
@@ -114,4 +115,4 @@ class TestDataCollector(object):
             data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
         # SUbset
         sub_df = pd.DataFrame({Term.DATE: [day0, day1], "Confirmed": [0, 2]})
-        assert collector.subset(geo=geo, variables=["Confirmed"]).equals(sub_df)
+        assert_frame_equal(collector.subset(geo=geo, variables=["Confirmed"]), sub_df, check_dtype=False)
