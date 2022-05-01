@@ -3,10 +3,10 @@
 
 import pandas as pd
 import pytest
-from covsirphy import Term, Geography
+from covsirphy import Term, SubsetManager
 
 
-class TestGeography(object):
+class TestSubsetManager(object):
     def test_layer(self):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.DataFrame(
@@ -21,7 +21,7 @@ class TestGeography(object):
                 Term.C: range(16),
             }
         )
-        geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
+        geography = SubsetManager(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
         # When `geo=None` or `geo=(None,)`, returns country-level data.
         df = pd.DataFrame(
             {
@@ -101,7 +101,7 @@ class TestGeography(object):
                 Term.C: range(16),
             }
         )
-        geography = Geography(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
+        geography = SubsetManager(layers=[Term.COUNTRY, Term.PROVINCE, Term.CITY])
         # When `geo = None` or `geo = (None,)`, returns all country-level data.
         df = pd.DataFrame(
             {
