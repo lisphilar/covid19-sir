@@ -82,7 +82,7 @@ class LayerAdjuster(Term):
         columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
-    def register(self, data, date="Date", data_layers=None, variables=None, citations=None, convert_iso3=True, **kwargs):
+    def register(self, data, layers=None, date="Date", variables=None, citations=None, convert_iso3=True, **kwargs):
         """Register new data.
 
         Args:
@@ -93,8 +93,8 @@ class LayerAdjuster(Term):
                     - columns defined by @data_layers
                     - columns defined by @date
                     - columns defined by @variables
-            date (str): column name of observation dates
-            data_layers (list[str]): layers of the data
+            layers (list[str]): layers of the data
+            date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
             convert_iso3 (bool): whether convert country names to ISO3 codes or not
@@ -106,10 +106,10 @@ class LayerAdjuster(Term):
         Returns:
             covsirphy.LayerAdjuster: self
         """
+        data_layers = self._ensure_list(target=layers or self._layers, name="layers")
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
-        self._ensure_dataframe(
-            target=data, name="data", columns=[*(data_layers or self._layers), date, *(variables or [])])
+        self._ensure_dataframe(target=data, name="data", columns=[*data_layers, date, *(variables or [])])
         df = data.copy()
         # Convert date type
         df.rename(columns={date: self._date}, inplace=True)
