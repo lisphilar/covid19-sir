@@ -11,6 +11,7 @@ class LayerAdjuster(Term):
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
+        date (str): column name of observation dates
         verbose (int): level of verbosity when downloading
 
     Raises:
@@ -26,17 +27,19 @@ class LayerAdjuster(Term):
     # Internal term
     _ID = "Location_ID"
 
-    def __init__(self, layers=None, country="ISO3", verbose=1):
+    def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
         self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
+        # Date column
+        self._date = str(date)
         # Location data
         self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
         if len(set(self._layers)) != len(self._layers):
             raise ValueError(f"@layer has duplicates, {self._layers}")
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
-        self._rec_df = pd.DataFrame(columns=[self._ID, self.DATE])
+        self._rec_df = pd.DataFrame(columns=[self._ID, self._date])
         # Citations
         self._citation_dict = {}
 
@@ -55,7 +58,7 @@ class LayerAdjuster(Term):
                     - Date (pandas.Timestamp): observation dates
                     - columns defined by @variables
         """
-        identifiers = [*self._layers, self.DATE]
+        identifiers = [*self._layers, self._date]
         df = self._loc_df.merge(self._rec_df, how="right", on=self._ID).drop(self._ID, axis=1)
         df = df.sort_values(identifiers, ignore_index=True)
         df = df.loc[:, [*identifiers, *sorted(set(df.columns) - set(identifiers), key=df.columns.tolist().index)]]
@@ -63,7 +66,7 @@ class LayerAdjuster(Term):
             return df
         all_variables = df.columns.tolist()
         sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
-        return df.loc[:, [*self._layers, self.DATE, *sel_variables]]
+        return df.loc[:, [*self._layers, self._date, *sel_variables]]
 
     def citations(self, variables=None):
         """
@@ -75,7 +78,7 @@ class LayerAdjuster(Term):
         Returns:
             list[str]: citation list
         """
-        all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self.DATE)]
+        all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self._date)]
         columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
@@ -90,7 +93,7 @@ class LayerAdjuster(Term):
                     - columns defined by @data_layers
                     - columns defined by @date
                     - columns defined by @variables
-            date (str): column name of date
+            date (str): column name of observation dates
             data_layers (list[str]): layers of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
@@ -109,8 +112,8 @@ class LayerAdjuster(Term):
             target=data, name="data", columns=[*(data_layers or self._layers), date, *(variables or [])])
         df = data.copy()
         # Convert date type
-        df.rename(columns={date: self.DATE}, inplace=True)
-        df[self.DATE] = pd.to_datetime(df[self.DATE], **kwargs)
+        df.rename(columns={date: self._date}, inplace=True)
+        df[self._date] = pd.to_datetime(df[self._date], **kwargs)
         # Convert country names to ISO3 codes
         if convert_iso3 and self._country is not None and self._country in df:
             df.loc[:, self._country] = self._to_iso3(df[self._country])
@@ -128,10 +131,10 @@ class LayerAdjuster(Term):
         # Records
         df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1).dropna()
         if variables is not None:
-            columns = [self._ID, self.DATE, *self._ensure_list(target=variables, name="variables")]
+            columns = [self._ID, self._date, *self._ensure_list(target=variables, name="variables")]
             df = df.loc[:, columns]
         rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns)))
-        rec_df = rec_df.set_index([self._ID, self.DATE]).combine_first(df.set_index([self._ID, self.DATE]))
+        rec_df = rec_df.set_index([self._ID, self._date]).combine_first(df.set_index([self._ID, self._date]))
         self._rec_df = rec_df.reset_index()
         # Citations
         new_citations = self._ensure_list(
