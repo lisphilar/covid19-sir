@@ -81,9 +81,9 @@ class TestLayerAdjuster(object):
         collector = LayerAdjuster(layers=layers, country=country)
         with pytest.raises(ValueError):
             collector.register(
-                data=raw, date="date", data_layers=["Country", "Country"], variables=["Confirmed", "Recovered"], citations="Manual")
+                data=raw, layers=["Country", "Country"], date="date", variables=["Confirmed", "Recovered"], citations="Manual")
         collector.register(
-            data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
+            data=raw, layers=list(data_dict.keys()), date="date", variables=["Confirmed"], citations="Manual")
         # All data
         all_df = pd.concat([pd.DataFrame(all_dict), pd.DataFrame(all_dict)], axis=0, ignore_index=True)
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
