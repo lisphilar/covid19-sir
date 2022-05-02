@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
 import warnings
 
 
@@ -72,7 +73,12 @@ class SubsetNotFoundError(KeyError, ValueError):
         """
         if geo is None and country is None:
             return "the world"
-        geo_converted = geo or (country if country_alias is None else f"country ({country_alias})", province or "")
+        if geo is not None:
+            geo_converted = deepcopy(geo)
+        elif province is None:
+            geo_converted = (country if country_alias is None else f"{country} ({country_alias})",)
+        else:
+            geo_converted = (country if country_alias is None else f"{country} ({country_alias})", province)
         names = [
             info if isinstance(info, str) else "-".join(list(info))
             for info in ([geo_converted] if isinstance(geo_converted, str) else geo_converted)]

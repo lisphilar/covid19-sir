@@ -8,8 +8,7 @@ from covsirphy.util.term import Term
 
 class _SubsetManager(Term):
     """
-    Class to manipulate geography data.
-
+    Class to get subset with location information.
     Args:
         layers (list[str]): names of administration layers with the order (upper layers precede, e.g. ["Country", "Province"])
     """
@@ -18,8 +17,7 @@ class _SubsetManager(Term):
         self._layers = self._ensure_list(layers, candidates=None, name="layers")
 
     def layer(self, data, geo=None):
-        """
-        Return the data at the selected layer.
+        """Return the data at the selected layer.
 
         Args:
             data (pandas.DataFrame):
@@ -79,8 +77,7 @@ class _SubsetManager(Term):
         return df.reset_index(drop=True)
 
     def filter(self, data, geo=None):
-        """
-        Filter the data with geography information.
+        """Filter the data with geography information.
 
         Args:
             data (pandas.DataFrame):

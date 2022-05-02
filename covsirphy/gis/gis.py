@@ -107,6 +107,76 @@ class GIS(Term):
         self._un_registered = False
         return self
 
+    def layer(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
+        """Return the data at the selected layer in the date range.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            errors (str): 'raise' or 'coerce'
+
+        Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is larger than the length of layers
+            NotRegisteredError: No records have been registered at the layer yet
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    reset index
+                Columns
+                    - (str): columns defined by covsirphy.GIS(layers)
+                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)
+                    - columns defined by @variables
+
+        Note:
+           Note that records with NAs as country names will be always removed.
+
+        Note:
+            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
+
+        Note:
+            When `geo=("Japan",)` or `geo="Japan"`, returns province-level data in Japan.
+
+        Note:
+            When `geo=(["Japan", "UK"],)`, returns province-level data in Japan and UK.
+
+        Note:
+            When `geo=("Japan", "Kanagawa")`, returns city-level data in Kanagawa/Japan.
+
+        Note:
+            When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns city-level data in Tokyo/Japan and Kanagawa/Japan.
+        """
+        # Get all data
+        if self._un_registered and errors == "raise":
+            raise NotRegisteredError("No records have been registered yet.")
+        data = self._adjuster.all(variables=variables)
+        # Filter with geo
+        if geo is None:
+            geo_converted = None
+        else:
+            geo_converted = [
+                self._to_iso3(
+                    info) if self._layers[i] == self._country and info is not None and info not in data[self._country].unique() else info
+                for i, info in enumerate([geo] if isinstance(geo, str) else geo)]
+        manager = _SubsetManager(layers=self._layers)
+        df = manager.layer(data=data, geo=geo_converted)
+        if df.empty and errors == "raise":
+            raise NotRegisteredError("No records have been registered at the layer yet.")
+        # Filter with date
+        series = df[self._date].copy()
+        start = self._ensure_date(start_date, default=series.min())
+        end = self._ensure_date(end_date, default=series.max())
+        df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
+        if df.empty and errors == "raise":
+            raise NotRegisteredError(
+                f"No records have been registered at the layer yet from {start_date} to {end_date}.")
+        # Get representative records for dates
+        df = df.groupby([*self._layers, self._date], dropna=True).first()
+        return df.reset_index()
+
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
 
@@ -128,7 +198,7 @@ class GIS(Term):
                 Index:
                     reset index
                 Columns
-                    - column defined by @date
+                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)
                     - columns defined by @variables
 
         Note:
