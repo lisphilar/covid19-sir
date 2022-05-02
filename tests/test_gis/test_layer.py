@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
-from covsirphy import Term, LayerAdjuster
+from covsirphy import Term
+from covsirphy.gis.layer import _LayerAdjuster as LayerAdjuster
 
 
 class TestLayerAdjuster(object):
