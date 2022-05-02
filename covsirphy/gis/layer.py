@@ -5,7 +5,7 @@ import pandas as pd
 from covsirphy.util.term import Term
 
 
-class LayerAdjuster(Term):
+class _LayerAdjuster(Term):
     """Class to adjust location layers of time-series data.
 
     Args:
@@ -28,15 +28,17 @@ class LayerAdjuster(Term):
     _ID = "Location_ID"
 
     def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
-        # Date column
-        self._date = str(date)
-        # Location data
+        # Layers of location information
         self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
         if len(set(self._layers)) != len(self._layers):
             raise ValueError(f"@layer has duplicates, {self._layers}")
+        # Date column
+        self._date = str(date)
+        # Verbosity
+        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        # Location data
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
         self._rec_df = pd.DataFrame(columns=[self._ID, self._date])
@@ -65,7 +67,8 @@ class LayerAdjuster(Term):
         if variables is None:
             return df
         all_variables = df.columns.tolist()
-        sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
+        sel_variables = self._ensure_list(
+            target=variables, candidates=set(all_variables) - set(identifiers), name="variables")
         return df.loc[:, [*self._layers, self._date, *sel_variables]]
 
     def citations(self, variables=None):

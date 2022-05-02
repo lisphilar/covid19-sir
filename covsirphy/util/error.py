@@ -37,6 +37,7 @@ class SubsetNotFoundError(KeyError, ValueError):
     Error when subset was failed with specified arguments.
 
     Args:
+        geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None
         country (str): country name
         country_alias (str or None): country name used in the dataset
         province (str or None): province name
@@ -46,9 +47,9 @@ class SubsetNotFoundError(KeyError, ValueError):
         message (str or None): the other messages
     """
 
-    def __init__(self, country, country_alias=None, province=None,
+    def __init__(self, geo=None, country=None, country_alias=None, province=None,
                  start_date=None, end_date=None, date=None, message=None):
-        self.area = self._area(country, country_alias, province)
+        self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
         self.message = "" if message is None else f" {message}"
 
@@ -56,11 +57,12 @@ class SubsetNotFoundError(KeyError, ValueError):
         return f"No records{self.message} in {self.area}{self.date} were found."
 
     @staticmethod
-    def _area(country, country_alias, province):
+    def _area(geo, country, country_alias, province):
         """
         Error when subset was failed with specified arguments.
 
         Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None
             country (str): country name
             country_alias (str or None): country name used in the dataset
             province (str or None): province name
@@ -68,12 +70,13 @@ class SubsetNotFoundError(KeyError, ValueError):
         Returns:
             str: area name
         """
-        if country_alias is None or country == country_alias:
-            c_alias_str = ""
-        else:
-            c_alias_str = f" ({country_alias})"
-        province_str = "" if province is None or province == "-" else f"{province}, "
-        return f"{province_str}{country}{c_alias_str}"
+        if geo is None and country is None:
+            return "the world"
+        geo_converted = geo or (country if country_alias is None else f"country ({country_alias})", province or "")
+        names = [
+            info if isinstance(info, str) else "-".join(list(info))
+            for info in ([geo_converted] if isinstance(geo_converted, str) else geo_converted)]
+        return "/".join(names[::-1])
 
     @staticmethod
     def _date(start_date, end_date, date):
@@ -124,6 +127,13 @@ class UnExecutedError(AttributeError, NameError, ValueError):
         return f"Please execute {self.method_name} in advance{self.message}"
 
 
+class NotRegisteredError(UnExecutedError):
+    """
+    Error when no records have been registered yet.
+    """
+    pass
+
+
 class NotRegisteredMainError(UnExecutedError):
     """
     Error when main datasets were not registered.
@@ -169,8 +179,8 @@ class PCRIncorrectPreconditionError(KeyError):
         """
         if province == "-":
             province = None
-        country_str = (" in country " + country) if not province else ""
-        province_str = "" if province is None else (" in province " + province)
+        country_str = "" if province else f" in country {country}"
+        province_str = "" if province is None else f" in province {province}"
         return f"{province_str}{country_str}"
 
 
@@ -219,7 +229,7 @@ class UnExpectedReturnValueError(ValueError):
     Args:
         name (str): argument name
         value (object): value user applied or None (will not be shown)
-        plural (bool): whether prulal or not
+        plural (bool): whether plural or not
         message (str or None): the other messages
     """
 

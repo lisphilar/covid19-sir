@@ -1,0 +1,183 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
+from covsirphy.util.term import Term
+from covsirphy.gis.subset import _SubsetManager
+from covsirphy.gis.layer import _LayerAdjuster
+
+
+class GIS(Term):
+    """Class of geographical information system.
+
+    Args:
+        layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
+        country (str or None): layer name of countries or None (countries are not included in the layers)
+        date (str): column name of observation dates
+        verbose (int): level of verbosity when downloading
+
+    Raises:
+        ValueError: @layers has duplicates
+
+    Note:
+        Country level data specified with @country will be stored with ISO3 codes.
+
+    Note:
+        If @verbose is 0, no descriptions will be shown.
+        If @verbose is 1 or larger, details of layer adjustment will be shown.
+    """
+
+    def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
+        # Countries will be specified with ISO3 codes and this requires conversion
+        self._country = None if country is None else str(country)
+        # Location data
+        self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
+        # Date column
+        self._date = str(date)
+        # Verbosity
+        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        # Layer adjuster
+        self._adjuster = _LayerAdjuster(
+            layers=self._layers, country=self._country, date=self._date, verbose=self._verbose)
+        self._un_registered = True
+
+    def all(self, variables=None, errors="raise"):
+        """Return all available data.
+
+        Args:
+            variables (list[str] or None): list of variables to collect or None (all available variables)
+            errors (str): 'raise' or 'coerce'
+
+        Raises:
+            NotRegisteredError: No records have been registered yet
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - (pandas.Category): columns defined by covsirphy.GIS(layers)
+                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)
+                    - columns defined by @variables
+        """
+        if self._un_registered and errors == "raise":
+            raise NotRegisteredError("No records have been registered yet.")
+        df = self._adjuster.all(variables=variables)
+        return df.astype(dict.fromkeys(self._layers, "category"))
+
+    def citations(self, variables=None):
+        """
+        Return citation list of the secondary data sources.
+
+        Args:
+            variables (list[str] or None): list of variables to collect or None (all available variables)
+
+        Returns:
+            list[str]: citation list
+        """
+        return self._adjuster.citations(variables=variables)
+
+    def register(self, data, layers=None, date="Date", variables=None, citations=None, convert_iso3=True, **kwargs):
+        """Register new data.
+
+        Args:
+            data (pandas.DataFrame): local dataset or None (un-available)
+                Index
+                    reset index
+                Columns
+                    - columns defined by @layers
+                    - column defined by @date
+                    - columns defined by @variables
+            layers (list[str]): layers of the data
+            date (str): column name of observation dates of the data
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
+            convert_iso3 (bool): whether convert country names to ISO3 codes or not
+            **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
+
+        Raises:
+            ValueError: @data_layers has duplicates
+
+        Returns:
+            covsirphy.GIS: self
+        """
+        self._adjuster.register(
+            data=data, layers=layers, date=date, variables=variables, citations=citations,
+            convert_iso3=convert_iso3, **kwargs)
+        self._un_registered = False
+        return self
+
+    def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
+        """Return subset of the location and date range.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            errors (str): 'raise' or 'coerce'
+
+        Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is larger than the length of layers
+            NotRegisteredError: No records have been registered yet
+            SubsetNotFoundError: no records were found for the country and @errors is 'raise'
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    reset index
+                Columns
+                    - column defined by @date
+                    - columns defined by @variables
+
+        Note:
+           Note that records with NAs as country names will be always removed.
+
+        Note:
+            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/provonce/city as layers here.
+
+        Note:
+            When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
+
+        Note:
+            When `geo=(["Japan", "UK"],)`, returns country-level data of Japan and UK.
+
+        Note:
+            When `geo=("Japan", "Tokyo")`, returns province-level data of Tokyo/Japan.
+
+        Note:
+            When `geo=("Japan", ["Tokyo", "Kanagawa"])`, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan.
+
+        Note:
+            When `geo=("Japan", "Kanagawa", "Yokohama")`, returns city-level data of Yokohama/Kanagawa/Japan.
+
+        Note:
+            When `geo=(("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.
+        """
+        # Get all data
+        if self._un_registered and errors == "raise":
+            raise NotRegisteredError("No records have been registered yet.")
+        data = self._adjuster.all(variables=variables)
+        # Filter with geo
+        if geo is None:
+            geo_converted = None
+        else:
+            geo_converted = [
+                self._to_iso3(
+                    info) if self._layers[i] == self._country and info is not None and info not in data[self._country].unique() else info
+                for i, info in enumerate([geo] if isinstance(geo, str) else geo)]
+        manager = _SubsetManager(layers=self._layers)
+        df = manager.filter(data=data, geo=geo_converted)
+        if df.empty and errors == "raise":
+            raise SubsetNotFoundError(geo=geo)
+        # Filter with date
+        series = df[self._date].copy()
+        start = self._ensure_date(start_date, default=series.min())
+        end = self._ensure_date(end_date, default=series.max())
+        df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
+        if df.empty and errors == "raise":
+            raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
+        # Get representative records for dates
+        df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
+        return df.groupby(self._date, as_index=False).sum()

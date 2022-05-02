@@ -15,7 +15,7 @@ from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
-from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
+from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
 from covsirphy.util.filer import save_dataframe
@@ -32,8 +32,7 @@ from covsirphy.visualization.bar_plot import BarPlot, bar_plot
 from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
 from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
 # gis
-from covsirphy.gis.subset import SubsetManager
-from covsirphy.gis.layer import LayerAdjuster
+from covsirphy.gis.gis import GIS
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -108,13 +107,13 @@ __all__ = [
     "StopWatch", "deprecate", "find_args", "Term", "Filer", "Evaluator",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
+    "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # gis
-    "SubsetManager", "LayerAdjuster",
+    "GIS",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",

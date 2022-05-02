@@ -6,7 +6,7 @@ from copy import deepcopy
 from covsirphy.util.term import Term
 
 
-class SubsetManager(Term):
+class _SubsetManager(Term):
     """
     Class to manipulate geography data.
 
@@ -123,7 +123,7 @@ class SubsetManager(Term):
         Note:
             When `geo=(("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.
         """
-        if geo is None or geo == (None,):
+        if geo is None or geo == (None,) or geo == [None]:
             return self.layer(data=data, geo=None)
         if not isinstance(geo, (list, tuple, str)):
             raise TypeError(
