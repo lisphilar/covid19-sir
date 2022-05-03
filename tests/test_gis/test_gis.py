@@ -88,3 +88,17 @@ class TestGIS(object):
             df = system.subset(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
             assert df.columns.tolist() == ["Date", "Positive", "Tested"]
             assert len(df) == length
+
+    @pytest.mark.parametrize(
+        "geo, answer",
+        [
+            (None, "the world"),
+            ((None,), "the world"),
+            ("Japan", "Japan"),
+            (("Japan",), "Japan"),
+            ((["Japan", "UK"],), "Japan_UK"),
+            (("Japan", "Tokyo"), "Tokyo/Japan"),
+        ]
+    )
+    def test_area_name(self, geo, answer):
+        assert GIS.area_name(geo) == answer
