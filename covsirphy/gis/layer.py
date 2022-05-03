@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import pandas as pd
 from covsirphy.util.term import Term
 
@@ -12,7 +13,7 @@ class _LayerAdjuster(Term):
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
         date (str): column name of observation dates
-        verbose (int): level of verbosity when downloading
+        verbose (int): level of verbosity of stdout
 
     Raises:
         ValueError: @layers has duplicates
@@ -116,7 +117,9 @@ class _LayerAdjuster(Term):
         df = data.copy()
         # Convert date type
         df.rename(columns={date: self._date}, inplace=True)
-        df[self._date] = pd.to_datetime(df[self._date], **kwargs)
+        df[self._date] = pd.to_datetime(df[self._date], **kwargs).dt.round("D")
+        with contextlib.suppress(TypeError):
+            df[self.DATE] = df[self.DATE].dt.tz_convert(None)
         # Convert country names to ISO3 codes
         if convert_iso3 and self._country is not None and self._country in df:
             df.loc[:, self._country] = self._to_iso3(df[self._country])

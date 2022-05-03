@@ -80,7 +80,7 @@ class SubsetNotFoundError(KeyError, ValueError):
         else:
             geo_converted = (country if country_alias is None else f"{country} ({country_alias})", province)
         names = [
-            info if isinstance(info, str) else "-".join(list(info))
+            info if isinstance(info, str) else "_".join(list(info))
             for info in ([geo_converted] if isinstance(geo_converted, str) else geo_converted)]
         return "/".join(names[::-1])
 

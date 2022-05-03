@@ -8,13 +8,13 @@ from covsirphy.gis.layer import _LayerAdjuster
 
 
 class GIS(Term):
-    """Class of geographical information system.
+    """Class of geographic information system.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
         date (str): column name of observation dates
-        verbose (int): level of verbosity when downloading
+        verbose (int): level of verbosity of stdout
 
     Raises:
         ValueError: @layers has duplicates
@@ -251,3 +251,20 @@ class GIS(Term):
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum()
+
+    @classmethod
+    def area_name(cls, geo=None):
+        """
+        Return area name of the geographic information, like 'Japan', 'Tokyo/Japan', 'Japan_UK', 'the world'.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names
+
+        Returns:
+            str: area name
+        """
+        if geo is None or geo[0] is None:
+            return "the world"
+        names = [
+            info if isinstance(info, str) else "_".join(list(info)) for info in ([geo] if isinstance(geo, str) else geo)]
+        return cls.SEP.join(names[::-1])
