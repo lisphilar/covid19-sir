@@ -54,7 +54,7 @@ class TestJHUData(object):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
     @pytest.mark.parametrize(
-        "country", ["UK", "Netherlands", "China", "Germany", "France", "Japan"])
+        "country", ["Netherlands", "China", "Germany", "France", "Japan"])
     def test_records(self, jhu_data, country):
         df, is_complemented = jhu_data.records(country=country)
         assert is_complemented
