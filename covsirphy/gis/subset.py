@@ -6,10 +6,9 @@ from copy import deepcopy
 from covsirphy.util.term import Term
 
 
-class Geography(Term):
+class _SubsetManager(Term):
     """
-    Class to manipulate geography data.
-
+    Class to get subset with location information.
     Args:
         layers (list[str]): names of administration layers with the order (upper layers precede, e.g. ["Country", "Province"])
     """
@@ -18,8 +17,7 @@ class Geography(Term):
         self._layers = self._ensure_list(layers, candidates=None, name="layers")
 
     def layer(self, data, geo=None):
-        """
-        Return the data at the selected layer.
+        """Return the data at the selected layer.
 
         Args:
             data (pandas.DataFrame):
@@ -27,7 +25,7 @@ class Geography(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `SubsetManager(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (top-level layer)
 
@@ -79,8 +77,7 @@ class Geography(Term):
         return df.reset_index(drop=True)
 
     def filter(self, data, geo=None):
-        """
-        Filter the data with geography information.
+        """Filter the data with geography information.
 
         Args:
             data (pandas.DataFrame):
@@ -88,7 +85,7 @@ class Geography(Term):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - columns defined by `Geography(layers)` argument: note that "-" means total values of the upper layer
+                    - columns defined by `SubsetManager(layers)` argument: note that "-" means total values of the upper layer
                     - the other columns of values
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names for the layers to filter or None (all data at the top level)
 
@@ -123,7 +120,7 @@ class Geography(Term):
         Note:
             When `geo=(("Japan", "Kanagawa", ["Yokohama", "Kawasaki"])`, returns city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.
         """
-        if geo is None or geo == (None,):
+        if geo is None or geo == (None,) or geo == [None]:
             return self.layer(data=data, geo=None)
         if not isinstance(geo, (list, tuple, str)):
             raise TypeError(

@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+import logging
 import math
 import warnings
 import country_converter as coco
@@ -571,15 +572,21 @@ class Term(object):
             "UK" will be converted to "GBR".
 
         Note:
-            When the country was not found or None, it will not be converted with stdout with coco_convert package.
+            When the country was not found or None, it will not be converted.
 
         Examples:
             >>> Term._to_iso3("Japan")
             ['JPN']
+            >>> Term._to_iso3("UK")
+            ['GBR']
+            >>> Term._to_iso3("Moon")
+            ['Moon']
+            >>> Term._to_iso3(None)
+            ['---']
             >>> Term._to_iso3(["Japan", "UK", "Moon", None])
-            Moon not found in regex
             ['JPN', 'GBR', 'Moon', '---']
         """
+        logging.basicConfig(level=logging.CRITICAL)
         warnings.simplefilter("ignore", FutureWarning)
         names = [name] if (isinstance(name, str) or name is None) else name
         code_dict = {"UK": "GBR", None: cls.NA * 3, }
