@@ -34,13 +34,6 @@ class TestJHUData(object):
 
     def test_countries(self, jhu_data):
         assert isinstance(jhu_data.countries(complement=False), list)
-        # assert isinstance(jhu_data.countries(complement=True), list)
-
-    @pytest.mark.parametrize("country", ["UK"])
-    def test_subset_complement_non_monotonic(self, jhu_data, country):
-        df, is_complemented = jhu_data.subset_complement(country=country)
-        assert is_complemented
-        assert df[Term.C].is_monotonic_increasing
 
     @pytest.mark.parametrize("country", ["Netherlands", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):

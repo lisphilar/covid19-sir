@@ -15,7 +15,7 @@ from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
-from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
+from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
 from covsirphy.util.filer import save_dataframe
@@ -31,6 +31,8 @@ from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
 from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
 from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
+# gis
+from covsirphy.gis.gis import GIS
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -47,9 +49,6 @@ from covsirphy.cleaning.mobility_data import MobilityData
 # loading
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
-# collecting
-from covsirphy.collecting.geography import Geography
-from covsirphy.collecting.data_collector import DataCollector
 # trend
 from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
@@ -108,18 +107,18 @@ __all__ = [
     "StopWatch", "deprecate", "find_args", "Term", "Filer", "Evaluator",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
+    "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
+    # gis
+    "GIS",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
-    # collecting
-    "Geography", "DataCollector",
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
