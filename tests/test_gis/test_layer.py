@@ -5,19 +5,19 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
-from covsirphy import Term, DataCollector
+from covsirphy import Term
+from covsirphy.gis.layer import _LayerAdjuster as LayerAdjuster
 
 
-class TestDataCollector(object):
+class TestLayerAdjuster(object):
     def test_empty(self):
         with pytest.raises(ValueError):
-            collector = DataCollector(layers=["ISO3", "Province", "Province"])
-        collector = DataCollector(layers=["ISO3", "Province"])
+            collector = LayerAdjuster(layers=["ISO3", "Province", "Province"])
+        collector = LayerAdjuster(layers=["ISO3", "Province"])
         all_df = collector.all()
         assert all_df.empty
         assert set(all_df.columns) == {"Date", "ISO3", "Province"}
         assert not collector.citations()
-        assert collector.subset().empty
 
     @pytest.mark.parametrize(
         "country, layers, data_dict, all_dict",
@@ -73,18 +73,18 @@ class TestDataCollector(object):
             ),
         )
     )
-    def test_manual(self, country, layers, data_dict, all_dict):
+    def test_register(self, country, layers, data_dict, all_dict):
         day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
         raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
         raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
         raw["Confirmed"] = np.arange(len(raw))
         raw["Recovered"] = 0
-        collector = DataCollector(layers=layers, country=country)
+        collector = LayerAdjuster(layers=layers, country=country)
         with pytest.raises(ValueError):
-            collector.manual(
-                data=raw, date="date", data_layers=["Country", "Country"], variables=["Confirmed", "Recovered"], citations="Manual")
-        collector.manual(
-            data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
+            collector.register(
+                data=raw, layers=["Country", "Country"], date="date", variables=["Confirmed", "Recovered"], citations="Manual")
+        collector.register(
+            data=raw, layers=list(data_dict.keys()), date="date", variables=["Confirmed"], citations="Manual")
         # All data
         all_df = pd.concat([pd.DataFrame(all_dict), pd.DataFrame(all_dict)], axis=0, ignore_index=True)
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
@@ -92,27 +92,3 @@ class TestDataCollector(object):
         all_df = all_df.sort_values([*layers, Term.DATE], ignore_index=True)
         assert_frame_equal(collector.all(variables=["Confirmed"]), all_df, check_dtype=False)
         assert collector.citations() == ["Manual"]
-
-    @pytest.mark.parametrize(
-        "country, layers, geo, data_dict",
-        (
-            (
-                "ISO3",
-                ["ISO3", "Province", "City"],
-                ("JPN",),
-                {"ISO3": ["JPN", "JPN"], "Province": ["-", "Tokyo"], "City": ["-", "Chiyoda"]},
-            ),
-        )
-    )
-    def test_subset(self, country, layers, geo, data_dict):
-        day0, day1 = pd.to_datetime("2022-01-01"), pd.to_datetime("2022-01-02")
-        raw = pd.concat([pd.DataFrame(data_dict), pd.DataFrame(data_dict)], axis=0, ignore_index=True)
-        raw["date"] = [day0 for _ in range(len(raw) // 2)] + [day1 for _ in range(len(raw) // 2)]
-        raw["Confirmed"] = list(range(len(raw)))
-        raw["Recovered"] = 0
-        collector = DataCollector(layers=layers, country=country)
-        collector.manual(
-            data=raw, date="date", data_layers=list(data_dict.keys()), variables=["Confirmed"], citations="Manual")
-        # SUbset
-        sub_df = pd.DataFrame({Term.DATE: [day0, day1], "Confirmed": [0, 2]})
-        assert_frame_equal(collector.subset(geo=geo, variables=["Confirmed"]), sub_df, check_dtype=False)
