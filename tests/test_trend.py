@@ -3,7 +3,7 @@
 
 import warnings
 import pytest
-from covsirphy import TrendDetector, Trend, ChangeFinder, UnExpectedValueError
+from covsirphy import TrendDetector, Trend, ChangeFinder, UnExpectedValueError, SubsetNotFoundError
 
 
 class TestTrendDetector(object):
@@ -36,10 +36,11 @@ class TestTrendDetector(object):
             "Brazil", "France", "Spain", "UK", "New Zealand", "Germany",
         ]
     )
-    def test_sr(self, jhu_data, population_data, algo, country):
-        # Dataset
-        population = population_data.value(country)
-        record_df, _ = jhu_data.records(country=country, population=population)
+    def test_sr(self, jhu_data, algo, country):
+        try:
+            record_df, _ = jhu_data.records(country=country)
+        except SubsetNotFoundError:
+            return
         # S-R trend analysis
         detector = TrendDetector(data=record_df, area=country)
         detector.sr(algo=algo)
