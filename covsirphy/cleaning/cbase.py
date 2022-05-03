@@ -249,11 +249,11 @@ class CleaningBase(Term):
 
         Note:
             If province is None or '-', return country name.
-            If not, return the area name, like 'Japan/Tokyo'
+            If not, return the area name, like 'Tokyo/Japan'
         """
         if province in [None, cls.NA]:
             return country
-        return f"{country}{cls.SEP}{province}"
+        return f"{province}{cls.SEP}{country}"
 
     def layer(self, country=None):
         """
