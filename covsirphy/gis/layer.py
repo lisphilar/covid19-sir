@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 import pandas as pd
 from covsirphy.util.term import Term
-from covsirphy.collecting.geography import Geography
 
 
-class DataCollector(Term):
-    """Class for collecting data for the specified location.
+class _LayerAdjuster(Term):
+    """Class to adjust location layers of time-series data.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
-        verbose (int): level of verbosity when downloading
+        date (str): column name of observation dates
+        verbose (int): level of verbosity of stdout
 
     Raises:
         ValueError: @layers has duplicates
@@ -27,17 +28,21 @@ class DataCollector(Term):
     # Internal term
     _ID = "Location_ID"
 
-    def __init__(self, layers=None, country="ISO3", verbose=1):
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+    def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
-        # Location data
+        # Layers of location information
         self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
         if len(set(self._layers)) != len(self._layers):
             raise ValueError(f"@layer has duplicates, {self._layers}")
+        # Date column
+        self._date = str(date)
+        # Verbosity
+        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        # Location data
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
-        self._rec_df = pd.DataFrame(columns=[self._ID, self.DATE])
+        self._rec_df = pd.DataFrame(columns=[self._ID, self._date])
         # Citations
         self._citation_dict = {}
 
@@ -52,64 +57,20 @@ class DataCollector(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by covsirphy.DataCollector(layers)
+                    - columns defined by covsirphy.LayerAdjuster(layers)
                     - Date (pandas.Timestamp): observation dates
                     - columns defined by @variables
         """
-        identifiers = [*self._layers, self.DATE]
+        identifiers = [*self._layers, self._date]
         df = self._loc_df.merge(self._rec_df, how="right", on=self._ID).drop(self._ID, axis=1)
         df = df.sort_values(identifiers, ignore_index=True)
         df = df.loc[:, [*identifiers, *sorted(set(df.columns) - set(identifiers), key=df.columns.tolist().index)]]
         if variables is None:
             return df
         all_variables = df.columns.tolist()
-        sel_variables = self._ensure_list(target=variables, candidates=all_variables, name="variables")
-        return df.loc[:, [*self._layers, self.DATE, *sel_variables]]
-
-    def subset(self, geo=None, variables=None):
-        """Create a subset with the geographic information.
-
-        Args:
-            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
-            variables (list[str] or None): list of variables to collect or None (all available variables)
-
-        Returns:
-            pandas.DataFrame:
-                Index
-                    reset index
-                Columns
-                    - Date (pandas.Timestamp): observation dates
-                    - columns defined by @variables
-
-        Note:
-            Please refer to covsirphy.Geography.filter() regarding @geo argument.
-
-        Note:
-            Layers will be dropped from the dataframe.
-        """
-        geo_converted = self._geo_with_iso3(geo=geo)
-        all_df = self.all(variables=variables)
-        if all_df.empty:
-            return all_df
-        geography = Geography(layers=self._layers)
-        df = geography.filter(data=all_df, geo=geo_converted)
-        return df.drop(self._layers, axis=1).groupby(self.DATE).first().reset_index()
-
-    def _geo_with_iso3(self, geo=None):
-        """Update the geographic information, converting country names to ISO3 codes.
-
-        Args:
-            geo (tuple(list[str] or tuple(str) or str)): location names defined in covsirphy.Geography class
-
-        Returns:
-            list[str] or tuple(str) or str): location names defined in covsirphy.Geography class
-        """
-        geo_converted = [geo] if isinstance(geo, str) else list(geo or [None])
-        geo_converted += [None] * (len(self._layers) - len(geo_converted))
-        if self._country is not None:
-            geo_converted = [
-                self._to_iso3(info) if layer == self._country else info for (layer, info) in zip(self._layers, geo_converted)]
-        return [info for info in geo_converted if info is not None] or None
+        sel_variables = self._ensure_list(
+            target=variables, candidates=set(all_variables) - set(identifiers), name="variables")
+        return df.loc[:, [*self._layers, self._date, *sel_variables]]
 
     def citations(self, variables=None):
         """
@@ -121,12 +82,12 @@ class DataCollector(Term):
         Returns:
             list[str]: citation list
         """
-        all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self.DATE)]
+        all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self._date)]
         columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
         return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
 
-    def manual(self, data, date="Date", data_layers=None, variables=None, citations=None, convert_iso3=True, **kwargs):
-        """Add data manually.
+    def register(self, data, layers=None, date="Date", variables=None, citations=None, convert_iso3=True, **kwargs):
+        """Register new data.
 
         Args:
             data (pandas.DataFrame): local dataset or None (un-available)
@@ -136,8 +97,8 @@ class DataCollector(Term):
                     - columns defined by @data_layers
                     - columns defined by @date
                     - columns defined by @variables
-            date (str): column name of date
-            data_layers (list[str]): layers of the data
+            layers (list[str]): layers of the data
+            date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
             convert_iso3 (bool): whether convert country names to ISO3 codes or not
@@ -147,16 +108,18 @@ class DataCollector(Term):
             ValueError: @data_layers has duplicates
 
         Returns:
-            covsirphy.DataCollector: self
+            covsirphy.LayerAdjuster: self
         """
+        data_layers = self._ensure_list(target=layers or self._layers, name="layers")
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
-        self._ensure_dataframe(
-            target=data, name="data", columns=[*(data_layers or self._layers), date, *(variables or [])])
+        self._ensure_dataframe(target=data, name="data", columns=[*data_layers, date, *(variables or [])])
         df = data.copy()
         # Convert date type
-        df.rename(columns={date: self.DATE}, inplace=True)
-        df[self.DATE] = pd.to_datetime(df[self.DATE], **kwargs)
+        df.rename(columns={date: self._date}, inplace=True)
+        df[self._date] = pd.to_datetime(df[self._date], **kwargs).dt.round("D")
+        with contextlib.suppress(TypeError):
+            df[self.DATE] = df[self.DATE].dt.tz_convert(None)
         # Convert country names to ISO3 codes
         if convert_iso3 and self._country is not None and self._country in df:
             df.loc[:, self._country] = self._to_iso3(df[self._country])
@@ -174,10 +137,10 @@ class DataCollector(Term):
         # Records
         df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1).dropna()
         if variables is not None:
-            columns = [self._ID, self.DATE, *self._ensure_list(target=variables, name="variables")]
+            columns = [self._ID, self._date, *self._ensure_list(target=variables, name="variables")]
             df = df.loc[:, columns]
         rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns)))
-        rec_df = rec_df.set_index([self._ID, self.DATE]).combine_first(df.set_index([self._ID, self.DATE]))
+        rec_df = rec_df.set_index([self._ID, self._date]).combine_first(df.set_index([self._ID, self._date]))
         self._rec_df = rec_df.reset_index()
         # Citations
         new_citations = self._ensure_list(
@@ -203,7 +166,7 @@ class DataCollector(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by DataCollector(layers)
+                    - columns defined by LayerAdjuster(layers)
                     - the other columns
         """
         df = data.copy()
@@ -225,7 +188,7 @@ class DataCollector(Term):
         return df.reset_index(drop=True)
 
     def _align_layers(self, data_layers):
-        """Perform sequence alignment of the layers of new data with the layers defined by DataCollector(layers).
+        """Perform sequence alignment of the layers of new data with the layers defined by LayerAdjuster(layers).
 
         Args:
             data_layers (list[str]): layers of the data
