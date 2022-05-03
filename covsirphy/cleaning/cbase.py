@@ -238,7 +238,7 @@ class CleaningBase(Term):
     @classmethod
     def area_name(cls, country, province=None):
         """
-        Return area name of the country/province.
+        Return area name of the province/country.
 
         Args:
             country (str): country name or ISO3 code
