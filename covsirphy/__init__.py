@@ -33,6 +33,8 @@ from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
 from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
 # gis
 from covsirphy.gis.gis import GIS
+# engineering
+from covsirphy.engineering.engineer import DataEngineer
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -114,6 +116,8 @@ __all__ = [
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # gis
     "GIS",
+    # engineer
+    "DataEngineer",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
