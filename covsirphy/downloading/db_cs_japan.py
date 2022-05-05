@@ -86,7 +86,7 @@ class _CSJapan(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        if self._to_iso3(country) != "JPN":
+        if self._to_iso3(country)[0] != "JPN":
             return pd.DataFrame(columns=[
                 self.DATE, self.ISO3, self.PROVINCE, self.CITY,
                 self.C, self.F, self.R, self.TESTS, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
