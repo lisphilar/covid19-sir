@@ -61,10 +61,10 @@ class _DataBase(Term):
             When @country and @province are strings, city-level data in the province will be returned.
         """
         if country is None:
-            return self._country().convert_dtypes()
+            return self._country()
         if province is None:
-            return self._province(country=country).convert_dtypes()
-        return self._city(country=country, province=province).convert_dtypes()
+            return self._province(country=country)
+        return self._city(country=country, province=province)
 
     def _country(self):
         """Returns country-level data.
@@ -130,6 +130,9 @@ class _DataBase(Term):
             columns (list[str]): columns to use
             date (str or None): column name of date
             date_format (str): format of date column, like %Y-%m-%d
+
+        Returns:
+            pandas.DataFrame
 
         Note:
             File will be downloaded to '/{self._directory}/{title}{suffix}.csv'.

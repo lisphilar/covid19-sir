@@ -32,6 +32,9 @@ class _DataProvider(Term):
             date (str or None): column name of date
             date_format (str): format of date column, like %Y-%m-%d
 
+        Returns:
+            pandas.DataFrame
+
         Note:
             If @verbose is 0, no descriptions will be shown.
             If @verbose is 1 or larger, URL and database name will be shown.
@@ -96,7 +99,7 @@ class _DataProvider(Term):
         """
         kwargs = {
             "header": 0, "usecols": columns,
-            "parse_dates": None if date is None else [date], "date_parser": lambda x: pd.datetime.strptime(x, date_format)
+            "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
         }
         try:
             return pd.read_csv(path, **kwargs)

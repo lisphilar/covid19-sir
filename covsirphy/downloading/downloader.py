@@ -105,7 +105,9 @@ class DataDownloader(Term):
         for database in selected:
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)
-            new_df = db.layer(country=country, province=province)
+            new_df = db.layer(country=country, province=province).convert_dtypes()
+            if new_df.empty:
+                continue
             self._gis.register(
                 data=new_df, layers=self.LAYERS, date=self.DATE, citations=db.CITATION, convert_iso3=False)
         return self._gis.layer(geo=(country, province))
