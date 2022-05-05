@@ -1,8 +1,8 @@
 # Usage: data loading
 
-The first step of CovsirPhy analysis is data laoding. In this chapter, we will confirm the way to load the following two type of datasets using `DataLoader` class.
+The first step of CovsirPhy analysis is data loading. In this chapter, we will confirm the way to load the following two type of datasets using `DataLoader` class.
 
-- recommented datasets: open datasets recommended by CovsirPhy community
+- recommended datasets: open datasets recommended by CovsirPhy community
 - local datasets: opened/closed datasets you have in your local environment
 
 ## 1. Decide whether to use the recommended datasets
@@ -34,13 +34,13 @@ We can read local datasets with `DataLoader.read_csv()`, `DataLoader.read_datafr
 
 ### 2-1. Check variables to use
 
-Variables to analyse are specified by `covsirphy`. Please check that you have records of the required variables and the correspondence of te variables you have and variables specified by `covsirphy`. The required variables must be prepared with `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`. We can decide column names freely at this step and we will tell the correspondence to `DataLoader` with `DataLoader.lock()` later.
+Variables to analyze are specified by `covsirphy`. Please check that you have records of the required variables and the correspondence of te variables you have and variables specified by `covsirphy`. The required variables must be prepared with `DataLoader.read_csv()`, `DataLoader.read_dataframe()` and `DataLoader.assign()`. We can decide column names freely at this step and we will tell the correspondence to `DataLoader` with `DataLoader.lock()` later.
 
 Required:
 
 - date: observation dates
 - country: country names (the top level administration)
-- province: province/state/prefecture names (the second level adminitration)
+- province: province/state/prefecture names (the second level administration)
 - confirmed: the number of confirmed cases
 - fatal: the number of fatal cases
 - population population values
@@ -54,7 +54,7 @@ Optional:
 - vaccinations: cumulative number of vaccinations
 - vaccinations_boosters: cumulative number of booster vaccinations
 - vaccinated_once: cumulative number of people who received at least one vaccine dose
-- vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
+- vaccinated_full: cumulative number of people who received all doses prescribed by the protocol
 
 Changeable:
 
@@ -67,9 +67,9 @@ If you want to use a new dataset for your analysis, kindly create an issue with 
 
 ### 2-2. Read datasets from CSV files
 
-If we have records as CSV files (time series data of vairables), we can read them with `DataLoader.read_csv()` method. This uses `pandas.read_csv()` internally and [arguments](https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html) of `pandas.read_csv()` can be used.
+If we have records as CSV files (time series data of variables), we can read them with `DataLoader.read_csv()` method. This uses `pandas.read_csv()` internally and [arguments](https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html) of `pandas.read_csv()` can be used.
 
-As an example, we have records in "./usa.csv" as shown in the next table. Obseervation dates are assigned to "date" column with "YYYY-MM-DD" format. (Data is from [COVID-19 Data Hub](https://covid19datahub.io/).)
+As an example, we have records in "./usa.csv" as shown in the next table. Observation dates are assigned to "date" column with "YYYY-MM-DD" format. (Data is from [COVID-19 Data Hub](https://covid19datahub.io/).)
 
 |    | confirmed | fatal | province | population | date       |
 | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -158,7 +158,7 @@ Three columns will be added.
 
 We need to run `DataLoader.lock()` (method for database lock) when you want to use local CSV files and `pandas.DataFrame` as the database. (i.e. We can skip this method when you use **ONLY** the recommended datasets.) After completion of database lock, we cannot update local database with `DataLoader.read_csv()` and so on.
 
-By database lock, we tell the correspondence of te variables you have and variables specified by `covsirphy` and lock the local database. Addtionally, the all recommended datasets will be downloaded automatically (if `update_interval` was not `None`) and combined to the local database.
+By database lock, we tell the correspondence of te variables you have and variables specified by `covsirphy` and lock the local database. Additionally, the all recommended datasets will be downloaded automatically (if `update_interval` was not `None`) and combined to the local database.
 
 Database lock can be done as follows. As an example, we assume that all variables are registered in advance.
 
@@ -180,14 +180,14 @@ loader.lock(
     # Optional regarding VaccineData
     product="product", vaccinations="vaccinations", vaccinations_boosters="vaccinations_boosters",
     vaccinated_once="vaccinated_once", vaccinated_full="vaccinated_full",
-    # Optinal for OxCGRTData (list[str] or None)
+    # Optional for OxCGRTData (list[str] or None)
     oxcgrt_variables=["Stringency_index", "Contact_tracing"],
-    # Optinal for OxCGRTData (list[str] or None)
+    # Optional for OxCGRTData (list[str] or None)
     mobility_variables=["Mobility_workplaces", "Mobility_residential"],
 )
 ```
 
-If you do not have some variables in the local database, please skip the arguments or apply `None` to the arguments. For example, the codes will be as follows if we have only the required arguemnts listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use).
+If you do not have some variables in the local database, please skip the arguments or apply `None` to the arguments. For example, the codes will be as follows if we have only the required arguments listed at [2-1. Variables to use](https://lisphilar.github.io/covid19-sir/markdown/LOADING.html#variables-to-use).
 
 ```Python
 loader.lock(
