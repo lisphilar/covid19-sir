@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
 
@@ -68,12 +67,12 @@ class _COVID19dh(_DataBase):
         """
         url = "https://storage.covid19datahub.io/level/1.csv.zip"
         df = self._provide(
-            url=url, suffix="_level1", columns=list(self.COL_DICT.keys()) + ["id"], date="date", date_format="%Y-%m-%d")
+            url=url, suffix="_level1", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
         # ships will be regarded as provinces of "Others" country
         ships = df.loc[df[self.ISO3].isna(), self.COUNTRY].unique()
         for ship in ships:
             df.loc[df[self.COUNTRY] == ship, [self.ISO3, self.PROVINCE]] = [self.OTHERS, ship]
-        return df.groupby("id").ffill().reset_index(drop=True)
+        return df
 
     def _province(self, country):
         """Returns province-level data.
@@ -96,14 +95,13 @@ class _COVID19dh(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        url = "https://storage.covid19datahub.io/level/2.csv.zip"
-        df = self._provide(
-            url=url, suffix="_level2", columns=list(self.COL_DICT.keys()) + ["id"], date="date", date_format="%Y-%m-%d")
         if country == self.OTHERS:
-            c_df = self._country()
-            others_df = c_df.loc[df[self.ISO3] == self.OTHERS]
-            df = pd.concat([df, others_df], axis=0, ignore_index=True)
-        return df.groupby("id").ffill().reset_index(drop=True)
+            df = self._country()
+        else:
+            url = "https://storage.covid19datahub.io/level/2.csv.zip"
+            df = self._provide(
+                url=url, suffix="_level2", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
+        return df.loc[df[self.ISO3] == self._to_iso3(country)[0]]
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -130,4 +128,4 @@ class _COVID19dh(_DataBase):
         url = "https://storage.covid19datahub.io/level/3.csv.zip"
         df = self._provide(
             url=url, suffix="_level3", columns=list(self.COL_DICT.keys()) + ["id"], date="date", date_format="%Y-%m-%d")
-        return df.groupby("id").ffill().reset_index(drop=True)
+        return df.loc[(df[self.ISO3] == self._to_iso3(country)[0]) & df[self.PROVINCE] == province]
