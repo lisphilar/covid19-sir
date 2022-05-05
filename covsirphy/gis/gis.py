@@ -175,7 +175,7 @@ class GIS(Term):
                 f"No records have been registered at the layer yet from {start_date} to {end_date}.")
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first()
-        return df.reset_index()
+        return df.reset_index().convert_dtypes()
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
@@ -250,7 +250,7 @@ class GIS(Term):
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
-        return df.groupby(self._date, as_index=False).sum()
+        return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
     @classmethod
     def area_name(cls, geo=None):
