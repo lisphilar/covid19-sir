@@ -95,13 +95,14 @@ class _COVID19dh(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        if country == self.OTHERS:
+        iso3 = self._to_iso3(country)[0]
+        if iso3 == self.OTHERS:
             df = self._country()
-        else:
-            url = "https://storage.covid19datahub.io/level/2.csv.zip"
-            df = self._provide(
-                url=url, suffix="_level2", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
-        return df.loc[df[self.ISO3] == self._to_iso3(country)[0]]
+            return df.loc[df[self.ISO3] == iso3]
+        url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
+        df = self._provide(
+            url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
+        return df.loc[~df[self.PROVINCE].isna()]
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -125,7 +126,8 @@ class _COVID19dh(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        url = "https://storage.covid19datahub.io/level/3.csv.zip"
+        iso3 = self._to_iso3(country)[0]
+        url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
-            url=url, suffix="_level3", columns=list(self.COL_DICT.keys()) + ["id"], date="date", date_format="%Y-%m-%d")
-        return df.loc[(df[self.ISO3] == self._to_iso3(country)[0]) & df[self.PROVINCE] == province]
+            url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
+        return df.loc[(df[self.PROVINCE] == province) & (~df[self.CITY].isna())]
