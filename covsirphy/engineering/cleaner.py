@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import contextlib
+import pandas as pd
+from covsirphy.util.error import UnExecutedError
+from covsirphy.util.term import Term
+
+
+class _DataCleaner(Term):
+    """Class for data cleaning.
+
+    Args:
+        data (pandas.DataFrame): raw data
+            Index
+                reset index
+            Column
+                - columns defined by @layers
+                - column defined by @date
+                - the other columns
+        layers (list[str]): location layers of the data
+        date (str): column name of observation dates of the data
+    """
+
+    def __init__(self, data, layers, date):
+        self._df = data.copy()
+        self._layers = self._ensure_list(layers, name="layers")
+        self._date = str(date)
+        self._id_cols = [*self._layers, self._date]
+
+    def all(self):
+        """Return all available data.
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Column
+                    - columns defined by @layers of _DataCleaner()
+                    - (pandas.Timestamp): observation dates defined by @date of _DataCleaner()
+                    - the other columns
+        """
+        return self._df
+
+    def convert_date(self, **kwargs):
+        """Convert dtype of date column to pandas.Timestamp.
+
+        Args:
+            **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
+        """
+        df = self._df.copy()
+        df[self._date] = pd.to_datetime(df[self._date], **kwargs).dt.round("D")
+        with contextlib.suppress(TypeError):
+            df[self._date] = df[self._date].dt.tz_convert(None)
+        self._df = df.copy()
+
+    def resample(self):
+        """Resample records with dates.
+        """
+        df = self._df.copy()
+        grouped = df.set_index(self._date).groupby(self._layers, as_index=False)
+        try:
+            df = grouped.resample("D").ffill()
+        except TypeError as e:
+            raise UnExecutedError(
+                f"{self._date} column was not a column of date. Please run _DataEngineer.convert_date()") from e
+        self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
+
+    def fillna(self):
+        """Fill NA values with '-' (layers) and the previous values and 0.
+        """
+        df = self._df.copy()
+        df.loc[:, self._layers] = df.loc[:, self._layers].fillna(self.NA)
+        for col in set(df.columns) - set(self._id_cols):
+            df[col] = df.groupby(self._layers)[col].ffill().fillna(0)
+        self._df = df.copy()

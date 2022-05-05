@@ -1,29 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import pytest
-import pandas as pd
-from covsirphy import GIS, JapanData, NotRegisteredError, SubsetNotFoundError
-
-
-@pytest.fixture(scope="module")
-def c_df():
-    path = Path("data", "japan", "covid_jpn_total.csv")
-    filepath = path if path.exists() else JapanData.URL_C
-    df = pd.read_csv(filepath, dayfirst=False).rename(columns={"Date": "date"})
-    df = df[["date", "Positive", "Tested"]].groupby("date", as_index=False).sum()
-    df.insert(0, "Country", "Japan")
-    return df
-
-
-@pytest.fixture(scope="module")
-def p_df():
-    path = Path("data", "japan", "covid_jpn_prefecture.csv")
-    filepath = path if path.exists() else JapanData.URL_P
-    df = pd.read_csv(filepath, dayfirst=False).rename(columns={"Date": "date"})
-    df.insert(0, "Country", "Japan")
-    return df[["Country", "Prefecture", "date", "Positive", "Tested"]]
+from covsirphy import GIS, NotRegisteredError, SubsetNotFoundError
 
 
 class TestGIS(object):
@@ -60,7 +39,7 @@ class TestGIS(object):
                 system.layer(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
         else:
             df = system.layer(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
-            assert df.columns.tolist() == ["Country", "Province", "Date", "Positive", "Tested"]
+            assert set(df.columns) == {"Country", "Province", "Date", "Positive", "Tested", "Discharged", "Fatal"}
             assert len(df) == length
 
     @pytest.mark.parametrize(
@@ -86,7 +65,7 @@ class TestGIS(object):
                 system.subset(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
         else:
             df = system.subset(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
-            assert df.columns.tolist() == ["Date", "Positive", "Tested"]
+            assert set(df.columns) == {"Date", "Positive", "Tested", "Discharged", "Fatal"}
             assert len(df) == length
 
     @pytest.mark.parametrize(
