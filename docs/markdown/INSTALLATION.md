@@ -1,6 +1,6 @@
 # Installation
 
-`covsirphy` library supports Python 3.7 and newer versions.
+`covsirphy` library supports Python 3.7.12 and newer versions.
 
 **Please use `covsirphy` with a virtual environment** (venv/poetry/conda etc.) because it has many dependencies as listed in "tool.poetry.dependencies" of [pyproject.toml](https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml).
 
