@@ -21,5 +21,5 @@ def find_args(func_list, **kwargs):
         list(signature(func).parameters.keys()) for func in func_list
     ]
     enabled_set = set(sum(enabled_nest, list()))
-    enabled_set = enabled_set - set(["self", "cls"])
+    enabled_set = enabled_set - {"self", "cls"}
     return {k: v for (k, v) in kwargs.items() if k in enabled_set}
