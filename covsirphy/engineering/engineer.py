@@ -125,7 +125,7 @@ class DataEngineer(Term):
         self._df = transformer.all()
 
     def diff(self, column, suffix="_diff", freq="D"):
-        """Calculate first discrete difference of element with "F(x>0) = F(x) - F(x-1), F(0) = 0".
+        """Calculate daily new cases with "x(x>0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers".
 
         Args:
             column (str): column name of the cumulative numbers
