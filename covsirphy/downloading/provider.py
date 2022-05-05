@@ -95,7 +95,7 @@ class _DataProvider(Term):
             pandas.DataFrame: downloaded data
         """
         kwargs = {
-            "low_memory": False, "header": 0, "usecols": columns,
+            "header": 0, "usecols": columns,
             "parse_dates": None if date is None else [date], "date_parser": lambda x: pd.datetime.strptime(x, date_format)
         }
         try:
