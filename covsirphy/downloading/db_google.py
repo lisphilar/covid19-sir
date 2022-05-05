@@ -149,8 +149,8 @@ class _GoogleOpenData(_DataBase):
         index_cols = ["location_key", "subregion1_name", "subregion2_name", "locality_name", "iso_3166_1_alpha_3"]
         df = self._provide(url=URL_I, suffix="_index", columns=index_cols, date=None, date_format=None)
         df = df.rename(columns={"subregion1_name": self.PROVINCE, "iso_3166_1_alpha_3": self.ISO3})
-        df[self.PROVINCE] = df[self.PROVINCE].apply(unidecode)
-        df[self.CITY] = df["subregion2_name"].fillna(df["locality_name"]).apply(unidecode)
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA).apply(unidecode)
+        df[self.CITY] = df["subregion2_name"].fillna(df["locality_name"]).fillna(self.NA).apply(unidecode)
         return df.fillna(self.NA).loc[:, ["location_key", self.ISO3, self.PROVINCE, self.CITY]]
 
     def _mobility(self):
