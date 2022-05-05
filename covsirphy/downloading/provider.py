@@ -13,20 +13,19 @@ class _DataProvider(Term):
     """Extract datasets and save it locally.
 
     Args:
-        filename (str or pathlib.Path): filename to save/read the download
         update_interval (int): update interval of downloading dataset
         stdout (str or None): stdout when downloading (shown at most one time) or None (no outputs)
     """
 
-    def __init__(self, filename, update_interval, stdout):
-        self._filename = filename
+    def __init__(self, update_interval, stdout):
         self._update_interval = update_interval
         self._stdout = stdout
 
-    def latest(self, url, columns, date, date_format):
+    def latest(self, filename, url, columns, date, date_format):
         """Provide the last dataset as a dataframe, downloading remote files or reading local files.
 
         Args:
+            filename (str or pathlib.Path): filename to save/read the download
             url (str): URL of the dataset
             columns (list[str]): column names the dataset must have
             date (str or None): column name of date
@@ -39,14 +38,14 @@ class _DataProvider(Term):
             If @verbose is 0, no descriptions will be shown.
             If @verbose is 1 or larger, URL and database name will be shown.
         """
-        if not self._download_necessity(self._filename):
+        if not self._download_necessity(filename):
             with contextlib.suppress(ValueError):
-                return self._read_csv(self._filename, columns, date=date, date_format=date_format)
+                return self._read_csv(filename, columns, date=date, date_format=date_format)
         if self._stdout is not None:
             print(self._stdout)
             self._stdout = None
         df = self._read_csv(url, columns, date=date, date_format=date_format)
-        df.to_csv(self._filename, index=False)
+        df.to_csv(filename, index=False)
         return df
 
     @staticmethod

@@ -32,6 +32,7 @@ class _DataBase(Term):
         self._filer = Filer(directory=directory)
         self._update_interval = update_interval
         self._stdout = self.STDOUT if verbose > 0 else None
+        self._provider = _DataProvider(update_interval=self._update_interval, stdout=self._stdout)
 
     def layer(self, country, province):
         """Return the data at the selected layer.
@@ -138,6 +139,5 @@ class _DataBase(Term):
             File will be downloaded to '/{self._directory}/{title}{suffix}.csv'.
         """
         filename = self._filer.csv(title=f"{self.TITLE}{suffix}")["path_or_buf"]
-        provider = _DataProvider(filename=filename, update_interval=self._update_interval, stdout=self._stdout)
-        df = provider.latest(url=url, columns=columns, date=date, date_format=date_format)
+        df = self._provider.latest(filename=filename, url=url, columns=columns, date=date, date_format=date_format)
         return df.rename(columns=self.COL_DICT)
