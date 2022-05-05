@@ -610,6 +610,25 @@ class Term(object):
             return False
         return all(value in target[col].unique() for (col, value) in value_dict.items())
 
+    def _country_information(self):
+        """Return the raw data of country_converter library raw data as a dataframe.
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns:
+                    - name_short: standard or short names
+                    - ISO2: ISO2 codes
+                    - ISO3: ISO3 codes
+                    - Continent: continent names
+                    - the other columns listed in country_converter library homepage.
+
+        Note:
+            Refer to https://github.com/konstantinstadler/country_converter
+        """
+        return coco.CountryConverter().data
+
 
 class Word(Term):
     @ deprecate(old="Word()", new="Term()")

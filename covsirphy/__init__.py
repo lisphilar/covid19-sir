@@ -33,6 +33,8 @@ from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
 from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
 # gis
 from covsirphy.gis.gis import GIS
+# downloading
+from covsirphy.downloading.downloader import DataDownloader
 # engineering
 from covsirphy.engineering.engineer import DataEngineer
 # cleaning
@@ -116,6 +118,8 @@ __all__ = [
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # gis
     "GIS",
+    # downloading
+    "DataDownloader",
     # engineer
     "DataEngineer",
     # cleaning

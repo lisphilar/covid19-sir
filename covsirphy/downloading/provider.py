@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import urllib
 import pandas as pd
-from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term
 
 
@@ -13,23 +13,22 @@ class _DataProvider(Term):
     """Extract datasets and save it locally.
 
     Args:
-        directory (str or pathlib.Path): directory to save downloaded datasets
-        title (str): file title without extensions
-        columns (list[str]): column names the dataset must have
+        filename (str or pathlib.Path): filename to save/read the download
         update_interval (int): update interval of downloading dataset
+        stdout (str or None): stdout when downloading (shown at most one time) or None (no outputs)
     """
 
-    def __init__(self, directory, title, columns, update_interval):
-        self._filename = Filer(directory=directory).csv(title=title)["path_or_buf"]
-        self._columns = self._ensure_list(columns, name="columns")
-        self._update_interval = self._ensure_natural_int(update_interval, include_zero=True, name="update_interval")
+    def __init__(self, filename, update_interval, stdout):
+        self._filename = filename
+        self._update_interval = update_interval
+        self._stdout = stdout
 
-    def provide(self, url, verbose, date, date_format):
+    def latest(self, url, columns, date, date_format):
         """Provide the last dataset as a dataframe, downloading remote files or reading local files.
 
         Args:
             url (str): URL of the dataset
-            verbose (int): level of verbosity when downloading
+            columns (list[str]): column names the dataset must have
             date (str or None): column name of date
             date_format (str): format of date column, like %Y-%m-%d
 
@@ -37,12 +36,15 @@ class _DataProvider(Term):
             If @verbose is 0, no descriptions will be shown.
             If @verbose is 1 or larger, URL and database name will be shown.
         """
-        verbose = self._ensure_natural_int(verbose, include_zero=True, name="verbose")
-        if self._download_necessity(self._filename):
-            df = self._read_csv(url, self._columns, date=date, date_format=date_format)
-            df.to_csv(self._filename, index=False)
-            return df
-        return self._read_csv(self._filename, self._columns, date=date, date_format=date_format)
+        if not self._download_necessity(self._filename):
+            with contextlib.suppress(ValueError):
+                return self._read_csv(self._filename, columns, date=date, date_format=date_format)
+        if self._stdout is not None:
+            print(self._stdout)
+            self._stdout = None
+        df = self._read_csv(url, columns, date=date, date_format=date_format)
+        df.to_csv(self._filename, index=False)
+        return df
 
     @staticmethod
     def _last_updated_local(path):
@@ -81,7 +83,7 @@ class _DataProvider(Term):
         return datetime.now() >= time_limit
 
     @staticmethod
-    def _read_csv(path, columns, date="date", date_format="%Y-%m-%d"):
+    def _read_csv(path, columns, date, date_format):
         """Read the CSV file and return as a dataframe.
 
         Args:
