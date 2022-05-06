@@ -40,7 +40,7 @@ class _GoogleOpenData(_DataBase):
         """Returns country-level data.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -62,7 +62,7 @@ class _GoogleOpenData(_DataBase):
         df = (df.set_index([self.DATE, self.ISO3]) + 100).reset_index()
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
-        return df
+        return df.compute()
 
     def _province(self, country):
         """Returns province-level data.
@@ -71,7 +71,7 @@ class _GoogleOpenData(_DataBase):
             country (str): country name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -93,7 +93,7 @@ class _GoogleOpenData(_DataBase):
         mobility_df = self._mobility()
         df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique().compute())]
         df = df.merge(index_df, how="left", on="location_key")
-        return df.drop("location_key", axis=1)
+        return df.drop("location_key", axis=1).compute()
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -103,7 +103,7 @@ class _GoogleOpenData(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -126,7 +126,7 @@ class _GoogleOpenData(_DataBase):
         mobility_df = self._mobility()
         df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique())]
         df = df.merge(index_df, how="left", on="location_key")
-        return df.drop("location_key", axis=1)
+        return df.drop("location_key", axis=1).compute()
 
     def _index_data(self):
         """Returns index data.

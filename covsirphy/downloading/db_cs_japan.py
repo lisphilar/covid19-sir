@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from multiprocessing import cpu_count
-import dask.dataframe as dd
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
@@ -37,7 +35,7 @@ class _CSJapan(_DataBase):
         """Returns country-level data.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -65,7 +63,7 @@ class _CSJapan(_DataBase):
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
         df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
         df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
-        return df
+        return df.compute()
 
     def _province(self, country):
         """Returns province-level data.
@@ -74,7 +72,7 @@ class _CSJapan(_DataBase):
             country (str): country name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -100,7 +98,7 @@ class _CSJapan(_DataBase):
         df[self.V_FULL] = pd.NA
         df[self.VAC_BOOSTERS] = pd.NA
         df[self.VAC] = pd.NA
-        return df
+        return df.compute()
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -110,7 +108,7 @@ class _CSJapan(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -127,6 +125,6 @@ class _CSJapan(_DataBase):
                     - Vaccinated_once (numpy.float64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return dd.from_pandas(pd.DataFrame(columns=[
+        return pd.DataFrame(columns=[
             self.DATE, self.ISO3, self.PROVINCE, self.CITY,
-            self.C, self.F, self.R, self.TESTS, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]), npartitions=cpu_count())
+            self.C, self.F, self.R, self.TESTS, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])

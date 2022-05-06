@@ -51,7 +51,7 @@ class _COVID19dh(_DataBase):
         """Returns country-level data.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -72,7 +72,7 @@ class _COVID19dh(_DataBase):
         ships = df.loc[df[self.ISO3].isna(), self.COUNTRY].unique()
         for ship in ships:
             df.loc[df[self.COUNTRY] == ship, [self.ISO3, self.PROVINCE]] = [self.OTHERS, ship]
-        return df
+        return df.compute()
 
     def _province(self, country):
         """Returns province-level data.
@@ -81,7 +81,7 @@ class _COVID19dh(_DataBase):
             country (str): country name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -102,7 +102,7 @@ class _COVID19dh(_DataBase):
         url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
             url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
-        return df.loc[~df[self.PROVINCE].isna()]
+        return df.loc[~df[self.PROVINCE].isna()].compute()
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -112,7 +112,7 @@ class _COVID19dh(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -130,4 +130,4 @@ class _COVID19dh(_DataBase):
         url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
             url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
-        return df.loc[(df[self.PROVINCE] == province) & (~df[self.CITY].isna())]
+        return df.loc[(df[self.PROVINCE] == province) & (~df[self.CITY].isna())].compute()

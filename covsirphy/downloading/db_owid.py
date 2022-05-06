@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from multiprocessing import cpu_count
-import dask.dataframe as dd
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
@@ -42,7 +40,7 @@ class _OWID(_DataBase):
         """Returns country-level data.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -68,7 +66,7 @@ class _OWID(_DataBase):
         v_rec_cols = [
             "date", "iso_code", "total_vaccinations", "total_boosters", "people_vaccinated", "people_fully_vaccinated"]
         v_rec_df = self._provide(
-            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date="date", date_format="%Y-%m-%d")
+            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date=None, date_format="%Y-%m-%d")
         v_loc_df = self._provide(
             url=URL_V_LOC, suffix="_vaccine_locations", columns=["iso_code", "vaccines"], date=None, date_format="%Y-%m-%d")
         v_df = v_rec_df.merge(v_loc_df, how="left", on=self.ISO3)
@@ -85,7 +83,7 @@ class _OWID(_DataBase):
         df = df.loc[~df[self.ISO3].isna()]
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
-        return df
+        return df.compute()
 
     def _province(self, country):
         """Returns province-level data.
@@ -94,7 +92,7 @@ class _OWID(_DataBase):
             country (str): country name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -119,7 +117,7 @@ class _OWID(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -140,7 +138,7 @@ class _OWID(_DataBase):
         """Return empty dask dataframe.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -157,4 +155,4 @@ class _OWID(_DataBase):
         """
         columns = [
             self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
-        return dd.from_pandas(pd.DataFrame(columns=columns), npartitions=cpu_count())
+        return pd.DataFrame(columns=columns)
