@@ -73,7 +73,7 @@ class _OWID(_DataBase):
         # Tests
         pcr_rec_cols = ["ISO code", "Date", "Daily change in cumulative total", "Cumulative total"]
         pcr_df = self._provide(url=URL_P_REC, suffix="", columns=pcr_rec_cols, date="Date", date_format="%Y-%m-%d")
-        pcr_df["cumsum"] = pcr_df.groupby("iso_code")["Daily change in cumulative total"].cumsum()
+        pcr_df["cumsum"] = pcr_df.groupby(self.ISO3)["Daily change in cumulative total"].cumsum()
         pcr_df = pcr_df.assign(tests=lambda x: x[self.TESTS].fillna(x["cumsum"]))
         pcr_df.rename(columns={"tests": self.TESTS}).drop(["tests", "Daily change in cumulative total"], axis=1)
         # Combine data (vaccinations/tests)
