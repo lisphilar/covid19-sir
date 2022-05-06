@@ -154,13 +154,7 @@ class GIS(Term):
             raise NotRegisteredError("No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
-        if geo is None:
-            geo_converted = None
-        else:
-            geo_converted = [
-                self._to_iso3(
-                    info) if self._layers[i] == self._country and info is not None and info not in data[self._country].unique() else info
-                for i, info in enumerate([geo] if isinstance(geo, str) else geo)]
+        geo_converted = self._parse_geo(geo=geo, data=data)
         manager = _SubsetManager(layers=self._layers)
         df = manager.layer(data=data, geo=geo_converted)
         if df.empty and errors == "raise":
@@ -175,7 +169,7 @@ class GIS(Term):
                 f"No records have been registered at the layer yet from {start_date} to {end_date}.")
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first()
-        return df.reset_index()
+        return df.reset_index().convert_dtypes()
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
@@ -230,13 +224,7 @@ class GIS(Term):
             raise NotRegisteredError("No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
-        if geo is None:
-            geo_converted = None
-        else:
-            geo_converted = [
-                self._to_iso3(
-                    info) if self._layers[i] == self._country and info is not None and info not in data[self._country].unique() else info
-                for i, info in enumerate([geo] if isinstance(geo, str) else geo)]
+        geo_converted = self._parse_geo(geo=geo, data=data)
         manager = _SubsetManager(layers=self._layers)
         df = manager.filter(data=data, geo=geo_converted)
         if df.empty and errors == "raise":
@@ -250,7 +238,7 @@ class GIS(Term):
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
-        return df.groupby(self._date, as_index=False).sum()
+        return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
     @classmethod
     def area_name(cls, geo=None):
@@ -268,3 +256,37 @@ class GIS(Term):
         names = [
             info if isinstance(info, str) else "_".join(list(info)) for info in ([geo] if isinstance(geo, str) else geo)]
         return cls.SEP.join(names[::-1])
+
+    def _parse_geo(self, geo, data):
+        """Parse geographic specifier.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - (str): column defined by @country (of covsirphy.GIS) if @country is not None
+
+        Returns:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): parsed location names
+        """
+        if geo is None:
+            return geo
+        return [self._info_to_iso3(info, self._layers[i], data) for i, info in enumerate([geo] if isinstance(geo, str) else geo)]
+
+    def _info_to_iso3(self, geo_info, layer, data):
+        """Convert a element of geographic specifier to ISO3 code.
+
+        Args:
+            geo_info (list[str] or tuple(str) or str or None): element of geographic specifier
+            layer (str): layer of geographic information
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - (str): column defined by @country if @country is not None
+        """
+        if layer != self._country or geo_info is None or set(geo_info).issubset(data[layer].unique()):
+            return geo_info
+        return self._to_iso3(geo_info)
