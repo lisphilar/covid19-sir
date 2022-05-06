@@ -102,7 +102,9 @@ class _COVID19dh(_DataBase):
         url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
             url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
-        return df.loc[~df[self.PROVINCE].isna()]
+        df = df.loc[(~df[self.PROVINCE].isna()) & (df[self.CITY].isna())]
+        df.loc[:, self.CITY] = df.loc[:, self.CITY].fillna(self.NA)
+        return df
 
     def _city(self, country, province):
         """Returns city-level data.

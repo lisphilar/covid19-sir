@@ -41,8 +41,8 @@ class _CSJapan(_DataBase):
                 Columns
                     - Date (pandas.Timestamp): observation date
                     - ISO3 (str): "Japan"
-                    - Province (pandas.NA): NAs
-                    - City (pandas.NA): NAs
+                    - Province (str): NAs
+                    - City (str): NAs
                     - Confirmed (numpy.float64): the number of confirmed cases
                     - Fatal (numpy.float64): the number of fatal cases
                     - Recovered (numpy.float64): the number of recovered cases
@@ -57,8 +57,8 @@ class _CSJapan(_DataBase):
         df = self._provide(url=self.URL_C, suffix="", columns=cols, date="Date", date_format="%Y-%m-%d")
         df = df.groupby("Date").sum().reset_index()
         df[self.ISO3] = "JPN"
-        df[self.PROVINCE] = pd.NA
-        df[self.CITY] = pd.NA
+        df[self.PROVINCE] = self.NA
+        df[self.CITY] = self.NA
         df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
         df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
@@ -79,7 +79,7 @@ class _CSJapan(_DataBase):
                     - Date (pandas.Timestamp): observation date
                     - ISO3 (str): country names
                     - Province (str): province/state/prefecture names
-                    - City (pandas.NA): NAs
+                    - City (str): NAs
                     - Confirmed (numpy.float64): the number of confirmed cases
                     - Fatal (numpy.float64): the number of fatal cases
                     - Recovered (numpy.float64): the number of recovered cases
@@ -93,7 +93,7 @@ class _CSJapan(_DataBase):
         cols = ["Date", "Prefecture", "Positive", "Tested", "Discharged", "Fatal"]
         df = self._provide(url=self.URL_P, suffix="_prefecture", columns=cols, date="Date", date_format="%Y-%m-%d")
         df[self.ISO3] = "JPN"
-        df[self.CITY] = pd.NA
+        df[self.CITY] = self.NA
         df[self.V_ONCE] = pd.NA
         df[self.V_FULL] = pd.NA
         df[self.VAC_BOOSTERS] = pd.NA

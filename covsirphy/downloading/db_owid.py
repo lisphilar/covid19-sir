@@ -46,8 +46,8 @@ class _OWID(_DataBase):
                 Columns
                     - Date (pandas.Timestamp): observation date
                     - ISO3 (str): country names
-                    - Province (pandas.NA): NAs
-                    - City (pandas.NA): NAs
+                    - Province (str): NAs
+                    - City (str): NAs
                     - Tests (numpy.float64): the number of tests
                     - Product (numpy.int64): vaccine product names
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
@@ -81,8 +81,8 @@ class _OWID(_DataBase):
         # Location (iso3/province)
         df = df.loc[~df[self.ISO3].str.contains("OWID_")]
         df = df.loc[~df[self.ISO3].isna()]
-        df[self.PROVINCE] = pd.NA
-        df[self.CITY] = pd.NA
+        df[self.PROVINCE] = self.NA
+        df[self.CITY] = self.NA
         return df
 
     def _province(self, country):
@@ -99,7 +99,7 @@ class _OWID(_DataBase):
                     - Date (pandas.Timestamp): observation date
                     - ISO3 (str): country names
                     - Province (str): province/state/prefecture names
-                    - City (pandas.NA): NAs
+                    - City (str): NAs
                     - Tests (numpy.float64): the number of tests
                     - Product (numpy.int64): vaccine product names
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
