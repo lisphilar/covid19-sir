@@ -37,6 +37,7 @@ class _GoogleOpenData(_DataBase):
         " Work in progress, https://goo.gle/covid-19-open-data"
     # Internal
     _MOBILITY_RAW_COLS = ["date", "location_key", *_MOBILITY_COLS_RAW]
+    _MOBILITY_RAW_COLS_WITH_ISO2 = ["date", "ISO2", *_MOBILITY_COLS_RAW]
 
     def _country(self):
         """Returns country-level data.
@@ -66,7 +67,7 @@ class _GoogleOpenData(_DataBase):
             df.to_csv(level_file, index=False)
         else:
             df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS, date="date", date_format="%Y-%m-%d")
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
         return df
@@ -106,7 +107,7 @@ class _GoogleOpenData(_DataBase):
             df.to_csv(level_file, index=False)
         else:
             df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS, date="date", date_format="%Y-%m-%d")
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
         return df.loc[df[self.ISO3] == iso3]
 
     def _city(self, country, province):
@@ -145,7 +146,7 @@ class _GoogleOpenData(_DataBase):
             df.to_csv(level_file, index=False)
         else:
             df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS, date="date", date_format="%Y-%m-%d")
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
         return df.loc[(df[self.ISO3] == iso3) & (df[self.PROVINCE] == province)]
 
     def _index_data(self):
