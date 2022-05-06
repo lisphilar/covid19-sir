@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from multiprocessing import cpu_count
-import dask.dataframe as dd
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
@@ -42,7 +40,7 @@ class _OWID(_DataBase):
         """Returns country-level data.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -94,7 +92,7 @@ class _OWID(_DataBase):
             country (str): country name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -119,7 +117,7 @@ class _OWID(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -137,10 +135,10 @@ class _OWID(_DataBase):
         return self._empty()
 
     def _empty(self):
-        """Return empty dask dataframe.
+        """Return empty dataframe.
 
         Returns:
-            dask.dataframe.DataFrame:
+            pandas.DataFrame:
                 Index
                     reset index
                 Columns
@@ -157,4 +155,4 @@ class _OWID(_DataBase):
         """
         columns = [
             self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
-        return dd.from_pandas(pd.DataFrame(columns=columns), npartitions=cpu_count())
+        return pd.DataFrame(columns=columns)
