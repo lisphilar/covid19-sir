@@ -287,9 +287,6 @@ class GIS(Term):
                 Columns
                     - (str): column defined by @country if @country is not None
         """
-        if layer != self._country or geo_info is None:
-            return geo_info
-        countries = data[layer].unique()
-        if set(geo_info).issubset(countries):
+        if layer != self._country or geo_info is None or set(geo_info).issubset(data[layer].unique()):
             return geo_info
         return self._to_iso3(geo_info)
