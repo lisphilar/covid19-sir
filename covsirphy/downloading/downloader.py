@@ -45,7 +45,7 @@ class DataDownloader(Term):
                 "owid": Our World In Data.
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns

@@ -37,7 +37,7 @@ class _CSJapan(_DataBase):
         """Returns country-level data.
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -74,7 +74,7 @@ class _CSJapan(_DataBase):
             country (str): country name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -110,7 +110,7 @@ class _CSJapan(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns

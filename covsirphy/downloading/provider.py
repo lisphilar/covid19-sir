@@ -32,7 +32,7 @@ class _DataProvider(Term):
             date_format (str): format of date column, like %Y-%m-%d
 
         Returns:
-            pandas.DataFrame
+            dask.dataframe.DataFrame
 
         Note:
             If @verbose is 0, no descriptions will be shown.
@@ -94,7 +94,7 @@ class _DataProvider(Term):
             date_format (str): format of date column, like %Y-%m-%d
 
         Returns:
-            pandas.DataFrame: downloaded data
+            dask.dataframe.DataFrame: downloaded data
         """
         kwargs = {
             "header": 0, "usecols": columns, "dtype": "object",

@@ -42,7 +42,7 @@ class _DataBase(Term):
             province (str or None): province/state/prefecture name or None
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -71,7 +71,7 @@ class _DataBase(Term):
         """Returns country-level data.
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -90,7 +90,7 @@ class _DataBase(Term):
             country (str): country name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -110,7 +110,7 @@ class _DataBase(Term):
             province (str): province/state/prefecture name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -133,7 +133,7 @@ class _DataBase(Term):
             date_format (str): format of date column, like %Y-%m-%d
 
         Returns:
-            pandas.DataFrame
+            dask.dataframe.DataFrame
 
         Note:
             File will be downloaded to '/{self._directory}/{title}{suffix}.csv'.
