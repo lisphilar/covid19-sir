@@ -93,6 +93,7 @@ class _GoogleOpenData(_DataBase):
         mobility_df = self._mobility()
         df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique())]
         df = df.merge(index_df, how="left", on="location_key")
+        df = df.loc[df[self.PROVINCE] != self.NA]
         return df.drop("location_key", axis=1)
 
     def _city(self, country, province):
@@ -126,6 +127,7 @@ class _GoogleOpenData(_DataBase):
         mobility_df = self._mobility()
         df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique())]
         df = df.merge(index_df, how="left", on="location_key")
+        df = df.loc[df[self.CITY] != self.NA]
         return df.drop("location_key", axis=1)
 
     def _index_data(self):
