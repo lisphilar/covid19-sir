@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from multiprocessing import cpu_count
+import dask.dataframe as dd
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
@@ -40,7 +42,7 @@ class _OWID(_DataBase):
         """Returns country-level data.
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -66,9 +68,9 @@ class _OWID(_DataBase):
         v_rec_cols = [
             "date", "iso_code", "total_vaccinations", "total_boosters", "people_vaccinated", "people_fully_vaccinated"]
         v_rec_df = self._provide(
-            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date="date", date_format="%Y-%m-%d")
+            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date=None, date_format="%Y-%m-%d")
         v_loc_df = self._provide(
-            url=URL_V_LOC, suffix="_vaccine_locations", columns=["iso_code", "vaccines"], date="date", date_format="%Y-%m-%d")
+            url=URL_V_LOC, suffix="_vaccine_locations", columns=["iso_code", "vaccines"], date=None, date_format="%Y-%m-%d")
         v_df = v_rec_df.merge(v_loc_df, how="left", on=self.ISO3)
         # Tests
         pcr_rec_cols = ["ISO code", "Date", "Daily change in cumulative total", "Cumulative total"]
@@ -92,7 +94,7 @@ class _OWID(_DataBase):
             country (str): country name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -107,8 +109,7 @@ class _OWID(_DataBase):
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return pd.DataFrame(columns=[
-            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
+        return self._empty()
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -118,7 +119,7 @@ class _OWID(_DataBase):
             province (str): province/state/prefecture name
 
         Returns:
-            pandas.DataFrame:
+            dask.dataframe.DataFrame:
                 Index
                     reset index
                 Columns
@@ -133,5 +134,27 @@ class _OWID(_DataBase):
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return pd.DataFrame(columns=[
-            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
+        return self._empty()
+
+    def _empty(self):
+        """Return empty dask dataframe.
+
+        Returns:
+            dask.dataframe.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation date
+                    - ISO3 (str): country names
+                    - Province (str): province/state/prefecture names
+                    - City (str): city names
+                    - Tests (numpy.float64): the number of tests
+                    - Product (numpy.int64): vaccine product names
+                    - Vaccinations (numpy.int64): cumulative number of vaccinations
+                    - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
+                    - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+        """
+        columns = [
+            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
+        return dd.from_pandas(pd.DataFrame(columns=columns), npartitions=cpu_count())
