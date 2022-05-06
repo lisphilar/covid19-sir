@@ -172,5 +172,7 @@ class _GoogleOpenData(_DataBase):
         URL_M = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
         df = self._provide(
             url=URL_M, suffix="", columns=["date", "location_key", *self._MOBILITY_COLS_RAW], date="date", date_format="%Y-%m-%d")
-        df.loc[:, self.MOBILITY_VARS] = df.loc[:, self.MOBILITY_VARS] + 100
+        # The following line with dask is equivalent with pandas to
+        # df.loc[:, self.MOBILITY_VARS] = df.loc[:, self.MOBILITY_VARS].fillna(0).astype("int64") + 100
+        df[self.MOBILITY_VARS] = df[self.MOBILITY_VARS].fillna(0).astype("int64") + 100
         return df

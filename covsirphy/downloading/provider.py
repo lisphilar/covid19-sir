@@ -5,7 +5,7 @@ import contextlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import urllib
-import pandas as pd
+import dask.dataframe as dd
 from covsirphy.util.term import Term
 
 
@@ -45,7 +45,7 @@ class _DataProvider(Term):
             print(self._stdout)
             self._stdout = None
         df = self._read_csv(url, columns, date=date, date_format=date_format)
-        df.to_csv(filename, index=False)
+        df.to_csv(filename, index=False, single_file=True, compute=False)
         return df
 
     @staticmethod
@@ -97,10 +97,10 @@ class _DataProvider(Term):
             pandas.DataFrame: downloaded data
         """
         kwargs = {
-            "header": 0, "usecols": columns,
+            "header": 0, "usecols": columns, "dtype": "object",
             "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
         }
         try:
-            return pd.read_csv(path, **kwargs)
+            return dd.read_csv(path, **kwargs)
         except urllib.error.HTTPError:
-            return pd.read_csv(path, storage_options={"User-Agent": "Mozilla/5.0"}, **kwargs)
+            return dd.read_csv(path, storage_options={"User-Agent": "Mozilla/5.0"}, **kwargs)
