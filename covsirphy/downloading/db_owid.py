@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from multiprocessing import cpu_count
+import dask.dataframe as dd
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading.db import _DataBase
@@ -107,8 +109,7 @@ class _OWID(_DataBase):
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return pd.DataFrame(columns=[
-            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
+        return self._empty()
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -133,5 +134,27 @@ class _OWID(_DataBase):
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return pd.DataFrame(columns=[
-            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
+        return self._empty()
+
+    def _empty(self):
+        """Return empty dask dataframe.
+
+        Returns:
+            dask.dataframe.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation date
+                    - ISO3 (str): country names
+                    - Province (str): province/state/prefecture names
+                    - City (str): city names
+                    - Tests (numpy.float64): the number of tests
+                    - Product (numpy.int64): vaccine product names
+                    - Vaccinations (numpy.int64): cumulative number of vaccinations
+                    - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
+                    - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+        """
+        columns = [
+            self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
+        return dd.from_pandas(pd.DataFrame(columns=columns), npartitions=cpu_count())
