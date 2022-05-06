@@ -5,6 +5,7 @@ import contextlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import urllib
+import warnings
 import pandas as pd
 from covsirphy.util.term import Term
 
@@ -38,13 +39,13 @@ class _DataProvider(Term):
             If @verbose is 0, no descriptions will be shown.
             If @verbose is 1 or larger, URL and database name will be shown.
         """
-        if not self._download_necessity(filename):
+        if not self.download_necessity(filename):
             with contextlib.suppress(ValueError):
-                return self._read_csv(filename, columns, date=date, date_format=date_format)
+                return self.read_csv(filename, columns, date=date, date_format=date_format)
         if self._stdout is not None:
             print(self._stdout)
             self._stdout = None
-        df = self._read_csv(url, columns, date=date, date_format=date_format)
+        df = self.read_csv(url, columns, date=date, date_format=date_format)
         df.to_csv(filename, index=False)
         return df
 
@@ -63,7 +64,7 @@ class _DataProvider(Term):
         date = datetime.fromtimestamp(m_time)
         return date.astimezone(timezone.utc).replace(tzinfo=None)
 
-    def _download_necessity(self, filename):
+    def download_necessity(self, filename):
         """
         Return whether we need to get the data from remote servers or not,
         comparing the last update of the files.
@@ -85,17 +86,18 @@ class _DataProvider(Term):
         return datetime.now() >= time_limit
 
     @staticmethod
-    def _read_csv(path, columns, date, date_format):
+    def read_csv(path, columns, date, date_format):
         """Read the CSV file and return as a dataframe.
 
         Args:
-            columns (list[str]): column names the dataset must have
+            columns (list[str] or None): column names the dataset must have
             date (str or None): column name of date
             date_format (str): format of date column, like %Y-%m-%d
 
         Returns:
             pandas.DataFrame: downloaded data
         """
+        warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
         kwargs = {
             "header": 0, "usecols": columns,
             "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
