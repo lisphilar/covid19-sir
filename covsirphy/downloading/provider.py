@@ -97,7 +97,7 @@ class _DataProvider(Term):
             dask.dataframe.DataFrame: downloaded data
         """
         kwargs = {
-            "header": 0, "usecols": columns, "dtype": "object",
+            "header": 0, "usecols": columns, "dtype": "object", "assume_missing": True,
             "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
         }
         try:
