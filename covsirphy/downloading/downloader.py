@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
 from covsirphy.downloading.db_cs_japan import _CSJapan
@@ -110,7 +111,10 @@ class DataDownloader(Term):
                 continue
             self._gis.register(
                 data=new_df, layers=self.LAYERS, date=self.DATE, citations=db.CITATION, convert_iso3=False)
-        return self._gis.layer(geo=(country, province))
+        try:
+            return self._gis.layer(geo=(country, province))
+        except NotRegisteredError:
+            raise SubsetNotFoundError(geo=(country, province)) from None
 
     def citations(self, variables=None):
         """

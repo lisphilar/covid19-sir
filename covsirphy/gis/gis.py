@@ -151,14 +151,14 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("No records have been registered yet.")
+            raise NotRegisteredError("GIS.register()", message="No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
         manager = _SubsetManager(layers=self._layers)
         df = manager.layer(data=data, geo=geo_converted)
         if df.empty and errors == "raise":
-            raise NotRegisteredError("No records have been registered at the layer yet.")
+            raise NotRegisteredError("GIS.register()", message="No records have been registered at the layer yet.")
         # Filter with date
         series = df[self._date].copy()
         start = self._ensure_date(start_date, default=series.min())
@@ -221,7 +221,7 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("No records have been registered yet.")
+            raise NotRegisteredError("GIS.register()", message="No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
