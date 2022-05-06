@@ -90,7 +90,7 @@ class _DataProvider(Term):
         """Read the CSV file and return as a dataframe.
 
         Args:
-            columns (list[str]): column names the dataset must have
+            columns (list[str] or None): column names the dataset must have
             date (str or None): column name of date
             date_format (str): format of date column, like %Y-%m-%d
 

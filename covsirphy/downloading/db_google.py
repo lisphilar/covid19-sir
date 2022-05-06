@@ -35,9 +35,6 @@ class _GoogleOpenData(_DataBase):
     CITATION = "O. Wahltinez and others (2020)," \
         " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
         " Work in progress, https://goo.gle/covid-19-open-data"
-    # Internal
-    _MOBILITY_RAW_COLS = ["date", "location_key", *_MOBILITY_COLS_RAW]
-    _MOBILITY_RAW_COLS_WITH_ISO2 = ["date", "ISO2", *MOBILITY_VARS]
 
     def _country(self):
         """Returns country-level data.
@@ -66,8 +63,7 @@ class _GoogleOpenData(_DataBase):
             df = df.drop("ISO2", axis=1).dropna(subset=["ISO3"]).rename(columns={"ISO3": self.ISO3})
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
         return df
@@ -106,8 +102,7 @@ class _GoogleOpenData(_DataBase):
             df = df.loc[(df[self.PROVINCE] != self.NA) & (df[self.CITY] == self.NA)]
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
         return df.loc[df[self.ISO3] == iso3]
 
     def _city(self, country, province):
@@ -145,8 +140,7 @@ class _GoogleOpenData(_DataBase):
             df = df.loc[df[self.CITY] != self.NA]
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(
-                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
         return df.loc[(df[self.ISO3] == iso3) & (df[self.PROVINCE] == province)]
 
     def _index_data(self):
@@ -192,6 +186,6 @@ class _GoogleOpenData(_DataBase):
         """
         URL_M = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
         df = self._provide(
-            url=URL_M, suffix="", columns=self._MOBILITY_RAW_COLS, date="date", date_format="%Y-%m-%d")
+            url=URL_M, suffix="", columns=["date", "location_key", *self._MOBILITY_COLS_RAW], date="date", date_format="%Y-%m-%d")
         df.loc[:, self.MOBILITY_VARS] = df.loc[:, self.MOBILITY_VARS] + 100
         return df.rename(columns={"location_key": "ISO2"})
