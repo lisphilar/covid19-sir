@@ -57,7 +57,7 @@ class _GoogleOpenData(_DataBase):
         """
         df = self._mobility()
         df = df.loc[df["location_key"].str.len() == 2].rename(columns={"location_key": "ISO2"})
-        df = df.merge(self._country_information()["ISO2", "ISO3"], how="left", on="ISO2")
+        df = df.merge(self._country_information()[["ISO2", "ISO3"]], how="left", on="ISO2")
         df = df.dropna(subset="ISO3").drop("ISO2", axis=1).rename(columns={"ISO3": self.ISO3})
         df = (df.set_index([self.DATE, self.ISO3]) + 100).reset_index()
         df[self.PROVINCE] = pd.NA
