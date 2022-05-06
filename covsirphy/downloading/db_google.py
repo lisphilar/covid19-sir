@@ -91,7 +91,7 @@ class _GoogleOpenData(_DataBase):
         index_df = index_df.loc[(index_df[self.ISO3] == iso3) & (~index_df[self.PROVINCE].isna())]
         # Mobility data
         mobility_df = self._mobility()
-        df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique().tolist())]
+        df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique().compute())]
         df = df.merge(index_df, how="left", on="location_key")
         return df.drop("location_key", axis=1)
 
