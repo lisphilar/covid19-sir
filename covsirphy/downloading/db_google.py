@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import country_converter as coco
 import pandas as pd
 from unidecode import unidecode
 from covsirphy.util.term import Term
@@ -87,7 +86,7 @@ class _GoogleOpenData(_DataBase):
                     - Mobility_residential: % to baseline in visits (places of residence)
                     - Mobility_workplaces: % to baseline in visits (places of work)
         """
-        iso3 = coco.convert(country, to="ISO3", not_found=self.NA)
+        iso3 = self._to_iso3(country)[0]
         index_df = self._index_data()
         index_df = index_df.loc[(index_df[self.ISO3] == iso3) & (~index_df[self.PROVINCE].isna())]
         # Mobility data
@@ -119,7 +118,7 @@ class _GoogleOpenData(_DataBase):
                     - Mobility_residential: % to baseline in visits (places of residence)
                     - Mobility_workplaces: % to baseline in visits (places of work)
         """
-        iso3 = coco.convert(country, to="ISO3", not_found=self.NA)
+        iso3 = self._to_iso3(country)[0]
         index_df = self._index_data()
         index_df = index_df.loc[
             (index_df[self.ISO3] == iso3) & (index_df[self.PROVINCE] == province) & (~index_df[self.CITY].isna())]
@@ -173,5 +172,5 @@ class _GoogleOpenData(_DataBase):
         URL_M = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
         df = self._provide(
             url=URL_M, suffix="", columns=["date", "location_key", *self._MOBILITY_COLS_RAW], date="date", date_format="%Y-%m-%d")
-        df = (df.set_index([self.DATE, "location_key"]) + 100).reset_index()
+        df.loc[:, self.MOBILITY_VARS] = df.loc[:, self.MOBILITY_VARS] + 100
         return df
