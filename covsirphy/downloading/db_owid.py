@@ -17,16 +17,16 @@ class _OWID(_DataBase):
     # Dictionary of column names
     COL_DICT = {
         # Vaccine
-        "date": Term.DATE,
         "iso_code": Term.ISO3,
+        "date": Term.DATE,
         "vaccines": Term.PRODUCT,
         "total_vaccinations": Term.VAC,
         "total_boosters": Term.VAC_BOOSTERS,
         "people_vaccinated": Term.V_ONCE,
         "people_fully_vaccinated": Term.V_FULL,
         # Tests
-        "Date": Term.DATE,
         "ISO code": Term.ISO3,
+        "Date": Term.DATE,
         "Cumulative total": Term.TESTS,
     }
     # Stdout when downloading (shown at most one time)
@@ -75,7 +75,8 @@ class _OWID(_DataBase):
         pcr_df = self._provide(url=URL_P_REC, suffix="", columns=pcr_rec_cols, date="Date", date_format="%Y-%m-%d")
         pcr_df["cumsum"] = pcr_df.groupby(self.ISO3)["Daily change in cumulative total"].cumsum()
         pcr_df = pcr_df.assign(tests=lambda x: x[self.TESTS].fillna(x["cumsum"]))
-        pcr_df.rename(columns={"tests": self.TESTS}).drop(["tests", "Daily change in cumulative total"], axis=1)
+        pcr_df.rename(columns={"tests": self.TESTS})
+        pcr_df = pcr_df.loc[:, [self.ISO3, self.DATE, self.TESTS]]
         # Combine data (vaccinations/tests)
         df = v_df.merge(pcr_df, how="outer", on=[self.ISO3, self.DATE])
         # Location (iso3/province)
