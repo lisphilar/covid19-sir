@@ -37,7 +37,7 @@ class _GoogleOpenData(_DataBase):
         " Work in progress, https://goo.gle/covid-19-open-data"
     # Internal
     _MOBILITY_RAW_COLS = ["date", "location_key", *_MOBILITY_COLS_RAW]
-    _MOBILITY_RAW_COLS_WITH_ISO2 = ["date", "ISO2", *_MOBILITY_COLS_RAW]
+    _MOBILITY_RAW_COLS_WITH_ISO2 = ["date", "ISO2", *MOBILITY_VARS]
 
     def _country(self):
         """Returns country-level data.
