@@ -45,7 +45,7 @@ class _DataProvider(Term):
             print(self._stdout)
             self._stdout = None
         df = self._read_csv(url, columns, date=date, date_format=date_format)
-        df.to_csv(filename, index=False, single_file=True, compute=False)
+        df.to_csv(filename, index=False, single_file=True)
         return df
 
     @staticmethod
