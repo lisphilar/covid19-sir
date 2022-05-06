@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from covsirphy import DataDownloader
+from covsirphy import DataDownloader, SubsetNotFoundError
 
 
 class TestDataDownloader(object):
@@ -20,3 +20,14 @@ class TestDataDownloader(object):
         downloader = DataDownloader()
         downloader.layer(country=country, province=province)
         assert downloader.citations()
+
+    @pytest.mark.parametrize(
+        "country, province",
+        [
+            ("UK", "London Region"),
+        ]
+    )
+    def test_download_error(self, country, province):
+        downloader = DataDownloader()
+        with pytest.raises(SubsetNotFoundError):
+            downloader.layer(country=country, province=province)

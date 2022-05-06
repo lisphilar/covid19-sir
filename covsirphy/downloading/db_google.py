@@ -35,6 +35,9 @@ class _GoogleOpenData(_DataBase):
     CITATION = "O. Wahltinez and others (2020)," \
         " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
         " Work in progress, https://goo.gle/covid-19-open-data"
+    # Internal
+    _MOBILITY_RAW_COLS = ["date", "location_key", *_MOBILITY_COLS_RAW]
+    _MOBILITY_RAW_COLS_WITH_ISO2 = ["date", "ISO2", *_MOBILITY_COLS_RAW]
 
     def _country(self):
         """Returns country-level data.
@@ -55,11 +58,16 @@ class _GoogleOpenData(_DataBase):
                     - Mobility_residential: % to baseline in visits (places of residence)
                     - Mobility_workplaces: % to baseline in visits (places of work)
         """
-        df = self._mobility()
-        df = df.loc[df["location_key"].str.len() == 2].rename(columns={"location_key": "ISO2"})
-        df = df.merge(self._country_information()[["ISO2", "ISO3"]], how="left", on="ISO2")
-        df = df.dropna(subset=["ISO3"]).drop("ISO2", axis=1).rename(columns={"ISO3": self.ISO3})
-        df = (df.set_index([self.DATE, self.ISO3]) + 100).reset_index()
+        level_file = self._filer.csv(title=f"{self.TITLE}_{self.COUNTRY}".lower())["path_or_buf"]
+        if self._provider.download_necessity(level_file):
+            df = self._mobility()
+            df = df.loc[df["ISO2"].str.len() == 2]
+            df = df.merge(self._country_information()[["ISO2", "ISO3"]], how="left", on="ISO2")
+            df = df.drop("ISO2", axis=1).dropna(subset=["ISO3"]).rename(columns={"ISO3": self.ISO3})
+            df.to_csv(level_file, index=False)
+        else:
+            df = self._provider.read_csv(
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
         return df
@@ -88,13 +96,19 @@ class _GoogleOpenData(_DataBase):
         """
         iso3 = self._to_iso3(country)[0]
         index_df = self._index_data()
-        index_df = index_df.loc[(index_df[self.ISO3] == iso3) & (~index_df[self.PROVINCE].isna())]
         # Mobility data
-        mobility_df = self._mobility()
-        df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique())]
-        df = df.merge(index_df, how="left", on="location_key")
-        df = df.loc[df[self.PROVINCE] != self.NA]
-        return df.drop("location_key", axis=1)
+        level_file = self._filer.csv(title=f"{self.TITLE}_{self.PROVINCE}".lower())["path_or_buf"]
+        if self._provider.download_necessity(level_file):
+            df = self._mobility()
+            df = df.loc[df["ISO2"].str.len() != 2]
+            df = df.merge(index_df, how="left", on="ISO2")
+            df = df.drop("ISO2", axis=1).dropna(subset=["ISO3"]).rename(columns={"ISO3": self.ISO3})
+            df = df.loc[(df[self.PROVINCE] != self.NA) & (df[self.CITY] == self.NA)]
+            df.to_csv(level_file, index=False)
+        else:
+            df = self._provider.read_csv(
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
+        return df.loc[df[self.ISO3] == iso3]
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -121,14 +135,19 @@ class _GoogleOpenData(_DataBase):
         """
         iso3 = self._to_iso3(country)[0]
         index_df = self._index_data()
-        index_df = index_df.loc[
-            (index_df[self.ISO3] == iso3) & (index_df[self.PROVINCE] == province) & (~index_df[self.CITY].isna())]
         # Mobility data
-        mobility_df = self._mobility()
-        df = mobility_df.loc[mobility_df["location_key"].isin(index_df["location_key"].unique())]
-        df = df.merge(index_df, how="left", on="location_key")
-        df = df.loc[df[self.CITY] != self.NA]
-        return df.drop("location_key", axis=1)
+        level_file = self._filer.csv(title=f"{self.TITLE}_{self.CITY}".lower())["path_or_buf"]
+        if self._provider.download_necessity(level_file):
+            df = self._mobility()
+            df = df.loc[df["ISO2"].str.len() != 2]
+            df = df.merge(index_df, how="left", on="ISO2")
+            df = df.drop("ISO2", axis=1).dropna(subset=["ISO3"]).rename(columns={"ISO3": self.ISO3})
+            df = df.loc[df[self.CITY] != self.NA]
+            df.to_csv(level_file, index=False)
+        else:
+            df = self._provider.read_csv(
+                level_file, columns=self._MOBILITY_RAW_COLS_WITH_ISO2, date="date", date_format="%Y-%m-%d")
+        return df.loc[(df[self.ISO3] == iso3) & (df[self.PROVINCE] == province)]
 
     def _index_data(self):
         """Returns index data.
@@ -142,7 +161,7 @@ class _GoogleOpenData(_DataBase):
                     reset index
                 Columns
                     - location key (str): Google location keys
-                    - ISO3 (str): country names
+                    - ISO2 (str): ISO2 codes
                     - Province (str): province/state/prefecture names
                     - City (str): city names
         """
@@ -152,7 +171,7 @@ class _GoogleOpenData(_DataBase):
         df = df.rename(columns={"subregion1_name": self.PROVINCE, "iso_3166_1_alpha_3": self.ISO3})
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.NA).apply(unidecode)
         df[self.CITY] = df["subregion2_name"].fillna(df["locality_name"]).fillna(self.NA).apply(unidecode)
-        return df.fillna(self.NA).loc[:, ["location_key", self.ISO3, self.PROVINCE, self.CITY]]
+        return df.fillna(self.NA).loc[:, ["location_key", self.ISO3, self.PROVINCE, self.CITY]].rename(columns={"location_key": "ISO2"})
 
     def _mobility(self):
         """Returns mobility data.
@@ -163,7 +182,7 @@ class _GoogleOpenData(_DataBase):
                     reset index
                 Columns
                     - Date (pandas.Timestamp): observation date
-                    - location key (str): Google location keys
+                    - ISO2 (str): ISO2 codes
                     - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
                     - Mobility_parks: % to baseline in visits (parks etc.)
                     - Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
@@ -173,6 +192,6 @@ class _GoogleOpenData(_DataBase):
         """
         URL_M = "https://storage.googleapis.com/covid19-open-data/v3/mobility.csv"
         df = self._provide(
-            url=URL_M, suffix="", columns=["date", "location_key", *self._MOBILITY_COLS_RAW], date="date", date_format="%Y-%m-%d")
+            url=URL_M, suffix="", columns=self._MOBILITY_RAW_COLS, date="date", date_format="%Y-%m-%d")
         df.loc[:, self.MOBILITY_VARS] = df.loc[:, self.MOBILITY_VARS] + 100
-        return df
+        return df.rename(columns={"location_key": "ISO2"})
