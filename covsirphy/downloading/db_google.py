@@ -63,7 +63,7 @@ class _GoogleOpenData(_DataBase):
             df = df.drop("ISO2", axis=1).dropna(subset=["ISO3"]).rename(columns={"ISO3": self.ISO3})
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date=self.DATE, date_format="%Y-%m-%d")
         df[self.PROVINCE] = pd.NA
         df[self.CITY] = pd.NA
         return df
@@ -102,7 +102,7 @@ class _GoogleOpenData(_DataBase):
             df = df.loc[(df[self.PROVINCE] != self.NA) & (df[self.CITY] == self.NA)]
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date=self.DATE, date_format="%Y-%m-%d")
         return df.loc[df[self.ISO3] == iso3]
 
     def _city(self, country, province):
@@ -140,7 +140,7 @@ class _GoogleOpenData(_DataBase):
             df = df.loc[df[self.CITY] != self.NA]
             df.to_csv(level_file, index=False)
         else:
-            df = self._provider.read_csv(level_file, columns=None, date="date", date_format="%Y-%m-%d")
+            df = self._provider.read_csv(level_file, columns=None, date=self.DATE, date_format="%Y-%m-%d")
         return df.loc[(df[self.ISO3] == iso3) & (df[self.PROVINCE] == province)]
 
     def _index_data(self):
