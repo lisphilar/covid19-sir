@@ -66,7 +66,7 @@ class _OWID(_DataBase):
         v_rec_cols = [
             "date", "iso_code", "total_vaccinations", "total_boosters", "people_vaccinated", "people_fully_vaccinated"]
         v_rec_df = self._provide(
-            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date=None, date_format="%Y-%m-%d")
+            url=URL_V_REC, suffix="_vaccine", columns=v_rec_cols, date="date", date_format="%Y-%m-%d")
         v_loc_df = self._provide(
             url=URL_V_LOC, suffix="_vaccine_locations", columns=["iso_code", "vaccines"], date=None, date_format="%Y-%m-%d")
         v_df = v_rec_df.merge(v_loc_df, how="left", on=self.ISO3)
