@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pandas as pd
 import pytest
 from covsirphy import GIS, NotRegisteredError, SubsetNotFoundError
 
@@ -41,6 +42,27 @@ class TestGIS(object):
             df = system.layer(geo=geo, start_date="01Jan2021", end_date=end_date, variables=None)
             assert set(df.columns) == {"Country", "Province", "Date", "Positive", "Tested", "Discharged", "Fatal"}
             assert len(df) == length
+
+    @pytest.mark.parametrize("geo, on", [(None, "01Jan2022"), ("Japan", None), ("Japan", "01Feb2022")])
+    def test_to_geo_pandas(self, c_df, p_df, geo, on):
+        with pytest.raises(ValueError):
+            GIS(layers=["Province"], country="Country").to_geopandas()
+        with pytest.raises(ValueError):
+            GIS(layers=["Country", "Province"], country=None).to_geopandas()
+        system = GIS(layers=["Country", "Province"], country="Country", date="Date")
+        system.register(data=c_df, layers=["Country"], date="date", citations="Country-level")
+        system.register(data=p_df, layers=["Country", "Prefecture"], date="date", citations="Prefecture-level")
+        gdf = system.to_geopandas(geo=geo, on=on)
+        if geo is None:
+            assert "Province" not in gdf.columns
+            assert gdf["Country"].unique() == ["JPN"]
+        else:
+            assert "Country" not in gdf.columns
+            assert gdf["Province"].nunique() == 47
+        if on is None:
+            assert gdf["Date"].max() == system.layer(geo=geo)["Date"].max()
+        else:
+            assert pd.to_datetime(gdf["Date"].unique()) == [pd.to_datetime(on)]
 
     @pytest.mark.parametrize(
         "geo, end_date, length",
