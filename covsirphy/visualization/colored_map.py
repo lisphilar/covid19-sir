@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import requests
 from unidecode import unidecode
-from covisirphy.util.error import deprecate
+from covsirphy.util.error import deprecate
 from covsirphy.visualization.vbase import VisualizeBase
 
 
