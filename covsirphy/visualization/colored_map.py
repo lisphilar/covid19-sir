@@ -17,7 +17,7 @@ from covsirphy.visualization.vbase import VisualizeBase
 
 class ColoredMap(VisualizeBase):
     """
-    Create global map with pandas.DataFrame.
+    Deprecated. Create global map with pandas.DataFrame.
 
     Args:
         filename (str or None): filename to save the figure or None (display)

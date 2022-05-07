@@ -13,7 +13,7 @@ from covsirphy.gis.choropleth import _ChoroplethMap
 
 
 class GIS(Term):
-    """Class of geographic information system.
+    """Class of geographic information system to handle geospatial time-series data.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
@@ -86,7 +86,7 @@ class GIS(Term):
         """Register new data.
 
         Args:
-            data (pandas.DataFrame): local dataset or None (un-available)
+            data (pandas.DataFrame): new data
                 Index
                     reset index
                 Columns

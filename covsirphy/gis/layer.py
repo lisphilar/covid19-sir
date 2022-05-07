@@ -90,7 +90,7 @@ class _LayerAdjuster(Term):
         """Register new data.
 
         Args:
-            data (pandas.DataFrame): local dataset or None (un-available)
+            data (pandas.DataFrame): new data
                 Index
                     reset index
                 Columns
