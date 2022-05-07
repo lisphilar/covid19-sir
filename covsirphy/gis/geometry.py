@@ -56,7 +56,7 @@ class _Geometry(Term):
         gdf = self._natural_earth(title=natural_earth or self._natural_earth_parse_title(iso3=iso3))
         right_on = self.ISO3 if iso3 is None else "NAME"
         gdf = self._df.merge(gdf, how="left", left_on=self._layer, right_on=right_on)
-        return gdf.loc[:, [*self._df.columns.tolist(), "geometry"]]
+        return gdf.rename(columns={f"{self.ISO3}_x": self.ISO3}).loc[:, [*self._df.columns.tolist(), "geometry"]]
 
     @staticmethod
     def _natural_earth_parse_title(iso3):

@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import geopandas as gpd
+from matplotlib import pyplot as plt
+from covsirphy.util.argument import find_args
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.term import Term
 from covsirphy.gis.subset import _SubsetManager
 from covsirphy.gis.layer import _LayerAdjuster
 from covsirphy.gis.geometry import _Geometry
+from covsirphy.gis.choropleth import _ChoroplethMap
 
 
 class GIS(Term):
@@ -89,7 +93,7 @@ class GIS(Term):
                     - columns defined by @layers
                     - column defined by @date
                     - columns defined by @variables
-            layers (list[str]): layers of the data
+            layers (list[str] or None): layers of the data or None (as the same GIS(layer))
             date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
@@ -212,6 +216,26 @@ class GIS(Term):
             data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
         iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
         return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
+
+    def choropleth(self, variable, filename, title="Choropleth map", logscale=True, **kwargs):
+        """Create choropleth map.
+
+        Args:
+            variable (str): variable name to show
+            filename (str or None): filename to save the figure or None (display)
+            title (str): title of the map
+            logscale (bool): whether convert the value to log10 scale values or not
+            kwargs: keyword arguments of the following classes and methods.
+                - covsirphy.GIS.to_geopandas(),
+                - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
+                - pandas.DataFrame.plot()
+        """
+        gdf = self.to_geopandas(**find_args(GIS.to_geopandas, **kwargs))
+        focused_layer = [layer for layer in self._layers if layer in gdf.columns][0]
+        gdf.rename(columns={focused_layer: "Location", variable: "Variable"}, inplace=True)
+        with _ChoroplethMap(filename=filename, **find_args(plt.savefig, **kwargs)) as cm:
+            cm.title = str(title)
+            cm.plot(data=gdf, logscale=logscale, **find_args(gpd.GeoDataFrame.plot, **kwargs))
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.

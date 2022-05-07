@@ -97,7 +97,7 @@ class _LayerAdjuster(Term):
                     - columns defined by @data_layers
                     - columns defined by @date
                     - columns defined by @variables
-            layers (list[str]): layers of the data
+            layers (list[str] or None): layers of the data or None (as the same _LayerAdjuster(layer))
             date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
@@ -135,7 +135,7 @@ class _LayerAdjuster(Term):
             loc_df[loc_df[self._ID].isna()].index.astype("str")
         self._loc_df = loc_df.reset_index()[[self._ID, *self._layers]]
         # Records
-        df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1).dropna()
+        df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1)
         if variables is not None:
             columns = [self._ID, self._date, *self._ensure_list(target=variables, name="variables")]
             df = df.loc[:, columns]
