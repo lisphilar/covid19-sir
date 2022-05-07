@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import requests
 from unidecode import unidecode
+from covisirphy.util.error import deprecate
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -23,6 +24,7 @@ class ColoredMap(VisualizeBase):
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
+    @deprecate(old="ColoredMap()", new="GIS.choropleth()", version="2.24.0-kappa")
     def __init__(self, filename=None, **kwargs):
         super().__init__(filename=filename, **kwargs)
         self._to_iso3 = partial(coco.convert, to="ISO3", not_found=None)
