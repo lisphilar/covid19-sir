@@ -44,7 +44,7 @@ class TestGIS(object):
             assert len(df) == length
 
     @pytest.mark.parametrize("geo, on", [(None, "01Jan2022"), ("Japan", None), ("Japan", "01Feb2022")])
-    def test_to_geo_pandas(self, c_df, p_df, geo, on):
+    def test_to_geo_pandas_choropleth(self, c_df, p_df, geo, on, imgfile):
         with pytest.raises(ValueError):
             GIS(layers=["Province"], country="Country").to_geopandas()
         with pytest.raises(ValueError):
@@ -63,6 +63,8 @@ class TestGIS(object):
             assert gdf["Date"].max() == system.layer(geo=geo)["Date"].max()
         else:
             assert pd.to_datetime(gdf["Date"].unique()) == [pd.to_datetime(on)]
+        # Choropleth map
+        system.choropleth(geo=geo, on=on, variable="Positive", filename=imgfile)
 
     @pytest.mark.parametrize(
         "geo, end_date, length",
