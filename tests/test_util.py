@@ -28,7 +28,7 @@ class TestFiler(object):
         filer.geojson("records")
         filer.csv("records", index=True)
         # Check files
-        assert len(filer.files(ext=None)) == 4
+        assert len(filer.files(ext=None)) == 5
         assert len(filer.files(ext="png")) == 1
         assert len(filer.files(ext="jpg")) == 1
         assert len(filer.files(ext="json")) == 1
