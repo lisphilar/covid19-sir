@@ -10,7 +10,7 @@ class Filer(object):
     Produce filenames and manage files.
 
     Args:
-        directory (str): top directory name
+        directory (list[str] or tuple(str) or str): top directory name(s)
         prefix (str or None): prefix of the filenames or None (no prefix)
         suffix (str or None): suffix of the filenames or None (no suffix)
         numbering (str or None): "001", "01", "1" or None (no numbering)
@@ -24,12 +24,14 @@ class Filer(object):
         {"filename": "<absolute path>/output/jpn_01_records.jpg"}
         >>> filer.json("backup")
         {"filename": "<absolute path>/output/jpn_01_backup.json"}
+        >>> filer.geojson("geometry", "driver": "GeoJson")
+        {"filename": "<absolute path>/output/jpn_01_geometry.geojson", "driver": "GeoJson"}
         >>> filer.csv("records", index=True)
         {"path_or_buf": "<absolute path>/output/jpn_01_records.csv", index: True}
     """
 
     def __init__(self, directory, prefix=None, suffix=None, numbering=None):
-        self._dir_path = Path(directory).resolve()
+        self._dir_path = Path(*directory if isinstance(directory, (list, tuple)) else directory).resolve()
         self._pre = "" if prefix is None else f"{prefix}_"
         self._suf = "" if suffix is None else f"_{suffix}"
         # Create the directory
@@ -117,6 +119,20 @@ class Filer(object):
             dict[str, str]: absolute filename (key: 'filename') and kwargs
         """
         filename = self._register(title=title, ext="json")
+        return {"filename": filename, **kwargs}
+
+    def geojson(self, title, **kwargs):
+        """
+        Create GeoJSON filename and register it.
+
+        Args:
+            title (str): title of the filename, like 'records'
+            kwargs: keyword arguments to be included in the output
+
+        Returns:
+            dict[str, str]: absolute filename (key: 'filename') and kwargs
+        """
+        filename = self._register(title=title, ext="geojson")
         return {"filename": filename, **kwargs}
 
     def csv(self, title, **kwargs):

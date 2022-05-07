@@ -5,6 +5,7 @@ from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.term import Term
 from covsirphy.gis.subset import _SubsetManager
 from covsirphy.gis.layer import _LayerAdjuster
+from covsirphy.gis.geometry import _Geometry
 
 
 class GIS(Term):
@@ -115,7 +116,7 @@ class GIS(Term):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             variables (list[str] or None): list of variables to add or None (all available columns)
-            errors (str): 'raise' or 'coerce'
+            errors (str): whether raise errors or not, 'raise' or 'coerce'
 
         Raises:
             TypeError: @geo has un-expected types
@@ -171,6 +172,47 @@ class GIS(Term):
         df = df.groupby([*self._layers, self._date], dropna=True).first()
         return df.reset_index().convert_dtypes()
 
+    def to_geopandas(self, geo=None, on=None, variables=None, directory=None, natural_earth=None):
+        """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
+            on (str or None): the date, like 22Jan2020, or None (the last date of each location)
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None (["input", "natural_earth"])
+            natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
+
+        Raises:
+            ValueError: country layer is not included in the dataset
+
+        Returns:
+            geopandas.GeoDataFrame:
+                Index:
+                    - reset index
+                Columns:
+                    - (str): layer focused on with @gis and GIS.layer()
+                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)
+                    - geometry: geometric information
+
+        Note:
+            GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson
+            https://www.naturalearthdata.com/
+            https://github.com/nvkelso/natural-earth-vector
+            Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)
+        """
+        if self._country not in self._layers:
+            raise ValueError("This cannot be done because country layer is not included in the dataset.")
+        df = self.layer(geo=geo, variables=variables)
+        if on is None:
+            df = df.sort_values(self._date, ascending=True).groupby(self._layers).last().reset_index()
+        else:
+            df = df.loc[df[self._date] == self._ensure_date(on)]
+        focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
+        geometry = _Geometry(
+            data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
+        iso3 = None if focused_layer == self._country else self._to_iso3(df[self._country].unique().tolist()[0])
+        return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
+
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
 
@@ -179,7 +221,7 @@ class GIS(Term):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             variables (list[str] or None): list of variables to add or None (all available columns)
-            errors (str): 'raise' or 'coerce'
+            errors (str): whether raise errors or not, 'raise' or 'coerce'
 
         Raises:
             TypeError: @geo has un-expected types
