@@ -114,7 +114,7 @@ __all__ = [
     "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
     # visualization
-    "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
+    "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # gis
     "GIS",
@@ -141,7 +141,7 @@ __all__ = [
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
-    "CountryData",
+    "CountryData", "ColoredMap",
 ]
 
 # Show exceptions in better format if used from command line

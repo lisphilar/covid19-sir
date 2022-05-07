@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import geopandas as gpd
+from matplotlib import pyplot as plt
+from covsirphy.util.argument import find_args
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.term import Term
 from covsirphy.gis.subset import _SubsetManager
 from covsirphy.gis.layer import _LayerAdjuster
+from covsirphy.gis.geometry import _Geometry
+from covsirphy.gis.choropleth import _ChoroplethMap
 
 
 class GIS(Term):
@@ -88,7 +93,7 @@ class GIS(Term):
                     - columns defined by @layers
                     - column defined by @date
                     - columns defined by @variables
-            layers (list[str]): layers of the data
+            layers (list[str] or None): layers of the data or None (as the same GIS(layer))
             date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
@@ -115,7 +120,7 @@ class GIS(Term):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             variables (list[str] or None): list of variables to add or None (all available columns)
-            errors (str): 'raise' or 'coerce'
+            errors (str): whether raise errors or not, 'raise' or 'coerce'
 
         Raises:
             TypeError: @geo has un-expected types
@@ -171,6 +176,67 @@ class GIS(Term):
         df = df.groupby([*self._layers, self._date], dropna=True).first()
         return df.reset_index().convert_dtypes()
 
+    def to_geopandas(self, geo=None, on=None, variables=None, directory=None, natural_earth=None):
+        """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
+            on (str or None): the date, like 22Jan2020, or None (the last date of each location)
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None (["input", "natural_earth"])
+            natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
+
+        Raises:
+            ValueError: country layer is not included in the dataset
+
+        Returns:
+            geopandas.GeoDataFrame:
+                Index:
+                    - reset index
+                Columns:
+                    - (str): layer focused on with @gis and GIS.layer()
+                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)
+                    - geometry: geometric information
+
+        Note:
+            GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson
+            https://www.naturalearthdata.com/
+            https://github.com/nvkelso/natural-earth-vector
+            Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)
+        """
+        if self._country not in self._layers:
+            raise ValueError("This cannot be done because country layer is not included in the dataset.")
+        df = self.layer(geo=geo, variables=variables)
+        if on is None:
+            df = df.sort_values(self._date, ascending=True).groupby(self._layers).last().reset_index()
+        else:
+            df = df.loc[df[self._date] == self._ensure_date(on)]
+        focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
+        geometry = _Geometry(
+            data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
+        iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
+        return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
+
+    def choropleth(self, variable, filename, title="Choropleth map", logscale=True, **kwargs):
+        """Create choropleth map.
+
+        Args:
+            variable (str): variable name to show
+            filename (str or None): filename to save the figure or None (display)
+            title (str): title of the map
+            logscale (bool): whether convert the value to log10 scale values or not
+            kwargs: keyword arguments of the following classes and methods.
+                - covsirphy.GIS.to_geopandas(),
+                - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
+                - pandas.DataFrame.plot()
+        """
+        gdf = self.to_geopandas(**find_args(GIS.to_geopandas, **kwargs))
+        focused_layer = [layer for layer in self._layers if layer in gdf.columns][0]
+        gdf.rename(columns={focused_layer: "Location", variable: "Variable"}, inplace=True)
+        with _ChoroplethMap(filename=filename, **find_args(plt.savefig, **kwargs)) as cm:
+            cm.title = str(title)
+            cm.plot(data=gdf, logscale=logscale, **find_args(gpd.GeoDataFrame.plot, **kwargs))
+
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
 
@@ -179,7 +245,7 @@ class GIS(Term):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             variables (list[str] or None): list of variables to add or None (all available columns)
-            errors (str): 'raise' or 'coerce'
+            errors (str): whether raise errors or not, 'raise' or 'coerce'
 
         Raises:
             TypeError: @geo has un-expected types
