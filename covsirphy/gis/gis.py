@@ -210,7 +210,7 @@ class GIS(Term):
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
         geometry = _Geometry(
             data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
-        iso3 = None if focused_layer == self._country else self._to_iso3(df[self._country].unique().tolist()[0])
+        iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
         return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
