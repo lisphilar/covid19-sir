@@ -96,8 +96,8 @@ class RegressionHandler(Term):
 
         Note:
             All tools and names are
-            - "elapsed": alculate elapsed days from the last change point of indicators
-            - "log": add log-transforemd indeciator values
+            - "elapsed": accurate elapsed days from the last change point of indicators
+            - "log": add log-transformed indiciator values
             - "delay": add delayed (lagged) variables with @delay (must not be None)
 
         Note:
@@ -110,7 +110,7 @@ class RegressionHandler(Term):
         if engineering_tools is None or "delay" in engineering_tools:
             self._delay_candidates = self._convert_delay_value(delay)
         else:
-            raise NotIncludedError(name="engineering_tools", value="delay")
+            raise NotIncludedError(key_name="delay", dict_name="engineering_tools")
         # Tools of feature engineering
         tool_dict = {
             "elapsed": (self._engineer.add_elapsed, {}),
@@ -216,6 +216,6 @@ class RegressionHandler(Term):
 
         Args:
             metric (str): metric name, refer to covsirphy.Evaluator.score()
-            fileaname (str): filename of the figure or None (display)
+            filename (str): filename of the figure or None (display)
         """
         return self._reg_dict[self._best].pred_actual_plot(metric=metric, filename=filename)

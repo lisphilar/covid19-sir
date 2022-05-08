@@ -145,10 +145,10 @@ class DataEngineer(Term):
         Args:
             address (list[str] or str): list/str to specify location, like ["Japan", "Tokyo"] when layers=["Country", "Prefecture"]
             col_dict (dict[str, str]): dictionary of column names
-                confirmed (str): column of the number of confirmed cases
-                fatal (str): column of the number of fatal cases
-                recovered (str): column of the number of recovered cases
-                tests (str): column of the number of tests
+                - confirmed (str): column of the number of confirmed cases
+                - fatal (str): column of the number of fatal cases
+                - recovered (str): column of the number of recovered cases
+                - tests (str): column of the number of tests
             kwargs: Keyword arguments of the following
                 recovery_period (int): expected value of recovery period [days]
                 interval (int): expected update interval of the number of recovered cases [days]
