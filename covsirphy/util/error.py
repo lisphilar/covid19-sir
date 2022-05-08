@@ -250,25 +250,6 @@ class UnExpectedReturnValueError(ValueError):
         return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.message}."
 
 
-class NotIncludedError(ValueError):
-    """
-    Error when an expected value was not included.
-
-    Args:
-        name (str): argument name
-        value (object): value user applied or None (will not be shown)
-        message (str or None): the other messages
-    """
-
-    def __init__(self, name, value, message=None):
-        self.name = str(name)
-        self.value = "" if value is None else f" ({value})"
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        return f"Expected value {self.value} was not included in {self.name}. {self.message}."
-
-
 class DBLockedError(ValueError):
     """
     Error when a database has been locked not as expected.
@@ -301,3 +282,46 @@ class NotDBLockedError(ValueError):
 
     def __str__(self):
         return f"{self.name} should be locked, but NOT locked.{self.message}"
+
+
+class _BaseException(Exception):
+    """Basic class of exception.
+
+    Args:
+        message (str): main message of error, should be set in child classes
+        details (str or None): details of error
+    """
+
+    def __init__(self, message, details=None):
+        self._message = str(message)
+        self._details = "" if details is None else f" {details}."
+
+    def __str__(self):
+        return f"{self._message}. {self._details}"
+
+
+class AlreadyCalledError(_BaseException):
+    """Error when a method has already been called and cannot be called any more.
+
+    Args:
+        name (str): the name of the method
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"{name} has already been called and cannot be called any more"
+        super().__init__(message=message, details=details)
+
+
+class NotIncludedError(_BaseException, ValueError):
+    """Error when a necessary key was not included in a dictionary.
+
+    Args:
+        key_name (str): key name
+        dict_name (str): dictionary name
+        details (str or None): details of error
+    """
+
+    def __init__(self, key_name, dict_name, details=None):
+        message = f"'{key_name}' was not included in the dictionary '{dict_name}'"
+        super().__init__(message=message, details=details)
