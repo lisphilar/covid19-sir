@@ -16,8 +16,9 @@ from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
+from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
+from covsirphy.util.error import AlreadyCalledError, NotIncludedError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -37,6 +38,8 @@ from covsirphy.gis.gis import GIS
 from covsirphy.downloading.downloader import DataDownloader
 # engineering
 from covsirphy.engineering.engineer import DataEngineer
+# eda
+from covsirphy.eda.eda import EDA
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -112,7 +115,8 @@ __all__ = [
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "UnExpectedReturnValueError", "NotIncludedError", "DBLockedError", "NotDBLockedError",
+    "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
+    "AlreadyCalledError", "NotIncludedError",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
@@ -122,6 +126,8 @@ __all__ = [
     "DataDownloader",
     # engineer
     "DataEngineer",
+    # eda
+    "EDA",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
