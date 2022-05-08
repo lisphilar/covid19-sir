@@ -93,7 +93,7 @@ class GIS(Term):
                     - columns defined by @layers
                     - column defined by @date
                     - columns defined by @variables
-            layers (list[str] or None): layers of the data or None (as the same GIS(layer))
+            layers (list[str] or None): layers of the data or None (as the same as covsirphy.GIS(layer))
             date (str): column name of observation dates of the data
             variables (list[str] or None): list of variables to add or None (all available columns)
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
@@ -199,6 +199,9 @@ class GIS(Term):
                     - geometry: geometric information
 
         Note:
+            Regarding @geo argument, please refer to covsirphy.GIS.layer().
+
+        Note:
             GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson
             https://www.naturalearthdata.com/
             https://github.com/nvkelso/natural-earth-vector
@@ -226,11 +229,11 @@ class GIS(Term):
             title (str): title of the map
             logscale (bool): whether convert the value to log10 scale values or not
             kwargs: keyword arguments of the following classes and methods.
-                - covsirphy.GIS.to_geopandas(),
+                - covsirphy.GIS.to_geopandas() except for @variables,
                 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
                 - pandas.DataFrame.plot()
         """
-        gdf = self.to_geopandas(**find_args(GIS.to_geopandas, **kwargs))
+        gdf = self.to_geopandas(variables=[variable], **find_args(GIS.to_geopandas, **kwargs))
         focused_layer = [layer for layer in self._layers if layer in gdf.columns][0]
         gdf.rename(columns={focused_layer: "Location", variable: "Variable"}, inplace=True)
         with _ChoroplethMap(filename=filename, **find_args(plt.savefig, **kwargs)) as cm:
