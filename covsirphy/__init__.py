@@ -13,12 +13,12 @@ from covsirphy.__citation__ import __citation__
 # util
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
-from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
+from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
-from covsirphy.util.error import AlreadyCalledError, NotIncludedError
+from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -79,6 +79,7 @@ from covsirphy.regression.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
+from covsirphy.analysis.dynamics import Dynamics
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.param_tracker import ParamTracker
@@ -112,11 +113,11 @@ def get_citation():
 __all__ = [
     # util
     "StopWatch", "deprecate", "find_args", "Term", "Filer", "Evaluator",
-    "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
+    "SubsetNotFoundError", "ScenarioNotFoundError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
-    "AlreadyCalledError", "NotIncludedError",
+    "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
@@ -142,7 +143,7 @@ __all__ = [
     # automl
     "AutoMLHandler",
     # analysis
-    "ExampleData", "Scenario", "ModelValidator", "DataHandler", "PhaseTracker",
+    "Dynamics", "ExampleData", "Scenario", "ModelValidator", "DataHandler", "PhaseTracker",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",

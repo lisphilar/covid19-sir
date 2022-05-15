@@ -162,7 +162,7 @@ class ODEHandler(Term):
         else:
             with Pool(self._n_jobs) as p:
                 scores = p.map(calc_f, divisors)
-        score_dict = {k: v for (k, v) in zip(divisors, scores)}
+        score_dict = dict(zip(divisors, scores))
         # Return the best tau value
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=self._metric)]
         self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
