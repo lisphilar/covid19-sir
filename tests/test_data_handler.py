@@ -77,7 +77,7 @@ class TestDataHandler(object):
             dhl.records_main()
         dhl.register(jhu_data=jhu_data)
         main_df = dhl.records_main()
-        assert set(main_df.columns) == set([Term.DATE, Term.C, Term.CI, Term.F, Term.R, Term.S])
+        assert set(main_df.columns) == {Term.DATE, Term.C, Term.CI, Term.F, Term.R, Term.S}
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_timepoints(self, jhu_data, country):
