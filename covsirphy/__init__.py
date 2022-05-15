@@ -143,12 +143,12 @@ __all__ = [
     # automl
     "AutoMLHandler",
     # analysis
-    "Dynamics", "Scenario", "ModelValidator", "DataHandler", "PhaseTracker",
+    "Dynamics", "Scenario", "DataHandler", "PhaseTracker",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
-    "CountryData", "ColoredMap", "ExampleData",
+    "CountryData", "ColoredMap", "ExampleData", "ModelValidator",
 ]
 
 # Show exceptions in better format if used from command line

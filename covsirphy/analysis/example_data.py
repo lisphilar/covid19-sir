@@ -13,7 +13,7 @@ from covsirphy.ode.ode_handler import ODEHandler
 
 class ExampleData(JHUData):
     """
-    Example dataset as a child class of JHUData.
+    Deprecated. Example dataset as a child class of JHUData.
 
     Args:
         clean_df (pandas.DataFrame or None): cleaned data

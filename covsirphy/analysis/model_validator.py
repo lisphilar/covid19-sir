@@ -4,6 +4,7 @@
 from itertools import chain
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.analysis.scenario import Scenario
@@ -12,7 +13,7 @@ from covsirphy.analysis.example_data import ExampleData
 
 class ModelValidator(Term):
     """
-    Evaluate ODE models performance as follows.
+    Deprecated. Evaluate ODE models performance as follows.
     1. Select model parameter sets randomly
     2. Set user-defined/random phase duration
     3. Perform simulation with a specified ODE model
@@ -32,6 +33,7 @@ class ModelValidator(Term):
         Estimators know tau values before parameter estimation.
     """
 
+    @deprecate(old="ModelValidator()", version="2.24.0-kappa")
     def __init__(self, tau=1440, n_trials=8, step_n=None, seed=0):
         self._tau = self._ensure_tau(tau)
         self._n_trials = self._ensure_natural_int(n_trials, name="n_trials")
