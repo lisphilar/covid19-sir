@@ -1333,7 +1333,7 @@ class Scenario(Term):
         if self._model is None:
             raise UnExecutedError(
                 "Scenario.estimate() or Scenario.add()",
-                message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
+                details=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Create training/test dataset
         tracker = self._tracker(name=name)
         param_df = tracker.track().set_index(self.DATE)[self._model.PARAMETERS].dropna()
@@ -1418,7 +1418,7 @@ class Scenario(Term):
         if self._model is None:
             raise UnExecutedError(
                 "Scenario.estimate() or Scenario.add()",
-                message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
+                details=f"Note that we need to specify @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Create X/Y
         try:
             X = self._data.records(main=True, extras=True).set_index(self.DATE)
