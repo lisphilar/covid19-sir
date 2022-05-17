@@ -23,8 +23,8 @@ class TestDynamics(object):
         assert dynamics.get(date="01May2020", variable="rho") == rho_eg * 3
         # Check simulation, tracking, summary
         assert set(model.VARIABLES).issubset(dynamics.simulate(ffill=True, model_specific=True))
-        assert dynamics.track(simulated=True, ffill=False).isna().any().any()
-        summary_df = dynamics.summary(simulated=False, ffill=True)
+        assert dynamics.track(ffill=False).isna().any().any()
+        summary_df = dynamics.summary(ffill=True)
         assert not summary_df.isna().any().any()
         assert len(summary_df) == 3
         # S-R trend analysis after simulation
