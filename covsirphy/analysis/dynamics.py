@@ -357,7 +357,7 @@ class Dynamics(Term):
             return self._model.convert(sim_df, tau=self._tau).convert_dtypes()
         return sim_df.convert_dtypes()
 
-    def track(self, simulated=False, ffill=True):
+    def track(self, ffill=True):
         """Track data with all dates.
 
         Args
@@ -386,9 +386,6 @@ class Dynamics(Term):
         """
         df = self._all_df.reset_index()
         parameters = self._model.PARAMETERS[:]
-        if simulated:
-            sim_df = self.simulate(ffill=ffill)
-            df = df.drop(self._SIFR, axis=1).join(sim_df, how="left")
         if ffill:
             df.loc[:, parameters] = df.loc[:, parameters].ffill()
         df[self.C] = df[[self.CI, self.F, self.R]].sum()
