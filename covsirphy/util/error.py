@@ -116,44 +116,6 @@ class ScenarioNotFoundError(KeyError):
         return f"{self.name} scenario is not registered."
 
 
-class UnExecutedError(AttributeError, NameError, ValueError):
-    """
-    Error when we have unexecuted methods that we need to run in advance.
-
-    Args:
-        method_name (str): method name to run in advance
-        message (str or None): the other messages
-    """
-
-    def __init__(self, method_name, message=None):
-        self.method_name = method_name
-        self.message = "." if message is None else f" {message}."
-
-    def __str__(self):
-        return f"Please execute {self.method_name} in advance{self.message}"
-
-
-class NotRegisteredError(UnExecutedError):
-    """
-    Error when no records have been registered yet.
-    """
-    pass
-
-
-class NotRegisteredMainError(UnExecutedError):
-    """
-    Error when main datasets were not registered.
-    """
-    pass
-
-
-class NotRegisteredExtraError(UnExecutedError):
-    """
-    Error when extra datasets were not registered.
-    """
-    pass
-
-
 class PCRIncorrectPreconditionError(KeyError):
     """
     Error when checking preconditions in the PCR data.
@@ -313,7 +275,7 @@ class AlreadyCalledError(_BaseException):
         super().__init__(message=message, details=details)
 
 
-class NotIncludedError(_BaseException, ValueError):
+class NotIncludedError(_BaseException):
     """Error when a necessary key was not included in a dictionary.
 
     Args:
@@ -325,3 +287,54 @@ class NotIncludedError(_BaseException, ValueError):
     def __init__(self, key_name, dict_name, details=None):
         message = f"'{key_name}' was not included in the dictionary '{dict_name}'"
         super().__init__(message=message, details=details)
+
+
+class NAFoundError(_BaseException):
+    """Error when NA values are included un-expectedly.
+
+    Args:
+        name (str): name of the target
+        value (str or None): value of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value=None, details=None):
+        message = f"'{name}' has NAs un-expectedly"
+        if value is not None:
+            message += ", '{value}'"
+        super().__init__(message=message, details=details)
+
+
+class UnExecutedError(_BaseException):
+    """
+    Error when we have unexecuted methods that we need to run in advance.
+
+    Args:
+        name (str): method name to run in advance
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"Please execute {name} in advance"
+        super().__init__(message=message, details=details)
+
+
+class NotRegisteredError(UnExecutedError):
+    """
+    Error when no records have been registered yet.
+    """
+    pass
+
+
+class NotRegisteredMainError(UnExecutedError):
+    """
+    Error when main datasets were not registered.
+    """
+    pass
+
+
+class NotRegisteredExtraError(UnExecutedError):
+    """
+    Error when extra datasets were not registered.
+    """
+    pass

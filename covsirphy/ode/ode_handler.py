@@ -85,8 +85,7 @@ class ODEHandler(Term):
         """
         if self._tau is None:
             raise UnExecutedError(
-                "ODEHandler.estimate_tau()",
-                message="or specify tau when creating an instance of ODEHandler")
+                "ODEHandler.estimate_tau()", details="Or specify tau when creating an instance of ODEHandler")
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         combs = itertools.product(self._model.PARAMETERS, self._info_dict.items())
@@ -162,7 +161,7 @@ class ODEHandler(Term):
         else:
             with Pool(self._n_jobs) as p:
                 scores = p.map(calc_f, divisors)
-        score_dict = {k: v for (k, v) in zip(divisors, scores)}
+        score_dict = dict(zip(divisors, scores))
         # Return the best tau value
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=self._metric)]
         self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
@@ -266,7 +265,7 @@ class ODEHandler(Term):
         if self._tau is None:
             raise UnExecutedError(
                 "ODEHandler.estimate_tau()",
-                message="or specify tau when creating an instance of ODEHandler")
+                details="Or specify tau when creating an instance of ODEHandler")
         # Arguments of _ParamEstimator
         check_kwargs = {"timeout": 180, "timeout_iteration": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
         check_kwargs.update(check_dict or {})

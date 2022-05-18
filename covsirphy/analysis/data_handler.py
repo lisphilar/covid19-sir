@@ -329,12 +329,11 @@ class DataHandler(Term):
         if self._main_df.empty:
             raise NotRegisteredMainError(".register(jhu_data)")
         if self._extra_df.empty:
-            raise NotRegisteredExtraError(
-                ".register(jhu_data, extras=[...])", message="with extra datasets")
+            raise NotRegisteredExtraError(".register(jhu_data, extras=[...]) with extra datasets")
         # Get all subset
         df = self._extra_df.copy()
         # Remove columns which is included in the main datasets
-        unused_set = set(self._main_df.columns) - set([self.DATE])
+        unused_set = set(self._main_df.columns) - {self.DATE}
         df = df.loc[:, ~df.columns.isin(unused_set)]
         # Data cleaning
         df = df.set_index(self.DATE).resample("D").last()

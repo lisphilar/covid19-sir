@@ -92,7 +92,8 @@ class DataEngineer(Term):
                 kind_dict[kind](**find_args(kind_dict[kind], **kwargs))
             except UnExecutedError:
                 raise UnExecutedError(
-                    f"{self._date} column was not a column of date. Please run DataEngineer.clean(kinds=['convert_date'])") from None
+                    "DataEngineer.clean(kinds=['convert_date'])",
+                    details=f"Column {self._date} was not a column of date") from None
         self._df = cleaner.all()
 
     def transform(self, new_dict=None, **kwargs):
