@@ -129,7 +129,7 @@ class TrendDetector(Term):
         """
         # Set algorithm class
         algo_kwargs = {"jump": 1, "min_size": self._min_size}
-        algo_kwargs.update(kwargs)
+        algo_kwargs |= kwargs
         algo_dict = {
             "Pelt-rbf": (rpt.Pelt, {"model": "rbf"}),
             "Binseg-rbf": (rpt.Binseg, {"model": "rbf"}),
@@ -138,7 +138,7 @@ class TrendDetector(Term):
             "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
         }
         self._ensure_selectable(target=algo, candidates=list(algo_dict.keys()), name="algo")
-        algo_kwargs.update(algo_dict[algo][1])
+        algo_kwargs |= algo_dict[algo][1]
         algorithm = algo_dict[algo][0](**find_args(algo_dict[algo][0], **algo_kwargs))
         # Run trend analysis
         finder = _SRChange(sr_df=self._record_df)
