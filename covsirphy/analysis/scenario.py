@@ -452,11 +452,11 @@ class Scenario(Term):
             self._ensure_date_order(start, end, name="end_date")
         tracker.define_phase(start, end)
         # Set parameter values
-        if None not in {self._model, self._tau}:
-            if param_dict := {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}:
-                param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
-                param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
-                tracker.set_ode(self._model, param_df, self._tau)
+        if None not in {self._model, self._tau} and (set(pre_param_dict) & set(self._model.PARAMETERS)):
+            param_dict = {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
+            param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
+            param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
+            tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
         self[name] = tracker
         return self
