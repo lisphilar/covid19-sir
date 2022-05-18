@@ -5,7 +5,7 @@ from datetime import timedelta
 import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_handler import ODEHandler
@@ -13,7 +13,7 @@ from covsirphy.ode.ode_handler import ODEHandler
 
 class ExampleData(JHUData):
     """
-    Example dataset as a child class of JHUData.
+    Deprecated. Example dataset as a child class of JHUData.
 
     Args:
         clean_df (pandas.DataFrame or None): cleaned data
@@ -33,6 +33,7 @@ class ExampleData(JHUData):
         start_date (str): start date, like 22Jan2020
     """
 
+    @deprecate(old="ExampleData()", new="Dynamics.from_sample()", version="2.24.0-kappa")
     def __init__(self, clean_df=None, tau=1440, start_date="22Jan2020"):
         if clean_df is None:
             clean_df = pd.DataFrame(columns=self.COLUMNS)

@@ -431,7 +431,7 @@ class PhaseUnit(Term):
             record_df = self._record_df.copy()
         if record_df.empty:
             raise UnExecutedError(
-                "PhaseUnit.record_df = ...", message="or specify @record_df argument")
+                "PhaseUnit.record_df = ...", details="or specify @record_df argument")
         self._ensure_dataframe(record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Check dates
         sta = self._ensure_date(self.start_date)

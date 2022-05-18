@@ -192,6 +192,5 @@ class _ParamEstimator(Term):
         # Check all max values are in allowance
         allowance0, allowance1 = allowance
         ok_list = [
-            (a * allowance0 <= p) and (p <= a * allowance1)
-            for (a, p) in zip(self._max_dict.values(), sim_max_dict.values())]
+            a * allowance0 <= p <= a * allowance1 for (a, p) in zip(self._max_dict.values(), sim_max_dict.values())]
         return all(ok_list)
