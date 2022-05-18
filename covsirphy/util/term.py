@@ -307,7 +307,7 @@ class Term(object):
         )
 
     @staticmethod
-    def _ensure_float(target, name="value"):
+    def _ensure_float(target, name="value", value_range=(0, None)):
         """
         Ensure a float value.
         If the value is a float value and the type was string,
@@ -316,15 +316,23 @@ class Term(object):
         Args:
             target (float or str): value to ensure
             name (str): argument name of the value
+            value_range(tuple(int or None, int or None)): value range, None means un-specified
 
         Returns:
             float: as-is the target
         """
         s = f"@{name} must be a float value, but {target} was applied"
         try:
-            return float(target)
+            value = float(target)
         except ValueError:
             raise ValueError(f"{s} and not converted to float.") from None
+        # Minimum
+        if value_range[0] is not None and value < value_range[0]:
+            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {value} was applied.")
+        # Maximum
+        if value_range[1] is not None and value > value_range[1]:
+            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {value} was applied.")
+        return value
 
     @classmethod
     def _ensure_date(cls, target, name="date", default=None):
@@ -631,6 +639,6 @@ class Term(object):
 
 
 class Word(Term):
-    @ deprecate(old="Word()", new="Term()")
+    @deprecate(old="Word()", new="Term()")
     def __init__(self):
         super().__init__()

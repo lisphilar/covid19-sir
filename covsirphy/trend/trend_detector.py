@@ -3,6 +3,7 @@
 
 import pandas as pd
 import ruptures as rpt
+from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
@@ -17,12 +18,9 @@ class TrendDetector(Term):
             Index:
                 reset index
             Column:
-                - Date(pd.Timestamp): Observation date
-                - Confirmed(int): the number of confirmed cases
-                - Infected(int): the number of currently infected cases
-                - Fatal(int): the number of fatal cases
+                - Date (pd.Timestamp): Observation date
                 - Recovered (int): the number of recovered cases
-                - Susceptible(int): the number of susceptible cases
+                - Susceptible (int): the number of susceptible cases
         area (str): area name (used in the figure title)
         min_size (int): minimum value of phase length [days], over 2
 
@@ -33,7 +31,7 @@ class TrendDetector(Term):
     """
 
     def __init__(self, data, area="Selected area", min_size=7):
-        self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
+        self._ensure_dataframe(data, name="data", columns=[self.DATE, self.S, self.R])
         # Index: Date, Columns: the number cases
         self._record_df = data.groupby(self.DATE).last()
         # Minimum size of phases
@@ -141,7 +139,7 @@ class TrendDetector(Term):
         }
         self._ensure_selectable(target=algo, candidates=list(algo_dict.keys()), name="algo")
         algo_kwargs.update(algo_dict[algo][1])
-        algorithm = algo_dict[algo][0](**algo_kwargs)
+        algorithm = algo_dict[algo][0](**find_args(algo_dict[algo][0], **algo_kwargs))
         # Run trend analysis
         finder = _SRChange(sr_df=self._record_df)
         points = finder.run(algorithm=algorithm, **algo_kwargs)

@@ -97,12 +97,7 @@ class SIR(ModelBase):
         rho_series = 0 - n * s.diff() / t.diff() / s / i
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i
-        # Calculate quantile
-        _dict = {
-            k: tuple(v.quantile(quantiles).clip(0, 1))
-            for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
-        }
-        return _dict
+        return {k: tuple(v.quantile(quantiles).clip(0, 1)) for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])}
 
     @classmethod
     @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
@@ -202,7 +197,7 @@ class SIR(ModelBase):
                 "1/beta [day]": int(tau / 24 / 60 / self.rho),
                 "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
             }
-        except ZeroDivisionError:
+        except (ZeroDivisionError, ValueError):
             return {p: None for p in self.DAY_PARAMETERS}
 
     @classmethod

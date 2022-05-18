@@ -156,14 +156,14 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("GIS.register()", message="No records have been registered yet.")
+            raise NotRegisteredError("GIS.register()", details="No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
         manager = _SubsetManager(layers=self._layers)
         df = manager.layer(data=data, geo=geo_converted)
         if df.empty and errors == "raise":
-            raise NotRegisteredError("GIS.register()", message="No records have been registered at the layer yet.")
+            raise NotRegisteredError("GIS.register()", details="No records have been registered at the layer yet.")
         # Filter with date
         series = df[self._date].copy()
         start = self._ensure_date(start_date, default=series.min())
@@ -171,7 +171,7 @@ class GIS(Term):
         df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
         if df.empty and errors == "raise":
             raise NotRegisteredError(
-                f"No records have been registered at the layer yet from {start_date} to {end_date}.")
+                "GIS.register()", details=f"No records have been registered at the layer yet from {start_date} to {end_date}.")
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first()
         return df.reset_index().convert_dtypes()

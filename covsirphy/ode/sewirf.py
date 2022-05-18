@@ -228,7 +228,7 @@ class SEWIRF(ModelBase):
                 "1/beta3 [day]": int(tau / 24 / 60 / self.rho3),
                 "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
             }
-        except ZeroDivisionError:
+        except (ZeroDivisionError, ValueError):
             return {p: None for p in self.DAY_PARAMETERS}
 
     @classmethod
