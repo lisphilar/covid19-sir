@@ -467,7 +467,7 @@ class PhaseUnit(Term):
         est_dict = estimator.to_dict()
         self.info_dict[self.RT] = est_dict.pop(self.RT)
         # Get parameter values and tau value
-        ode_set = set([*self._model.PARAMETERS, self.TAU])
+        ode_set = {*self._model.PARAMETERS, self.TAU}
         ode_dict = {
             k: v for (k, v) in est_dict.items() if k in ode_set}
         self._ode_dict.update(ode_dict)
