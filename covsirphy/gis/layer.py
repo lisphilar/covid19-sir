@@ -3,6 +3,7 @@
 
 import contextlib
 import pandas as pd
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -32,13 +33,13 @@ class _LayerAdjuster(Term):
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
         # Layers of location information
-        self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
+        self._layers = Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence()
         if len(set(self._layers)) != len(self._layers):
             raise ValueError(f"@layer has duplicates, {self._layers}")
         # Date column
         self._date = str(date)
         # Verbosity
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
         # Location data
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
@@ -68,8 +69,7 @@ class _LayerAdjuster(Term):
         if variables is None:
             return df
         all_variables = df.columns.tolist()
-        sel_variables = self._ensure_list(
-            target=variables, candidates=set(all_variables) - set(identifiers), name="variables")
+        sel_variables = Validator(variables, "variables").sequence(candidates=set(all_variables) - set(identifiers))
         return df.loc[:, [*self._layers, self._date, *sel_variables]]
 
     def citations(self, variables=None):
@@ -83,8 +83,8 @@ class _LayerAdjuster(Term):
             list[str]: citation list
         """
         all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self._date)]
-        columns = self._ensure_list(target=variables or all_columns, candidates=all_columns, name="variables")
-        return self.flatten([v for (k, v) in self._citation_dict.items() if k in columns], unique=True)
+        columns = Validator(variables, "variables").sequence(default=all_columns, candidates=all_columns)
+        return Validator([v for k, v in self._citation_dict.items() if k in columns]).sequence(flatten=True, unique=True)
 
     def register(self, data, layers=None, date="Date", variables=None, citations=None, convert_iso3=True, **kwargs):
         """Register new data.
@@ -110,11 +110,10 @@ class _LayerAdjuster(Term):
         Returns:
             covsirphy.LayerAdjuster: self
         """
-        data_layers = self._ensure_list(target=layers or self._layers, name="layers")
+        data_layers = Validator(layers, "layers").sequence(default=self._layers)
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
-        self._ensure_dataframe(target=data, name="data", columns=[*data_layers, date, *(variables or [])])
-        df = data.copy()
+        df = Validator(data, "data").dataframe(columns=[*data_layers, date, *(variables or [])])
         # Convert date type
         df.rename(columns={date: self._date}, inplace=True)
         df[self._date] = pd.to_datetime(df[self._date], **kwargs).dt.round("D")
@@ -137,14 +136,14 @@ class _LayerAdjuster(Term):
         # Records
         df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1)
         if variables is not None:
-            columns = [self._ID, self._date, *self._ensure_list(target=variables, name="variables")]
+            columns = [self._ID, self._date, *Validator(variables, "variables").sequence()]
             df = df.loc[:, columns]
         rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns)))
         rec_df = rec_df.set_index([self._ID, self._date]).combine_first(df.set_index([self._ID, self._date]))
         self._rec_df = rec_df.reset_index()
         # Citations
-        new_citations = self._ensure_list(
-            [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), name="citations")
+        new_citations = Validator(
+            [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), "citations").sequence()
         citation_dict = {col: self._citation_dict.get(col, []) + new_citations for col in variables or df.columns}
         self._citation_dict.update(citation_dict)
         return self
