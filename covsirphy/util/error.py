@@ -225,7 +225,7 @@ class SubsetNotFoundError(_BaseException):
                  start_date=None, end_date=None, date=None, details=None):
         self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
-        message = f"No records{self.message} in {self.area}{self.date} were found."
+        message = f"No records in {self.area}{self.date} were found."
         super().__init__(message=message, details=details)
 
     @staticmethod
