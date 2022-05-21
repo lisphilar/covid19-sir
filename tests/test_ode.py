@@ -119,11 +119,9 @@ class TestODEHandler(object):
         population = population_data.value("Japan")
         subset_df = jhu_data.subset("Japan", population=population)
         # Test
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        specialized_df = model.specialize(subset_df, population)
-        model.restore(specialized_df)
-        model.convert(subset_df, tau=1440)
         model.convert(subset_df, tau=None)
+        converted_df = model.convert(subset_df, tau=1440)
+        model.restore(converted_df)
         with pytest.raises(NotImplementedError):
             model.guess(1, 2)
         with pytest.raises(NotImplementedError):
