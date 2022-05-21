@@ -57,17 +57,17 @@ class DataLoader(Term):
         except TypeError as e:
             raise TypeError(f"@directory should be a path-like object, but {directory} was applied.") from e
         self.dir_path.mkdir(parents=True, exist_ok=True)
-        # Dictionary of filenames to save remote datasets
         file_dict = {
             "covid19dh": "covid19dh.csv",
             "owid": "ourworldindata.csv",
             "google": "google_cloud_platform.csv",
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
+        } | {
+            k: self.dir_path.joinpath((basename_dict or {}).get(k, v))
+            for (k, v) in file_dict.items()
         }
-        file_dict.update(
-            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in file_dict.items()}
-        )
+
         self._file_dict = file_dict.copy()
         # Verbosity
         self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
