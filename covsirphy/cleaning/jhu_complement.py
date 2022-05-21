@@ -5,6 +5,7 @@ import functools
 import warnings
 import numpy as np
 from datetime import timedelta
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -24,7 +25,7 @@ class JHUDataComplementHandler(Term):
 
     Note:
         To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
-        Status names with high socres will be prioritized when status code will be determined.
+        Status names with high scores will be prioritized when status code will be determined.
         Status code: 'fully complemented recovered data' and so on as noted in self.run() docstring.
     """
     # Column names
@@ -47,24 +48,16 @@ class JHUDataComplementHandler(Term):
 
     def __init__(self, recovery_period, interval=2, max_ignored=100,
                  max_ending_unupdated=14, upper_limit_days=90,
-                 lower_limit_days=7, upper_percentage=0.5,
-                 lower_percentage=0.5):
+                 lower_limit_days=7, upper_percentage=0.5, lower_percentage=0.5):
         # Arguments for complement
-        self.recovery_period = self._ensure_natural_int(
-            recovery_period, name="recovery_period")
-        self.interval = self._ensure_natural_int(interval, name="interval")
-        self.max_ignored = self._ensure_natural_int(
-            max_ignored, name="max_ignored")
-        self.max_ending_unupdated = self._ensure_natural_int(
-            max_ending_unupdated, name="max_ending_unupdated")
-        self.upper_limit_days = self._ensure_natural_int(
-            upper_limit_days, name="upper_limit_days")
-        self.lower_limit_days = self._ensure_natural_int(
-            lower_limit_days, name="lower_limit_days")
-        self.upper_percentage = self._ensure_float(
-            upper_percentage, name="upper_percentage")
-        self.lower_percentage = self._ensure_float(
-            lower_percentage, name="lower_percentage")
+        self.recovery_period = Validator(recovery_period, "recovery_period").int(value_range=(1, None))
+        self.interval = Validator(interval, "interval").int(value_range=(0, None))
+        self.max_ignored = Validator(max_ignored, "max_ignored").int(value_range=(1, None))
+        self.max_ending_unupdated = Validator(max_ending_unupdated, "max_ending_unupdated").int(value_range=(0, None))
+        self.upper_limit_days = Validator(upper_limit_days, "upper_limit_days").int(value_range=(0, None))
+        self.lower_limit_days = Validator(lower_limit_days, "lower_limit_days").int(value_range=(0, None))
+        self.upper_percentage = Validator(upper_percentage, "upper_percentage").float(value_range=(0, 100))
+        self.lower_percentage = Validator(lower_percentage, "lower_percentage").float(value_range=(0, 100))
         self.complement_dict = None
 
     def _protocol(self):
@@ -131,8 +124,7 @@ class JHUDataComplementHandler(Term):
             - 'fully complemented recovered data'
             - 'partially complemented recovered data'
         """
-        self._ensure_dataframe(
-            subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
+        Validator(subset_df, "subset_df").dataframe(columns=[self.DATE, *self.RAW_COLS])
         # Initialize
         after_df = subset_df.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
@@ -299,7 +291,7 @@ class JHUDataComplementHandler(Term):
         # Whether complement is necessary or not
         if df[self.R].max() > self.max_ignored:
             # Necessary if sum of recovered is more than 99%
-            # or less than 1% of sum of recovered minus infected when outbreaking
+            # or less than 1% of sum of recovered minus infected when out-breaking
             sel_C1 = df[self.C] > self.max_ignored
             sel_R1 = df[self.R] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0

@@ -4,8 +4,9 @@
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import numpy as np
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
+from covsirphy.visualization.vbase import find_args
 from covsirphy.visualization.line_plot import LinePlot
 
 
@@ -46,7 +47,7 @@ class TrendPlot(LinePlot):
                     - the other arguments will be assumed as predicted values for y-axis
             actual_col (str): column name for y-axis
         """
-        self._ensure_dataframe(data, name="data", columns=[actual_col])
+        Validator(data, "data").dataframe(columns=[actual_col])
         predicted_cols = [col for col in data.columns if col != actual_col]
         self._variables = data.columns.tolist()
         # Scatter plot (actual values)
@@ -64,7 +65,7 @@ class TrendPlot(LinePlot):
 
         Args:
             xlabel (str or None): x-label
-            xlim (tuple(int or float, int or float)): limit of x dimain
+            xlim (tuple(int or float, int or float)): limit of x domain
 
         Note:
             When xlim[0] is None and lower x-axis limit determined by matplotlib automatically is lower than 0,

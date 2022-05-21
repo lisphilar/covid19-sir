@@ -4,7 +4,7 @@
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import Term, UnExecutedError, find_args
+from covsirphy import Term, UnExecutedError, Validator
 from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF, ODEHandler
 
 
@@ -80,7 +80,7 @@ class TestODEHandler(object):
         param_dict = model.EXAMPLE[Term.PARAM_DICT].copy()
         param_dict["sigma"] = 0
         param_dict["kappa"] = 0
-        model_ins = model(population=1_000_000, **find_args(model, **param_dict))
+        model_ins = model(population=1_000_000, **Validator(param_dict).kwargs(functions=model, default=None))
         assert str(model_ins)
         assert model_ins.calc_r0() is None
         assert model_ins.calc_days_dict(tau=1440)
@@ -108,20 +108,6 @@ class TestODEHandler(object):
         with pytest.raises(NotImplementedError):
             model_ins.calc_days_dict(1440)
 
-    @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
-    def test_deprecated_class_methods(self, model, jhu_data, population_data):
-        # Set-up
-        population = population_data.value("Japan")
-        subset_df = jhu_data.subset("Japan", population=population)
-        taufree_df = model.convert(subset_df, tau=1440).reset_index()
-        # Test
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        model.tau_free(subset_df, population, tau=None)
-        model.tau_free(subset_df, population, tau=1440)
-        specialized_df = model.specialize(subset_df, population)
-        model.restore(specialized_df)
-        model.param_range(taufree_df, population)
-
     @pytest.mark.parametrize("model", [SIRFV])
     def test_deprecated(self, model):
         with pytest.raises(NotImplementedError):
@@ -133,11 +119,9 @@ class TestODEHandler(object):
         population = population_data.value("Japan")
         subset_df = jhu_data.subset("Japan", population=population)
         # Test
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        specialized_df = model.specialize(subset_df, population)
-        model.restore(specialized_df)
-        model.convert(subset_df, tau=1440)
         model.convert(subset_df, tau=None)
+        converted_df = model.convert(subset_df, tau=1440)
+        model.restore(converted_df)
         with pytest.raises(NotImplementedError):
             model.guess(1, 2)
         with pytest.raises(NotImplementedError):
