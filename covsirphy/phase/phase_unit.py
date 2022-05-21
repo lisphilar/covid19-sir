@@ -4,6 +4,7 @@
 import pandas as pd
 from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.estimator import Estimator
@@ -64,7 +65,7 @@ class PhaseUnit(Term):
         self._ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date
         self._end_date = end_date
-        self._population = self._ensure_population(population)
+        population = Validator(population, "population").int(value_range=(1, None))
         # Summary of information
         self.info_dict = {
             self.START: start_date,
@@ -87,6 +88,27 @@ class PhaseUnit(Term):
         self._record_df = pd.DataFrame()
         self.y0_dict = {}
         self._estimator = None
+
+    @classmethod
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str or pandas.Timestamp): previous date
+            following_date (str or pandas.Timestamp): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date > @following_date
+        """
+        previous_date = cls._ensure_date(previous_date)
+        following_date = cls._ensure_date(following_date)
+        p_str = previous_date.strftime(cls.DATE_FORMAT)
+        f_str = following_date.strftime(cls.DATE_FORMAT)
+        if previous_date <= following_date:
+            return None
+        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
 
     def __str__(self):
         if self._id_dict is None:
@@ -170,6 +192,54 @@ class PhaseUnit(Term):
         date = self._ensure_date(date)
         return sta <= date <= end
 
+    @classmethod
+    def _ensure_date(cls, target, name="date", default=None):
+        """
+        Ensure the format of the string.
+
+        Args:
+            target (str or pandas.Timestamp): string to ensure
+            name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
+
+        Returns:
+            pandas.Timestamp or None: as-is the target or default value
+        """
+        if target is None:
+            return default
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
+        try:
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
+        except ValueError as e:
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
+
+    @classmethod
+    def tomorrow(cls, date_str):
+        """
+        Tomorrow of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: tomorrow
+        """
+        return cls.date_change(date_str, days=1)
+
+    @classmethod
+    def yesterday(cls, date_str):
+        """
+        Yesterday of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: yesterday
+        """
+        return cls.date_change(date_str, days=-1)
+
     @property
     def id_dict(self):
         """
@@ -198,7 +268,7 @@ class PhaseUnit(Term):
 
     def del_id(self):
         """
-        Delete identifers.
+        Delete identifiers.
 
         Returns:
             covsirphy.PhaseUnit: self
@@ -262,7 +332,7 @@ class PhaseUnit(Term):
     @ tau.setter
     def tau(self, value):
         if self._ode_dict[self.TAU] is None:
-            self._ode_dict[self.TAU] = self._ensure_tau(value)
+            self._ode_dict[self.TAU] = Validator(value, "tau").tau(default=None)
             return
         raise AttributeError(
             f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
@@ -346,13 +416,13 @@ class PhaseUnit(Term):
             covsirphy.PhaseUnit: self
         """
         # Tau value
-        tau = self._ensure_tau(tau) or self._ode_dict[self.TAU]
+        tau = Validator(tau, "tau").tau(default=None) or self._ode_dict[self.TAU]
         # Model
         model = model or self._model
         if model is None:
             self._ode_dict[self.TAU] = tau
             return self
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._model = Validator(model, "model").subclass(ModelBase)
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
         param_dict = self._ode_dict.copy()
@@ -394,6 +464,41 @@ class PhaseUnit(Term):
         self._ensure_dataframe(df, name="df", columns=self.NLOC_COLUMNS)
         self._record_df = df.copy()
         self.set_y0(df)
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
 
     def _model_is_registered(self):
         """
@@ -467,7 +572,7 @@ class PhaseUnit(Term):
         est_dict = estimator.to_dict()
         self.info_dict[self.RT] = est_dict.pop(self.RT)
         # Get parameter values and tau value
-        ode_set = set([*self._model.PARAMETERS, self.TAU])
+        ode_set = {*self._model.PARAMETERS, self.TAU}
         ode_dict = {
             k: v for (k, v) in est_dict.items() if k in ode_set}
         self._ode_dict.update(ode_dict)

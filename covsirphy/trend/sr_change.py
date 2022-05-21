@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
 
@@ -27,7 +28,7 @@ class _SRChange(Term):
     """
 
     def __init__(self, sr_df):
-        self._ensure_dataframe(sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
+        Validator(sr_df, name="sr_df").dataframe(time_index=True, columns=[self.S, self.R])
         # Index: Date, Columns: Recovered, Susceptible, logS
         self._sr_df = pd.DataFrame(
             {

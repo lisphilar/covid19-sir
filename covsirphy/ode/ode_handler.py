@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.argument import find_args
 from covsirphy.util.stopwatch import StopWatch
 from datetime import timedelta
 import functools
 from multiprocessing import cpu_count, Pool
-from covsirphy.util.evaluator import Evaluator
 import itertools
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_solver_multi import _MultiPhaseODESolver
@@ -28,12 +28,12 @@ class ODEHandler(Term):
     """
 
     def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._first = self._ensure_date(first_date, name="first_date")
-        self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
-        self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
+        self._model = Validator(model, "model").subclass(ModelBase)
+        self._first = Validator(first_date, "first_date").date()
+        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())[0]
+        self._n_jobs = cpu_count() if n_jobs == -1 else Validator(n_jobs, "n_jobs").int()
         # Tau value [min] or None
-        self._tau = self._ensure_tau(tau, accept_none=True)
+        self._tau = Validator(tau, "tau").tau(default=None)
         # {"0th": output of self.add()}
         self._info_dict = {}
 
@@ -60,7 +60,7 @@ class ODEHandler(Term):
             start = list(self._info_dict.values())[-1][self.END] + timedelta(days=1)
         else:
             start = self._first
-        end = self._ensure_date(end_date, name="end_date")
+        end = Validator(end_date, "end_date").date()
         self._info_dict[phase] = {
             self.START: start, self.END: end, "y0": y0_dict or {}, "param": param_dict or {}}
         return self._info_dict[phase]
@@ -148,14 +148,14 @@ class ODEHandler(Term):
             ODE parameter for each tau value will be guessed by .guess() classmethod of the model.
             Tau value will be selected from the divisors of 1440 [min] and set to self.
         """
-        self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        Validator(data, "data").dataframe(columns=self.DSIFR_COLUMNS)
         df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         # Calculate scores of tau candidates
-        self._ensure_float(guess_quantile, name="quantile")
+        Validator(guess_quantile, "quantile").float(value_range=(0, 1))
         calc_f = functools.partial(self._score_tau, data=df, quantile=guess_quantile)
-        divisors = self.divisors(1440)
+        divisors = [i for i in range(1, 1441) if 1440 % i == 0]
         if self._n_jobs == 1:
             scores = [calc_f(candidate) for candidate in divisors]
         else:
@@ -227,7 +227,7 @@ class ODEHandler(Term):
                     - Recovered (int): the number of recovered cases
             quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
             check_dict (dict[str, object] or None): setting of validation
-                - None means {"timeout": 180, "timeout_interation": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
+                - None means {"timeout": 180, "timeout_interaction": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
                 - timeout (int): timeout of optimization
                 - timeout_iteration (int): timeout of one iteration
                 - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
@@ -258,7 +258,7 @@ class ODEHandler(Term):
         print(f"Running optimization with {self._n_jobs} CPUs...")
         stopwatch = StopWatch()
         # Arguments
-        self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        Validator(data, "data").dataframe(columns=self.DSIFR_COLUMNS)
         df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
@@ -306,7 +306,7 @@ class ODEHandler(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            kwargs: keyword arguments of  ODEHander.estimate_tau() and ODEHander.estimate_param()
+            kwargs: keyword arguments of  ODEHandler.estimate_tau() and ODEHandler.estimate_param()
 
         Raises:
             covsirphy.UnExecutedError: phase information was not set
@@ -324,6 +324,6 @@ class ODEHandler(Term):
                     - Trials (int): the number of trials
                     - Runtime (str): runtime of optimization
         """
-        tau = self.estimate_tau(data, **find_args(self.estimate_tau, **kwargs))
+        tau = self.estimate_tau(data, **Validator(kwargs, "keyword arguments").kwargs(functions=self.estimate_tau))
         info_dict = self.estimate_params(data, **kwargs)
         return (tau, info_dict)

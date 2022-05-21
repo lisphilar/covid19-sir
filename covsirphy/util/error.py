@@ -33,9 +33,182 @@ def deprecate(old, new=None, version=None, ref=None):
     return _deprecate
 
 
-class SubsetNotFoundError(KeyError, ValueError):
+class _BaseException(Exception):
+    """Basic class of exception.
+
+    Args:
+        message (str): main message of error, should be set in child classes
+        details (str or None): details of error
     """
-    Error when subset was failed with specified arguments.
+
+    def __init__(self, message, details=None):
+        self._message = str(message)
+        self._details = "" if details is None else f" {details}."
+
+    def __str__(self):
+        return f"{self._message}. {self._details}"
+
+
+class AlreadyCalledError(_BaseException):
+    """Error when a method has already been called and cannot be called any more.
+
+    Args:
+        name (str): the name of the method
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"{name} has already been called and cannot be called any more"
+        super().__init__(message=message, details=details)
+
+
+class NotIncludedError(_BaseException):
+    """Error when a necessary key was not included in a container.
+
+    Args:
+        key_name (str): key name
+        container_name (str): name of the container
+        details (str or None): details of error
+    """
+
+    def __init__(self, key_name, container_name, details=None):
+        message = f"'{key_name}' was not included in the '{container_name}'"
+        super().__init__(message=message, details=details)
+
+
+class NAFoundError(_BaseException):
+    """Error when NA values are included un-expectedly.
+
+    Args:
+        name (str): name of the target
+        value (str or None): value of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value=None, details=None):
+        message = f"'{name}' has NA(s) un-expectedly"
+        if value is not None:
+            message += ", '{value}'"
+        super().__init__(message=message, details=details)
+
+
+class UnExecutedError(_BaseException):
+    """
+    Error when we have unexecuted methods that we need to run in advance.
+
+    Args:
+        name (str): method name to run in advance
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"Please execute {name} in advance"
+        super().__init__(message=message, details=details)
+
+
+class NotRegisteredError(UnExecutedError):
+    """
+    Error when no records have been registered yet.
+    """
+    pass
+
+
+class NotRegisteredMainError(UnExecutedError):
+    """
+    Error when main datasets were not registered.
+    """
+    pass
+
+
+class NotRegisteredExtraError(UnExecutedError):
+    """
+    Error when extra datasets were not registered.
+    """
+    pass
+
+
+class NotSubclassError(_BaseException):
+    """Error when an object is not a subclass of the parent class un-expectedly.
+
+    Args:
+        name (str): name of the target
+        target (object): target object
+        parent (object): expected parent class
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, target, parent, details=None):
+        message = f"'{name}' must be a sub-class of {type(parent)}, but {type(target)} was applied"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedTypeError(_BaseException):
+    """Error when an object cannot be converted to an instance un-expectedly.
+
+    Args:
+        name (str): name of the target
+        target (object): target object
+        expected (object): expected type
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, target, expected, details=None):
+        message = f"'{name}' could not converted to an instance of {type(expected)} because that of {type(target)} was applied"
+        super().__init__(message=message, details=details)
+
+
+class EmptyError(_BaseException):
+    """Error when the dataframe is empty un-expectedly.
+
+    Args:
+        name (str): name of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"'Empty dataframe was applied as {name}' un-expectedly"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedValueRangeError(_BaseException):
+    """Error when the value is out of value range.
+
+    Args:
+        name (str): name of the target
+        target (object): target object
+        value_range (tuple(int or None, int or None)): value range, None means un-specified
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, target, value_range, details=None):
+        _min, _max = value_range
+        if _min is None:
+            s = "is not in the expected value range" if _max is None else f"must be under or equal to {_max}"
+        else:
+            s = f"must be over or equal to {_min}" if _max is None else f"is not in the expected value range ({_min}, {_max})"
+        message = f"'{name}' {s}, but {target} was applied"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedValueError(_BaseException):
+    """
+    Error when unexpected value was applied as the value of an argument.
+
+    Args:
+        name (str): argument name
+        value (object): value user applied
+        candidates (list[object]): candidates of the argument
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, candidates, details=None):
+        c_str = ", ".join(candidates)
+        message = f"{name} must be selected from [{c_str}], but {value} was applied"
+        super().__init__(message=message, details=details)
+
+
+class SubsetNotFoundError(_BaseException):
+    """Error when subset was failed with specified arguments.
 
     Args:
         geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None
@@ -45,17 +218,15 @@ class SubsetNotFoundError(KeyError, ValueError):
         start_date (str or None): start date, like 22Jan2020
         end_date (str or None): end date, like 01Feb2020
         date (str or None): specified date, like 22Jan2020
-        message (str or None): the other messages
+        details (str or None): details of error
     """
 
     def __init__(self, geo=None, country=None, country_alias=None, province=None,
-                 start_date=None, end_date=None, date=None, message=None):
+                 start_date=None, end_date=None, date=None, details=None):
         self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        return f"No records{self.message} in {self.area}{self.date} were found."
+        message = f"No records in {self.area}{self.date} were found."
+        super().__init__(message=message, details=details)
 
     @staticmethod
     def _area(geo, country, country_alias, province):
@@ -101,37 +272,32 @@ class SubsetNotFoundError(KeyError, ValueError):
         return f"{start_str}{end_str}"
 
 
-class ScenarioNotFoundError(KeyError):
-    """
-    Error when unregistered scenario name was specified.
+class ScenarioNotFoundError(_BaseException):
+    """Error when unregistered scenario name was specified.
 
     Args:
         name (str): scenario name
+        details (str or None): details of error
     """
 
-    def __init__(self, name):
-        self.name = name
-
-    def __str__(self):
-        return f"{self.name} scenario is not registered."
+    def __init__(self, name, details=None):
+        message = f"{name} scenario is not registered."
+        super().__init__(message=message, details=details)
 
 
-class PCRIncorrectPreconditionError(KeyError):
-    """
-    Error when checking preconditions in the PCR data.
+class PCRIncorrectPreconditionError(_BaseException):
+    """Error when checking preconditions in the PCR data.
 
     Args:
         country (str): country name
         province (str or None): province name
-        message (str or None): the other messages
+        details (str or None): details of error
     """
 
-    def __init__(self, country, province=None, message=None):
+    def __init__(self, country, province=None, details=None):
         self.area = self._area(country, province)
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        return f"{self.message}{self.area}."
+        message = f"The dataset of {self.area} has too many missing values"
+        super().__init__(message=message, details=details)
 
     @staticmethod
     def _area(country, province):
@@ -152,189 +318,57 @@ class PCRIncorrectPreconditionError(KeyError):
         return f"{province_str}{country_str}"
 
 
-class NotInteractiveError(ValueError):
-    """
-    Error when interactive shell is not used but forced to use it.
+class NotInteractiveError(_BaseException):
+    """Error when interactive shell is not used but forced to use it.
 
     Args:
-        message (str or None): the other messages
+        details (str or None): details of error
     """
 
-    def __init__(self, message=None):
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        return f"Interactive shell is not used.{self.message}"
+    def __init__(self, details=None):
+        message = "Interactive shell is not used."
+        super().__init__(message=message, details=details)
 
 
-class UnExpectedValueError(ValueError):
-    """
-    Error when unexpected value was applied as the value of an argument.
-
-    Args:
-        name (str): argument name
-        value (object): value user applied
-        candidates (list[object]): candidates of the argument
-        message (str or None): the other messages
-    """
-
-    def __init__(self, name, value, candidates, message=None):
-        self.name = str(name)
-        self.value = str(value)
-        self.candidates_str = ", ".join(candidates)
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        s1 = f"@{self.name} must be selected from '{self.candidates_str}',"
-        s2 = f"but {self.value} was applied.{self.message}"
-        return f"{s1} {s2}"
-
-
-class UnExpectedReturnValueError(ValueError):
-    """
-    Error when unexpected value was returned.
+class UnExpectedReturnValueError(_BaseException):
+    """Error when unexpected value was returned.
 
     Args:
         name (str): argument name
         value (object): value user applied or None (will not be shown)
         plural (bool): whether plural or not
-        message (str or None): the other messages
+        details (str or None): details of error
     """
 
-    def __init__(self, name, value, plural=False, message=None):
-        self.name = str(name)
+    def __init__(self, name, value, plural=False, details=None):
         self.value = "" if value is None else f" ({value})"
         self.s = "s" if plural else ""
         self.be = "were" if plural else "was"
-        self.message = "" if message is None else f" {message}"
-
-    def __str__(self):
-        return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.message}."
+        message = f"Un-expected value{self.s}{self.value} {self.be} returned as {name}"
+        super().__init__(message=message, details=details)
 
 
-class DBLockedError(ValueError):
-    """
-    Error when a database has been locked not as expected.
+class DBLockedError(_BaseException):
+    """Error when a database has been locked not as expected.
 
     Args:
         name (str): database name
-        message (str or None): the other messages
-    """
-
-    def __init__(self, name, message=None):
-        self.name = str(name)
-        self.message = "" if message is None else f" {message}."
-
-    def __str__(self):
-        return f"{self.name} should NOT be locked, but locked.{self.message}"
-
-
-class NotDBLockedError(ValueError):
-    """
-    Error when a database has NOT been locked not as expected.
-
-    Args:
-        name (str): database name
-        message (str or None): the other messages
-    """
-
-    def __init__(self, name, message=None):
-        self.name = str(name)
-        self.message = "" if message is None else f" {message}."
-
-    def __str__(self):
-        return f"{self.name} should be locked, but NOT locked.{self.message}"
-
-
-class _BaseException(Exception):
-    """Basic class of exception.
-
-    Args:
-        message (str): main message of error, should be set in child classes
-        details (str or None): details of error
-    """
-
-    def __init__(self, message, details=None):
-        self._message = str(message)
-        self._details = "" if details is None else f" {details}."
-
-    def __str__(self):
-        return f"{self._message}. {self._details}"
-
-
-class AlreadyCalledError(_BaseException):
-    """Error when a method has already been called and cannot be called any more.
-
-    Args:
-        name (str): the name of the method
         details (str or None): details of error
     """
 
     def __init__(self, name, details=None):
-        message = f"{name} has already been called and cannot be called any more"
+        message = f"{name} should NOT be locked, but locked"
         super().__init__(message=message, details=details)
 
 
-class NotIncludedError(_BaseException):
-    """Error when a necessary key was not included in a dictionary.
+class NotDBLockedError(_BaseException):
+    """Error when a database has NOT been locked not as expected.
 
     Args:
-        key_name (str): key name
-        dict_name (str): dictionary name
-        details (str or None): details of error
-    """
-
-    def __init__(self, key_name, dict_name, details=None):
-        message = f"'{key_name}' was not included in the dictionary '{dict_name}'"
-        super().__init__(message=message, details=details)
-
-
-class NAFoundError(_BaseException):
-    """Error when NA values are included un-expectedly.
-
-    Args:
-        name (str): name of the target
-        value (str or None): value of the target
-        details (str or None): details of error
-    """
-
-    def __init__(self, name, value=None, details=None):
-        message = f"'{name}' has NAs un-expectedly"
-        if value is not None:
-            message += ", '{value}'"
-        super().__init__(message=message, details=details)
-
-
-class UnExecutedError(_BaseException):
-    """
-    Error when we have unexecuted methods that we need to run in advance.
-
-    Args:
-        name (str): method name to run in advance
+        name (str): database name
         details (str or None): details of error
     """
 
     def __init__(self, name, details=None):
-        message = f"Please execute {name} in advance"
+        message = f"{name} should be locked, but NOT locked"
         super().__init__(message=message, details=details)
-
-
-class NotRegisteredError(UnExecutedError):
-    """
-    Error when no records have been registered yet.
-    """
-    pass
-
-
-class NotRegisteredMainError(UnExecutedError):
-    """
-    Error when main datasets were not registered.
-    """
-    pass
-
-
-class NotRegisteredExtraError(UnExecutedError):
-    """
-    Error when extra datasets were not registered.
-    """
-    pass
