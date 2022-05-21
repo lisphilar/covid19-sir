@@ -4,7 +4,8 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
-from covsirphy.util.argument import find_args
+from covsirphy.util.validator import Validator
+from covsirphy.visualization.vbase import find_args
 from covsirphy.visualization.line_plot import LinePlot
 
 
@@ -47,7 +48,7 @@ class ScatterPlot(LinePlot):
             color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
-        self._data = self._ensure_dataframe(data, name="data", columns=["x", "y"])
+        self._data = Validator(data, "data").dataframe(columns=["x", "y"])
         # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
         # Set plotting
