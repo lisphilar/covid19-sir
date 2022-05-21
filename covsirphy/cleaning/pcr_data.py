@@ -408,7 +408,7 @@ class PCRData(CleaningBase):
             return df
         # Failed in retrieving sufficient data
         raise PCRIncorrectPreconditionError(
-            country=country, province=province, message="Too many missing Tests records")
+            country=country, province=province, details="Too many missing Tests records")
 
     def positive_rate(self, country, province=None, window=7, last_date=None, show_figure=True, filename=None):
         """
@@ -449,7 +449,7 @@ class PCRData(CleaningBase):
             subset_df = self._subset_select(country_alias, province)
         except PCRIncorrectPreconditionError:
             raise PCRIncorrectPreconditionError(
-                country=country, province=province, message="Too many missing Tests records") from None
+                country=country, province=province, details="Too many missing Tests records") from None
         # Limit tests records to last date
         if last_date is not None:
             subset_df = subset_df.loc[subset_df[self.DATE] <= pd.to_datetime(last_date)]

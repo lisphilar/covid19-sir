@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 import pandas as pd
 import ruptures as rpt
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
 
@@ -14,7 +15,7 @@ class TrendDetector(Term):
     Interface for trend analysis (change point analysis).
 
     Args:
-        data (pandas.DataFrame): data to analyse
+        data (pandas.DataFrame): data to analyze
             Index:
                 reset index
             Column:
@@ -31,11 +32,11 @@ class TrendDetector(Term):
     """
 
     def __init__(self, data, area="Selected area", min_size=7):
-        self._ensure_dataframe(data, name="data", columns=[self.DATE, self.S, self.R])
+        Validator(data, "data").dataframe(columns=[self.DATE, self.S, self.R])
         # Index: Date, Columns: the number cases
         self._record_df = data.groupby(self.DATE).last()
         # Minimum size of phases
-        self._min_size = self._ensure_int_range(min_size, name="min_size", value_range=(3, None))
+        self._min_size = Validator(min_size, "min_size").int(value_range=(3, None))
         if len(self._record_df) < self._min_size * 2:
             raise ValueError(f"More than {min_size * 2} records must be included because @min_size is {min_size}.")
         # The first/last date
@@ -67,7 +68,7 @@ class TrendDetector(Term):
         # Start dates
         start_dates = [date.strftime(self.DATE_FORMAT) for date in [self._first_point, *points]]
         # End dates
-        end_dates = [self.yesterday(date.strftime(self.DATE_FORMAT)) for date in points]
+        end_dates = [(Validator(date).date() - timedelta(days=1)).strftime(self.DATE_FORMAT) for date in points]
         end_dates.append(self._last_point.strftime(self.DATE_FORMAT))
         return (start_dates, end_dates)
 
@@ -137,9 +138,10 @@ class TrendDetector(Term):
             "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf"}),
             "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
         }
-        self._ensure_selectable(target=algo, candidates=list(algo_dict.keys()), name="algo")
+        Validator([algo], "algo").sequence(candidates=algo_dict.keys())
         algo_kwargs.update(algo_dict[algo][1])
-        algorithm = algo_dict[algo][0](**find_args(algo_dict[algo][0], **algo_kwargs))
+        algorithm = algo_dict[algo][0](
+            **Validator(algo_kwargs, "keyword arguments").kwargs(functions=algo_dict[algo][0]))
         # Run trend analysis
         finder = _SRChange(sr_df=self._record_df)
         points = finder.run(algorithm=algorithm, **algo_kwargs)

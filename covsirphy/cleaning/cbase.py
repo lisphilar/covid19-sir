@@ -96,6 +96,114 @@ class CleaningBase(Term):
         }
         return pd.read_csv(filename, dtype=dtype_dict).reindex(columns=columns)
 
+    @staticmethod
+    def _ensure_instance(target, class_obj, name="target"):
+        """
+        Ensure the target is an instance of the class object.
+
+        Args:
+            target (instance): target to ensure
+            parent (class): class object
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
+
+    @staticmethod
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+        """
+        Ensure a natural (non-negative) number.
+
+        Args:
+            target (int or float or str or None): value to ensure
+            name (str): argument name of the value
+            include_zero (bool): include 0 or not
+            none_ok (bool): None value can be applied or not.
+
+        Returns:
+            int: as-is the target
+
+        Note:
+            When @target is None and @none_ok is True, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
+        """
+        if target is None and none_ok:
+            return None
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        min_value = 0 if include_zero else 1
+        if number < min_value:
+            raise ValueError(f"{s}. This value is under {min_value}")
+        return number
+
+    @classmethod
+    def _ensure_date(cls, target, name="date", default=None):
+        """
+        Ensure the format of the string.
+
+        Args:
+            target (str or pandas.Timestamp): string to ensure
+            name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
+
+        Returns:
+            pandas.Timestamp or None: as-is the target or default value
+        """
+        if target is None:
+            return default
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
+        try:
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
+        except ValueError as e:
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
+
     @property
     def raw(self):
         """
@@ -367,7 +475,7 @@ class CleaningBase(Term):
 
     def subset_complement(self, country, **kwargs):
         """
-        Return the subset. If necessary, complemention will be performed.
+        Return the subset. If necessary, complementing will be performed.
 
         Raises:
             NotImplementedError
@@ -377,7 +485,7 @@ class CleaningBase(Term):
     def records(self, country, province=None, start_date=None, end_date=None,
                 auto_complement=True, **kwargs):
         """
-        Return the subset. If necessary, complemention will be performed.
+        Return the subset. If necessary, complementing will be performed.
 
         Args:
             country (str): country name or ISO3 code
@@ -502,7 +610,7 @@ class CleaningBase(Term):
         df = df.loc[df[self.PROVINCE] != self.NA]
         if df.empty:
             raise SubsetNotFoundError(
-                country=country, country_alias=iso3, message="at province level")
+                country=country, country_alias=iso3, details="at province level")
         # Select date
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])
