@@ -120,8 +120,7 @@ class TestODEHandler(object):
         subset_df = jhu_data.subset("Japan", population=population)
         # Test
         model.convert(subset_df, tau=None)
-        converted_df = model.convert(subset_df, tau=1440)
-        model.restore(converted_df)
+        model.convert(subset_df, tau=1440)
         with pytest.raises(NotImplementedError):
             model.guess(1, 2)
         with pytest.raises(NotImplementedError):
