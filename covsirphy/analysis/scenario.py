@@ -799,7 +799,7 @@ class Scenario(Term):
         all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
         self.disable(phases=all_phases, name=name)
         handler_kwargs = {"n_jobs": 1}
-        handler_kwargs.update(kwargs)
+        handler_kwargs |= kwargs
         for ph in phases:
             self._reverse(phases=[ph], name=name)
             self._tau = self[name].estimate(self._model, tau=self._tau, **handler_kwargs)
