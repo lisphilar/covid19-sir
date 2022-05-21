@@ -4,8 +4,8 @@
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import pandas as pd
-from covsirphy.util.argument import find_args
-from covsirphy.visualization.vbase import VisualizeBase
+from covsirphy.util.validator import Validator
+from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class LinePlot(VisualizeBase):
@@ -48,7 +48,7 @@ class LinePlot(VisualizeBase):
         """
         if isinstance(data, pd.Series):
             data = pd.DataFrame(data)
-        self._ensure_dataframe(data, name="data")
+        Validator(data, "data").dataframe()
         self._variables = data.columns.tolist()
         # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
@@ -65,7 +65,7 @@ class LinePlot(VisualizeBase):
         Args:
             xlabel (str or None): x-label
             x_logscale (bool): whether use log-scale in x-axis or not
-            xlim (tuple(int or float, int or float)): limit of x dimain
+            xlim (tuple(int or float, int or float)): limit of x domain
 
         Note:
             If None is included in xlim, the values will be automatically determined by Matplotlib
@@ -86,7 +86,7 @@ class LinePlot(VisualizeBase):
         Args:
             ylabel (str or None): y-label
             y_logscale (bool): whether use log-scale in y-axis or not
-            ylim (tuple(int or float, int or float)): limit of y dimain
+            ylim (tuple(int or float, int or float)): limit of y domain
             math_scale (bool): whether use LaTEX or not in y-label
             y_integer (bool): whether force to show the values as integer or not
 
@@ -99,7 +99,7 @@ class LinePlot(VisualizeBase):
         if math_scale:
             self._ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
             self._ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-        # Interger scale
+        # Integer scale
         if y_integer:
             fmt = ScalarFormatter(useOffset=False)
             fmt.set_scientific(False)
