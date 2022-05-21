@@ -108,20 +108,6 @@ class TestODEHandler(object):
         with pytest.raises(NotImplementedError):
             model_ins.calc_days_dict(1440)
 
-    @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
-    def test_deprecated_class_methods(self, model, jhu_data, population_data):
-        # Set-up
-        population = population_data.value("Japan")
-        subset_df = jhu_data.subset("Japan", population=population)
-        taufree_df = model.convert(subset_df, tau=1440).reset_index()
-        # Test
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        model.tau_free(subset_df, population, tau=None)
-        model.tau_free(subset_df, population, tau=1440)
-        specialized_df = model.specialize(subset_df, population)
-        model.restore(specialized_df)
-        model.param_range(taufree_df, population)
-
     @pytest.mark.parametrize("model", [SIRFV])
     def test_deprecated(self, model):
         with pytest.raises(NotImplementedError):
