@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from inspect import signature
+from covsirphy.util.error import deprecate
 
 
+@deprecate("find_args", version="2.25.0-mu")
 def find_args(func_list, **kwargs):
     """
     Find values of enabled arguments of the function from the keyword arguments.

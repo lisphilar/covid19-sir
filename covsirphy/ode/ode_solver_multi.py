@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.error import NAFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_solver import _ODESolver
@@ -18,9 +20,11 @@ class _MultiPhaseODESolver(Term):
     """
 
     def __init__(self, model, first, tau):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._first = self._ensure_instance(first, pd.Timestamp, name="first")
-        self._tau = self._ensure_tau(tau, accept_none=False)
+        self._model = Validator(model, "model").subclass(ModelBase)
+        self._first = Validator(first, "first").instance(pd.Timestamp)
+        self._tau = Validator(tau, "tau").tau(default=None)
+        if self._tau is None:
+            NAFoundError("tau", None)
         # {"0th": output of self.add()}
         self._info_dict = {}
 
@@ -42,7 +46,7 @@ class _MultiPhaseODESolver(Term):
         Note:
             Internal variable "step_n" means from the first date to the next date of the end date.
         """
-        self._ensure_instance(end, pd.Timestamp, name="end")
+        Validator(end, end).instance(pd.Timestamp)
         phase = self.num2str(len(self._info_dict))
         all_step_n = self.steps(
             self._first.strftime(self.DATE_FORMAT), end.strftime(self.DATE_FORMAT), tau=self._tau)

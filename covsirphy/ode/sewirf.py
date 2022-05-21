@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.ode.mbase import ModelBase
 
 
@@ -32,7 +32,7 @@ class SEWIRF(ModelBase):
     # Weights of variables in parameter estimation error function
     WEIGHTS = np.array([0, 10, 10, 2, 0, 0])
     # Variables that increases monotonically
-    VARS_INCLEASE = [ModelBase.R, ModelBase.F]
+    VARS_INCREASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
         ModelBase.STEP_N: 180,
@@ -61,7 +61,7 @@ class SEWIRF(ModelBase):
             - @sigma (float)
         """
         # Total population
-        self.population = self._ensure_population(population)
+        self.population = Validator(population, "population").int(value_range=(1, None))
         # Non-dim parameters
         self.theta = theta
         self.kappa = kappa
@@ -96,104 +96,6 @@ class SEWIRF(ModelBase):
         dfdt = self.kappa * i + self.theta * self.rho3 * w
         didt = 0 - dsdt - drdt - dfdt - dedt - dwdt
         return np.array([dsdt, didt, drdt, dfdt, dedt, dwdt])
-
-    @classmethod
-    @deprecate(".param_range()", new=".guess()", version="2.19.1-zeta-fu1")
-    def param_range(cls, taufree_df, population):
-        """
-        Deprecated. Define the range of parameters (not including tau value).
-
-        Args:
-            taufree_df (pandas.DataFrame):
-                Index
-                    reset index
-                Columns
-                    - t (int): time steps (tau-free)
-                    - columns with dimensional variables
-            population (int): total population
-
-        Returns:
-            (dict)
-                - key (str): parameter name
-                - value (tuple(float, float)): min value and max value
-        """
-        raise NotImplementedError(
-            "SEWIR-F cannot be used for parameter estimation because we do not have records "
-            "of Exposed and Waiting. Please use SIR-F model with `covsirphy.SIRF` class."
-        )
-
-    @classmethod
-    @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
-    def specialize(cls, data_df, population):
-        """
-        Deprecated. Specialize the dataset for this model.
-
-        Args:
-            data_df (pandas.DataFrame):
-                Index
-                    reset index
-                Columns
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - any columns
-            population (int): total population in the place
-
-        Returns:
-            (pandas.DataFrame)
-                Index
-                    reset index
-                Columns
-                    - any columns @data_df has
-                    - Susceptible (int): the number of susceptible cases
-                    - Exposed (int): 0
-                    - Waiting (int): 0
-        """
-        cls._ensure_dataframe(data_df, name="data_df", columns=cls.VALUE_COLUMNS)
-        df = data_df.copy()
-        # Calculate dimensional variables
-        df[cls.S] = population - df[cls.C]
-        df[cls.E] = 0
-        df[cls.W] = 0
-        return df
-
-    @classmethod
-    @deprecate(".restore()", new=".convert_reverse()", version="2.19.1-zeta-fu1")
-    def restore(cls, specialized_df):
-        """
-        Deprecated. Restore Confirmed/Infected/Recovered/Fatal.
-         using a dataframe with the variables of the model.
-
-        Args:
-            specialized_df (pandas.DataFrame): dataframe with the variables
-
-                Index
-                    (object)
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
-                    - Exposed (int): Exposed and in latent period (without infectivity)
-                    - Waiting (int): Waiting cases for confirmation (with infectivity)
-                    - any columns
-
-        Returns:
-            (pandas.DataFrame):
-                Index
-                    (object): as-is
-                Columns
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - the other columns @specialzed_df has
-        """
-        df = specialized_df.copy()
-        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
-        df[cls.C] = df[cls.CI] + df[cls.R] + df[cls.F]
-        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
 
     def calc_r0(self):
         """
@@ -280,7 +182,7 @@ class SEWIRF(ModelBase):
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Exposed (int): exposed and in latent period (without infectivity)
-                    - Waiting (int): waiting for confirmaion diagnosis (with infectivity)
+                    - Waiting (int): waiting for confirmation diagnosis (with infectivity)
                     - Infected (int): the number of currently infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases

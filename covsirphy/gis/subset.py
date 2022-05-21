@@ -3,18 +3,20 @@
 
 import contextlib
 from copy import deepcopy
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
 class _SubsetManager(Term):
     """
     Class to get subset with location information.
+
     Args:
         layers (list[str]): names of administration layers with the order (upper layers precede, e.g. ["Country", "Province"])
     """
 
     def __init__(self, layers):
-        self._layers = self._ensure_list(layers, candidates=None, name="layers")
+        self._layers = Validator(layers, "layers").sequence(candidates=None)
 
     def layer(self, data, geo=None):
         """Return the data at the selected layer.
@@ -40,7 +42,7 @@ class _SubsetManager(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns province-level data in Japan.
@@ -58,8 +60,7 @@ class _SubsetManager(Term):
             raise TypeError(
                 f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
         geo_converted = (geo,) if (geo is None or isinstance(geo, str)) else deepcopy(geo)
-        self._ensure_dataframe(target=data, name="data", columns=self._layers, empty_ok=False)
-        df = data.copy()
+        df = Validator(data, "data").dataframe(columns=self._layers, empty_ok=False)
         df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
         df = df.loc[df[self._layers[0]] != self.NA]
         for (i, sel) in enumerate(geo_converted):
@@ -100,7 +101,7 @@ class _SubsetManager(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns all country-level data, assuming we have country/provonce/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns all country-level data, assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
@@ -128,8 +129,8 @@ class _SubsetManager(Term):
         geo_converted = (geo,) if isinstance(geo, str) else deepcopy(geo)
         if len(geo_converted) > len(self._layers):
             raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
-        *geo_formars, geo_last = geo_converted
-        df = self.layer(data=data, geo=geo_formars or None)
+        *geo_formers, geo_last = geo_converted
+        df = self.layer(data=data, geo=geo_formers or None)
         if not isinstance(geo_last, (str, list, tuple)):
             raise TypeError(
                 f"The last value of @geo must be a list[str] or tuple(str) or str, but {geo_last} was applied.")

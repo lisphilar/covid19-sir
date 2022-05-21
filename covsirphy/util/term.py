@@ -9,7 +9,8 @@ import warnings
 import country_converter as coco
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate, UnExpectedValueError
+from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 
 
 class Term(object):
@@ -112,7 +113,7 @@ class Term(object):
         Returns:
             str
         """
-        num = cls._ensure_natural_int(num, include_zero=True)
+        num = Validator(num, "num").int(value_range=(0, None))
         q, mod = divmod(num, 10)
         suffix = "th" if q % 10 == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
@@ -136,6 +137,7 @@ class Term(object):
                 f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied."
             ) from e
 
+    @deprecate(".negative_exp()", version="2.25.0-mu")
     @staticmethod
     def negative_exp(x, a, b):
         """
@@ -151,6 +153,7 @@ class Term(object):
         """
         return a * np.exp(-b * x)
 
+    @deprecate(".linear()", version="2.25.0-mu")
     @staticmethod
     def linear(x, a, b):
         """
@@ -166,6 +169,7 @@ class Term(object):
         """
         return a * x + b
 
+    @deprecate(".flatten()", new="Validator.sequence(flatten=True)", version="2.25.0-mu")
     @staticmethod
     def flatten(nested_list, unique=True):
         """
@@ -183,156 +187,40 @@ class Term(object):
             return list(set(flattened))
         return flattened
 
-    @staticmethod
-    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+    @deprecate(".divisors()", version="2.25.0-mu")
+    @classmethod
+    def divisors(cls, value):
         """
-        Ensure the dataframe has the columns.
+        Return the list of divisors of the value.
 
         Args:
-            target (pandas.DataFrame): the dataframe to ensure
-            name (str): argument name of the dataframe
-            time_index (bool): if True, the dataframe must has DatetimeIndex
-            columns (list[str] or None): the columns the dataframe must have
-            empty_ok (bool): whether give permission to empty dataframe or not
+            value (int): target value
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    as-is
-                Columns:
-                    columns specified with @columns or all columns of @target (when @columns is None)
+            list[int]: the list of divisors
         """
-        if not isinstance(target, pd.DataFrame):
-            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
-        df = target.copy()
-        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
-            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
-        if not empty_ok and target.empty:
-            raise ValueError(f"@{name} must not be a empty dataframe.")
-        if columns is None:
-            return df
-        if not set(columns).issubset(df.columns):
-            cols_str = ", ".join(col for col in columns if col not in df.columns)
-            included = ", ".join(df.columns.tolist())
-            s1 = f"Expected columns were not included in {name} with {included}."
-            raise KeyError(f"{s1} {cols_str} must be included.")
-        return df.loc[:, columns]
+        value = Validator(value).int(value_range=(1, None))
+        return [i for i in range(1, value + 1) if value % i == 0]
 
-    @staticmethod
-    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
+    @classmethod
+    def date_obj(cls, date_str=None, default=None):
         """
-        Ensure a natural (non-negative) number.
+        Convert a string to a datetime object.
 
         Args:
-            target (int or float or str or None): value to ensure
-            name (str): argument name of the value
-            include_zero (bool): include 0 or not
-            none_ok (bool): None value can be applied or not.
+            date_str (str or None, optional): string, like 22Jan2020
+            default (datetime.datetime or None, optional): default value to return
 
         Returns:
-            int: as-is the target
+            datetime.datetime or None
 
         Note:
-            When @target is None and @none_ok is True, None will be returned.
-            If the value is a natural number and the type was float or string,
-            it will be converted to an integer.
+            If @date_str is None, returns @default value
         """
-        if target is None and none_ok:
-            return None
-        s = f"@{name} must be a natural number, but {target} was applied"
-        try:
-            number = int(target)
-        except TypeError as e:
-            raise TypeError(f"{s} and not converted to integer.") from e
-        if number != target:
-            raise ValueError(f"{s}. |{target} - {number}| > 0")
-        min_value = 0 if include_zero else 1
-        if number < min_value:
-            raise ValueError(f"{s}. This value is under {min_value}")
-        return number
-
-    def _ensure_int_range(self, target, name="number", value_range=(0, None)):
-        """
-        Ensure the number is an integer and in the specified range.
-
-        Args:
-            target (int or float or str): value to ensure
-            name (str): argument name of the value
-            value_range(tuple(int or None, int or None)): value range, None means un-specified
-
-        Returns:
-            int: as-is the target
-        """
-        number = self._ensure_natural_int(target=target, name=name, include_zero=True, none_ok=False)
-        # Minimum
-        if value_range[0] is not None and number < value_range[0]:
-            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {number} was applied.")
-        # Maximum
-        if value_range[1] is not None and number > value_range[1]:
-            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {number} was applied.")
-        return number
-
-    @classmethod
-    def _ensure_tau(cls, tau, accept_none=True):
-        """
-        Ensure that the value can be used as tau value [min].
-
-        Args:
-            tau (int or None): value to use [min] or None (when @accept_none is True)
-            accept_none (bool): whether accept None or not
-
-        Returns:
-            int or None: as-is
-        """
-        if tau is None and accept_none:
-            return None
-        tau = cls._ensure_natural_int(tau, name="tau")
-        if tau in set(cls.divisors(1440)):
-            return tau
-        raise ValueError(f"@tau must be a divisor of 1440 [min], but {tau} was applied.")
-
-    @classmethod
-    def _ensure_population(cls, population):
-        """
-        Ensure that the population value is valid.
-
-        Args:
-            population (int or float or str): population value
-
-        Returns:
-            int: as-is
-        """
-        return cls._ensure_natural_int(
-            population, name="population", include_zero=False, none_ok=False
-        )
-
-    @staticmethod
-    def _ensure_float(target, name="value", value_range=(0, None)):
-        """
-        Ensure a float value.
-        If the value is a float value and the type was string,
-        it will be converted to a float.
-
-        Args:
-            target (float or str): value to ensure
-            name (str): argument name of the value
-            value_range(tuple(int or None, int or None)): value range, None means un-specified
-
-        Returns:
-            float: as-is the target
-        """
-        s = f"@{name} must be a float value, but {target} was applied"
-        try:
-            value = float(target)
-        except ValueError:
-            raise ValueError(f"{s} and not converted to float.") from None
-        # Minimum
-        if value_range[0] is not None and value < value_range[0]:
-            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {value} was applied.")
-        # Maximum
-        if value_range[1] is not None and value > value_range[1]:
-            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {value} was applied.")
-        return value
+        if date_str is None:
+            return default
+        return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @classmethod
     def _ensure_date(cls, target, name="date", default=None):
@@ -356,104 +244,7 @@ class Term(object):
         except ValueError as e:
             raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
 
-    @staticmethod
-    def _ensure_subclass(target, parent, name="target"):
-        """
-        Ensure the target is a subclass of the parent class.
-
-        Args:
-            target (object): target to ensure
-            parent (object): parent class
-            name (str): argument name of the target
-
-        Returns:
-            int: as-is the target
-        """
-        s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
-        if not issubclass(target, parent):
-            raise TypeError(s)
-        return target
-
-    @staticmethod
-    def _ensure_instance(target, class_obj, name="target"):
-        """
-        Ensure the target is an instance of the class object.
-
-        Args:
-            target (instance): target to ensure
-            parent (class): class object
-            name (str): argument name of the target
-
-        Returns:
-            object: as-is target
-        """
-        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
-        if not isinstance(target, class_obj):
-            raise TypeError(s)
-        return target
-
-    @staticmethod
-    def _ensure_list(target, candidates=None, name="target"):
-        """
-        Ensure the target is a sub-list of the candidates.
-
-        Args:
-            target (list[object]): target to ensure
-            candidates (list[object] or None): list of candidates, if we have
-            name (str): argument name of the target
-
-        Returns:
-            object: as-is target
-        """
-        if not isinstance(target, (list, tuple)):
-            raise TypeError(f"@{name} must be a list or tuple, but {type(target)} was applied.")
-        if candidates is None:
-            return target
-        # Check the target is a sub-list of candidates
-        try:
-            strings = [str(candidate) for candidate in candidates]
-        except TypeError:
-            raise TypeError(f"@candidates must be a list, but {candidates} was applied.") from None
-        ok_list = [element in candidates for element in target]
-        if all(ok_list):
-            return target
-        candidate_str = ", ".join(strings)
-        raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
-
-    @classmethod
-    def divisors(cls, value):
-        """
-        Return the list of divisors of the value.
-
-        Args:
-            value (int): target value
-
-        Returns:
-            list[int]: the list of divisors
-        """
-        value = cls._ensure_natural_int(value)
-        return [i for i in range(1, value + 1) if value % i == 0]
-
-    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
-    @classmethod
-    def date_obj(cls, date_str=None, default=None):
-        """
-        Convert a string to a datatime object.
-
-        Args:
-            date_str (str or None, optional): string, like 22Jan2020
-            default (datetime.datetime or None, optional): default value to return
-
-        Returns:
-            datetime.datetime or None
-
-        Note:
-            If @date_str is None, returns @default value
-        """
-        if date_str is None:
-            return default
-        return datetime.strptime(date_str, cls.DATE_FORMAT)
-
+    @deprecate(".date_change()", version="2.25.0-mu")
     @classmethod
     def date_change(cls, date_str, days=0):
         """
@@ -472,6 +263,7 @@ class Term(object):
         date = cls._ensure_date(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
+    @deprecate(".tomorrow()", version="2.25.0-mu")
     @classmethod
     def tomorrow(cls, date_str):
         """
@@ -485,6 +277,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=1)
 
+    @deprecate(".yesterday()", version="2.25.0-mu")
     @classmethod
     def yesterday(cls, date_str):
         """
@@ -510,61 +303,8 @@ class Term(object):
         """
         sta = cls._ensure_date(start_date)
         end = cls._ensure_date(end_date)
-        tau = cls._ensure_tau(tau)
+        tau = Validator(tau, "tau").tau(default=None)
         return math.ceil((end - sta) / timedelta(minutes=tau))
-
-    @classmethod
-    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
-        """
-        Ensure that the order of dates.
-
-        Args:
-            previous_date (str or pandas.Timestamp): previous date
-            following_date (str or pandas.Timestamp): following date
-            name (str): name of @following_date
-
-        Raises:
-            ValueError: @previous_date > @following_date
-        """
-        previous_date = cls._ensure_date(previous_date)
-        following_date = cls._ensure_date(following_date)
-        p_str = previous_date.strftime(cls.DATE_FORMAT)
-        f_str = following_date.strftime(cls.DATE_FORMAT)
-        if previous_date <= following_date:
-            return None
-        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
-
-    def _ensure_selectable(self, target, candidates, name="target"):
-        """
-        Ensure that the target can be selectable.
-
-        Args:
-            target (object): target to check
-            candidates (list[object]): list of candidates
-            name (str): name of the target
-        """
-        self._ensure_list(candidates, name="candidates")
-        if target in candidates:
-            return target
-        raise UnExpectedValueError(name=name, value=target, candidates=candidates)
-
-    def _ensure_kwargs(self, arg_list, value_type, **kwargs):
-        """
-        Ensure the all expected arguments are specified.
-
-        Args:
-            arg_list (list[str]): list of argument names
-            value_type (object): type of the values
-            kwargs: keyword arguments of values
-
-        Returns:
-            dict[str, int]: dictionary of values
-        """
-        for param in arg_list:
-            if param not in kwargs:
-                raise KeyError(f"Value of {param} was not specified with keyword arguments.")
-            self._ensure_instance(kwargs[param], value_type, name=f"{param} value")
-        return {param: kwargs[param] for param in arg_list}
 
     @classmethod
     def _to_iso3(cls, name):
@@ -600,23 +340,6 @@ class Term(object):
         code_dict = {"UK": "GBR", None: cls.NA * 3, }
         code_dict.update({elem: coco.convert(elem, to="ISO3", not_found=elem) for elem in set(names) - set(code_dict)})
         return [code_dict[elem] for elem in names]
-
-    def _value_included(self, target, value_dict, **kwargs):
-        """
-        Return whether all expected values are included in the columns or not.
-
-        Args:
-            target (pandas.DataFrame): the dataframe to ensure
-            value_dict (dict[str, object]): dictionary of values which must be included in the column
-            **kwargs: additional keyword arguments of ._ensure_dataframe()
-
-        Returns:
-            bool: whether all values (specified in @value_dict) are included or not
-        """
-        self._ensure_dataframe(target=target, **kwargs)
-        if not set(value_dict.keys()).issubset(target.columns):
-            return False
-        return all(value in target[col].unique() for (col, value) in value_dict.items())
 
     def _country_information(self):
         """Return the raw data of country_converter library raw data as a dataframe.

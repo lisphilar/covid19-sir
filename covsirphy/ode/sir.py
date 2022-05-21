@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.ode.mbase import ModelBase
 
 
@@ -30,7 +30,7 @@ class SIR(ModelBase):
     # Weights of variables in parameter estimation error function
     WEIGHTS = np.array([1, 1, 1])
     # Variables that increases monotonically
-    VARS_INCLEASE = [ModelBase.FR]
+    VARS_INCREASE = [ModelBase.FR]
     # Example set of parameters and initial values
     EXAMPLE = {
         ModelBase.STEP_N: 180,
@@ -45,7 +45,7 @@ class SIR(ModelBase):
 
     def __init__(self, population, rho, sigma):
         # Total population
-        self.population = self._ensure_population(population)
+        self.population = Validator(population, "population").int(value_range=(1, None))
         # Non-dim parameters
         self.rho = rho
         self.sigma = sigma
@@ -68,106 +68,6 @@ class SIR(ModelBase):
         drdt = self.sigma * i
         didt = 0 - dsdt - drdt
         return np.array([dsdt, didt, drdt])
-
-    @classmethod
-    @deprecate(".param_range()", new=".guess()", version="2.19.1-zeta-fu1")
-    def param_range(cls, taufree_df, population, quantiles=(0.1, 0.9)):
-        """
-        Deprecated. Define the value range of ODE parameters using (X, dX/dt) points.
-        In SIR model, X is S, I and R here.
-
-        Args:
-            taufree_df (pandas.DataFrame):
-                Index
-                    reset index
-                Columns
-                    - t (int): time steps (tau-free)
-                    - columns with dimensional variables
-            population (int): total population
-            quantiles (tuple(int, int)): quantiles to cut, like confidence interval
-
-        Returns:
-            dict(str, tuple(float, float)): minimum/maximum values
-        """
-        cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
-        df = taufree_df.copy()
-        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
-        n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
-        # rho = - n * (dS/dt) / S / I
-        rho_series = 0 - n * s.diff() / t.diff() / s / i
-        # sigma = (dR/dt) / I
-        sigma_series = r.diff() / t.diff() / i
-        return {k: tuple(v.quantile(quantiles).clip(0, 1)) for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])}
-
-    @classmethod
-    @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
-    def specialize(cls, data_df, population):
-        """
-        Deprecated. Specialize the dataset for this model.
-
-        Args:
-            data_df (pandas.DataFrame):
-                Index
-                    reset index
-                Columns
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - any columns
-            population (int): total population in the place
-
-        Returns:
-            (pandas.DataFrame):
-                    Index
-                        reset index
-                    Columns
-                        - any columns @data_df has
-                        - Susceptible (int): the number of susceptible cases
-                        - Fatal or Recovered (int): total number of fatal/recovered cases
-        """
-        cls._ensure_dataframe(data_df, name="data_df", columns=cls.VALUE_COLUMNS)
-        df = data_df.copy()
-        # Calculate dimensional variables
-        df[cls.S] = population - df[cls.C]
-        df[cls.FR] = df[cls.F] + df[cls.R]
-        return df
-
-    @classmethod
-    @deprecate(".restore()", new=".convert_reverse()", version="2.19.1-zeta-fu1")
-    def restore(cls, specialized_df):
-        """
-        Deprecated. Restore Confirmed/Infected/Recovered/Fatal.
-         using a dataframe with the variables of the model.
-
-        Args:
-            specialized_df (pandas.DataFrame): dataframe with the variables
-
-                Index
-                    reset index
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal or Recovered (int): the number of fatal/recovered cases
-                    - any columns
-
-        Returns:
-            (pandas.DataFrame):
-                Index
-                    reset index
-                Columns
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - the other columns @specialzed_df has
-        """
-        df = specialized_df.copy()
-        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
-        df[cls.C] = df[cls.CI] + df[cls.FR]
-        df[cls.F] = 0
-        df[cls.R] = df[cls.FR]
-        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
 
     def calc_r0(self):
         """

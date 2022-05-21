@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import UnExecutedError
+from covsirphy.util.error import NAFoundError, UnExecutedError, UnExpectedValueError
 from covsirphy.util.argument import find_args
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
 from covsirphy.trend.trend_detector import TrendDetector
@@ -37,7 +39,7 @@ class PhaseTracker(Term):
 
     def __init__(self, data, today, area):
         self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
-        self._today = self._ensure_date(today, name="today")
+        self._today = Validator(today, "today").date()
         self._area = str(area)
         # Tracker of phase information: index=Date, records of C/I/F/R/S, phase ID (0: not defined)
         self._track_df = data.set_index(self.DATE)
@@ -54,6 +56,69 @@ class PhaseTracker(Term):
         df = df.loc[df[self.ID] != 0]
         return df[self.ID].nunique()
 
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
+
+    @staticmethod
+    def _ensure_list(target, candidates=None, name="target"):
+        """
+        Ensure the target is a sub-list of the candidates.
+
+        Args:
+            target (list[object]): target to ensure
+            candidates (list[object] or None): list of candidates, if we have
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        if not isinstance(target, (list, tuple)):
+            raise TypeError(f"@{name} must be a list or tuple, but {type(target)} was applied.")
+        if candidates is None:
+            return target
+        # Check the target is a sub-list of candidates
+        try:
+            strings = [str(candidate) for candidate in candidates]
+        except TypeError:
+            raise TypeError(f"@candidates must be a list, but {candidates} was applied.") from None
+        ok_list = [element in candidates for element in target]
+        if all(ok_list):
+            return target
+        candidate_str = ", ".join(strings)
+        raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
+
     def define_phase(self, start, end):
         """
         Define an active phase with the series of dates.
@@ -68,8 +133,8 @@ class PhaseTracker(Term):
         Note:
             When today is in the range of (start, end), a past phase and a future phase will be created.
         """
-        start = self._ensure_date(start, name="start")
-        end = self._ensure_date(end, name="end")
+        start = Validator(start, name="start").date()
+        end = Validator(end, name="end").date()
         track_df = self._track_df.copy()
         # Start date must be over the first date of records
         self._ensure_date_order(track_df.index.min(), start, name="start")
@@ -83,12 +148,33 @@ class PhaseTracker(Term):
             df.index.name = self.DATE
             df[self.ID] = track_df[self.ID].abs().max() + 1
             track_df = pd.concat([track_df, df], axis=0).resample("D").last()
-        # Fill in skiped dates
+        # Fill in skipped dates
         series = track_df[self.ID].copy()
         track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.abs().max() + 1
         # Update self
         self._track_df = track_df.copy()
         return self
+
+    @classmethod
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str or pandas.Timestamp): previous date
+            following_date (str or pandas.Timestamp): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date > @following_date
+        """
+        previous_date = cls._ensure_date(previous_date)
+        following_date = cls._ensure_date(following_date)
+        p_str = previous_date.strftime(cls.DATE_FORMAT)
+        f_str = following_date.strftime(cls.DATE_FORMAT)
+        if previous_date <= following_date:
+            return None
+        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
 
     def deactivate(self, start, end):
         """
@@ -101,8 +187,8 @@ class PhaseTracker(Term):
         Returns:
             covsirphy.PhaseTracker: self
         """
-        start = self._ensure_date(start, name="start")
-        end = self._ensure_date(end, name="end")
+        start = Validator(start, "start").date()
+        end = Validator(end, "end").date()
         self._track_df.loc[start:end, self.ID] *= -1
         return self
 
@@ -117,8 +203,8 @@ class PhaseTracker(Term):
         Returns:
             covsirphy.PhaseTracker: self
         """
-        start = self._ensure_date(start, name="start")
-        end = self._ensure_date(end, name="end")
+        start = Validator(start, "start").date()
+        end = Validator(end, "end").date()
         self._track_df.loc[start:end, self.ID] = 0
         return self
 
@@ -151,10 +237,8 @@ class PhaseTracker(Term):
         df = self._track_df.copy()
         df = df.loc[df[self.ID] != 0]
         # Use simulated data for tracking
-        try:
+        with contextlib.suppress(UnExecutedError):
             df.update(self.simulate().set_index(self.DATE))
-        except UnExecutedError:
-            pass
         return df.drop(self.ID, axis=1).reset_index()
 
     def summary(self):
@@ -238,7 +322,7 @@ class PhaseTracker(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             tau (int or None): tau value [min] or None (to be estimated)
-            kwargs: keyword arguments of ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
+            kwargs: keyword arguments of ODEHandler(), ODEHandler.estimate_tau() and .estimate_param()
 
         Returns:
             int: applied or estimated tau value [min]
@@ -246,8 +330,8 @@ class PhaseTracker(Term):
         Note:
             ODE parameter estimation will be done for all active phases.
         """
-        self._ensure_subclass(model, ModelBase, name="model")
-        self._ensure_tau(tau, accept_none=True)
+        Validator(model, "model").subclass(ModelBase)
+        Validator(tau, "tau").tau(default=None)
         # Set-up ODEHandler
         data_df = self._track_df.reset_index()
         data_df = data_df.loc[data_df[self.ID] > 0].dropna(how="all", axis=0)
@@ -302,9 +386,11 @@ class PhaseTracker(Term):
         Note:
             ODE model for simulation will be overwritten.
         """
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._model = Validator(model, "model").subclass(ModelBase)
         self._ensure_dataframe(param_df, name="param_df", time_index=True, columns=model.PARAMETERS)
-        self._tau = self._ensure_tau(tau, accept_none=False)
+        self._tau = Validator(tau, "tau").tau(default=None)
+        if self._tau is None:
+            raise NAFoundError("tau")
         new_df = param_df.copy()
         # Add model name
         new_df.insert(0, self.ODE, model.NAME)
@@ -428,15 +514,13 @@ class PhaseTracker(Term):
         if dates is not None:
             if len(dates) != 2:
                 raise ValueError(f"@dates must be a tuple which has two elements, but {dates} was applied.")
-            start = self._ensure_date(
-                dates[0], name="the first element of 'dates' argument", default=start_default)
-            end = self._ensure_date(
-                dates[1], name="the second element of 'dates' argument", default=end_default)
+            start = Validator(dates[0], name="the first element of 'dates' argument").date(default=start_default)
+            end = Validator(dates[1], name="the second element of 'dates' argument").date(default=end_default)
             self._ensure_date_order(start, end, name="the second element of 'dates' argument")
             return (start, end)
         # Read @past_days
         if past_days is not None:
-            past_days = self._ensure_natural_int(past_days, name="past_days")
+            past_days = Validator(past_days, "past_days").int(value_range=(1, None))
             return (self._today - timedelta(days=past_days), self._today)
         # No arguments were specified
         if phases is None:
@@ -451,3 +535,17 @@ class PhaseTracker(Term):
             end = df.loc[phase_replaced, self.END]
             dates.extend(pd.date_range(start, end).tolist())
         return (min(dates), max(dates))
+
+    def _ensure_selectable(self, target, candidates, name="target"):
+        """
+        Ensure that the target can be selectable.
+
+        Args:
+            target (object): target to check
+            candidates (list[object]): list of candidates
+            name (str): name of the target
+        """
+        Validator(candidates, "candidates").sequence()
+        if target in candidates:
+            return target
+        raise UnExpectedValueError(name=name, value=target, candidates=candidates)
