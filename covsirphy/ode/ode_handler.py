@@ -30,7 +30,7 @@ class ODEHandler(Term):
     def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = Validator(model, "model").subclass(ModelBase)
         self._first = Validator(first_date, "first_date").date()
-        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())
+        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())[0]
         self._n_jobs = cpu_count() if n_jobs == -1 else Validator(n_jobs, "n_jobs").int()
         # Tau value [min] or None
         self._tau = Validator(tau, "tau").tau(default=None)

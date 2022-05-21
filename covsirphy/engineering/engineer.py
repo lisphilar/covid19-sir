@@ -187,7 +187,7 @@ class DataEngineer(Term):
         comp_kwargs = self.DEFAULT_COMPLEMENT_KWARGS.copy()
         comp_kwargs.update(kwargs)
         # Location
-        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
+        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()[0]
         if len(address_converted) != len(self._layers):
             raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
         df = self._df.copy()
@@ -252,7 +252,7 @@ class DataEngineer(Term):
             - "partially complemented tests data (ending)": 2.
         """
         # Location
-        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
+        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()[0]
         if len(address_converted) != len(self._layers):
             raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
         df, remain_df = self._df.copy(), self._df.copy()

@@ -45,7 +45,7 @@ class _ParamEstimator(Term):
         self._tau = Validator(tau, "tau").tau(default=None)
         if self._tau is None:
             raise NAFoundError("tau", None)
-        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())
+        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())[0]
         # time steps (index), variables of the model
         df = model.convert(data, tau)
         self._taufree_df = df.copy()
