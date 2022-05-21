@@ -52,7 +52,7 @@ class SIRFV(ModelBase):
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         raise NotImplementedError(
             "SIR-FV model was removed because vaccinated persons may move "
             "to the other compartments. Please use SIR-F model and adjust parameter values "
