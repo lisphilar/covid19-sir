@@ -230,7 +230,7 @@ class Estimator(Term):
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
-        param_dict.update(self.fixed_dict)
+        param_dict |= self.fixed_dict
         return self._score(self.tau, param_dict)
 
     def _suggest(self, trial, name, min_value, max_value):
@@ -339,7 +339,7 @@ class Estimator(Term):
             param_dict = {p: 0 for p in self.model.PARAMETERS}
             if self.tau_final is None:
                 param_dict[self.TAU] = None
-        param_dict.update(self.fixed_dict)
+        param_dict |= self.fixed_dict
         tau = self.tau_final or param_dict.pop(self.TAU)
         return (tau, param_dict)
 
