@@ -4,8 +4,8 @@
 from pathlib import Path
 import warnings
 import pandas as pd
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
@@ -39,7 +39,7 @@ class DataLoader(Term):
 
     Note:
         If @update_interval (not None) hours have passed since the last update of downloaded datasets,
-        the dawnloaded datasets will be updated automatically.
+        the downloaded datasets will be updated automatically.
         When we do not use datasets of remote servers, set @update_interval as None.
         Note that the outputs of .japan() and .pyramid() are not locked by .lock().
         So, they are not influenced by @update_interval.
@@ -70,7 +70,7 @@ class DataLoader(Term):
         )
         self._file_dict = file_dict.copy()
         # Verbosity
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
         # Recommended datasets
         self._use_recommended = update_interval is not None
         self._recommended = None if update_interval is None else _Recommended(
@@ -135,16 +135,17 @@ class DataLoader(Term):
         Raises:
             UnExpectedValueError: un-expected value was applied as @how_combine
         """
+        v = Validator(kwargs, "keyword arguments")
         self._ensure_lock_status(lock_expected=False)
         if self._local_df.empty or how_combine == "replace":
             self._local_df = data.copy()
         elif how_combine == "concat":
             self._local_df = pd.concat(
-                [self._local_df, data], ignore_index=True, sort=True, **find_args(pd.concat, **kwargs))
+                [self._local_df, data], ignore_index=True, sort=True, **v.kwargs(functions=pd.concat, default=None))
         elif how_combine == "merge":
-            self._local_df = self._local_df.merge(data, **find_args(pd.merge, **kwargs))
+            self._local_df = self._local_df.merge(data, **v.kwargs(functions=pd.merge, default=None))
         elif how_combine == "update":
-            self._local_df.update(data, **find_args(data.update, **kwargs))
+            self._local_df.update(data, **v.kwargs(functions=data.update, default=None))
         else:
             raise UnExpectedValueError(
                 "how_combine", how_combine, candidates=["replace", "concat", "merge", "update"])
@@ -191,8 +192,9 @@ class DataLoader(Term):
             Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
             for the keyword arguments of pandas.DataFrame.update().
         """
+        v = Validator(kwargs, "keyword arguments")
         df = pd.read_csv(
-            filename, parse_dates=parse_dates, dayfirst=dayfirst, **find_args(pd.read_csv, **kwargs))
+            filename, parse_dates=parse_dates, dayfirst=dayfirst, **v.kwargs(functions=pd.read_csv, default=None))
         self._edit_local(
             data=df, citation=str(citation or Path(filename).name), how_combine=how_combine, **kwargs)
         return self
@@ -238,10 +240,10 @@ class DataLoader(Term):
             Please refer to https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.update.html
             for the keyword arguments of pandas.DataFrame.update().
         """
-        df = self._ensure_dataframe(dataframe, name="dataframe")
+        df = Validator(dataframe, "dataframe").dataframe()
         if parse_dates:
-            self._ensure_list(parse_dates, candidates=df.columns.tolist(), name="parse_dates")
-            datetime_kwargs = find_args(pd.to_datetime, **kwargs)
+            Validator(parse_dates, "parse_dates").sequence(candidates=df.columns)
+            datetime_kwargs = Validator(kwargs, "keyword arguments").kwargs(functions=pd.to_datetime)
             for col in parse_dates:
                 df[col] = pd.to_datetime(df[col], dayfirst=dayfirst, **datetime_kwargs)
         self._edit_local(
@@ -276,7 +278,7 @@ class DataLoader(Term):
         Args:
             date (str): column name for dates
             country (str or None): country names (top level administration)
-            procvince (str or None): province names (2nd level administration)
+            province (str or None): province names (2nd level administration)
             iso3 (str or None): ISO3 codes
             confirmed (str or None): the number of confirmed cases
             fatal (str or None): the number of fatal cases
@@ -287,7 +289,7 @@ class DataLoader(Term):
             vaccinations (str or None): cumulative number of vaccinations
             vaccinations_boosters (str or None): cumulative number of booster vaccinations
             vaccinated_once (str or None): cumulative number of people who received at least one vaccine dose
-            vaccinated_full (str or None): cumulative number of people who received all doses prescrived by the protocol
+            vaccinated_full (str or None): cumulative number of people who received all doses prescribed by the protocol
             oxcgrt_variables (list[str] or None): list of variables for OxCGRTData
             mobility_variables (list[str] or None): list of variables for MobilityData
 
@@ -301,7 +303,7 @@ class DataLoader(Term):
             If @oxcgrt_variables is None, variables registered in COVID-19 Data Hub will be used.
 
         Note:
-            If @mobility_variables is None, variables registed in COVID-19 Open Data (Google) will be used.
+            If @mobility_variables is None, variables registered in COVID-19 Open Data (Google) will be used.
         """
         self._ensure_lock_status(lock_expected=False)
         # Flexible variables
@@ -373,7 +375,7 @@ class DataLoader(Term):
             warnings.warn(
                 "verbose argument was deprecated. Please use DataLoader(verbose).",
                 DeprecationWarning, stacklevel=2)
-            self._verbose = self._ensure_natural_int(verbose, name="verbose")
+            self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
 
     def _auto_lock(self, variables):
         """
@@ -396,8 +398,9 @@ class DataLoader(Term):
         if variables is None:
             return (self._locked_df, [])
         citation_dict = self._locked_citation_dict.copy()
-        citations = self.flatten([c for (v, line) in citation_dict.items() for c in line if v in variables])
-        return (self._locked_df, sorted(set(citations), key=citations.index))
+        citations_nest = [c for v, line in citation_dict.items() for c in line if v in variables]
+        citations = Validator(citations_nest).sequence(flatten=True, unique=True)
+        return (self._locked_df, citations)
 
     @property
     def covid19dh_citation(self):

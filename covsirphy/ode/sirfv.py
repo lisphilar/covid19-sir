@@ -37,7 +37,7 @@ class SIRFV(ModelBase):
     # Weights of variables in parameter estimation error function
     WEIGHTS = np.array([0, 10, 10, 2, 0])
     # Variables that increases monotonically
-    VARS_INCLEASE = [ModelBase.R, ModelBase.F]
+    VARS_INCREASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
         ModelBase.STEP_N: 180,

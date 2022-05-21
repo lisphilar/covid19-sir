@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 
@@ -22,9 +23,9 @@ class _ODESolver(Term):
     """
 
     def __init__(self, model, **kwargs):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._model = Validator(model, "model").subclass(ModelBase)
         param_dict = {k: float(v) for (k, v) in kwargs.items() if isinstance(v, (float, int))}
-        self._param_dict = self._ensure_kwargs(model.PARAMETERS, float, **param_dict)
+        self._param_dict = Validator(param_dict, "kwargs").dict(required_keys=model.PARAMETERS, errors="raise")
 
     def run(self, step_n, **kwargs):
         """
@@ -47,9 +48,9 @@ class _ODESolver(Term):
             Total value of initial values will be regarded as total population.
         """
         # Check arguments
-        step_n = self._ensure_natural_int(step_n, name="number")
+        step_n = Validator(step_n, "number").int(value_range=(1, None))
         kwargs = {param: int(value) for (param, value) in kwargs.items()}
-        y0_dict = self._ensure_kwargs(self._model.VARIABLES, int, **kwargs)
+        y0_dict = Validator(kwargs, "kwargs").dict(required_keys=self._model.VARIABLES, errors="raise")
         # Calculate population
         population = sum(y0_dict.values())
         # Solve problem

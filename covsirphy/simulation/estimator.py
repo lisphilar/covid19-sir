@@ -13,6 +13,7 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.simulator import ODESimulator
@@ -36,7 +37,7 @@ class Estimator(Term):
         model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
         tau (int): tau value [min], a divisor of 1440
-        kwargs: parameter values of the model and data subseting
+        kwargs: parameter values of the model and data subsetting
     """
     np.seterr(divide="raise")
     optuna.logging.disable_default_handler()
@@ -46,17 +47,16 @@ class Estimator(Term):
     @deprecate("Estimator", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # ODE model
-        self.model = self._ensure_subclass(model, ModelBase, name="model")
+        self.model = Validator(model, "model").subclass(ModelBase)
         self.variables = model.VARIABLES[:]
         self.variables_evaluate = [
             v for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0]
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
-        self._ensure_dataframe(record_df, name="record_df", columns=self.NLOC_COLUMNS)
-        self.record_df = record_df.copy()
+        self.record_df = Validator(record_df, "record_df").dataframe(columns=self.NLOC_COLUMNS)
         # Settings for simulation
-        self.population = self._ensure_population(population)
+        population = Validator(population, "population").int(value_range=(1, None))
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES}
@@ -70,7 +70,7 @@ class Estimator(Term):
         self.total_trials = 0
         self.runtime = 0
         # Tau value
-        self.tau_final = self._ensure_tau(tau)
+        self.tau_final = Validator(tau, "tau").tau(default=None)
         self.tau_candidates = self.divisors(1440)
         self.tau = tau
         if tau is None:
@@ -82,6 +82,20 @@ class Estimator(Term):
         self._metric = None
         # Keyword arguments of ModelBase.param_range()
         self._param_range_dict = {}
+
+    @classmethod
+    def divisors(cls, value):
+        """
+        Return the list of divisors of the value.
+
+        Args:
+            value (int): target value
+
+        Returns:
+            list[int]: the list of divisors
+        """
+        value = Validator(value).int(value_range=(1, None))
+        return [i for i in range(1, value + 1) if value % i == 0]
 
     def _init_study(self, seed, pruner, upper, percentile):
         """
@@ -109,7 +123,7 @@ class Estimator(Term):
             )
         except KeyError:
             raise KeyError(
-                f"@pruner should be selected from {', '.join(pruner_dict.keys())}.")
+                f"@pruner should be selected from {', '.join(pruner_dict.keys())}.") from None
 
     def run(self, timeout=180, reset_n_max=3, timeout_iteration=5, tail_n=4, allowance=(0.99, 1.01),
             seed=0, pruner="threshold", upper=0.5, percentile=50, metric=None, metrics="RMSLE", **kwargs):
@@ -149,7 +163,7 @@ class Estimator(Term):
             self._init_study(seed=seed, pruner=pruner, upper=upper, percentile=percentile)
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
-        increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
+        increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCREASE]
         stopwatch = StopWatch()
         scores = []
         for _ in range(iteration_n):
@@ -192,10 +206,7 @@ class Estimator(Term):
         a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.variables]
         p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.variables]
         allowance0, allowance1 = allowance
-        ok_list = [
-            (a * allowance0 <= p) and (p <= a * allowance1)
-            for (a, p) in zip(a_max_values, p_max_values)
-        ]
+        ok_list = [a * allowance0 <= p <= a * allowance1 for (a, p) in zip(a_max_values, p_max_values)]
         return all(ok_list)
 
     def _objective(self, trial):

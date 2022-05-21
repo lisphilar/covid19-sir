@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
+from datetime import timedelta
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.phase.phase_unit import PhaseUnit
 
@@ -22,10 +25,58 @@ class PhaseSeries(Term):
     def __init__(self, first_date, last_date, population):
         self._first_date = self._ensure_date(first_date, "first_date").strftime(self.DATE_FORMAT)
         self._last_date = self._ensure_date(last_date, "last_date").strftime(self.DATE_FORMAT)
-        self.init_population = self._ensure_population(population)
+        population = Validator(population, "population").int(value_range=(1, None))
         # List of PhaseUnit
         self._units = []
         self.clear(include_past=True)
+
+    @classmethod
+    def _ensure_date(cls, target, name="date", default=None):
+        """
+        Ensure the format of the string.
+
+        Args:
+            target (str or pandas.Timestamp): string to ensure
+            name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
+
+        Returns:
+            pandas.Timestamp or None: as-is the target or default value
+        """
+        if target is None:
+            return default
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
+        try:
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
+        except ValueError as e:
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
+
+    @classmethod
+    def tomorrow(cls, date_str):
+        """
+        Tomorrow of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: tomorrow
+        """
+        return cls.date_change(date_str, days=1)
+
+    @classmethod
+    def yesterday(cls, date_str):
+        """
+        Yesterday of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: yesterday
+        """
+        return cls.date_change(date_str, days=-1)
 
     def __iter__(self):
         yield from self._units
@@ -70,7 +121,7 @@ class PhaseSeries(Term):
         try:
             return self._units[num]
         except IndexError:
-            raise KeyError(f"{phase} phase is not registered.")
+            raise KeyError(f"{phase} phase is not registered.") from None
 
     def clear(self, include_past=False):
         """
@@ -86,6 +137,24 @@ class PhaseSeries(Term):
             self._units = []
         self._units = [unit for unit in self._units if unit <= self._last_date]
         return self
+
+    @classmethod
+    def date_change(cls, date_str, days=0):
+        """
+        Return @days days ago or @days days later.
+
+        Args:
+            date_str (str): today
+            days (int): (negative) days ago or (positive) days later
+
+        Returns:
+            str: the date
+        """
+        if not isinstance(days, int):
+            raise TypeError(
+                f"@days must be integer, but {type(days)} was applied.")
+        date = Validator(date_str) + timedelta(days=days)
+        return date.strftime(cls.DATE_FORMAT)
 
     def _calc_end_date(self, start_date, end_date=None, days=None):
         """
@@ -105,6 +174,27 @@ class PhaseSeries(Term):
         if days is None:
             return self._last_date
         return self.date_change(start_date, days=days - 1)
+
+    @classmethod
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str or pandas.Timestamp): previous date
+            following_date (str or pandas.Timestamp): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date > @following_date
+        """
+        previous_date = cls._ensure_date(previous_date)
+        following_date = cls._ensure_date(following_date)
+        p_str = previous_date.strftime(cls.DATE_FORMAT)
+        f_str = following_date.strftime(cls.DATE_FORMAT)
+        if previous_date <= following_date:
+            return None
+        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
 
     def add(self, end_date=None, days=None, population=None, model=None, tau=None, **kwargs):
         """
@@ -130,8 +220,7 @@ class PhaseSeries(Term):
         start_date = self.tomorrow(last_unit.end_date)
         end_date = self._calc_end_date(
             start_date, end_date=end_date, days=days)
-        population = self._ensure_population(
-            population or last_unit.population)
+        population = Validator(population, "population").int(value_range=(1, None), default=last_unit.population)
         model = model or last_unit.model
         tau = last_unit.tau or tau
         if model is None:
@@ -401,16 +490,14 @@ class PhaseSeries(Term):
         """
         dataframes = []
         rec_dates = record_df[self.DATE].dt.strftime(self.DATE_FORMAT).unique()
-        for (num, unit) in enumerate(self._units):
+        for unit in self._units:
             if not unit:
                 continue
             if unit.start_date in rec_dates:
                 unit.set_y0(record_df)
             else:
-                try:
+                with contextlib.suppress(IndexError):
                     unit.set_y0(dataframes[-1])
-                except IndexError:
-                    pass
             df = unit.simulate(y0_dict=y0_dict)
             dataframes.append(df)
         sim_df = pd.concat(dataframes, ignore_index=True, sort=True)

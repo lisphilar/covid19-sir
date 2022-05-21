@@ -47,6 +47,41 @@ class ColoredMap(VisualizeBase):
     def directory(self, name):
         self._geo_dirpath = Path(name)
 
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
+
     def plot(self, data, level="Country", included=None, excluded=None, logscale=True, **kwargs):
         """
         Set dataframe and the variable to show in a colored map.
@@ -89,7 +124,7 @@ class ColoredMap(VisualizeBase):
                 raise ValueError(f"{self.PROVINCE} column of data should be unique.")
             gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
         gdf.loc[gdf["Value"] < 0, "Value"] = 0
-        # Colorbar
+        # Color bar
         divider = make_axes_locatable(self._ax)
         cax = divider.append_axes("bottom", size="5%", pad=0.1)
         # Arguments of plotting with GeoPandas
@@ -214,8 +249,8 @@ class ColoredMap(VisualizeBase):
         # Geography information from Natural Earth
         # pop_est, continent, name, iso_a3, gdp_md_est, geometry
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        geopath = gpd.datasets.get_path("naturalearth_lowres")
-        gdf = gpd.read_file(geopath)
+        geo_path = gpd.datasets.get_path("naturalearth_lowres")
+        gdf = gpd.read_file(geo_path)
         # Data cleaning
         gdf["name"] = gdf["name"].apply(unidecode)
         gdf["name"].replace(
