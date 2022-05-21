@@ -166,5 +166,5 @@ class _SRChange(Term):
             "show_legend": True,
             "v": [fit_df.loc[point, self.R] for point in change_points],
         }
-        plot_kwargs.update(kwargs)
+        plot_kwargs |= kwargs
         trend_plot(df=fit_df.set_index(self.R), actual_col=self.ACTUAL, **plot_kwargs)
