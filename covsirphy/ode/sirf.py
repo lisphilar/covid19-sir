@@ -51,7 +51,7 @@ class SIRF(ModelBase):
 
     def __init__(self, population, theta, kappa, rho, sigma):
         # Total
-        population = Validator(population, "population").int(value_range=(1, None))
+        self.population = Validator(population, "population").int(value_range=(1, None))
         # Non-dim parameters
         self.theta = theta
         self.kappa = kappa

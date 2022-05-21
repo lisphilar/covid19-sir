@@ -47,7 +47,7 @@ class SIRD(ModelBase):
 
     def __init__(self, population, kappa, rho, sigma):
         # Total population
-        population = Validator(population, "population").int(value_range=(1, None))
+        self.population = Validator(population, "population").int(value_range=(1, None))
         # Non-dim parameters
         self.kappa = kappa
         self.rho = rho
