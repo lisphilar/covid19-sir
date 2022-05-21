@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+import contextlib
+from datetime import datetime, timedelta
 import warnings
 import pytest
 import pandas as pd
@@ -33,7 +34,7 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
-            snl.last_date = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
+            snl.last_date = (datetime.now() + timedelta(days=1)).strftime(Term.DATE_FORMAT)
         # Add a phase to today (01Apr2020)
         snl.add(name="Main")
         assert snl.get(Term.END, phase="last", name="Main") == today
@@ -89,7 +90,7 @@ class TestScenario(object):
         snl.records(variables="all")
         snl.records(variables="CIFR")
         df = snl.records(variables=[Term.TESTS, Term.VAC])
-        assert set(df.columns) == set([Term.DATE, Term.TESTS, Term.VAC])
+        assert set(df.columns) == {Term.DATE, Term.TESTS, Term.VAC}
         snl.records_diff()
         # Complemented
         snl.complement()
@@ -98,7 +99,7 @@ class TestScenario(object):
         snl.records_diff(variables="all")
         snl.records_diff(variables="CFR")
         diff_df = snl.records_diff(variables=[Term.TESTS, Term.VAC])
-        assert set(diff_df.columns) == set([Term.TESTS, Term.VAC])
+        assert set(diff_df.columns) == {Term.TESTS, Term.VAC}
         # Details of complement
         snl.show_complement()
 
@@ -235,10 +236,8 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("metrics", ["RMSLE"])
     def test_score(self, snl, metrics):
-        try:
+        with contextlib.suppress(KeyError):
             snl.delete(name="Score")
-        except KeyError:
-            pass
         snl.clear(name="Score", template="Main")
         assert isinstance(snl.score(metrics=metrics, name="Score"), float)
         # Selected phases
@@ -281,7 +280,7 @@ class TestScenario(object):
         snl.rename(old=best, new="Best")
         snl.rename(old=worst, new="Worst")
         snl.delete_matched(pattern=r"^Multi")
-        assert set(snl._tracker_dict.keys()) == set(["Main", "Likely", "Best", "Worst"])
+        assert set(snl._tracker_dict.keys()) == {"Main", "Likely", "Best", "Worst"}
 
     def test_backup(self, snl, jhu_data):
         filer = Filer("input")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -21,7 +22,7 @@ class _DataTransformer(Term):
 
     def __init__(self, data, layers, date):
         self._df = data.copy()
-        self._layers = self._ensure_list(layers, name="layers")
+        self._layers = Validator(layers, "layers").sequence()
         self._date = str(date)
 
     def all(self):
@@ -41,9 +42,8 @@ class _DataTransformer(Term):
                 - population (str): total population
                 - confirmed (str): the number of confirmed cases
         """
-        df = self._df.copy()
-        c_dict = self._ensure_kwargs(["population", "confirmed"], str, **kwargs)
-        self._ensure_dataframe(target=df, columns=list(c_dict.values()), name="data")
+        c_dict = Validator(kwargs, "kwargs").dict(required_keys=["population", "confirmed"], errors="raise")
+        df = Validator(self._df, "raw data").dataframe(columns=list(c_dict.values()))
         df[new] = df[c_dict["population"]] - df[c_dict["confirmed"]]
         self._df = df.copy()
 
@@ -57,9 +57,8 @@ class _DataTransformer(Term):
                 - fatal (str): the number of fatal cases
                 - recovered (str): the number of recovered cases
         """
-        df = self._df.copy()
-        c_dict = self._ensure_kwargs(["confirmed", "fatal", "recovered"], str, **kwargs)
-        self._ensure_dataframe(target=df, columns=list(c_dict.values()), name="raw data")
+        c_dict = Validator(kwargs, "kwargs").dict(required_keys=["confirmed", "fatal", "recovered"], errors="raise")
+        df = Validator(self._df, "raw data").dataframe(columns=list(c_dict.values()))
         df[new] = df[c_dict["confirmed"]] - df[c_dict["fatal"]] - df[c_dict["recovered"]]
         self._df = df.copy()
 
@@ -74,9 +73,8 @@ class _DataTransformer(Term):
         Note:
             Regarding @freq, refer to https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
         """
+        df = Validator(self._df, "raw data").dataframe(columns=[column])
         new_column = f"{column}{suffix}"
-        df = self._df.copy()
-        self._ensure_dataframe(target=df, columns=[column], name="data")
         series = df.set_index(self._date).groupby(self._layers).shift(freq=freq)[column]
         series.name = new_column
         df = df.merge(series, how="left", left_on=[*self._layers, self._date], right_index=True)
