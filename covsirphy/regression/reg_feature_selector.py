@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -13,7 +14,7 @@ class _FeatureSelector(Term, BaseEstimator, TransformerMixin):
     - Highly correlated features will be replaced with zeros.
 
     Args:
-        corr_threshould (float): lower limit of correation
+        corr_threshold (float): lower limit of correlation
 
     Note:
         We can use this convert in scikit-learn pipeline because this is a child class of
@@ -21,7 +22,7 @@ class _FeatureSelector(Term, BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, corr_threshold=0.9):
-        self.corr_threshold = self._ensure_float(corr_threshold, "corr_threshold")
+        self.corr_threshold = Validator(corr_threshold, "corr_threshold").float(value_range=(0, 1))
 
     @property
     def corr_threshold_(self):

@@ -70,6 +70,27 @@ class DataHandler(Term):
         # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
 
+    @classmethod
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str or pandas.Timestamp): previous date
+            following_date (str or pandas.Timestamp): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date > @following_date
+        """
+        previous_date = cls._ensure_date(previous_date)
+        following_date = cls._ensure_date(following_date)
+        p_str = previous_date.strftime(cls.DATE_FORMAT)
+        f_str = following_date.strftime(cls.DATE_FORMAT)
+        if previous_date <= following_date:
+            return None
+        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
+
     @property
     def main_satisfied(self):
         """
@@ -123,6 +144,24 @@ class DataHandler(Term):
         """
         return self._today.strftime(self.DATE_FORMAT)
 
+    @staticmethod
+    def _ensure_instance(target, class_obj, name="target"):
+        """
+        Ensure the target is an instance of the class object.
+
+        Args:
+            target (instance): target to ensure
+            parent (class): class object
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
+
     def register(self, jhu_data=None, population_data=None, extras=None):
         """
         Register datasets.
@@ -157,6 +196,34 @@ class DataHandler(Term):
         # Extra datasets
         if extras is not None:
             self._register_extras(extras)
+
+    @staticmethod
+    def _ensure_list(target, candidates=None, name="target"):
+        """
+        Ensure the target is a sub-list of the candidates.
+
+        Args:
+            target (list[object]): target to ensure
+            candidates (list[object] or None): list of candidates, if we have
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        if not isinstance(target, (list, tuple)):
+            raise TypeError(f"@{name} must be a list or tuple, but {type(target)} was applied.")
+        if candidates is None:
+            return target
+        # Check the target is a sub-list of candidates
+        try:
+            strings = [str(candidate) for candidate in candidates]
+        except TypeError:
+            raise TypeError(f"@candidates must be a list, but {candidates} was applied.") from None
+        ok_list = [element in candidates for element in target]
+        if all(ok_list):
+            return target
+        candidate_str = ", ".join(strings)
+        raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
     def _register_extras(self, extras):
         """
@@ -523,3 +590,25 @@ class DataHandler(Term):
         # Calculate number of days between the periods
         df[delay_name] = df["index"].sort_values(ignore_index=True).diff()
         return df.loc[:, output_cols]
+
+    @classmethod
+    def _ensure_date(cls, target, name="date", default=None):
+        """
+        Ensure the format of the string.
+
+        Args:
+            target (str or pandas.Timestamp): string to ensure
+            name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
+
+        Returns:
+            pandas.Timestamp or None: as-is the target or default value
+        """
+        if target is None:
+            return default
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
+        try:
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
+        except ValueError as e:
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e

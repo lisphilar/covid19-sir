@@ -4,7 +4,8 @@
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, NAFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -23,7 +24,7 @@ class ModelBase(Term):
     # Weights of variables in parameter estimation error function
     WEIGHTS = np.array(list())
     # Variables that increases monotonically
-    VARS_INCLEASE = list()
+    VARS_INCREASE = list()
     # Example set of parameters and initial values
     EXAMPLE = {
         Term.STEP_N: 180,
@@ -40,9 +41,7 @@ class ModelBase(Term):
             population (int): total population
         """
         # Total population
-        self.population = self._ensure_natural_int(
-            population, name="population"
-        )
+        self.population = Validator(population, "population").int(value_range=(1, None))
         # Dictionary of non-dim parameters: {name: value}
         self.non_param_dict = {}
 
@@ -146,7 +145,7 @@ class ModelBase(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-                    - the other columns @specialzed_df has
+                    - the other columns @specialized_df has
         """
         raise NotImplementedError
 
@@ -203,19 +202,7 @@ class ModelBase(Term):
                     - t (int): if tau is not None
                     - columns with dimensional variables
         """
-        df = subset_df.copy()
-        if tau is None:
-            df = df.drop(cls.DATE, axis=1)
-            return cls.specialize(df, population=population).reset_index(drop=True)
-        tau = cls._ensure_tau(tau)
-        cls._ensure_dataframe(df, name="data_df", columns=cls.NLOC_COLUMNS)
-        # Calculate elapsed time from the first date [min]
-        df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()
-        df[cls.T] = df[cls.T] // 60
-        # Convert to tau-free
-        df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
-        df = df.drop([cls.T, cls.DATE], axis=1)
-        return cls.specialize(df, population).reset_index(drop=True)
+        raise NotImplementedError
 
     @classmethod
     def _convert(cls, data, tau):
@@ -245,11 +232,13 @@ class ModelBase(Term):
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        df = cls._ensure_dataframe(data, name="data", columns=cls.DSIFR_COLUMNS)
+        df = Validator(data, "data").dataframe(columns=cls.DSIFR_COLUMNS)
         if tau is None:
             return df.set_index(cls.DATE)
         # Convert to tau-free
-        tau = cls._ensure_tau(tau, accept_none=False)
+        tau = Validator(tau, "tau").tau(default=None)
+        if tau is None:
+            raise NAFoundError("tau", None)
         time_series = (pd.to_datetime(df[cls.DATE]) - df[cls.DATE].min()).dt.total_seconds() // 60
         df.index = (time_series / tau).astype(np.int64)
         df.index.name = cls.TS
@@ -284,7 +273,9 @@ class ModelBase(Term):
         """
         df = converted_df.copy()
         # Calculate date with tau and start date
-        tau = cls._ensure_tau(tau, accept_none=False)
+        tau = Validator(tau, "tau").tau(default=None)
+        if tau is None:
+            raise NAFoundError("tau", None)
         elapsed = pd.Series(df.index * tau)
         df[cls.DATE] = start + elapsed.apply(lambda x: timedelta(minutes=x))
         # Select the last records for dates
@@ -295,7 +286,7 @@ class ModelBase(Term):
     def convert(cls, data, tau):
         """
         Divide dates by tau value [min] and convert variables to model-specialized variables.
-        This will be overwitten by child classes.
+        This will be overwritten by child classes.
 
         Args:
             data (pandas.DataFrame):
@@ -322,7 +313,7 @@ class ModelBase(Term):
     def convert_reverse(cls, converted_df, start, tau):
         """
         Calculate date with tau and start date, and restore Susceptible/Infected/"Fatal or Recovered".
-        This will be overwitten by child classes.
+        This will be overwritten by child classes.
 
         Args:
             converted_df (pandas.DataFrame):
@@ -350,7 +341,7 @@ class ModelBase(Term):
     def guess(cls, data, tau, q=0.5):
         """
         With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
-        This will be overwitten by child classes.
+        This will be overwritten by child classes.
 
         Args:
             data (pandas.DataFrame):
@@ -382,5 +373,5 @@ class ModelBase(Term):
         """
         if isinstance(values, float):
             return min(max(values, lower), upper)
-        cls._ensure_instance(values, pd.Series, name="values")
+        Validator(values, "values").instance(pd.Series)
         return values.clip()

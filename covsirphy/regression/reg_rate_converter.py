@@ -3,6 +3,7 @@
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -51,7 +52,7 @@ class _RateConverter(Term, BaseEstimator, TransformerMixin):
         Returns:
             pandas.DataFrame: transformed samples
         """
-        self._ensure_dataframe(X, name="X")
+        Validator(X, "X").dataframe()
         if not self.to_convert:
             return X
         return X.div(X.shift(1)).replace(np.inf, 0).fillna(0)

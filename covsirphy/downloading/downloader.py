@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
 from covsirphy.downloading.db_cs_japan import _CSJapan
@@ -29,8 +30,8 @@ class DataDownloader(Term):
 
     def __init__(self, directory="input", update_interval=12, verbose=1):
         self._directory = directory
-        self._update_interval = self._ensure_natural_int(update_interval, include_zero=True, name="update_interval")
-        self._verbose = self._ensure_natural_int(verbose, include_zero=True, name="verbose")
+        self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
 
     def layer(self, country=None, province=None, databases=None):
@@ -55,7 +56,7 @@ class DataDownloader(Term):
                     - Province (str): province/state/prefecture names
                     - City (str): city names
                     - Country (str): country names (top level administration)
-                    - Procvince (str): province names (2nd level administration)
+                    - Province (str): province names (2nd level administration)
                     - ISO3 (str): ISO3 codes
                     - Confirmed (pandas.Int64): the number of confirmed cases
                     - Fatal (pandas.Int64): the number of fatal cases
@@ -66,7 +67,7 @@ class DataDownloader(Term):
                     - Vaccinations (pandas.Int64): cumulative number of vaccinations
                     - Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations
                     - Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol
                     - School_closing
                     - Workplace_closing
                     - Cancel_events
@@ -102,7 +103,7 @@ class DataDownloader(Term):
             "owid": _OWID,
         }
         all_databases = list(db_dict.keys())
-        selected = self._ensure_list(target=databases or all_databases, candidates=all_databases, name="databases")
+        selected = Validator(databases, "databases").sequence(default=all_databases, candidates=all_databases)
         for database in selected:
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)

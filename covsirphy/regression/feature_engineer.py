@@ -3,7 +3,7 @@
 
 import numpy as np
 from sklearn.model_selection import train_test_split
-from covsirphy.util.argument import find_args
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -26,9 +26,9 @@ class _FeatureEngineer(Term):
 
     def __init__(self, X, Y):
         # Validate values
-        self._X_raw = self._ensure_dataframe(X, name="X", time_index=True)
+        self._X_raw = Validator(X, "X").dataframe(time_index=True)
         self._X = X.copy()
-        self._Y = self._ensure_dataframe(Y, name="Y", time_index=True)
+        self._Y = Validator(Y, "Y").dataframe(time_index=True)
 
     def split(self, **kwargs):
         """
@@ -55,7 +55,7 @@ class _FeatureEngineer(Term):
         split_kwargs = {"test_size": 0.2, "random_state": 0, "shuffle": False}
         split_kwargs.update(kwargs)
         split_kwargs["random_state"] = split_kwargs.get("seed", split_kwargs["random_state"])
-        split_kwargs = find_args(train_test_split, **split_kwargs)
+        split_kwargs = Validator(split_kwargs, "keyword arguments").kwargs(functions=train_test_split)
         # Train/test
         X, Y = self._X.copy(), self._Y.copy()
         df = X.join(Y, how="inner").dropna().drop_duplicates()
@@ -63,7 +63,7 @@ class _FeatureEngineer(Term):
         Y_arranged = df.loc[:, Y.columns]
         splitted = train_test_split(X_arranged, Y_arranged, **split_kwargs)
         names = ["X_train", "X_test", "Y_train", "Y_test"]
-        data_dict = {name: data for (name, data) in zip(names, splitted)}
+        data_dict = dict(zip(names, splitted))
         # X_target
         data_dict["X_target"] = X.loc[X.index > Y.index.max()]
         return data_dict
@@ -79,7 +79,7 @@ class _FeatureEngineer(Term):
 
     def log_transform(self):
         """
-        Add log-transforemd indeciator values to X as new features.
+        Add log-transformed indicator values to X as new features.
         """
         raw = self._X_raw.copy()
         selected = raw.loc[:, raw.max(axis=0) >= 1000]
