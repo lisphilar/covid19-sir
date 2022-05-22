@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
 from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 
@@ -56,9 +57,9 @@ class ODESimulator(Term):
                 "Simulation for two phases is not supported from version 2.7.0")
         # Register the setting
         self.setting = {
-            "model": self._ensure_subclass(model, ModelBase, name="model"),
-            self.STEP_N: self._ensure_natural_int(step_n, name="step_n"),
-            "population": self._ensure_population(population),
+            "model": Validator(model, "model").subclass(ModelBase),
+            self.STEP_N: Validator(step_n, "step_n").int(value_range=(1, None)),
+            "population": Validator(population, "population").int(value_range=(1, None)),
             ModelBase.PARAM_DICT: self._ensure_parameters(model, param_dict),
             self.Y0_DICT: self._ensure_initial_values(model, y0_dict),
         }

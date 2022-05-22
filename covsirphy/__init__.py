@@ -14,15 +14,17 @@ from covsirphy.__citation__ import __citation__
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
-from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
+from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
-from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError
+from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
+from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term, Word
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
@@ -112,12 +114,14 @@ def get_citation():
 
 __all__ = [
     # util
-    "StopWatch", "deprecate", "find_args", "Term", "Filer", "Evaluator",
+    "StopWatch", "deprecate", "Term", "Filer", "Evaluator",
     "SubsetNotFoundError", "ScenarioNotFoundError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "UnExpectedValueError", "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
+    "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
-    "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError",
+    "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
+    "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError",
+    "Validator",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
@@ -148,7 +152,7 @@ __all__ = [
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
-    "CountryData", "ColoredMap", "ExampleData", "ModelValidator",
+    "CountryData", "ColoredMap", "ExampleData", "ModelValidator", "find_args",
 ]
 
 # Show exceptions in better format if used from command line

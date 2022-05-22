@@ -46,9 +46,42 @@ class _Recommended(Term):
         # Column names to identify records
         self._id_cols = [self.ISO3, self.PROVINCE, self.DATE]
 
+    @staticmethod
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+        """
+        Ensure a natural (non-negative) number.
+
+        Args:
+            target (int or float or str or None): value to ensure
+            name (str): argument name of the value
+            include_zero (bool): include 0 or not
+            none_ok (bool): None value can be applied or not.
+
+        Returns:
+            int: as-is the target
+
+        Note:
+            When @target is None and @none_ok is True, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
+        """
+        if target is None and none_ok:
+            return None
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        min_value = 0 if include_zero else 1
+        if number < min_value:
+            raise ValueError(f"{s}. This value is under {min_value}")
+        return number
+
     def retrieve(self):
         """
-        Retrive datasets from remote servers.
+        Retrieve datasets from remote servers.
 
         Returns:
             tuple(pandas/DataFrame, dict[str, str]):
@@ -58,7 +91,7 @@ class _Recommended(Term):
                     Columns
                         - Date (str): column name for dates
                         - Country (str): country names (top level administration)
-                        - Procvince (str): province names (2nd level administration)
+                        - Province (str): province names (2nd level administration)
                         - ISO3 (str): ISO3 codes
                         - Confirmed (numpy.float64): the number of confirmed cases
                         - Fatal (numpy.float64): the number of fatal cases
@@ -69,7 +102,7 @@ class _Recommended(Term):
                         - Vaccinations (numpy.float64): cumulative number of vaccinations
                         - Vaccinations_boosters (numpy.float64): cumulative number of booster vaccinations
                         - Vaccinated_once (numpy.float64): cumulative number of people who received at least one vaccine dose
-                        - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescrived by the protocol
+                        - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescribed by the protocol
                         - School_closing
                         - Workplace_closing
                         - Cancel_events

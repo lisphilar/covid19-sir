@@ -3,8 +3,8 @@
 
 import geopandas as gpd
 from matplotlib import pyplot as plt
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.subset import _SubsetManager
 from covsirphy.gis.layer import _LayerAdjuster
@@ -13,7 +13,7 @@ from covsirphy.gis.choropleth import _ChoroplethMap
 
 
 class GIS(Term):
-    """Class of geographic information system to handle geospatial time-series data.
+    """Class of geographic information system to handle geo-spatial time-series data.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
@@ -36,11 +36,11 @@ class GIS(Term):
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
         # Location data
-        self._layers = self._ensure_list(target=layers or [self._country, self.PROVINCE, self.CITY], name="layers")
+        self._layers = Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence()
         # Date column
         self._date = str(date)
         # Verbosity
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
         # Layer adjuster
         self._adjuster = _LayerAdjuster(
             layers=self._layers, country=self._country, date=self._date, verbose=self._verbose)
@@ -140,7 +140,7 @@ class GIS(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/provonce/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns province-level data in Japan.
@@ -166,8 +166,8 @@ class GIS(Term):
             raise NotRegisteredError("GIS.register()", details="No records have been registered at the layer yet.")
         # Filter with date
         series = df[self._date].copy()
-        start = self._ensure_date(start_date, default=series.min())
-        end = self._ensure_date(end_date, default=series.max())
+        start = Validator(start_date).date(default=series.min())
+        end = Validator(end_date).date(default=series.max())
         df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
         if df.empty and errors == "raise":
             raise NotRegisteredError(
@@ -213,7 +213,7 @@ class GIS(Term):
         if on is None:
             df = df.sort_values(self._date, ascending=True).groupby(self._layers).last().reset_index()
         else:
-            df = df.loc[df[self._date] == self._ensure_date(on)]
+            df = df.loc[df[self._date] == Validator(on).date()]
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
         geometry = _Geometry(
             data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
@@ -233,12 +233,13 @@ class GIS(Term):
                 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
                 - pandas.DataFrame.plot()
         """
-        gdf = self.to_geopandas(variables=[variable], **find_args(GIS.to_geopandas, **kwargs))
+        v = Validator(kwargs, "keyword arguments")
+        gdf = self.to_geopandas(variables=[variable], **v.kwargs(functions=GIS.to_geopandas, default=None))
         focused_layer = [layer for layer in self._layers if layer in gdf.columns][0]
         gdf.rename(columns={focused_layer: "Location", variable: "Variable"}, inplace=True)
-        with _ChoroplethMap(filename=filename, **find_args(plt.savefig, **kwargs)) as cm:
+        with _ChoroplethMap(filename=filename, **v.kwargs(functions=plt.savefig, default=None)) as cm:
             cm.title = str(title)
-            cm.plot(data=gdf, logscale=logscale, **find_args(gpd.GeoDataFrame.plot, **kwargs))
+            cm.plot(data=gdf, logscale=logscale, **v.kwargs(functions=gpd.GeoDataFrame.plot, default=None))
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, errors="raise"):
         """Return subset of the location and date range.
@@ -268,7 +269,7 @@ class GIS(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/provonce/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
@@ -290,7 +291,7 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("GIS.register()", message="No records have been registered yet.")
+            raise NotRegisteredError("GIS.register()", details="No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
@@ -300,8 +301,8 @@ class GIS(Term):
             raise SubsetNotFoundError(geo=geo)
         # Filter with date
         series = df[self._date].copy()
-        start = self._ensure_date(start_date, default=series.min())
-        end = self._ensure_date(end_date, default=series.max())
+        start = Validator(start_date).date(default=series.min())
+        end = Validator(end_date).date(default=series.max())
         df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
         if df.empty and errors == "raise":
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)

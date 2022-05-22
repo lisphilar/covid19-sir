@@ -5,6 +5,7 @@ from itertools import chain
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.analysis.scenario import Scenario
@@ -35,15 +36,15 @@ class ModelValidator(Term):
 
     @deprecate(old="ModelValidator()", version="2.24.0-kappa")
     def __init__(self, tau=1440, n_trials=8, step_n=None, seed=0):
-        self._tau = self._ensure_tau(tau)
-        self._n_trials = self._ensure_natural_int(n_trials, name="n_trials")
-        self._seed = self._ensure_natural_int(seed, name="seed", include_zero=True)
+        self._tau = Validator(tau, "tau").tau(default=None)
+        self._n_trials = Validator(n_trials, "n_trials").int(value_range=(1, None))
+        self._seed = Validator(seed, "seed").int(value_range=(0, None))
         # list[int]: the number of steps for each trials
         if step_n is None:
             np.random.seed(seed)
             self._step_n_list = np.random.randint(5, 60, n_trials)
         else:
-            self._ensure_int_range(step_n, name="step_n", value_range=(3, None))
+            Validator(step_n, "step_n").int(value_range=(3, None))
             self._step_n_list = [step_n for _ in range(n_trials)]
         # Validated models
         self.model_names = []
@@ -63,7 +64,7 @@ class ModelValidator(Term):
         Returns:
             covsirphy.ModelValidator: self
         """
-        model = self._ensure_subclass(model, ModelBase, name="model")
+        model = Validator(model, "model").subclass(ModelBase)
         if model.NAME in self.model_names:
             raise ValueError(f"{model.NAME} has been validated.")
         self.model_names.append(model.NAME)
