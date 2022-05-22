@@ -193,7 +193,7 @@ class RegressionHandler(Term):
                 - delay (list[int]): list of delay period [days]
         """
         fit_dict = {"best": self._best}
-        fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
+        fit_dict |= self._reg_dict[self._best].to_dict(metric=metric)
         fit_dict["delay"] = self._delay_candidates
         return fit_dict
 
