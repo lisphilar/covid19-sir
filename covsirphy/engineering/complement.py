@@ -4,6 +4,7 @@
 from datetime import timedelta
 import warnings
 import numpy as np
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -44,7 +45,7 @@ class _ComplementHandler(Term):
         Return:
             bool: whether complement is required or not
         """
-        self._ensure_dataframe(target=self._df, columns=[column], name="column")
+        Validator(self._df, "data").dataframe(columns=[column])
         return not self._df[column].drop_duplicates().is_monotonic_increasing
 
     def force_monotonic_increase(self, column):
@@ -101,7 +102,7 @@ class _ComplementHandler(Term):
         if 0 < df[recovered].max() <= max_ignored:
             return True
         # Complement is required if sum of recovered is more than 99%
-        # or less than 1% of sum of recovered minus infected when outbreaking
+        # or less than 1% of sum of recovered minus infected when out-breaking
         sel_C1 = df[confirmed] > max_ignored
         sel_R1 = df[recovered] > max_ignored
         sel_2 = df[confirmed].diff().diff().rolling(14).mean() > 0
@@ -295,3 +296,64 @@ class _ComplementHandler(Term):
         df.loc[min_index:, tests] = np.ceil(first_value + diff_series.loc[min_index:].cumsum())
         self._df = df.copy()
         return True
+
+    @staticmethod
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+        """
+        Ensure a natural (non-negative) number.
+
+        Args:
+            target (int or float or str or None): value to ensure
+            name (str): argument name of the value
+            include_zero (bool): include 0 or not
+            none_ok (bool): None value can be applied or not.
+
+        Returns:
+            int: as-is the target
+
+        Note:
+            When @target is None and @none_ok is True, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
+        """
+        if target is None and none_ok:
+            return None
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        min_value = 0 if include_zero else 1
+        if number < min_value:
+            raise ValueError(f"{s}. This value is under {min_value}")
+        return number
+
+    @staticmethod
+    def _ensure_float(target, name="value", value_range=(0, None)):
+        """
+        Ensure a float value.
+        If the value is a float value and the type was string,
+        it will be converted to a float.
+
+        Args:
+            target (float or str): value to ensure
+            name (str): argument name of the value
+            value_range(tuple(int or None, int or None)): value range, None means un-specified
+
+        Returns:
+            float: as-is the target
+        """
+        s = f"@{name} must be a float value, but {target} was applied"
+        try:
+            value = float(target)
+        except ValueError:
+            raise ValueError(f"{s} and not converted to float.") from None
+        # Minimum
+        if value_range[0] is not None and value < value_range[0]:
+            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {value} was applied.")
+        # Maximum
+        if value_range[1] is not None and value > value_range[1]:
+            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {value} was applied.")
+        return value

@@ -3,19 +3,19 @@
 
 import warnings
 import pytest
-from covsirphy import Term
+from covsirphy import Term, SubsetNotFoundError
 
 
 class TestMobilityData(object):
     def test_cleaning(self, mobility_data):
         df = mobility_data.cleaned()
-        assert set([Term.DATE, Term.ISO3, Term.COUNTRY, Term.PROVINCE]).issubset(df.columns)
+        assert {Term.DATE, Term.ISO3, Term.COUNTRY, Term.PROVINCE}.issubset(df.columns)
 
     def test_subset(self, mobility_data):
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             mobility_data.subset("Moon")
         df = mobility_data.subset("JPN")
-        assert set([Term.DATE]).issubset(df.columns)
+        assert {Term.DATE}.issubset(df.columns)
 
     def test_total(self, mobility_data):
         with pytest.raises(NotImplementedError):

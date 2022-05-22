@@ -37,7 +37,7 @@ class SIRFV(ModelBase):
     # Weights of variables in parameter estimation error function
     WEIGHTS = np.array([0, 10, 10, 2, 0])
     # Variables that increases monotonically
-    VARS_INCLEASE = [ModelBase.R, ModelBase.F]
+    VARS_INCREASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
         ModelBase.STEP_N: 180,
@@ -52,8 +52,7 @@ class SIRFV(ModelBase):
         },
     }
 
-    def __init__(self, population, theta, kappa, rho, sigma,
-                 omega=None, v_per_day=None):
+    def __init__(self, *args, **kwargs):
         raise NotImplementedError(
             "SIR-FV model was removed because vaccinated persons may move "
             "to the other compartments. Please use SIR-F model and adjust parameter values "
