@@ -107,8 +107,7 @@ class Scenario(Term):
 
     @first_date.setter
     def first_date(self, date):
-        self._data.timepoints(
-            first_date=date, last_date=self._data.last_date, today=self._data.today)
+        self._data.timepoints(first_date=date, last_date=self._data.last_date, today=self._data.today)
 
     @property
     def last_date(self):
@@ -120,13 +119,13 @@ class Scenario(Term):
     @last_date.setter
     def last_date(self, date):
         try:
-            Validator(date, "date").date(value_range=(self._data.today, None))
+            Validator(date, "date").date(
+                value_range=(Validator(self._data.today, "today").date(), None))
         except ValueError:
             today = date
         else:
             today = self._data.today
-        self.timepoints(
-            first_date=self._data.first_date, last_date=date, today=today)
+        self.timepoints(first_date=self._data.first_date, last_date=date, today=today)
 
     @property
     def today(self):
@@ -137,8 +136,7 @@ class Scenario(Term):
 
     @today.setter
     def today(self, date):
-        self.timepoints(
-            first_date=self._data.first_date, last_date=self._data.last_date, today=date)
+        self.timepoints(first_date=self._data.first_date, last_date=self._data.last_date, today=date)
 
     @property
     def interactive(self):
