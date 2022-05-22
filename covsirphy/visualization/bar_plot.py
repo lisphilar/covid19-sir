@@ -4,8 +4,8 @@
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import pandas as pd
-from covsirphy.util.argument import find_args
-from covsirphy.visualization.vbase import VisualizeBase
+from covsirphy.util.validator import Validator
+from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class BarPlot(VisualizeBase):
@@ -42,14 +42,14 @@ class BarPlot(VisualizeBase):
                     labels of the bars
                 Columns
                     variables to show
-            vartical (bool): whether vertical bar plot (True) or horizontal bar plot (False)
+            vertical (bool): whether vertical bar plot (True) or horizontal bar plot (False)
             colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
             color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         if isinstance(data, pd.Series):
             data = pd.DataFrame(data)
-        self._ensure_dataframe(data, name="data")
+        Validator(data, "data").dataframe()
         self._variables = data.columns.tolist()
         # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
@@ -79,7 +79,7 @@ class BarPlot(VisualizeBase):
         Args:
             ylabel (str or None): y-label
             y_logscale (bool): whether use log-scale in y-axis or not
-            ylim (tuple(int or float, int or float)): limit of y dimain
+            ylim (tuple(int or float, int or float)): limit of y domain
             math_scale (bool): whether use LaTEX or not in y-label
             y_integer (bool): whether force to show the values as integer or not
 
@@ -92,7 +92,7 @@ class BarPlot(VisualizeBase):
         if math_scale:
             self._ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
             self._ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-        # Interger scale
+        # Integer scale
         if y_integer:
             fmt = ScalarFormatter(useOffset=False)
             fmt.set_scientific(False)

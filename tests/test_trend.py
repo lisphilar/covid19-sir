@@ -4,6 +4,7 @@
 import warnings
 import pytest
 from covsirphy import TrendDetector, Trend, ChangeFinder, UnExpectedValueError, SubsetNotFoundError
+from covsirphy import UnExpectedValueRangeError
 
 
 class TestTrendDetector(object):
@@ -14,7 +15,7 @@ class TestTrendDetector(object):
         population = population_data.value(country)
         subset_df = jhu_data.subset(country=country, population=population)
         # Too small min_size
-        with pytest.raises(ValueError):
+        with pytest.raises(UnExpectedValueRangeError):
             TrendDetector(data=subset_df, min_size=2)
         # Too large min_size
         with pytest.raises(ValueError):
