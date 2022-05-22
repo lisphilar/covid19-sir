@@ -3,6 +3,7 @@
 
 from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.feature_engineer import _FeatureEngineer
@@ -38,10 +39,10 @@ class RegressionHandler(Term):
 
     def __init__(self, data, model, **kwargs):
         # ODE parameter values
-        self._ensure_subclass(model, ModelBase, name="model")
+        Validator(model, "model").subclass(ModelBase)
         self._parameters = model.PARAMETERS[:]
         # Set datasets (create _FeatureEngineer instance)
-        self._ensure_dataframe(data, name="data", columns=self._parameters, time_index=True)
+        Validator(data, "data").dataframe(columns=self._parameters, time_index=True)
         df = data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
         X = df.drop(self._parameters, axis=1)
         Y = df.loc[:, self._parameters]
@@ -77,10 +78,10 @@ class RegressionHandler(Term):
                 "@delay must be integer or tuple(int, int) when @tools is None or includes 'delay'.")
         if isinstance(delay, tuple):
             delay_min, delay_max = delay
-            self._ensure_natural_int(delay_min, name="delay[0]")
-            self._ensure_natural_int(delay_max, name="delay[1]")
+            Validator(delay_min, "delay[0]").int(value_range=(1, None))
+            Validator(delay_max, "delay[1]").int(value_range=(1, None))
             return list(range(delay_min, delay_max + 1))
-        return [self._ensure_natural_int(delay, name="delay")]
+        return [Validator(delay, "delay").int(value_range=(1, None))]
 
     def feature_engineering(self, engineering_tools=None, delay=None):
         """
@@ -97,7 +98,7 @@ class RegressionHandler(Term):
         Note:
             All tools and names are
             - "elapsed": accurate elapsed days from the last change point of indicators
-            - "log": add log-transformed indiciator values
+            - "log": add log-transformed indicator values
             - "delay": add delayed (lagged) variables with @delay (must not be None)
 
         Note:
@@ -110,7 +111,7 @@ class RegressionHandler(Term):
         if engineering_tools is None or "delay" in engineering_tools:
             self._delay_candidates = self._convert_delay_value(delay)
         else:
-            raise NotIncludedError(key_name="delay", dict_name="engineering_tools")
+            raise NotIncludedError("delay", "engineering_tools")
         # Tools of feature engineering
         tool_dict = {
             "elapsed": (self._engineer.add_elapsed, {}),
@@ -118,8 +119,7 @@ class RegressionHandler(Term):
             "delay": (self._engineer.apply_delay, {"delay_values": self._delay_candidates}),
         }
         all_tools = list(tool_dict.keys())
-        selected_tools = self._ensure_list(
-            engineering_tools or all_tools, candidates=all_tools, name="tools")
+        selected_tools = Validator(engineering_tools, "tools").sequence(default=all_tools, candidates=all_tools)
         # Perform feature engineering
         for name in selected_tools:
             method, arg_dict = tool_dict[name]
@@ -134,7 +134,7 @@ class RegressionHandler(Term):
             regressor (list[str]): list of regressors selected from en, dt, lgbm, svr (refer to note)
 
         Raises:
-            ValueError: un-expected parameter values were predcited by all regressors, out of range (0, 1)
+            ValueError: un-expected parameter values were predicted by all regressors, out of range (0, 1)
 
         Returns:
             float: the best score
@@ -164,7 +164,7 @@ class RegressionHandler(Term):
         if not self._reg_dict:
             raise UnExpectedReturnValueError(
                 name="ODE parameter values", value=None, plural=True,
-                message="Values are out of range (0, 1) with all regressors")
+                details="Values are out of range (0, 1) with all regressors")
         # Select the best regressor with the metric
         score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
         self._best, score = Evaluator.best_one(score_dict, metric=metric)

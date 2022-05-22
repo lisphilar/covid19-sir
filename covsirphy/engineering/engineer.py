@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import UnExecutedError, UnExpectedValueError, SubsetNotFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.engineering.cleaner import _DataCleaner
 from covsirphy.engineering.transformer import _DataTransformer
@@ -11,7 +11,7 @@ from covsirphy.engineering.complement import _ComplementHandler
 
 
 class DataEngineer(Term):
-    """Class for data engineering including cleaning, tranforming and complementing.
+    """Class for data engineering including cleaning, transforming and complementing.
 
     Args:
         data (pandas.DataFrame): raw data
@@ -41,11 +41,10 @@ class DataEngineer(Term):
     }
 
     def __init__(self, data, layers, date="Date"):
-        self._layers = self._ensure_list(layers, name="layers")
+        self._layers = Validator(layers, "layers").sequence()
         self._date = str(date)
         self._id_cols = [*self._layers, self._date]
-        self._ensure_dataframe(target=data, columns=[*self._layers, self._date], name="data")
-        self._df = data.copy()
+        self._df = Validator(data, "data").dataframe(columns=[*self._layers, self._date])
 
     def all(self):
         """Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().
@@ -86,10 +85,10 @@ class DataEngineer(Term):
             "fillna": cleaner.fillna,
         }
         all_kinds = list(kind_dict.keys())
-        selected = all_kinds if kinds is None else self._ensure_list(target=kinds, candidates=all_kinds, name="kinds")
+        selected = all_kinds if kinds is None else Validator(kinds, "kind").sequence(candidates=all_kinds)
         for kind in selected:
             try:
-                kind_dict[kind](**find_args(kind_dict[kind], **kwargs))
+                kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
             except UnExecutedError:
                 raise UnExecutedError(
                     "DataEngineer.clean(kinds=['convert_date'])",
@@ -188,7 +187,7 @@ class DataEngineer(Term):
         comp_kwargs = self.DEFAULT_COMPLEMENT_KWARGS.copy()
         comp_kwargs.update(kwargs)
         # Location
-        address_converted = self._ensure_list([address] if isinstance(address, str) else address, name="address")
+        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()[0]
         if len(address_converted) != len(self._layers):
             raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
         df = self._df.copy()
@@ -253,7 +252,7 @@ class DataEngineer(Term):
             - "partially complemented tests data (ending)": 2.
         """
         # Location
-        address_converted = self._ensure_list([address] if isinstance(address, str) else address, name="address")
+        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
         if len(address_converted) != len(self._layers):
             raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
         df, remain_df = self._df.copy(), self._df.copy()
