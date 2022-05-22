@@ -3,8 +3,10 @@
 
 import functools
 from multiprocessing import cpu_count, Pool
+import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
@@ -54,11 +56,64 @@ class MPEstimator(Term):
             self.record_df = record_df.copy()
             self.from_dataset = False
         # Arguments
-        self.model = self._ensure_subclass(model, ModelBase, "model")
-        self._tau = self._ensure_tau(tau)
+        self.model = Validator(model, "model").subclass(ModelBase)
+        self._tau = Validator(tau, "tau").tau(default=None)
         self.param_dict = {
             k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         self._units = []
+
+    @staticmethod
+    def _ensure_instance(target, class_obj, name="target"):
+        """
+        Ensure the target is an instance of the class object.
+
+        Args:
+            target (instance): target to ensure
+            parent (class): class object
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
 
     @property
     def tau(self):
@@ -106,8 +161,7 @@ class MPEstimator(Term):
             try:
                 country = id_dict["country"]
             except KeyError:
-                raise KeyError(
-                    "PhaseUnit.id_dict['country'] must have country name.")
+                raise KeyError("PhaseUnit.id_dict['country'] must have country name.") from None
             province = id_dict["province"] if "province" in id_dict else None
             population = self.population_data.value(
                 country=country, province=province)
