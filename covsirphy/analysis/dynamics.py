@@ -108,7 +108,7 @@ class Dynamics(Term):
             "tau": 1440,
             "area": model.NAME,
         }
-        cls_dict.update(kwargs)
+        cls_dict |= kwargs
         df = model.convert_reverse(
             pd.DataFrame([model.EXAMPLE["y0_dict"]]), start=Validator(cls_dict["first_date"]).date(), tau=1440)
         param_df = pd.DataFrame([model.EXAMPLE["param_dict"]])
