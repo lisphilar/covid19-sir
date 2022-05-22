@@ -927,7 +927,7 @@ class Scenario(Term):
         # Adjusted end date
         adjusted = max(current_dict.values())
         for (name, _) in self._tracker_dict.items():
-            with contextlib.suppress(ValueError):
+            with contextlib.suppress(UnExpectedValueRangeError):
                 self.add(end_date=adjusted, name=name)
         return self
 
