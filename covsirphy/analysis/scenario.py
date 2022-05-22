@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import NotInteractiveError
+from covsirphy.util.error import NotInteractiveError, UnExpectedValueRangeError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -119,9 +119,9 @@ class Scenario(Term):
     @last_date.setter
     def last_date(self, date):
         try:
-            Validator(date, "date").date(
+            Validator(date, "last_date").date(
                 value_range=(Validator(self._data.today, "today").date(), None))
-        except ValueError:
+        except UnExpectedValueRangeError:
             today = date
         else:
             today = self._data.today
