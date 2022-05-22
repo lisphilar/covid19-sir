@@ -6,6 +6,7 @@ import warnings
 import geopandas as gpd
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from covsirphy.util.validator import Validator
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -42,10 +43,10 @@ class _ChoroplethMap(VisualizeBase):
             kwargs: arguments of geopandas.GeoDataFrame.plot() except for 'column'
         """
         warnings.filterwarnings("ignore", category=UserWarning)
-        df = self._ensure_dataframe(data, columns=["Location", "Variable", "geometry"], name="data")
+        df = Validator(data, "data").dataframe(columns=["Location", "Variable", "geometry"])
         df["Variable"] = df["Variable"].astype("float64")
         gdf = gpd.GeoDataFrame(df)
-        # Colorbar
+        # Color bar
         divider = make_axes_locatable(self._ax)
         cax = divider.append_axes("bottom", size="5%", pad=0.1)
         # Arguments of plotting with GeoPandas

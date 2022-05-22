@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from itertools import groupby
 from operator import itemgetter
 import pandas as pd
 from covsirphy.util.error import deprecate, UnExecutedError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
@@ -18,7 +20,7 @@ from covsirphy.analysis.scenario import Scenario
 class PolicyMeasures(Term):
     """
     Deprecated.
-    Analyse the relationship of policy measures and parameters of ODE models.
+    Analyze the relationship of policy measures and parameters of ODE models.
     This analysis will be done at country level because OxCGRT tracks policies at country level.
 
     Args:
@@ -39,11 +41,29 @@ class PolicyMeasures(Term):
         self.oxcgrt_data = self._ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # tau value must be shared
-        self.tau = self._ensure_tau(tau)
+        self.tau = Validator(tau, "tau").tau(default=None)
         # Init
         self._countries = self._all_countries()
         self._init_scenario()
         self.model = None
+
+    @staticmethod
+    def _ensure_instance(target, class_obj, name="target"):
+        """
+        Ensure the target is an instance of the class object.
+
+        Args:
+            target (instance): target to ensure
+            parent (class): class object
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
 
     def _all_countries(self):
         """
@@ -87,7 +107,7 @@ class PolicyMeasures(Term):
     @property
     def countries(self):
         """
-        list[str]: countries to analyse
+        list[str]: countries to analyze
         """
         return self._countries
 
@@ -117,10 +137,8 @@ class PolicyMeasures(Term):
         """
         min_len = self._ensure_natural_int(min_len, name="min_len")
         for country in self._countries:
-            try:
+            with contextlib.suppress(ValueError):
                 self.scenario_dict[country].trend(set_phases=True, show_figure=False)
-            except ValueError:
-                pass
         countries = [
             country for country in self._countries
             if len(self.scenario_dict[country][self.MAIN]) >= min_len
@@ -181,7 +199,7 @@ class PolicyMeasures(Term):
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
-        model = self._ensure_subclass(model, ModelBase, name="model")
+        model = Validator(model, "model").subclass(ModelBase)
         unit_nest = [
             [
                 unit.set_id(
@@ -224,7 +242,7 @@ class PolicyMeasures(Term):
             roll_window (int or None): rolling average window if necessary
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: keword arguments of line_plot()
+            kwargs: keyword arguments of line_plot()
 
         Returns:
             pandas.DataFrame:
@@ -261,6 +279,39 @@ class PolicyMeasures(Term):
         )
         return df
 
+    @staticmethod
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+        """
+        Ensure a natural (non-negative) number.
+
+        Args:
+            target (int or float or str or None): value to ensure
+            name (str): argument name of the value
+            include_zero (bool): include 0 or not
+            none_ok (bool): None value can be applied or not.
+
+        Returns:
+            int: as-is the target
+
+        Note:
+            When @target is None and @none_ok is True, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
+        """
+        if target is None and none_ok:
+            return None
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError as e:
+            raise TypeError(f"{s} and not converted to integer.") from e
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        min_value = 0 if include_zero else 1
+        if number < min_value:
+            raise ValueError(f"{s}. This value is under {min_value}")
+        return number
+
     def track(self):
         """
         Return subset of summary and show a figure to show the history in each country.
@@ -270,7 +321,7 @@ class PolicyMeasures(Term):
             roll_window (int or None): rolling average window if necessary
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: keword arguments of pd.DataFrame.plot or line_plot()
+            kwargs: keyword arguments of pd.DataFrame.plot or line_plot()
 
         Returns:
             pandas.DataFrame: parameter values
