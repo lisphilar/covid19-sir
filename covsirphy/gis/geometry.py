@@ -5,15 +5,16 @@ from pathlib import Path
 import warnings
 import geopandas as gpd
 from unidecode import unidecode
+from covsirphy.util.validator import Validator
 from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term
 
 
 class _Geometry(Term):
-    """Class to add geometry information to geospatial data.
+    """Class to add geometry information to geo-spatial data.
 
     Args:
-        data (pandas.DataFrame): geospatial data
+        data (pandas.DataFrame): geo-spatial data
             Index
                 reset index
             Columns
@@ -25,11 +26,10 @@ class _Geometry(Term):
     """
 
     def __init__(self, data, layer, directory, verbose):
-        self._ensure_dataframe(data, columns=[layer], name="{layer}-level data")
-        self._df = data.copy()
+        self._df = Validator(data, f"{layer}-level data").dataframe(columns=[layer])
         self._layer = layer
         self._filer = Filer(directory=directory)
-        self._verbose = self._ensure_natural_int(verbose, name="verbose", include_zero=True)
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
 
     def to_geopandas(self, iso3, natural_earth):
         """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.

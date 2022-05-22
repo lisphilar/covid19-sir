@@ -11,7 +11,7 @@ class TestCleaningBase(object):
     def test_cbase(self):
         warnings.simplefilter("ignore", category=DeprecationWarning)
         cbase = CleaningBase(filename=None)
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             cbase.iso3_to_country("JPN")
         with pytest.raises(NotImplementedError):
             cbase.total()

@@ -3,8 +3,8 @@
 
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
-from covsirphy.util.argument import find_args
-from covsirphy.visualization.vbase import VisualizeBase
+from covsirphy.util.validator import Validator
+from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class ComparePlot(VisualizeBase):
@@ -44,10 +44,10 @@ class ComparePlot(VisualizeBase):
             variables (list[str]): variables to compare
             groups (list[str]): the first group name and the second group name
         """
-        self._ensure_list(variables, name="variables")
-        group1, group2 = self._ensure_list(groups, name="groups")
+        Validator(variables, "variables").sequence()
+        group1, group2 = Validator(groups, "groups").sequence()
         col_nest = [[f"{variable}_{group}" for group in groups] for variable in variables]
-        self._ensure_dataframe(data, name="data", columns=sum(col_nest, []))
+        Validator(data, "data").dataframe(columns=sum(col_nest, []))
         # Prepare figure object
         fig_len = len(variables) + 1
         _, self._ax = plt.subplots(ncols=1, nrows=fig_len, figsize=(9, 6 * fig_len / 2))

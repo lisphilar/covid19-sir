@@ -3,7 +3,7 @@
 
 import warnings
 import pytest
-from covsirphy import Term
+from covsirphy import Term, SubsetNotFoundError
 
 
 class TestOxCGRTData(object):
@@ -12,7 +12,7 @@ class TestOxCGRTData(object):
         assert {Term.DATE, Term.ISO3, Term.COUNTRY, Term.PROVINCE}.issubset(df.columns)
 
     def test_subset(self, oxcgrt_data):
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             oxcgrt_data.subset("Moon")
         df = oxcgrt_data.subset("JPN")
         assert {Term.DATE}.issubset(df.columns)
