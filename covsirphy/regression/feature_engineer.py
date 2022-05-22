@@ -53,7 +53,7 @@ class _FeatureEngineer(Term):
             test_size=0.2, random_state=0, shuffle=False.
         """
         split_kwargs = {"test_size": 0.2, "random_state": 0, "shuffle": False}
-        split_kwargs.update(kwargs)
+        split_kwargs |= kwargs
         split_kwargs["random_state"] = split_kwargs.get("seed", split_kwargs["random_state"])
         split_kwargs = Validator(split_kwargs, "keyword arguments").kwargs(functions=train_test_split)
         # Train/test
