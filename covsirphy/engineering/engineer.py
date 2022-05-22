@@ -252,7 +252,7 @@ class DataEngineer(Term):
             - "partially complemented tests data (ending)": 2.
         """
         # Location
-        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()[0]
+        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
         if len(address_converted) != len(self._layers):
             raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
         df, remain_df = self._df.copy(), self._df.copy()
