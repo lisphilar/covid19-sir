@@ -4,6 +4,7 @@
 import contextlib
 from pathlib import Path
 import pandas as pd
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -55,14 +56,64 @@ class _RemoteDatabase(Term):
                 df = self._ensure_dataframe(self.read(), columns=self.saved_cols)
                 if self._iso3 is None and df[self.ISO3].nunique() > 1:
                     return df
-                if self._iso3 is not None and self._value_included(df, value_dict={self.ISO3: self._iso3}):
-                    return df
+                if self._iso3 is not None:
+                    Validator(df, "raw data").dataframe()
+                    if self._value_included(df, value_dict={self.ISO3: self._iso3}):
+                        return df
         # Download dataset from server
         df = self.download(verbose=verbose)
         df = df.rename(columns=self.COL_DICT)
         df = self._ensure_dataframe(df, columns=self.saved_cols)
         df.to_csv(self.filepath, index=False)
         return df
+
+    def _value_included(self, target, value_dict):
+        """
+        Return whether all expected values are included in the columns or not.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            value_dict (dict[str, object]): dictionary of values which must be included in the column
+
+        Returns:
+            bool: whether all values (specified in @value_dict) are included or not
+        """
+        return all(value in target[col].unique() for (col, value) in value_dict.items()) if set(value_dict.keys()).issubset(target.columns) else False
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
 
     def read(self):
         """

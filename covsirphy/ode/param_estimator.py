@@ -4,9 +4,10 @@
 import math
 import optuna
 from optuna.samplers import TPESampler
-from covsirphy.util.argument import find_args
+from covsirphy.util.error import NAFoundError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_solver import _ODESolver
@@ -39,10 +40,12 @@ class _ParamEstimator(Term):
     }
 
     def __init__(self, model, data, tau, metric, quantiles):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
-        self._tau = self._ensure_tau(tau, accept_none=False)
-        self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
+        self._model = Validator(model, "model").subclass(ModelBase)
+        Validator(data, "data").dataframe(columns=self.DSIFR_COLUMNS)
+        self._tau = Validator(tau, "tau").tau(default=None)
+        if self._tau is None:
+            raise NAFoundError("tau", None)
+        self._metric = Validator([metric], "metric").sequence(candidates=Evaluator.metrics())[0]
         # time steps (index), variables of the model
         df = model.convert(data, tau)
         self._taufree_df = df.copy()
@@ -93,7 +96,7 @@ class _ParamEstimator(Term):
         study = self.init_study(**study_dict)
         # The number of iterations
         iteration_n = math.ceil(timeout / timeout_iteration)
-        stopmatch = StopWatch()
+        stopwatch = StopWatch()
         # Optimization
         scores = []
         param_dict = {}
@@ -115,7 +118,7 @@ class _ParamEstimator(Term):
             **model_instance.calc_days_dict(self._tau),
             self._metric: self._score(**param_dict),
             self.TRIALS: len(study.trials),
-            self.RUNTIME: stopmatch.stop_show(),
+            self.RUNTIME: stopwatch.stop_show(),
         }
 
     def init_study(self, pruner, **kwargs):
@@ -129,9 +132,10 @@ class _ParamEstimator(Term):
         Returns:
             optuna.study.Study
         """
+        v = Validator(kwargs, "keyword arguments")
         pruner_class = self.PRUNER_DICT.get(pruner.lower(), optuna.pruners.ThresholdPruner)
-        pruner = pruner_class(**find_args(pruner_class, **kwargs))
-        sampler = TPESampler(**find_args(TPESampler, **kwargs))
+        pruner = pruner_class(**v.kwargs(functions=pruner_class, default=None))
+        sampler = TPESampler(**v.kwargs(functions=TPESampler, default=None))
         return optuna.create_study(direction="minimize", sampler=sampler, pruner=pruner)
 
     def objective(self, trial):
