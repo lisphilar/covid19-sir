@@ -260,6 +260,7 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
+    @pytest.mark.skipif(True, reason="Very slow")
     @pytest.mark.parametrize("days", [30])
     def test_predict(self, snl, days):
         # Prediction
