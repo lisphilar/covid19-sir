@@ -3,6 +3,7 @@
 
 from itertools import product
 import pandas as pd
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.automl.autots_predictor import _AutoTSPredictor
@@ -35,10 +36,10 @@ class AutoMLHandler(Term):
     _LOWER = "Lower"
 
     def __init__(self, X, Y, model, days, **kwargs):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._X = self._ensure_dataframe(X, name="X", time_index=True, empty_ok=True)
-        self._Y = self._ensure_dataframe(Y, name="Y", time_index=True, empty_ok=False, columns=model.PARAMETERS)
-        self._days = self._ensure_natural_int(days, name="days")
+        self._model = Validator(model, "model").subclass(ModelBase)
+        self._X = Validator(X, "X").dataframe(time_index=True, empty_ok=True)
+        self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False, columns=model.PARAMETERS)
+        self._days = Validator(days, name="days").int(value_range=(1, None))
         self._kwargs = kwargs.copy()
         self._pred_df = pd.DataFrame(columns=[self.SERIES, self.DATE, *Y.columns.tolist()])
 

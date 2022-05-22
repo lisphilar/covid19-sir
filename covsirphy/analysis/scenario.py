@@ -11,11 +11,11 @@ import sys
 import warnings
 import numpy as np
 import pandas as pd
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.compare_plot import compare_plot
@@ -58,7 +58,7 @@ class Scenario(Term):
         # ODE model
         self._model = None
         # Tau value
-        self._tau = self._ensure_tau(tau, accept_none=True)
+        self._tau = Validator(tau, "tau").tau(default=None)
         # Register datasets
         self._tracker_dict = {}
         self.register(jhu_data=jhu_data, population_data=population_data, extras=None)
@@ -95,7 +95,7 @@ class Scenario(Term):
             key (str): scenario name
             value (covsirphy.PhaseTracker): phase tracker
         """
-        self._ensure_instance(value, PhaseTracker, name="value")
+        Validator(value, "value").instance(PhaseTracker)
         self._tracker_dict[key] = value
 
     @property
@@ -107,8 +107,7 @@ class Scenario(Term):
 
     @first_date.setter
     def first_date(self, date):
-        self._data.timepoints(
-            first_date=date, last_date=self._data.last_date, today=self._data.today)
+        self._data.timepoints(first_date=date, last_date=self._data.last_date, today=self._data.today)
 
     @property
     def last_date(self):
@@ -120,13 +119,13 @@ class Scenario(Term):
     @last_date.setter
     def last_date(self, date):
         try:
-            self._ensure_date_order(self._data.today, date)
+            Validator(date, "date").date(
+                value_range=(Validator(self._data.today, "today").date(), None))
         except ValueError:
             today = date
         else:
             today = self._data.today
-        self.timepoints(
-            first_date=self._data.first_date, last_date=date, today=today)
+        self.timepoints(first_date=self._data.first_date, last_date=date, today=today)
 
     @property
     def today(self):
@@ -137,8 +136,7 @@ class Scenario(Term):
 
     @today.setter
     def today(self, date):
-        self.timepoints(
-            first_date=self._data.first_date, last_date=self._data.last_date, today=date)
+        self.timepoints(first_date=self._data.first_date, last_date=self._data.last_date, today=date)
 
     @property
     def interactive(self):
@@ -272,11 +270,11 @@ class Scenario(Term):
         if abbr is None:
             return [self.CI, self.F, self.R]
         if abbr == "all":
-            return self._ensure_list(candidates, name="candidates")
+            return Validator(candidates, "candidates").sequence()
         abbr_dict = {"C": self.C, "I": self.CI, "F": self.F, "R": self.R, }
         variables = list(abbr) if isinstance(abbr, str) else abbr
         variables = [abbr_dict.get(v, v) for v in variables]
-        return self._ensure_list(variables, candidates=candidates, name="variables")
+        return Validator(variables, "variables").sequence(candidates=candidates)
 
     def records(self, variables=None, **kwargs):
         """
@@ -327,7 +325,7 @@ class Scenario(Term):
 
     def records_diff(self, variables=None, window=7, **kwargs):
         """
-        Return the number of daily new cases (the first discreate difference of records).
+        Return the number of daily new cases (the first discrete difference of records).
 
         Args:
             variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
@@ -344,7 +342,7 @@ class Scenario(Term):
                     - Fatal (int):  daily new cases of Fatal, if calculated
                     - Recovered (int):  daily new cases of Recovered, if calculated
         """
-        window = self._ensure_natural_int(window, name="window")
+        window = Validator(window, "window").int(value_range=(1, None))
         df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
@@ -427,34 +425,33 @@ class Scenario(Term):
             When ODE model and tau value has been or were registered, parameter values will be also added.
             Default values are that of the last phase. Er can change them with kwargs.
         """
-        days = self._ensure_natural_int(days, name="days", none_ok=True)
-        today = self._ensure_date(self._data.today)
+        days = Validator(days, "days").int(value_range=(1, None))
+        today = Validator(self._data.today).date()
         tracker = self._tracker(name)
         # Update ODE model
         if model is not None:
-            self._model = self._ensure_subclass(model, ModelBase, name="model")
+            self._model = Validator(model, "model").subclass(ModelBase)
         # Set tau value if has been un-set
-        self._tau = self._tau or self._ensure_tau(tau, accept_none=True)
-        # Calcumate start date and get parameter set
+        self._tau = self._tau or Validator(tau, "tau").tau(default=None)
+        # Calculate start date and get parameter set
         if tracker:
             summary_df = tracker.summary()
             start = summary_df[self.END].max() + timedelta(days=1)
             pre_param_dict = summary_df.iloc[-1].to_dict()
             pre_param_dict.update(kwargs)
         else:
-            start = self._ensure_date(self._data.first_date)
+            start = Validator(self._data.first_date).date()
             pre_param_dict = kwargs.copy()
         # Add a new phase
         if end_date is None and days is not None:
             end = start + timedelta(days=days - 1)
         else:
-            end = self._ensure_date(end_date, name="end_date", default=today)
-            self._ensure_date_order(start, end, name="end_date")
+            end = Validator(end_date, "end_date").date(default=today, value_range=(start, None))
         tracker.define_phase(start, end)
         # Set parameter values
         if None not in {self._model, self._tau} and (set(pre_param_dict) & set(self._model.PARAMETERS)):
             param_dict = {k: float(v) for (k, v) in pre_param_dict.items() if k in self._model.PARAMETERS}
-            param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **param_dict)
+            param_dict = Validator(param_dict, "param_dict").dict(required_keys=self._model.PARAMETERS, errors="raise")
             param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
             tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
@@ -536,7 +533,7 @@ class Scenario(Term):
 
     def delete_matched(self, pattern):
         """
-        Delete scenarios which matchs to the given pattern.
+        Delete scenarios which matches to the given pattern.
 
         Arg:
             pattern (raw string): pattern to match
@@ -617,12 +614,12 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        self._ensure_list(phases, name="phases")
+        Validator(phases, name="phases").sequence()
         tracker = self._tracker(name)
         start, end = tracker.parse_range(phases=phases)
         tracker.define_phase(start, end)
         if kwargs and self._model is not None and self._tau is not None:
-            kwargs = self._ensure_kwargs(self._model.PARAMETERS, float, **kwargs)
+            kwargs = Validator(kwargs, "kwargs").dict(required_keys=self._model.PARAMETERS, errors="raise")
             param_df = pd.DataFrame(index=pd.date_range(start, end))
             for (param, value) in kwargs.items():
                 param_df[param] = value
@@ -646,7 +643,7 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        date = self._ensure_date(date, name="date")
+        date = Validator(date, "date").date()
         tracker = self._tracker(name)
         # Get start date and end date which include the separation date
         df = tracker.summary()
@@ -725,7 +722,7 @@ class Scenario(Term):
         df[self.END] = df[self.END].dt.strftime(self.DATE_FORMAT)
         if columns is None:
             return df
-        self._ensure_list(columns, df.columns.tolist(), name="columns")
+        Validator(columns, "columns").sequence(df.columns.tolist())
         return df.loc[:, columns]
 
     def trend(self, min_size=None, force=True, name="Main", show_figure=True, filename=None, **kwargs):
@@ -751,13 +748,13 @@ class Scenario(Term):
         # Minimum size of phases
         if min_size is None:
             try:
-                delay, _ = self.estimate_delay(**find_args(self.estimate_delay, **kwargs))
+                delay, _ = self.estimate_delay(**Validator(kwargs, "keyword arguments").kwargs(
+                    functions=self.estimate_delay, default=None))
             except KeyError:
                 # Extra datasets are not registered
                 delay = 7
             min_size = max(7, delay)
-        self._ensure_int_range(min_size, name="min_size", value_range=(2, None))
-        kwargs["min_size"] = min_size
+        kwargs["min_size"] = Validator(min_size, "min_size").int(value_range=(2, None))
         # S-R trend analysis
         tracker = self._tracker(name)
         if not self._interactive and filename is None:
@@ -780,7 +777,7 @@ class Scenario(Term):
             model (covsirphy.ModelBase): ODE model
             phases (list[str]): list of phase names, like 1st, 2nd...
             name (str): phase series name
-            kwargs: keyword arguments of ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
+            kwargs: keyword arguments of ODEHandler(), ODEHandler.estimate_tau() and .estimate_param()
 
         Note:
             If @name phase was not registered, new tracker will be created.
@@ -788,7 +785,7 @@ class Scenario(Term):
         Note:
             If @phases is None, all past phase will be used.
         """
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._model = Validator(model, "model").subclass(ModelBase)
         tracker = self._tracker(name)
         if self.TAU in kwargs:
             raise ValueError(
@@ -807,7 +804,7 @@ class Scenario(Term):
             self._reverse(phases=[ph], name=name)
         self.enable(phases=all_phases, name=name)
 
-    @deprecate("Scenario.phase_estimator()", version="2.19.1-delta-fu1")
+    @ deprecate("Scenario.phase_estimator()", version="2.19.1-delta-fu1")
     def phase_estimator(self, **kwargs):
         """
         Deprecated. Return the estimator of the phase.
@@ -817,7 +814,7 @@ class Scenario(Term):
         """
         raise NotImplementedError
 
-    @deprecate("Scenario.estimate_history()", version="2.19.1-delta-fu1")
+    @ deprecate("Scenario.estimate_history()", version="2.19.1-delta-fu1")
     def estimate_history(self, **kwargs):
         """
         Deprecated. Show the history of optimization.
@@ -871,7 +868,8 @@ class Scenario(Term):
         # Variables to show
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Specify range of dates
-        start, end = tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        start, end = tracker.parse_range(
+            **Validator(kwargs, "keyword arguments").kwargs(functions=PhaseTracker.parse_range, default=None))
         sim_df = tracker.simulate().set_index(self.DATE).loc[start:end, variables]
         # Show figure
         start_dates = tracker.summary()[self.START].tolist()
@@ -902,7 +900,7 @@ class Scenario(Term):
             phase = df.index[-1]
         return df.loc[phase, param]
 
-    @deprecate(
+    @ deprecate(
         old="Scenario.param_history(targets: list)",
         new="Scenario.history(target: str)",
         version="2.7.3-alpha")
@@ -1051,7 +1049,8 @@ class Scenario(Term):
         track_df[self.N] = track_df[[self.S, self.C]].sum(axis=1)
         # Specify date range
         ref_tracker = self._tracker(ref_name)
-        start, end = ref_tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        start, end = ref_tracker.parse_range(
+            **Validator(kwargs, "keyword arguments").kwargs(functions=PhaseTracker.parse_range, default=None))
         return track_df.loc[(track_df[self.DATE] >= start) & (track_df[self.DATE] <= end)]
 
     def _history(self, target, with_actual=True):
@@ -1099,7 +1098,8 @@ class Scenario(Term):
         df = self._history(target=target, with_actual=with_actual)
         df.dropna(subset=[col for col in df.columns if col != self.ACTUAL], inplace=True)
         ref_tracker = self._tracker(ref_name)
-        start, end = ref_tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        start, end = ref_tracker.parse_range(
+            **Validator(kwargs, "keyword arguments").kwargs(functions=PhaseTracker.parse_range, default=None))
         df = df.loc[start:end]
         # Y-label
         if target == self.RT:
@@ -1160,7 +1160,7 @@ class Scenario(Term):
             model (covsirphy.ModelBase): ODE model
             control (str): scenario name of control
             target (str): scenario name of target
-            kwargs: keyword arguments of ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
+            kwargs: keyword arguments of ODEHandler(), ODEHandler.estimate_tau() and .estimate_param()
 
         Note:
             When parameter values are not specified,
@@ -1201,16 +1201,16 @@ class Scenario(Term):
         """
         tracker = self._tracker(name)
         # Variables to evaluate
-        variables = self._ensure_list(
-            variables or [self.CI, self.F, self.R],
-            candidates=[self.S, self.C, self.CI, self.F, self.R], name="variables")
+        variables = Validator(variables, "variables").sequence(
+            candidates=[self.S, self.C, self.CI, self.F, self.R], default=[self.CI, self.F, self.R])
         # Specify date range
-        start, end = tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        start, end = tracker.parse_range(
+            **Validator(kwargs, "keyword arguments").kwargs(functions=PhaseTracker.parse_range, default=None))
         sim_df = tracker.simulate().set_index(self.DATE)
         rec_df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
         # Evaluate
         evaluator = Evaluator(rec_df.loc[start:end], sim_df.loc[start:end, variables], how="inner")
-        return evaluator.score(**find_args(Evaluator.score, **kwargs))
+        return evaluator.score(**Validator(kwargs, "keyword arguments").kwargs(functions=Evaluator.score, default=None))
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
                        target="Confirmed", percentile=25, limits=(7, 30), **kwargs):
@@ -1259,7 +1259,7 @@ class Scenario(Term):
         # Calculate delay values
         df = self._data.estimate_delay(
             indicator=indicator, target=target, min_size=min_size, delay_name="Period Length",
-            **find_args(DataHandler.estimate_delay, **kwargs))
+            **Validator(kwargs, "keyword arguments").kwargs(functions=DataHandler.estimate_delay, default=None))
         # Remove NAs and sort
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
@@ -1282,13 +1282,13 @@ class Scenario(Term):
         Deprecated and merged to .predict().
         Fit regressors to predict the parameter values in the future phases,
         assuming that indicators will impact on ODE parameter values/the number of cases with delay.
-        Please refer to covsirphy.RegressionHander class.
+        Please refer to covsirphy.RegressionHandler class.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset, deprecated
             name (str): scenario name
             test_size (float): proportion of the test dataset of Elastic Net regression
-            seed (int): random seed when spliting the dataset to train/test data
+            seed (int): random seed when splitting the dataset to train/test data
             delay (int or tuple(int, int) or None):
                 - (int): delay period [days],
                 - tuple(int, int): select the best value with grid search in this range, or
@@ -1305,7 +1305,7 @@ class Scenario(Term):
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
 
         Returns:
-            dict: this is the same as covsirphy.Regressionhander.to_dict()
+            dict: this is the same as covsirphy.RegressionHandler.to_dict()
 
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
@@ -1352,12 +1352,13 @@ class Scenario(Term):
             data = param_df.join(records_df)
         elif not isinstance(delay, tuple):
             # Use specified delay value
-            delay = self._ensure_natural_int(delay, name="delay")
+            delay = Validator(delay, name="delay").int(value_range=(1, None))
         # Fit regression models
         handler = RegressionHandler(data=data, model=self._model, **kwargs)
         handler.feature_engineering(
-            delay=delay, **find_args(RegressionHandler.feature_engineering, **kwargs))
-        handler.fit(metric=metric, **find_args(RegressionHandler.fit, **kwargs))
+            delay=delay, **Validator(kwargs, "keyword arguments").kwargs(functions=RegressionHandler.feature_engineering, default=None))
+        handler.fit(
+            metric=metric, **Validator(kwargs, "keyword arguments").kwargs(functions=RegressionHandler.fit, default=None))
         self._reghandler_dict[name] = handler
         # Accuracy
         self.fit_accuracy(name=name, metric=metric, **kwargs)
@@ -1366,7 +1367,7 @@ class Scenario(Term):
 
     def _get_fit_handler(self, name="Main"):
         """
-        Get the instance of RegresionHandler.
+        Get the instance of RegressionHandler.
 
         Args:
             name (str): scenario name
@@ -1389,14 +1390,14 @@ class Scenario(Term):
             kwargs: keyword arguments of RegressionHandler.pred_true_plot()
 
         Returns:
-            dict: this is the same as covsirphy.Regressionhander.to_dict()
+            dict: this is the same as covsirphy.RegressionHandler.to_dict()
         """
         metric = kwargs.pop("metrics") if "metrics" in kwargs else metric
         handler = self._get_fit_handler(name=name)
         # Show predicted vs. actual plot
         if show_figure:
             handler.pred_actual_plot(
-                metric=metric, **find_args(RegressionHandler.pred_actual_plot, **kwargs))
+                metric=metric, **Validator(kwargs, "keyword arguments").kwargs(functions=RegressionHandler.pred_actual_plot, default=None))
         # Return information
         return handler.to_dict(metric=metric)
 
@@ -1466,7 +1467,8 @@ class Scenario(Term):
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
-        self.fit(oxcgrt_data=oxcgrt_data, name=name, **find_args(Scenario.fit, **kwargs))
+        self.fit(
+            oxcgrt_data=oxcgrt_data, name=name, **Validator(kwargs, "keyword arguments").kwargs(functions=Scenario.fit, default=None))
         handler = self._get_fit_handler(name=name)
         # Prediction with regression model
         df = handler.predict()
@@ -1474,7 +1476,7 @@ class Scenario(Term):
         df.index.name = "end_date"
         # Days to predict
         days = days or [len(df)]
-        self._ensure_list(days, candidates=list(range(1, len(df) + 1)), name="days")
+        Validator(days, "days").sequence(candidates=list(range(1, len(df) + 1)))
         phase_df = df.reset_index().loc[[day - 1 for day in days], :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
@@ -1518,8 +1520,8 @@ class Scenario(Term):
             covsirphy.Scenario: self
 
         Note:
-            If keyword arguments of Scenario.timepoint() are available as the values of "timepoint" key,
-            timpoints will be restored.
+            If keyword arguments of Scenario.timepoints() are available as the values of "timepoint" key,
+            timepoints will be restored.
         """
         # Read the file
         with Path(filename).open("r") as fh:
@@ -1527,8 +1529,8 @@ class Scenario(Term):
         # Check area name
         if "area" not in info_dict or info_dict["area"] != self._area:
             raise ValueError(f"Area name (value of 'area' key) must be {self._area},\n{filename}")
-        # Set timepoint
-        self.timepoints(**find_args(self.timepoints, **info_dict.get("timepoint", {})))
+        # Set timepoints
+        self.timepoints(**Validator(info_dict.get("timepoint", {})).kwargs(functions=self.timepoints, default=None))
         # Set scenarios and phases
         snl_dict = info_dict.get("scenario", {})
         model_dict = {SIR.NAME: SIR, SIRD.NAME: SIRD, SIRF.NAME: SIRF}
@@ -1586,12 +1588,12 @@ class Scenario(Term):
         Note:
             Dimension of returned object corresponds to the type of @q.
         """
-        quantiles = [q] if isinstance(q, float) else self._ensure_list(q, name="q")
-        variable = self._ensure_selectable(variable, candidates=self.VALUE_COLUMNS, name="variable")
+        quantiles = [q] if isinstance(q, float) else Validator(q, "q").sequence()
+        Validator([variable], "variable").sequence(candidates=self.VALUE_COLUMNS)
         # Target scenarios to represent
         all_set = set(self._tracker_dict.keys())
-        in_set = all_set if included is None else set(self._ensure_list(included, name="included"))
-        ex_set = set() if excluded is None else set(self._ensure_list(excluded, name="excluded"))
+        in_set = all_set if included is None else set(Validator(included, "included").sequence())
+        ex_set = set() if excluded is None else set(Validator(excluded, "excluded").sequence())
         scenarios = list(all_set & (in_set) - ex_set)
         # Get simulation data of the variable of the target scenarios
         sim_dict = {name: self._tracker_dict[name].simulate().set_index(self.DATE)[variable] for name in scenarios}
@@ -1600,7 +1602,7 @@ class Scenario(Term):
             raise ValueError(
                 "The end dates of the last phases must be aligned. Scenario.adjust_end() method may fix this issue.")
         # Find representative scenario
-        date_obj = self._ensure_date(target=date, name="date", default=sim_df.index[-1])
+        date_obj = Validator(date, "date").date(default=sim_df.index[-1])
         series = sim_df.loc[sim_df.index == date_obj].squeeze()
         values = series.quantile(q=quantiles, interpolation="nearest")
         return [series[series == v].index.tolist()[0] for v in values]

@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from covsirphy.trend.trend_plot import trend_plot
-from covsirphy.util.argument import find_args
 from covsirphy.util.error import NAFoundError, UnExecutedError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_handler import ODEHandler
@@ -44,11 +44,11 @@ class Dynamics(Term):
     _SIFR = [Term.S, Term.CI, Term.F, Term.R]
 
     def __init__(self, model, data, tau=None, area="Selected area", **kwargs):
-        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._model = Validator(model, "model").subclass(ModelBase)
         self._area = str(area)
-        self._tau = self._ensure_tau(tau, accept_none=True)
+        self._tau = Validator(tau, "tau").tau(default=None)
         # Records and date
-        self._ensure_dataframe(data, columns=[self.DATE, *self._SIFR, *self._model.PARAMETERS], name="data")
+        Validator(data, "data").dataframe(columns=[self.DATE, *self._SIFR, *self._model.PARAMETERS])
         self._data_df = data.set_index(self.DATE)
         self._first, self._today, self._last = None, None, None
         self.timepoints(**kwargs)
@@ -71,12 +71,10 @@ class Dynamics(Term):
         Note:
             When executed, ODE parameters and phases will be reset.
         """
-        first = self._ensure_date(first_date, name="first_date", default=self._data_df.index.min())
-        last = self._ensure_date(last_date, name="last_date", default=self._data_df.index.max())
-        self._ensure_date_order(first, last, name="last_date")
-        _today = self._ensure_date(today, name="today", default=last)
-        self._ensure_date_order(first, _today, name="today")
-        self._ensure_date_order(_today, last, name="last_date")
+        first = Validator(first_date, "first_date").date(default=self._data_df.index.min())
+        last = Validator(last_date, "last_date").date(default=self._data_df.index.max())
+        Validator(last, "last_date").date(value_range=(first, None))
+        _today = Validator(today, "today").date(default=last, value_range=(first, last))
         df = pd.DataFrame(
             {self._PH: 0, self.ODE: self._model.NAME, self.TAU: self._tau},
             index=pd.date_range(start=first, end=last, freq="D"),
@@ -112,7 +110,7 @@ class Dynamics(Term):
         }
         cls_dict.update(kwargs)
         df = model.convert_reverse(
-            pd.DataFrame([model.EXAMPLE["y0_dict"]]), start=cls._ensure_date(cls_dict["first_date"]), tau=1440)
+            pd.DataFrame([model.EXAMPLE["y0_dict"]]), start=Validator(cls_dict["first_date"]).date(), tau=1440)
         param_df = pd.DataFrame([model.EXAMPLE["param_dict"]])
         df = pd.concat([df, param_df], axis=1)
         return cls(model=model, data=df, **cls_dict)
@@ -125,7 +123,7 @@ class Dynamics(Term):
             start_date (str or pandas.Timestamp or None): start date of the records to focus on or None (covsirphy.Dynamics(first_date))
             end_date (str or pandas.Timestamp or None): end date of the records to focus on or None (covsirphy.Dynamics(last_date))
             kwargs: keyword arguments of S-R trend analysis
-                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDector.sr()
+                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDetector.sr()
                 - min_size (int): minimum value of phase length [days], over 2, default value is 7
                 - the other arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp)
 
@@ -141,22 +139,21 @@ class Dynamics(Term):
         Note:
             Tomorrow (tomorrow of covsirphy.Dynamics.timepoints(today)) will be regarded as a change point automatically.
         """
-        start = self._ensure_date(start_date, name="start_date", default=self._first)
-        end = self._ensure_date(end_date, name="end_date", default=self._last)
+        start = Validator(start_date, name="start_date").date(default=self._first)
+        end = Validator(end_date, name="end_date").date(default=self._last, value_range=(start, None))
         df = self._all_df.copy()
         # Find change points manually or with S-R trend analysis
         if points is not None:
-            starts = [self._ensure_date(date, name="a change point") for date in points] + [start]
+            starts = [Validator(date, name="a change point").date() for date in points] + [start]
         else:
             detector = self._detector(data=self._all_df, start=start, end=end, **kwargs)
-            starts = [self._ensure_date(date) for date in detector.dates()[0]]
+            starts = [Validator(date).date() for date in detector.dates()[0]]
         # Add tomorrow
-        tomorrow = self._ensure_date(self.tomorrow(self._today))
+        tomorrow = Validator(self._today).date() + timedelta(days=1)
         start_set = set(starts) | ({tomorrow} if start < self._today < end else set())
         # Set phases
         for point in sorted(start_set):
-            self._ensure_date_order(start, point, name="a change point")
-            self._ensure_date_order(point, end, name="end_date")
+            Validator(point, "a change point").date(value_range=(start, end))
             df.loc[point: end, self._PH] = max(df[self._PH].abs()) + 1
         self._all_df = df.copy()
         return self
@@ -170,7 +167,7 @@ class Dynamics(Term):
             metric (str): metrics name of evaluation, default is "MSE", refer to covsirphy.Evaluator.score()
             simulated (bool): whether use simulated number of cases for analysis or not
             kwargs: keyword arguments of S-R trend analysis
-                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDector.sr()
+                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDetector.sr()
                 - min_size (int): minimum value of phase length [days], over 2, default value is 7
                 - the other arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp)
                 - keyword arguments of covsirphy.TrendDetector.show() and covsirphy.trend_plot()
@@ -181,14 +178,15 @@ class Dynamics(Term):
         Returns:
             pandas.DataFrame: as-is TrendDetector.summary()
         """
-        start = self._ensure_date(start_date, name="start_date", default=self._first)
-        end = self._ensure_date(end_date, name="end_date", default=self._last)
+        start = Validator(start_date, name="start_date").date(default=self._first)
+        end = Validator(end_date, name="end_date").date(default=self._last)
         # Data for S-R analysis
         df = self.simulate(ffill=True).set_index(self.DATE) if simulated else self._all_df.copy()
         # Perform S-R trend analysis
         detector = self._detector(data=df, start=start, end=end, **kwargs)
         # Show results
-        detector.show(**find_args([TrendDetector.show, trend_plot], **kwargs))
+        detector.show(
+            **Validator(kwargs, "keyword arguments").kwargs(functions=[TrendDetector.show, trend_plot], default=None))
         return detector.summary(metric=metric)
 
     def _detector(self, data, start, end, **kwargs):
@@ -204,7 +202,7 @@ class Dynamics(Term):
             start (pandas.Timestamp): start date of the records to focus on
             end (pandas.Timestamp): end date of the records to focus on
             kwargs: keyword arguments of S-R trend analysis
-                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDector.sr()
+                - algo (str): detection algorithms and models, default is "Binseg-normal", refer to covsirphy.TrendDetector.sr()
                 - min_size (int): minimum value of phase length [days], over 2, default value is 7
                 - the other arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp)
 
@@ -254,7 +252,7 @@ class Dynamics(Term):
                 continue
             y0_series = self._model.convert(data_df.loc[data_df[self.DATE] >= start], tau=None).iloc[0]
             _ = handler.add(end, y0_dict=y0_series.to_dict())
-        # Estimate tau (if necessary) and ODE parameer values
+        # Estimate tau (if necessary) and ODE parameter values
         try:
             self._tau, est_dict = handler.estimate(data_df, **kwargs)
         except UnExecutedError:
@@ -279,17 +277,17 @@ class Dynamics(Term):
         Returns:
             covsirphy.Dynamics: self
         """
-        start = self._ensure_date(start_date, name="start_date")
-        end = self._ensure_date(end_date, name="end_date")
+        start = Validator(start_date, name="start_date").date()
+        end = Validator(end_date, name="end_date").date()
         parameters = self._model.PARAMETERS[:]
-        self._ensure_selectable(variable, candidates=[*self._SIFR, *parameters], name="variable")
+        Validator([variable], "variable").sequence(candidates=[*self._SIFR, *parameters])
         if variable in self._SIFR:
             new_df = pd.DataFrame(
-                {variable: self._ensure_natural_int(value, name=f"value of {variable}", include_zero=True)},
+                {variable: Validator(value, f"value of {variable}").int(value_range=(0, None))},
                 index=pd.date_range(start=start, end=end, freq="D"))
         else:
-            new_df = self._all_df.loc[self._ensure_date(start_date): self._ensure_date(end_date), parameters]
-            new_df[variable] = self._ensure_float(value, name=f"value of {variable}", value_range=(0, 1))
+            new_df = self._all_df.loc[Validator(start_date).date(): Validator(end_date).date(), parameters]
+            new_df[variable] = Validator(value, f"value of {variable}").float(value_range=(0, 1))
             new_df[self.RT] = new_df.apply(lambda x: self._model(population=1, **x.to_dict()).calc_r0(), axis=1)
             if self._tau is not None:
                 days_df = new_df.drop(self.RT, axis=1).apply(
@@ -308,8 +306,8 @@ class Dynamics(Term):
         Returns:
             covsirphy.Dynamics: self
         """
-        self._ensure_selectable(variable, candidates=[*self._SIFR, *self._model.PARAMETERS], name="variable")
-        return self._all_df.loc[self._ensure_date(date, name="date"), variable]
+        Validator([variable], "variable").sequence(candidates=[*self._SIFR, *self._model.PARAMETERS])
+        return self._all_df.loc[Validator(date, "date").date(), variable]
 
     def simulate(self, ffill=True, model_specific=False):
         """Perform simulation with the multi-phased ODE model.

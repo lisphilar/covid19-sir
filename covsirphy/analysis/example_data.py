@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError
+from covsirphy.util.validator import Validator
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_handler import ODEHandler
@@ -23,7 +24,7 @@ class ExampleData(JHUData):
             Columns
                 - Date (pd.Timestamp): Observation date
                 - Country (pandas.Category): country/region name
-                - Province (pandas.Category): province/prefecture/sstate name
+                - Province (pandas.Category): province/prefecture/state name
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases
@@ -44,10 +45,45 @@ class ExampleData(JHUData):
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
-        self._tau = self._ensure_tau(tau)
-        self._start = self._ensure_date(start_date, name="start_date")
+        self._tau = Validator(tau, "tau").tau(default=None)
+        self._start = Validator(start_date, "start_date").date()
         self._population = None
         self._recovery_period = None
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
 
     def ensure_country_name(self, country, errors="raise"):
         """
@@ -91,7 +127,7 @@ class ExampleData(JHUData):
             return (country, province)
         if model is None:
             raise ValueError("@model or @country must be specified.")
-        model = self._ensure_subclass(model, ModelBase, name="model")
+        model = Validator(model, "model").subclass(ModelBase)
         return (model.NAME, province)
 
     def add(self, model, country=None, province=None, **kwargs):
@@ -111,7 +147,7 @@ class ExampleData(JHUData):
             If province is None, '-' will be used.
         """
         # Arguments
-        model = self._ensure_subclass(model, ModelBase, name="model")
+        model = Validator(model, "model").subclass(ModelBase)
         arg_dict = model.EXAMPLE.copy()
         arg_dict.update(kwargs)
         self._population = arg_dict["population"]
