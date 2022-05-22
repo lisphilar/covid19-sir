@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
+import pandas as pd
 from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_detector import TrendDetector
 from covsirphy.trend.trend_plot import trend_plot
@@ -15,7 +18,7 @@ from covsirphy.phase.phase_series import PhaseSeries
 
 class ParamTracker(Term):
     """
-    Split records with S-R trend analysis and estimate parameter values of the phases.
+    Deprecated. Split records with S-R trend analysis and estimate parameter values of the phases.
 
     Args:
         record_df (pandas.DataFrame): records
@@ -40,15 +43,96 @@ class ParamTracker(Term):
         self._series = self._ensure_instance(phase_series, PhaseSeries, name="phase_series")
         # Records
         self._ensure_dataframe(record_df, name="record_df", columns=self.SUB_COLUMNS)
-        df = record_df.loc[record_df[self.DATE] >= self._ensure_date(phase_series.first_date)]
-        self.record_df = df.loc[df[self.DATE] <= self._ensure_date(phase_series.last_date)]
+        df = record_df.loc[record_df[self.DATE] >= Validator(phase_series.first_date).date()]
+        self.record_df = df.loc[df[self.DATE] <= Validator(phase_series.last_date).date()]
         # Area name
         self.area = area or ""
         # Tau value
-        self.tau = self._ensure_tau(tau)
+        self.tau = Validator(tau, "tau").tau(default=None)
+
+    @staticmethod
+    def _ensure_instance(target, class_obj, name="target"):
+        """
+        Ensure the target is an instance of the class object.
+
+        Args:
+            target (instance): target to ensure
+            parent (class): class object
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
 
     def __len__(self):
         return len(self._series)
+
+    @staticmethod
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None, empty_ok=True):
+        """
+        Ensure the dataframe has the columns.
+
+        Args:
+            target (pandas.DataFrame): the dataframe to ensure
+            name (str): argument name of the dataframe
+            time_index (bool): if True, the dataframe must has DatetimeIndex
+            columns (list[str] or None): the columns the dataframe must have
+            empty_ok (bool): whether give permission to empty dataframe or not
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
+        """
+        if not isinstance(target, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if not empty_ok and target.empty:
+            raise ValueError(f"@{name} must not be a empty dataframe.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(df.columns):
+            cols_str = ", ".join(col for col in columns if col not in df.columns)
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
+            raise KeyError(f"{s1} {cols_str} must be included.")
+        return df.loc[:, columns]
+
+    @staticmethod
+    def _ensure_list(target, candidates=None, name="target"):
+        """
+        Ensure the target is a sub-list of the candidates.
+
+        Args:
+            target (list[object]): target to ensure
+            candidates (list[object] or None): list of candidates, if we have
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        if not isinstance(target, (list, tuple)):
+            raise TypeError(f"@{name} must be a list or tuple, but {type(target)} was applied.")
+        if candidates is None:
+            return target
+        # Check the target is a sub-list of candidates
+        try:
+            strings = [str(candidate) for candidate in candidates]
+        except TypeError:
+            raise TypeError(f"@candidates must be a list, but {candidates} was applied.") from None
+        ok_list = [element in candidates for element in target]
+        if all(ok_list):
+            return target
+        candidate_str = ", ".join(strings)
+        raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
     @staticmethod
     def create_series(first_date, last_date, population):
@@ -126,7 +210,7 @@ class ParamTracker(Term):
                 covsirphy.PhaseUnit: phase unit
         """
         self._ensure_phase_setting()
-        self._ensure_date(date)
+        Validator(date).date()
         phase_nest = [
             (self.num2str(i), unit) for (i, unit) in enumerate(self._series) if date in unit]
         try:
@@ -154,7 +238,20 @@ class ParamTracker(Term):
             date for ph in self._series for date in [ph.start_date, ph.end_date]]
         return [
             date for base_date in base_dates
-            for date in [self.yesterday(base_date), base_date, self.tomorrow(base_date)]]
+            for date in [self.yesterday(base_date), base_date, Validator(base_date).date() + timedelta(days=1)]]
+
+    @classmethod
+    def yesterday(cls, date_str):
+        """
+        Yesterday of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: yesterday
+        """
+        return cls.date_change(date_str, days=-1)
 
     def all_phases(self):
         """
@@ -219,13 +316,13 @@ class ParamTracker(Term):
             - Either @end_date or @days must be specified.
             - If @end_date and @days are None, the end date will be the last date of the records.
             - If both of @end_date and @days were specified, @end_date will be used.
-            - If @popultion is None, initial value will be used.
+            - If @population is None, initial value will be used.
             - If @model is None, the model of the last phase will be used.
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
         if end_date is not None:
-            self._ensure_date(end_date, name="end_date")
+            Validator(end_date, "end_date").date()
         try:
             self._series.add(
                 end_date=end_date, days=days, population=population,
@@ -410,7 +507,7 @@ class ParamTracker(Term):
             - In kwargs, tau value cannot be included.
         """
         self._ensure_phase_setting()
-        model = self._ensure_subclass(model, ModelBase, "model")
+        model = Validator(model, "model").subclass(ModelBase)
         units = [
             unit.set_id(phase=phase)
             for (phase, unit) in zip(*self.past_phases(phases=phases))
@@ -450,7 +547,7 @@ class ParamTracker(Term):
         try:
             return self._series.simulate(record_df=self.record_df, y0_dict=y0_dict)
         except NameError:
-            raise UnExecutedError(".estimate()")
+            raise UnExecutedError(".estimate()") from None
 
     def _compare_with_actual(self, variables, y0_dict=None):
         """
