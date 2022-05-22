@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
 
@@ -27,7 +28,7 @@ class _SRChange(Term):
     """
 
     def __init__(self, sr_df):
-        self._ensure_dataframe(sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
+        Validator(sr_df, name="sr_df").dataframe(time_index=True, columns=[self.S, self.R])
         # Index: Date, Columns: Recovered, Susceptible, logS
         self._sr_df = pd.DataFrame(
             {
@@ -82,10 +83,25 @@ class _SRChange(Term):
         # Curve fitting
         warnings.filterwarnings("ignore", category=OptimizeWarning)
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        param, _ = curve_fit(self.linear, df[self.R], df["logS"], maxfev=10000)
+        param, _ = curve_fit(self._linear, df[self.R], df["logS"], maxfev=10000)
         # Get fitted values
-        f_partial = functools.partial(self.linear, a=param[0], b=param[1])
+        f_partial = functools.partial(self._linear, a=param[0], b=param[1])
         return pd.DataFrame({self.FITTED: 10 ** f_partial(df[self.R])}, index=df.index)
+
+    @staticmethod
+    def _linear(x, a, b):
+        """
+        Linear function f(x) = A x + b.
+
+        Args:
+            x (float): x values
+            a (float): the first parameter of the function
+            b (float): the second parameter of the function
+
+        Returns:
+            float
+        """
+        return a * x + b
 
     def _fitting(self, change_points):
         """

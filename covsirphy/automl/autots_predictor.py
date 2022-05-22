@@ -4,7 +4,7 @@
 import warnings
 from autots import AutoTS
 from sklearn.exceptions import ConvergenceWarning
-from covsirphy.util.argument import find_args
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -24,7 +24,7 @@ class _AutoTSPredictor(Term):
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
     def __init__(self, days, model_list, **kwargs):
-        self._autots_kwargs = {
+        autots_kwargs = {
             "forecast_length": days,
             "model_list": model_list,
             "frequency": "D",
@@ -38,7 +38,7 @@ class _AutoTSPredictor(Term):
             "verbose": 1,
             "n_jobs": -1,
         }
-        self._autots_kwargs.update(find_args(AutoTS, **kwargs))
+        self._autots_kwargs = Validator(kwargs, "keyword arguments").kwargs(functions=AutoTS, default=autots_kwargs)
 
     def predict(self, past_df):
         """

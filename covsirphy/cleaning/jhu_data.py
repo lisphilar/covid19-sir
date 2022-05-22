@@ -5,6 +5,7 @@ import contextlib
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
+from covsirphy.util.validator import Validator
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
@@ -250,7 +251,7 @@ class JHUData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date,
-                message=f"with 'Recovered >= {recovered_min}'") from None
+                details=f"with 'Recovered >= {recovered_min}'") from None
         return df
 
     @deprecate("JHUData.to_sr()", version="2.17.0-zeta")
@@ -278,7 +279,7 @@ class JHUData(CleaningBase):
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
-        population = self._ensure_population(population)
+        population = Validator(population, "population").int(value_range=(1, None))
         subset_df = self.subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
@@ -601,7 +602,7 @@ class JHUData(CleaningBase):
         except ValueError:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
+                start_date=start_date, end_date=end_date, details="with 'Recovered > 0'") from None
 
     def show_complement(self, country=None, province=None,
                         start_date=None, end_date=None, **kwargs):

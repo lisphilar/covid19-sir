@@ -4,6 +4,7 @@
 import contextlib
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
@@ -24,7 +25,7 @@ class _DataCleaner(Term):
 
     def __init__(self, data, layers, date):
         self._df = data.copy()
-        self._layers = self._ensure_list(layers, name="layers")
+        self._layers = Validator(layers, "layers").sequence()
         self._date = str(date)
         self._id_cols = [*self._layers, self._date]
 
