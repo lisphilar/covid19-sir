@@ -7,7 +7,7 @@ import warnings
 import pytest
 import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
-from covsirphy import Scenario, Term, PhaseTracker, SIRF, Filer
+from covsirphy import Scenario, Term, PhaseTracker, SIRF, Filer, UnExpectedValueRangeError
 
 
 @pytest.fixture(scope="module")
@@ -116,7 +116,7 @@ class TestScenario(object):
     def test_add_delete(self, snl):
         # Add phases
         snl.add(end_date="01Sep2020")
-        with pytest.raises(ValueError):
+        with pytest.raises(UnExpectedValueRangeError):
             snl.add(end_date="01Jun2020")
         # Deprecated
         warnings.filterwarnings("ignore", category=DeprecationWarning)
