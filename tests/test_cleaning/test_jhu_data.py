@@ -19,9 +19,9 @@ class TestJHUData(object):
     def test_subset(self, jhu_data, country):
         df = jhu_data.subset(country, start_date="01Apr2020", end_date="01Jun2020")
         assert df[Term.S].dtype == "int64"
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             jhu_data.subset("Moon")
-        with pytest.raises(ValueError):
+        with pytest.raises(SubsetNotFoundError):
             jhu_data.subset(country, start_date="01Jan2020", end_date="10Jan2020")
         if country == "Japan":
             s_df = jhu_data.subset(country, population=126_500_000)
@@ -38,33 +38,33 @@ class TestJHUData(object):
     @pytest.mark.parametrize("country", ["Netherlands", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
         if country in {"Netherlands"}:
-            with pytest.raises(ValueError):
+            with pytest.raises(SubsetNotFoundError):
                 jhu_data.subset(country=country)
-        df, is_complemented = jhu_data.subset_complement(country=country)
+        _, is_complemented = jhu_data.subset_complement(country=country)
         assert isinstance(jhu_data.recovery_period, int)
         assert is_complemented
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_subset_complement_partial(self, jhu_data, country):
         df, is_complemented = jhu_data.subset_complement(country=country)
         assert is_complemented
-        with pytest.raises(KeyError):
+        with pytest.raises(SubsetNotFoundError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
-    @pytest.mark.parametrize(
+    @ pytest.mark.parametrize(
         "country", ["Netherlands", "Germany", "France", "Japan"])
     def test_records(self, jhu_data, country):
         df, is_complemented = jhu_data.records(country=country)
         assert is_complemented
 
-    @pytest.mark.parametrize("country", ["Netherlands", "Moon"])
+    @ pytest.mark.parametrize("country", ["Netherlands", "Moon"])
     def test_records_error(self, jhu_data, country):
         with pytest.raises(SubsetNotFoundError):
             jhu_data.records(country=country, auto_complement=False)
 
-    @pytest.mark.parametrize(
+    @ pytest.mark.parametrize(
         "applied, iso3",
         [
             ("Congo", "COG"),
@@ -85,12 +85,12 @@ class TestJHUData(object):
     )
     def test_country_name(self, jhu_data, applied, iso3):
         if iso3 == "error":
-            with pytest.raises(KeyError):
+            with pytest.raises(SubsetNotFoundError):
                 jhu_data.ensure_country_name(applied)
         else:
             assert jhu_data.ensure_country_name(applied) == iso3
 
-    @pytest.mark.parametrize(
+    @ pytest.mark.parametrize(
         "country, province",
         [
             ("Greece", None),

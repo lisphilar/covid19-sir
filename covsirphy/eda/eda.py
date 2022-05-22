@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
 from covsirphy.downloading.downloader import DataDownloader
 
 
 class EDA(Term):
-    """Class for data engineering (via covsirphy.DataEngineer) and explanatory data analysis (EDA) of geospatial time-series data.
+    """Class for data engineering (via covsirphy.DataEngineer) and explanatory data analysis (EDA) of geo-spatial time-series data.
 
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
@@ -27,7 +28,7 @@ class EDA(Term):
     """
 
     def __init__(self, layers=None, country="ISO3", directory="input", verbose=1):
-        self._layers = self._ensure_list(layers or [self.ISO3, self.PROVINCE, self.CITY], name="layers")
+        self._layers = Validator(layers, "layers").sequence(default=[self.ISO3, self.PROVINCE, self.CITY])
         self._country = str(country)
         self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE, verbose=verbose)
         self._gis = GIS(**self._gis_kwargs)
@@ -243,6 +244,6 @@ class EDA(Term):
         if alias is None:
             return self._alias_dict["variables"]
         if variables is not None:
-            self._ensure_list(variables, candidates=self.all().columns.tolist(), name="variables")
+            Validator(variables, "variables").sequence(candidates=self.all().columns.tolist())
             self._alias_dict["variables"][alias] = variables[:]
         return self._alias_dict["variables"][alias]

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from inspect import signature
 import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 # Style of Matplotlib
@@ -16,6 +18,27 @@ plt.rcParams["ytick.direction"] = "in"
 plt.rcParams["font.size"] = 11.0
 plt.rcParams["figure.figsize"] = (9, 6)
 plt.rcParams["legend.frameon"] = False
+
+
+def find_args(func_list, **kwargs):
+    """
+    Find values of enabled arguments of the function from the keyword arguments.
+
+    Args:
+        func_list (list[function] or function): target function
+        kwargs: keyword arguments
+
+    Returns:
+        dict: dictionary of enabled arguments
+    """
+    if not isinstance(func_list, list):
+        func_list = [func_list]
+    enabled_nest = [
+        list(signature(func).parameters.keys()) for func in func_list
+    ]
+    enabled_set = set(sum(enabled_nest, list()))
+    enabled_set = enabled_set - {"self", "cls"}
+    return {k: v for (k, v) in kwargs.items() if k in enabled_set}
 
 
 class VisualizeBase(Term):
@@ -73,7 +96,7 @@ class VisualizeBase(Term):
 
     @ax.setter
     def ax(self, ax):
-        self._ax = self._ensure_instance(ax, matplotlib.axes.Axes, name="ax")
+        self._ax = Validator(ax, "ax").instance(matplotlib.axes.Axes)
 
     def plot(self):
         """
@@ -87,7 +110,7 @@ class VisualizeBase(Term):
     def tick_params(self, **kwargs):
         """
         Directly calling matplotlib.pyplot.tick_params,
-        change the appearance of ticks, tick labels and gridlines.
+        change the appearance of ticks, tick labels and grid lines.
 
         Args:
             kwargs: arguments of matplotlib.pyplot.tick_params
@@ -106,8 +129,8 @@ class VisualizeBase(Term):
         """
         if not self._variables:
             raise UnExecutedError(".plot()")
-        ncol = self._ensure_natural_int(
-            ncol or (1 if "left" in bbox_loc else len(self._variables)), name="ncol")
+        ncol = Validator(
+            ncol or (1 if "left" in bbox_loc else len(self._variables)), "ncol").int(value_range=(1, None))
         self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
         plt.tight_layout()
 
