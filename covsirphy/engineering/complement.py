@@ -88,7 +88,6 @@ class _ComplementHandler(Term):
 
         Args:
             subset_df (pandas.DataFrame): Subset of records
-
                 Index
                     reset index
                 Columns
@@ -101,26 +100,26 @@ class _ComplementHandler(Term):
         Returns:
             tuple(pandas.DataFrame, str, dict):
                 pandas.DataFrame
-
                     Index
                         reset index
                     Columns
-                        - Date(pd.Timestamp): Observation date
+                        - Date (pd.Timestamp): Observation date
                         - Confirmed (int): the number of confirmed cases
                         - Fatal (int): the number of fatal cases
                         - Recovered (int): the number of recovered cases
-
-                str: status code
-                dict: status for each complement type
-
-        Note:
-            Status code will be selected from:
-            - '' (not complemented)
-            - 'monotonic increasing complemented confirmed data'
-            - 'monotonic increasing complemented fatal data'
-            - 'monotonic increasing complemented recovered data'
-            - 'fully complemented recovered data'
-            - 'partially complemented recovered data'
+                str: status code: will be selected from
+                    - '' (not complemented)
+                    - 'monotonic increasing complemented confirmed data'
+                    - 'monotonic increasing complemented fatal data'
+                    - 'monotonic increasing complemented recovered data'
+                    - 'fully complemented recovered data'
+                    - 'partially complemented recovered data'
+                dict[str, bool]: status for each complement type, keys are
+                    - Monotonic_confirmed
+                    - Monotonic_fatal
+                    - Monotonic_recovered
+                    - Full_recovered
+                    - Partial_recovered
         """
         Validator(subset_df, "subset_df").dataframe(columns=[self.DATE, *self.RAW_COLS])
         # Initialize
@@ -136,7 +135,7 @@ class _ComplementHandler(Term):
         # Create status code
         status_list = [
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data" for (v, score) in status_dict.items() if score]
-        return (after_df, " and \n".join(status_list), self.complement_dict)
+        return (after_df.convert_dtypes(), " and \n".join(status_list), self.complement_dict)
 
     def _pre_processing(self, subset_df):
         """

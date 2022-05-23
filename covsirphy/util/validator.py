@@ -4,7 +4,7 @@
 from inspect import signature
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError
+from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError
 
 
 class Validator(object):
@@ -185,7 +185,7 @@ class Validator(object):
             raise UnExpectedValueRangeError(self._name, value, value_range)
         return value
 
-    def sequence(self, default=None, flatten=False, unique=False, candidates=None):
+    def sequence(self, default=None, flatten=False, unique=False, candidates=None, length=None):
         """Convert a sequence (list, tuple) to a list.
 
         Args:
@@ -193,10 +193,12 @@ class Validator(object):
             flatten (bool): whether flatten the sequence or not
             unique (bool): whether remove duplicated values or not, the first value will remain
             candidates (list[object] or tuple(object) or iter or None): list of candidates or None (no limitations)
+            length (int or None): length of the sequence or None (no limitations)
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to a list or failed in flattening
             UnExpectedValueError: the target has a value which is not included in the candidates
+            UnExpectedLengthError: the number of elements is not the same as @length
 
         Returns:
             list[object] or None: converted list or None (when both of the target and @default are None)
@@ -217,6 +219,8 @@ class Validator(object):
             targets = list(self._target)
         if unique:
             targets = sorted(set(targets), key=targets.index)
+        if length is not None and len(targets) != length:
+            raise UnExpectedLengthError(self._name, targets, length)
         if candidates is None or set(targets).issubset(candidates):
             return targets
         for value in (set(targets) - set(candidates)):
@@ -226,13 +230,13 @@ class Validator(object):
         """Ensure the target is a dictionary.
 
         Args:
-            default (dict[str, object] or None): default value, when the target is None or key is not included in the target
+            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
             required_keys (list): keys which must be included
             errors (str): "coerce" or "raise"
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
-            NAFoundError: values of the required keys are not specified when @errors="coerce"
+            NAFoundError: values of the required keys are not specified when @errors="raise"
 
         Returns:
             dict[str, object]: the target is self with default values and required keys
@@ -258,11 +262,10 @@ class Validator(object):
 
         Args:
             functions (list[function] or function): target functions
-            default (dict[str, object] or None): default value when the target is None
+            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
-            NAFoundError: values of the required keys are not specified when @errors="coerce"
 
         Returns:
             dict[str, object]: keyword arguments of the functions

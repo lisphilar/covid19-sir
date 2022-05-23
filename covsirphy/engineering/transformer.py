@@ -80,3 +80,19 @@ class _DataTransformer(Term):
         df = df.merge(series, how="left", left_on=[*self._layers, self._date], right_index=True)
         df[new_column] = (df[column] - df[new_column]).fillna(0)
         self._df = df.copy()
+
+    def div(self, numerator, denominator, new, fill_value):
+        """Calculate element-wise floating division, numerator / denominator * 100.
+
+        Args:
+            numerator (str): numerator column
+            denominator (str): denominator column
+            new (str): column name of floating division
+            fill_value (float): value to fill in NAs
+
+        Note:
+            Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
+        """
+        df = Validator(self._df, "raw data").dataframe(columns=[numerator, denominator])
+        df[new] = numerator.div(denominator, fill_value=Validator(fill_value, "fill_value").float())
+        self._df = df.copy()

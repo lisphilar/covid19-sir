@@ -203,7 +203,23 @@ class UnExpectedValueError(_BaseException):
 
     def __init__(self, name, value, candidates, details=None):
         c_str = ", ".join(candidates)
-        message = f"{name} must be selected from [{c_str}], but {value} was applied"
+        message = f"'{name}' must be selected from [{c_str}], but {value} was applied"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedLengthError(_BaseException):
+    """
+    Error when a sequence has un-expended length.
+
+    Args:
+        name (str): argument name
+        value (object): value user applied
+        length (int): length of the sequence
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, length, details=None):
+        message = f"The length of '{name}' must be {length}, but {len(value)} was applied"
         super().__init__(message=message, details=details)
 
 

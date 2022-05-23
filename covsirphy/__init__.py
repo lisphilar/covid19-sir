@@ -19,7 +19,7 @@ from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, Not
 from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.error import DBLockedError, NotDBLockedError
 from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
-from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError
+from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -40,8 +40,6 @@ from covsirphy.gis.gis import GIS
 from covsirphy.downloading.downloader import DataDownloader
 # engineering
 from covsirphy.engineering.engineer import DataEngineer
-# eda
-from covsirphy.eda.eda import EDA
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -120,7 +118,7 @@ __all__ = [
     "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
     "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
-    "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError",
+    "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
     "Validator",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
@@ -131,8 +129,6 @@ __all__ = [
     "DataDownloader",
     # engineer
     "DataEngineer",
-    # eda
-    "EDA",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
