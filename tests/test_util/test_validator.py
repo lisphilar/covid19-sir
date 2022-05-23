@@ -7,7 +7,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from covsirphy import Validator, ModelBase, SIR, SIRF
 from covsirphy import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy import UnExpectedValueRangeError, UnExpectedValueError
+from covsirphy import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError
 
 
 class TestValidator(object):
@@ -90,6 +90,9 @@ class TestValidator(object):
         with pytest.raises(UnExpectedValueError):
             v.sequence(candidates=[1, 4, 5])
         assert v.sequence(candidates=[1, 2, 3, 4]) == [1, 2, 3]
+        with pytest.raises(UnExpectedLengthError):
+            v.sequence(length=2)
+        assert v.sequence(length=3) == [1, 2, 3]
 
     def test_dict(self):
         assert Validator(None).dict(default={1: 2}) == {1: 2}
