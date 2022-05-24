@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import NotIncludedError, UnExecutedError
+import numpy as np
+import pandas as pd
+from covsirphy.util.error import NotIncludedError, UnExecutedError, UnExpectedReturnValueError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
@@ -53,19 +55,22 @@ class DataEngineer(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by covsirphy.EDA(layer)
-                    - Date (str): observation dates
-                    - Population (str): total population, optional
-                    - Tests (str): column of the number of tests, optional
-                    - Confirmed (str): the number of confirmed cases, optional
-                    - Fatal (str): the number of fatal cases, optional
-                    - Recovered (str): the number of recovered cases, optional
+                    - columns defined by covsirphy.DataEngineer(layer)
+                    - Date (pandas.DataFrame): observation dates
+                    - Population (int): total population, optional
+                    - Tests (int): column of the number of tests, optional
+                    - Confirmed (int): the number of confirmed cases, optional
+                    - Fatal (int): the number of fatal cases, optional
+                    - Recovered (int): the number of recovered cases, optional
+                    - the other columns will be also registered
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
             **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
 
         Returns:
             covsirphy.DataEngineer: self
         """
+        Validator(data, "data").dataframe(
+            columns=[*self._layers, self.DATE, self.N, self.TESTS, self.C, self.F, self.R])
         self._gis.register(
             data=data, layers=self._layers, date=self.DATE, variables=None,
             citations=citations or ["my own dataset"], convert_iso3=(self._country in self._layers), **kwargs)
@@ -162,17 +167,12 @@ class DataEngineer(Term):
             data=cleaner.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
         return self
 
-    def transform(self, susceptible="Susceptible", infected="Infected", **kwargs):
+    def transform(self):
         """Transform all registered data, calculating the number of susceptible and infected cases.
 
         Args:
             susceptible (str or None): the number of susceptible cases or None (will not be calculated)
             infected (str or None): the number of infected cases or None (will not be calculated)
-            kwargs (dict[str, str]): dictionary of existed columns
-                - population (str): total population, "Population" as default
-                - confirmed (str): the number of confirmed cases, "Confirmed" as default
-                - fatal (str): the number of fatal cases, "Fatal" as default
-                - recovered (str): the number of recovered cases, "Recovered" as default
 
         Returns:
             covsirphy.DataEngineer: self
@@ -183,21 +183,11 @@ class DataEngineer(Term):
         Note:
             Infected = Confirmed - Fatal - Recovered.
         """
-        default_dict = {"population": self.N, "confirmed": self.C, "fatal": self.F, "recovered": self.R}
-        kwargs_dict = Validator(kwargs, "keyword arguments").dict(default=default_dict)
         all_df = self._gis.all()
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=all_df, layers=self._layers, date=self._date)
-        # Susceptible
-        s_cols = [v for k, v in kwargs_dict.items() if k in ["population", "confirmed"]]
-        if susceptible is not None and None not in set(s_cols):
-            Validator(all_df, "all registered data").dataframe(columns=s_cols)
-            transformer.susceptible(new=susceptible, **kwargs)
-        # Infected
-        i_cols = [v for k, v in kwargs_dict.items() if k in ["confirmed", "fatal", "recovered"]]
-        if infected is not None and None not in set(i_cols):
-            Validator(all_df, "all registered data").dataframe(columns=i_cols)
-            transformer.infected(new=infected, **kwargs)
+        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
+        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
@@ -223,8 +213,7 @@ class DataEngineer(Term):
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self._date)
         transformer.diff(
-            column=self.variables_alias(column, length=1)[
-                0] if column in self._alias_dict["variables"].keys() else column,
+            column=self.variables_alias(column, length=1)[0] if column in self._alias_dict["variables"] else column,
             suffix=suffix, freq=freq)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
@@ -243,13 +232,12 @@ class DataEngineer(Term):
         Note:
             Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
+        var_dict = self._alias_dict["variables"].copy()
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self._date)
         transformer.div(
-            numerator=self.variables_alias(numerator, length=1)[
-                0] if numerator in self._alias_dict["variables"].keys() else numerator,
-            denominator=self.variables_alias(denominator, length=1)[
-                0] if denominator in self._alias_dict["variables"].keys() else denominator,
+            numerator=self.variables_alias(numerator, length=1)[0] if numerator in var_dict else numerator,
+            denominator=self.variables_alias(denominator, length=1)[0] if denominator in var_dict else denominator,
             new=new or f"{numerator}_per_({denominator.replace(' ', '_')})", fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
@@ -285,9 +273,8 @@ class DataEngineer(Term):
         Note:
             Regarding @geo argument, please refer to covsirphy.GIS.layer().
         """
-        variables_converted = self.variables_alias(
-            variables) if variables in self._alias_dict["variables"].keys() else variables
-        return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=variables_converted, errors="raise")
+        v_converted = self.variables_alias(variables) if variables in self._alias_dict["variables"] else variables
+        return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
 
     def choropleth(self, geo, variable, on=None, title="Choropleth map", filename="choropleth.jpg", logscale=True, natural_earth=None, **kwargs):
         """Create choropleth map.
@@ -318,8 +305,7 @@ class DataEngineer(Term):
         gis.register(data=layer_df, date=self.DATE)
         gis.choropleth(
             variable=variable, filename=filename, title=title, logscale=logscale,
-            geo=geo, on=on, directory=[self._directory, "natural_earth"], natural_earth=natural_earth, **kwargs
-        )
+            geo=geo, on=on, directory=[self._directory, "natural_earth"], natural_earth=natural_earth, **kwargs)
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, complement=True, **kwargs):
         """Return subset of the location and date range.
@@ -365,6 +351,9 @@ class DataEngineer(Term):
 
         Note:
             Regarding @geo argument, please refer to covsirphy.GIS.subset().
+
+        Note:
+            Re-calculation of Susceptible and Infected will be done automatically.
         """
         subset_df = self._gis.subset(
             geo=geo, start_date=start_date, end_date=end_date, variables=variables, errors="raise")
@@ -382,7 +371,10 @@ class DataEngineer(Term):
         }
         handler = _ComplementHandler(
             **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
-        return handler.run()
+        transformer = _DataTransformer(data=handler.run(), layers=self._layers, date=self.DATE)
+        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
+        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
+        return transformer.all()
 
     def subset_alias(self, alias=None, update=False, **kwargs):
         """Set/get/list-up alias name(s) of subset.
@@ -440,11 +432,45 @@ class DataEngineer(Term):
             raise NotIncludedError(alias, "keys of alias dictionary of variables") from None
         return Validator(selected, f"variables selected with alias '{alias}'").sequence(length=length)
 
-    def recovery_period(self, **kwargs):
-        raise NotImplementedError
+    @classmethod
+    def recovery_period(cls, data, **kwargs):
+        """Calculate mode value of recovery period of the data.
 
-    def subset_show(self, subset_alias, variables, plot_type="line", title=None, filename=None, **kwargs):
-        raise NotImplementedError
+        Args:
+            data (pandas.DataFrame): data for calculation
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): observation dates
+                    - Confirmed (int): the number of confirmed cases, optional
+                    - Fatal (int): the number of fatal cases, optional
+                    - Recovered (int): the number of recovered cases, optional
+                    - the other columns will be ignored
+            **kwargs: keyword arguments as follows
+                - upper_limit_days (int): maximum number of valid partial recovery periods [days], 90 as default
+                - lower_limit_days (int): minimum number of valid partial recovery periods [days], 7 as default
+                - upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5 as default
+                - lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5 as default
 
-    def layer_show(self, geo, variable, plot_type="line", title=None, filename=None, **kwargs):
-        raise NotImplementedError
+        Returns:
+            int: mode value of recovery period [days]
+        """
+        df = Validator(data, "data").dataframe(columns=[cls.DATE, cls.C, cls.F, cls.R], empty_ok=False)
+        Validator(df[cls.DATE], "Date column of the data").instance(pd.DatetimeIndex)
+        kwargs_dict = Validator(kwargs, "keyword arguments").dict(
+            default={"upper_limit_days": 90, "lower_limit_days": 7, "upper_percentage": 0.5, "lower_percentage": 0.5})
+        df = df.groupby(cls.DATE).sum()
+        df["diff"] = df[cls.C] - df[cls.F]
+        df = df.loc[:, ["diff", cls.R]].unstack().reset_index()
+        df.columns = ["Variable", "Date", "Number"]
+        df["Days"] = (df["Date"] - df["Date"].min()).dt.days
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        df["Elapsed"] = df[cls.R] - df["diff"]
+        df = df.loc[df["Elapsed"] > 0]
+        # Check partial recovery periods
+        per_up = (df["Elapsed"] > kwargs_dict["upper_limit_days"]).sum()
+        per_lw = (df["Elapsed"] < kwargs_dict["lower_limit_days"]).sum()
+        if df.empty or per_up / len(df) >= kwargs_dict["upper_percentage"] or per_lw / len(df) >= kwargs_dict["lower_percentage"]:
+            raise UnExpectedReturnValueError("recovery period", df)
+        return df["Elapsed"].mode().mean()
