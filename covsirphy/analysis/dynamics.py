@@ -430,7 +430,7 @@ class Dynamics(Term):
         """
         df = self.track(**kwargs)
         # Show only defined phases
-        df = df.loc[df[self._PH] > 0]
+        df = df.loc[df[self._PH] >= 0]
         # Set index with phases
         df[self._PH], _ = df[self._PH].factorize()
         first_df = df.groupby(self._PH).first()
