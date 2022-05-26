@@ -102,7 +102,7 @@ class DataEngineer(Term):
         """Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().
 
         Args:
-            variables (list[str] or None): list of variables to collect or None (all available variables)
+            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)
 
         Raises:
             NotRegisteredError: No records have been registered yet
@@ -116,19 +116,23 @@ class DataEngineer(Term):
                     - (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
                     - the other columns
         """
-        return self._gis.all(variables=self._alias_dict["variables"].get(variables, variables), errors="raise").convert_dtypes()
+        v_converted = self.variables_alias(variables) if isinstance(
+            variables, str) and variables in self._alias_dict["variables"] else variables
+        return self._gis.all(variables=v_converted, errors="raise").convert_dtypes()
 
     def citations(self, variables=None):
         """
         Return citation list of the secondary data sources.
 
         Args:
-            variables (list[str] or None): list of variables to collect or None (all available variables)
+            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)
 
         Returns:
             list[str]: citation list
         """
-        return self._gis.citations(variables=self._alias_dict["variables"].get(variables, variables))
+        v_converted = self.variables_alias(variables) if isinstance(
+            variables, str) and variables in self._alias_dict["variables"] else variables
+        return self._gis.citations(variables=v_converted)
 
     def clean(self, kinds=None, **kwargs):
         """Clean all registered data.
@@ -244,10 +248,10 @@ class DataEngineer(Term):
             covsirphy.DataEngineer: self
         """
         var_dict = self._alias_dict["variables"].copy()
-        col_names = self.variables_alias(columns) if columns in var_dict else columns
+        col_names = self.variables_alias(columns) if isinstance(columns, str) and columns in var_dict else columns
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
-        transformer.add(columns=col_names, new=new or "".join(col_names), fill_value=fill_value)
+        transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
@@ -265,10 +269,10 @@ class DataEngineer(Term):
             covsirphy.DataEngineer: self
         """
         var_dict = self._alias_dict["variables"].copy()
-        col_names = self.variables_alias(columns) if columns in var_dict else columns
+        col_names = self.variables_alias(columns) if isinstance(columns, str) and columns in var_dict else columns
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
-        transformer.div(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
+        transformer.mul(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)

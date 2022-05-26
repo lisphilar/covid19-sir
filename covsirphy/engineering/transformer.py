@@ -119,7 +119,7 @@ class _DataTransformer(Term):
         v = Validator([minuend, subtrahend], "columns of numerator and subtrahend")
         v.sequence(candidates=list(self._df.columns))
         df = self._df.copy()
-        df[new] = minuend.sub(subtrahend, fill_value=Validator(fill_value, "fill_value").float())
+        df[new] = df[minuend].sub(df[subtrahend], fill_value=Validator(fill_value, "fill_value").float())
         self._df = df.copy()
 
     def div(self, numerator, denominator, new, fill_value):
@@ -137,7 +137,7 @@ class _DataTransformer(Term):
         v = Validator([numerator, denominator], "columns of numerator and denominator")
         v.sequence(candidates=list(self._df.columns))
         df = self._df.copy()
-        df[new] = numerator.div(denominator, fill_value=Validator(fill_value, "fill_value").float())
+        df[new] = df[numerator].div(df[denominator], fill_value=Validator(fill_value, "fill_value").float())
         self._df = df.copy()
 
     def assign(self, **kwargs):
@@ -149,4 +149,4 @@ class _DataTransformer(Term):
         Note:
             Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
         """
-        self._df.assign(**kwargs)
+        self._df = self._df.assign(**kwargs)
