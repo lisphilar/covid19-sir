@@ -299,7 +299,7 @@ class DataEngineer(Term):
         return self
 
     def div(self, numerator, denominator, new=None, fill_value=0):
-        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator * 100.
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.
 
         Args:
             numerator (str): numerator column
@@ -311,7 +311,7 @@ class DataEngineer(Term):
             covsirphy.DataEngineer: self
 
         Note:
-            Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
+            Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
         var_dict = self._alias_dict["variables"].copy()
         citations = self._gis.citations(variables=None)
@@ -320,6 +320,23 @@ class DataEngineer(Term):
             numerator=self.variables_alias(numerator, length=1)[0] if numerator in var_dict else numerator,
             denominator=self.variables_alias(denominator, length=1)[0] if denominator in var_dict else denominator,
             new=new or f"{numerator}_per_({denominator.replace(' ', '_')})", fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def assign(self, **kwargs):
+        """Assign a new column with pandas.DataFrame.assign().
+
+        Args:
+            **kwargs: dict of {str: callable or pandas.Series}
+
+        Note:
+            Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
+        """
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.assign(**kwargs)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)

@@ -123,7 +123,7 @@ class _DataTransformer(Term):
         self._df = df.copy()
 
     def div(self, numerator, denominator, new, fill_value):
-        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator * 100.
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.
 
         Args:
             numerator (str): numerator column
@@ -132,10 +132,21 @@ class _DataTransformer(Term):
             fill_value (float): value to fill in NAs
 
         Note:
-            Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
+            Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
         v = Validator([numerator, denominator], "columns of numerator and denominator")
         v.sequence(candidates=list(self._df.columns))
         df = self._df.copy()
         df[new] = numerator.div(denominator, fill_value=Validator(fill_value, "fill_value").float())
         self._df = df.copy()
+
+    def assign(self, **kwargs):
+        """Assign a new column with pandas.DataFrame.assign().
+
+        Args:
+            **kwargs: dict of {str: callable or pandas.Series}
+
+        Note:
+            Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
+        """
+        self._df.assign(**kwargs)
