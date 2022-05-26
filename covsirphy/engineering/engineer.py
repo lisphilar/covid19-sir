@@ -236,6 +236,27 @@ class DataEngineer(Term):
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
+    def mul(self, columns, new=None, fill_value=0):
+        """Calculate element-wise multiplication, X1 * X2 * X3 *...
+
+        Args:
+            columns (str): columns to multiply
+            new (str): column name of multiplication or None (f"{X1}*{X2}*{X3}...")
+            fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
+        """
+        var_dict = self._alias_dict["variables"].copy()
+        col_names = self.variables_alias(columns) if columns in var_dict else columns
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.div(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
     def div(self, numerator, denominator, new=None, fill_value=0):
         """Calculate element-wise floating division, numerator / denominator * 100.
 
@@ -244,6 +265,9 @@ class DataEngineer(Term):
             denominator (str): denominator column
             new (str or None): column name of floating division or None (f"{numerator}_per_({denominator.replace(' ', '_')})")
             fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
 
         Note:
             Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`

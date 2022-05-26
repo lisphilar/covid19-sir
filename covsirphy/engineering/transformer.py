@@ -81,6 +81,22 @@ class _DataTransformer(Term):
         df[new_column] = (df[column] - df[new_column]).fillna(0)
         self._df = df.copy()
 
+    def mul(self, columns, new, fill_value):
+        """Calculate element-wise multiplication, X1 * X2 * X3 *...
+
+        Args:
+            columns (str): columns to multiply
+            new (str): column name of floating division
+            fill_value (float): value to fill in NAs
+        """
+        Validator(columns, "columns").sequence(candidates=list(self._df.columns))
+        fill_value_validated = Validator(fill_value, "fill_value").float()
+        df = self._df.copy()
+        df[new] = df[columns[0]].copy()
+        for col in columns[1:]:
+            df[new] = df[new].mul(df[col], fill_value=fill_value_validated)
+        self._df = df.copy()
+
     def div(self, numerator, denominator, new, fill_value):
         """Calculate element-wise floating division, numerator / denominator * 100.
 
@@ -93,6 +109,8 @@ class _DataTransformer(Term):
         Note:
             Positive rate could be calculated with Confirmed / Tested * 100 (%), `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
-        df = Validator(self._df, "raw data").dataframe(columns=[numerator, denominator])
+        v = Validator([numerator, denominator], "columns of numerator and denominator")
+        v.sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
         df[new] = numerator.div(denominator, fill_value=Validator(fill_value, "fill_value").float())
         self._df = df.copy()
