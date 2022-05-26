@@ -233,7 +233,7 @@ class DataEngineer(Term):
         return self
 
     def add(self, columns, new=None, fill_value=0):
-        """Calculate element-wise addition, X1 + X2 + X3 +...
+        """Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +...
 
         Args:
             columns (str): columns to add
@@ -254,7 +254,7 @@ class DataEngineer(Term):
         return self
 
     def mul(self, columns, new=None, fill_value=0):
-        """Calculate element-wise multiplication, X1 * X2 * X3 *...
+        """Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 *...
 
         Args:
             columns (str): columns to multiply
@@ -275,7 +275,7 @@ class DataEngineer(Term):
         return self
 
     def sub(self, minuend, subtrahend, new=None, fill_value=0):
-        """Calculate element-wise subtraction, minuend - subtrahend.
+        """Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.
 
         Args:
             minuend (str): numerator column
@@ -299,7 +299,7 @@ class DataEngineer(Term):
         return self
 
     def div(self, numerator, denominator, new=None, fill_value=0):
-        """Calculate element-wise floating division, numerator / denominator * 100.
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator * 100.
 
         Args:
             numerator (str): numerator column

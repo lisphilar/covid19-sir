@@ -82,7 +82,7 @@ class _DataTransformer(Term):
         self._df = df.copy()
 
     def add(self, columns, new, fill_value):
-        """Calculate element-wise addition, X1 + X2 + X3 +...
+        """Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +...
 
         Args:
             columns (str): columns to add
@@ -95,7 +95,7 @@ class _DataTransformer(Term):
         self._df = df.copy()
 
     def mul(self, columns, new, fill_value):
-        """Calculate element-wise multiplication, X1 * X2 * X3 *...
+        """Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 *...
 
         Args:
             columns (str): columns to multiply
@@ -108,7 +108,7 @@ class _DataTransformer(Term):
         self._df = df.copy()
 
     def sub(self, minuend, subtrahend, new, fill_value):
-        """Calculate element-wise subtraction, minuend - subtrahend.
+        """Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.
 
         Args:
             minuend (str): numerator column
@@ -123,7 +123,7 @@ class _DataTransformer(Term):
         self._df = df.copy()
 
     def div(self, numerator, denominator, new, fill_value):
-        """Calculate element-wise floating division, numerator / denominator * 100.
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator * 100.
 
         Args:
             numerator (str): numerator column
