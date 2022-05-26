@@ -81,12 +81,28 @@ class _DataTransformer(Term):
         df[new_column] = (df[column] - df[new_column]).fillna(0)
         self._df = df.copy()
 
+    def add(self, columns, new, fill_value):
+        """Calculate element-wise addition, X1 + X2 + X3 +...
+
+        Args:
+            columns (str): columns to add
+            new (str): column name of addition
+            fill_value (float): value to fill in NAs
+        """
+        Validator(columns, "columns").sequence(candidates=list(self._df.columns))
+        fill_value_validated = Validator(fill_value, "fill_value").float()
+        df = self._df.copy()
+        df[new] = df[columns[0]].copy()
+        for col in columns[1:]:
+            df[new] = df[new].add(df[col], fill_value=fill_value_validated)
+        self._df = df.copy()
+
     def mul(self, columns, new, fill_value):
         """Calculate element-wise multiplication, X1 * X2 * X3 *...
 
         Args:
             columns (str): columns to multiply
-            new (str): column name of floating division
+            new (str): column name of multiplication
             fill_value (float): value to fill in NAs
         """
         Validator(columns, "columns").sequence(candidates=list(self._df.columns))

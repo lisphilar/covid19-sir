@@ -236,6 +236,27 @@ class DataEngineer(Term):
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
+    def add(self, columns, new=None, fill_value=0):
+        """Calculate element-wise addition, X1 + X2 + X3 +...
+
+        Args:
+            columns (str): columns to add
+            new (str): column name of addition or None (f"{X1}+{X2}+{X3}...")
+            fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
+        """
+        var_dict = self._alias_dict["variables"].copy()
+        col_names = self.variables_alias(columns) if columns in var_dict else columns
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
     def mul(self, columns, new=None, fill_value=0):
         """Calculate element-wise multiplication, X1 * X2 * X3 *...
 
