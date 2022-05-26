@@ -90,11 +90,8 @@ class _DataTransformer(Term):
             fill_value (float): value to fill in NAs
         """
         Validator(columns, "columns").sequence(candidates=list(self._df.columns))
-        fill_value_validated = Validator(fill_value, "fill_value").float()
         df = self._df.copy()
-        df[new] = df[columns[0]].copy()
-        for col in columns[1:]:
-            df[new] = df[new].add(df[col], fill_value=fill_value_validated)
+        df[new] = df[columns].sum(axis=1).fillna(Validator(fill_value, "fill_value").float())
         self._df = df.copy()
 
     def mul(self, columns, new, fill_value):
@@ -106,11 +103,8 @@ class _DataTransformer(Term):
             fill_value (float): value to fill in NAs
         """
         Validator(columns, "columns").sequence(candidates=list(self._df.columns))
-        fill_value_validated = Validator(fill_value, "fill_value").float()
         df = self._df.copy()
-        df[new] = df[columns[0]].copy()
-        for col in columns[1:]:
-            df[new] = df[new].mul(df[col], fill_value=fill_value_validated)
+        df[new] = df[columns].product(axis=1).fillna(Validator(fill_value, "fill_value").float())
         self._df = df.copy()
 
     def sub(self, minuend, subtrahend, new, fill_value):

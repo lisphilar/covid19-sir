@@ -200,13 +200,9 @@ class DataEngineer(Term):
         Note:
             Confirmed = Infected + Fatal + Recovered.
         """
-        df = Validator(self._gis.all(), "all registered data").dataframe(columns=[self.S, self.CI, self.F, self.R])
-        df[self.C] = df[[self.CI, self.F, self.R]].sum(axis=1)
-        df[self.N] = df[[self.S, self.C]].sum(axis=1)
-        citations = self._gis.citations(variables=None)
-        self._gis = GIS(**self._gis_kwargs)
-        self._gis.register(
-            data=df, layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        Validator(self._gis.all(), "all registered data").dataframe(columns=[self.S, self.CI, self.F, self.R])
+        self.add(columns=[self.CI, self.F, self.R], new=self.C)
+        self.add(columns=[self.S, self.C], new=self.N)
         return self
 
     def diff(self, column, suffix="_diff", freq="D"):
