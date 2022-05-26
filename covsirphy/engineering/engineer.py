@@ -147,7 +147,7 @@ class DataEngineer(Term):
             For "convert_date", keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not" can be used.
         """
         citations = self._gis.citations(variables=None)
-        cleaner = _DataCleaner(data=self._gis.all(), layers=self._layers, date=self._date)
+        cleaner = _DataCleaner(data=self._gis.all(), layers=self._layers, date=self.DATE)
         kind_dict = {
             "convert_date": cleaner.convert_date,
             "resample": cleaner.resample,
@@ -160,10 +160,10 @@ class DataEngineer(Term):
                 kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
             except UnExecutedError:
                 raise UnExecutedError(
-                    "DataEngineer.clean(kinds=['convert_date'])", details=f"Column {self._date} was not a column of date") from None
+                    "DataEngineer.clean(kinds=['convert_date'])", details=f"Column {self.DATE} was not a column of date") from None
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
-            data=cleaner.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+            data=cleaner.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def transform(self):
@@ -180,12 +180,12 @@ class DataEngineer(Term):
         """
         all_df = self._gis.all()
         citations = self._gis.citations(variables=None)
-        transformer = _DataTransformer(data=all_df, layers=self._layers, date=self._date)
+        transformer = _DataTransformer(data=all_df, layers=self._layers, date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
-            data=transformer.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def transform_inverse(self):
@@ -206,7 +206,7 @@ class DataEngineer(Term):
         citations = self._gis.citations(variables=None)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
-            data=df, layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+            data=df, layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def diff(self, column, suffix="_diff", freq="D"):
@@ -227,13 +227,13 @@ class DataEngineer(Term):
             If the alias of values
         """
         citations = self._gis.citations(variables=None)
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self._date)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.diff(
             column=self.variables_alias(column, length=1)[0] if column in self._alias_dict["variables"] else column,
             suffix=suffix, freq=freq)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
-            data=transformer.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def div(self, numerator, denominator, new=None, fill_value=0):
@@ -250,14 +250,14 @@ class DataEngineer(Term):
         """
         var_dict = self._alias_dict["variables"].copy()
         citations = self._gis.citations(variables=None)
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self._date)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.div(
             numerator=self.variables_alias(numerator, length=1)[0] if numerator in var_dict else numerator,
             denominator=self.variables_alias(denominator, length=1)[0] if denominator in var_dict else denominator,
             new=new or f"{numerator}_per_({denominator.replace(' ', '_')})", fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
-            data=transformer.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def layer(self, geo=None, start_date=None, end_date=None, variables=None):
