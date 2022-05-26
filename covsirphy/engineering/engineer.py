@@ -69,8 +69,7 @@ class DataEngineer(Term):
         Returns:
             covsirphy.DataEngineer: self
         """
-        Validator(data, "data").dataframe(
-            columns=[*self._layers, self.DATE, self.N, self.TESTS, self.C, self.F, self.R])
+        Validator(data, "data").dataframe(columns=[*self._layers, self.DATE])
         self._gis.register(
             data=data, layers=self._layers, date=self.DATE, variables=None,
             citations=citations or ["my own dataset"], convert_iso3=(self._country in self._layers), **kwargs)
