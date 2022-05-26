@@ -170,10 +170,6 @@ class DataEngineer(Term):
     def transform(self):
         """Transform all registered data, calculating the number of susceptible and infected cases.
 
-        Args:
-            susceptible (str or None): the number of susceptible cases or None (will not be calculated)
-            infected (str or None): the number of infected cases or None (will not be calculated)
-
         Returns:
             covsirphy.DataEngineer: self
 
@@ -191,6 +187,27 @@ class DataEngineer(Term):
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def transform_inverse(self):
+        """Perform inverse transformation, calculating total population and confirmed.
+
+        Returns:
+            covsirphy.DataEngineer: self
+
+        Note:
+            Population = Susceptible + Confirmed.
+
+        Note:
+            Confirmed = Infected + Fatal + Recovered.
+        """
+        df = Validator(self._gis.all(), "all registered data").dataframe(columns=[[self.S, self.I, self.F, self.R]])
+        df[self.C] = df[[self.I, self.F, self.R]].sum(axis=1)
+        df[self.N] = df[[self.S, self.C]].sum(axis=1)
+        citations = self._gis.citations(variables=None)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=df, layers=self._layers, date=self._date, variables=None, citations=citations, convert_iso3=False)
         return self
 
     def diff(self, column, suffix="_diff", freq="D"):
