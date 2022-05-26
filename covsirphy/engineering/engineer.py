@@ -200,8 +200,8 @@ class DataEngineer(Term):
         Note:
             Confirmed = Infected + Fatal + Recovered.
         """
-        df = Validator(self._gis.all(), "all registered data").dataframe(columns=[[self.S, self.I, self.F, self.R]])
-        df[self.C] = df[[self.I, self.F, self.R]].sum(axis=1)
+        df = Validator(self._gis.all(), "all registered data").dataframe(columns=[self.S, self.CI, self.F, self.R])
+        df[self.C] = df[[self.CI, self.F, self.R]].sum(axis=1)
         df[self.N] = df[[self.S, self.C]].sum(axis=1)
         citations = self._gis.citations(variables=None)
         self._gis = GIS(**self._gis_kwargs)
