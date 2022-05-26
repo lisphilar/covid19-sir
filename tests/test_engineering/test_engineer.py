@@ -15,3 +15,28 @@ class TestDataEngineer(object):
         assert engineer.citations() == ["Simulated data"]
         engineer.transform_inverse()
         assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R, Term.N, Term.C}
+
+    def test_operations(self):
+        dynamics = Dynamics.from_sample(model=SIRF)
+        data = dynamics.simulate()
+        data.insert(0, "Model", SIRF.NAME)
+        engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
+        engineer.register(data, citations="Simulated data")
+        engineer.transform_inverse()
+        # Diff
+        engineer.diff(column=Term.C, suffix="_diff", freq="D")
+        assert f"{Term.C}_diff" in engineer.all()
+        # Addition
+        engineer.add(columns=[Term.F, Term.R])
+        assert f"{Term.F}+{Term.R}" in engineer.all()
+        # Multiplication
+        engineer.mul(columns=[Term.C, Term.R])
+        assert f"{Term.C}*{Term.R}" in engineer.all()
+        # Subtraction
+        engineer.sub(minuend=Term.C, subtrahend=Term.R)
+        assert f"{Term.C}-{Term.R}" in engineer.all()
+        # Division and assign
+        engineer.assign(Tests=lambda x: x[Term.C] * 10)
+        engineer.div(numerator=Term.C, denominator="Tests", new="Positive_rate")
+        engineer.assign(**{"Positive_rate_%": lambda x: x["Positive_rate"] * 100})
+        assert engineer.all()["Positive_rate_%"].unique() == 10
