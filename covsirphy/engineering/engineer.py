@@ -251,7 +251,7 @@ class DataEngineer(Term):
         col_names = self.variables_alias(columns) if columns in var_dict else columns
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
-        transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
+        transformer.add(columns=col_names, new=new or "".join(col_names), fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
@@ -273,6 +273,30 @@ class DataEngineer(Term):
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.div(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def sub(self, minuend, subtrahend, new=None, fill_value=0):
+        """Calculate element-wise subtraction, minuend - subtrahend.
+
+        Args:
+            minuend (str): numerator column
+            subtrahend (str): subtrahend column
+            new (str): column name of subtraction or None (f"{minuend}-{subtrahend}")
+            fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
+        """
+        var_dict = self._alias_dict["variables"].copy()
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.sub(
+            minuend=self.variables_alias(minuend, length=1)[0] if minuend in var_dict else minuend,
+            subtrahend=self.variables_alias(subtrahend, length=1)[0] if subtrahend in var_dict else subtrahend,
+            new=new or f"{minuend}-{subtrahend}", fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)

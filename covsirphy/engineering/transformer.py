@@ -113,6 +113,21 @@ class _DataTransformer(Term):
             df[new] = df[new].mul(df[col], fill_value=fill_value_validated)
         self._df = df.copy()
 
+    def sub(self, minuend, subtrahend, new, fill_value):
+        """Calculate element-wise subtraction, minuend - subtrahend.
+
+        Args:
+            minuend (str): numerator column
+            subtrahend (str): subtrahend column
+            new (str): column name of subtraction
+            fill_value (float): value to fill in NAs
+        """
+        v = Validator([minuend, subtrahend], "columns of numerator and subtrahend")
+        v.sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
+        df[new] = minuend.sub(subtrahend, fill_value=Validator(fill_value, "fill_value").float())
+        self._df = df.copy()
+
     def div(self, numerator, denominator, new, fill_value):
         """Calculate element-wise floating division, numerator / denominator * 100.
 
