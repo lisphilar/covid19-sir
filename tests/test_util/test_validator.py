@@ -7,10 +7,15 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from covsirphy import Validator, ModelBase, SIR, SIRF
 from covsirphy import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError
+from covsirphy import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
 
 class TestValidator(object):
+    def test_none(self):
+        Validator(1, "target", accept_none=True)
+        with pytest.raises(UnExpectedNoneError):
+            Validator(None, "target", accept_none=False)
+
     def test_subclass(self):
         v = Validator(SIRF, name="model")
         with pytest.raises(NotSubclassError):
