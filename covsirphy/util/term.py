@@ -137,8 +137,8 @@ class Term(object):
                 f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied."
             ) from e
 
-    @deprecate(".negative_exp()", version="2.25.0-mu")
     @staticmethod
+    @deprecate(".negative_exp()", version="2.25.0-mu")
     def negative_exp(x, a, b):
         """
         Negative exponential function f(x) = A exp(-Bx).
@@ -153,8 +153,8 @@ class Term(object):
         """
         return a * np.exp(-b * x)
 
-    @deprecate(".linear()", version="2.25.0-mu")
     @staticmethod
+    @deprecate(".linear()", version="2.25.0-mu")
     def linear(x, a, b):
         """
         Linear function f(x) = A x + b.
@@ -169,8 +169,8 @@ class Term(object):
         """
         return a * x + b
 
-    @deprecate(".flatten()", new="Validator.sequence(flatten=True)", version="2.25.0-mu")
     @staticmethod
+    @deprecate(".flatten()", new="Validator.sequence(flatten=True)", version="2.25.0-mu")
     def flatten(nested_list, unique=True):
         """
         Flatten the nested list.
@@ -187,8 +187,8 @@ class Term(object):
             return list(set(flattened))
         return flattened
 
-    @deprecate(".divisors()", version="2.25.0-mu")
     @classmethod
+    @deprecate(".divisors()", version="2.25.0-mu")
     def divisors(cls, value):
         """
         Return the list of divisors of the value.
@@ -202,8 +202,8 @@ class Term(object):
         value = Validator(value).int(value_range=(1, None))
         return [i for i in range(1, value + 1) if value % i == 0]
 
-    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
     @classmethod
+    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
     def date_obj(cls, date_str=None, default=None):
         """
         Convert a string to a datetime object.
@@ -223,6 +223,7 @@ class Term(object):
         return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @classmethod
+    @deprecate(".date_change()", version="2.25.0-nu")
     def _ensure_date(cls, target, name="date", default=None):
         """
         Ensure the format of the string.
@@ -244,8 +245,8 @@ class Term(object):
         except ValueError as e:
             raise ValueError(f"{name} was not recognized as a date, {target} was applied.") from e
 
-    @deprecate(".date_change()", version="2.25.0-mu")
     @classmethod
+    @deprecate(".date_change()", version="2.25.0-mu")
     def date_change(cls, date_str, days=0):
         """
         Return @days days ago or @days days later.
@@ -263,8 +264,8 @@ class Term(object):
         date = cls._ensure_date(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
-    @deprecate(".tomorrow()", version="2.25.0-mu")
     @classmethod
+    @deprecate(".tomorrow()", version="2.25.0-mu")
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -277,8 +278,8 @@ class Term(object):
         """
         return cls.date_change(date_str, days=1)
 
-    @deprecate(".yesterday()", version="2.25.0-mu")
     @classmethod
+    @deprecate(".yesterday()", version="2.25.0-mu")
     def yesterday(cls, date_str):
         """
         Yesterday of the date.
@@ -292,6 +293,7 @@ class Term(object):
         return cls.date_change(date_str, days=-1)
 
     @classmethod
+    @deprecate(".steps()", version="2.25.0-mu")
     def steps(cls, start_date, end_date, tau):
         """
         Return the number of days (round up).
