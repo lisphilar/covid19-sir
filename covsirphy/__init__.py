@@ -67,6 +67,8 @@ from covsirphy.ode.sirf import SIRF
 from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
 from covsirphy.ode.ode_handler import ODEHandler
+# dynamics
+from covsirphy.dynamics.ode import ODEModel
 # simulation
 from covsirphy.simulation.estimator import Estimator, Optimizer
 from covsirphy.simulation.simulator import ODESimulator
@@ -137,12 +139,14 @@ __all__ = [
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
+    # dynamics
+    "ODEModel",
     # regression
     "RegressionHandler",
     # automl
     "AutoMLHandler",
     # analysis
-    "Dynamics", "Scenario", "DataHandler", "PhaseTracker",
+    "Scenario", "DataHandler", "PhaseTracker",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
