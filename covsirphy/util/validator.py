@@ -4,7 +4,7 @@
 from inspect import signature
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError
+from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
 
 class Validator(object):
@@ -13,11 +13,20 @@ class Validator(object):
     Args:
         target (object): target object to validate
         name (str): name of the target shown in error code
+        accept_none (str): whether accept None as the target value or not
+
+    Raises:
+        NAFoundError: @accept_none is False, but @target is None
+
+    Note:
+        When @accept_none is True and @target is None, default values will be returned with instance methods.
     """
 
-    def __init__(self, target, name="target"):
+    def __init__(self, target, name="target", accept_none=True):
         self._target = target
         self._name = str(name)
+        if target is None and not accept_none:
+            raise UnExpectedNoneError(self._name)
 
     def subclass(self, parent):
         """Ensure the target is a subclass of the parent class.

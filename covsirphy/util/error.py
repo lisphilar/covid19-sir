@@ -92,6 +92,19 @@ class NAFoundError(_BaseException):
         super().__init__(message=message, details=details)
 
 
+class UnExpectedNoneError(_BaseException):
+    """Error when a value is None un-expectedly.
+
+    Args:
+        name (str): name of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"'{name}' is None un-expectedly"
+        super().__init__(message=message, details=details)
+
+
 class UnExecutedError(_BaseException):
     """
     Error when we have unexecuted methods that we need to run in advance.
