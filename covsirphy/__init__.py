@@ -79,7 +79,6 @@ from covsirphy.regression.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
-from covsirphy.analysis.dynamics import Dynamics
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.param_tracker import ParamTracker
