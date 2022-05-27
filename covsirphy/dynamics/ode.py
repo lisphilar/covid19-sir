@@ -11,14 +11,15 @@ from covsirphy.util.term import Term
 
 
 class ODEModel(Term):
-    """Basic class of ordinary differential equation (ODE) models which solves initial value problem.
+    """Basic class of ordinary differential equation (ODE) model.
 
     Args:
         date_range (tuple(str, str)): start date and end date of simulation
         tau (int): tau value [min]
-        initial_dict (dict[str, int]): initial values
-        param_dict (dict[str, float]): parameter values
+        initial_dict (dict of {str: int}): initial values
+        param_dict (dict of {str: float}): non-dimensional parameter values
     """
+    _SIFR = [Term.S, Term.CI, Term.F, Term.R]
     # Name of ODE model
     _NAME = "ODE Model"
     # Variables
@@ -49,19 +50,33 @@ class ODEModel(Term):
             required_keys=self._PARAMETERS, errors="raise")
         # Total population
         self._population = sum(list(initial_dict.values()))
-        # Information regarding parameter estimation
 
     def __str__(self):
         return self._NAME
 
     def __repr__(self):
-        _dict = {
+        _dict = self.to_dict()
+        return f"{type(self).__name__}({', '.join([f'{k}={v}' for k, v in _dict.items()])})"
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
+    def to_dict(self):
+        """Return conditions as a dictionary.
+
+        Returns:
+            dict of {str: object}:
+                - date_range (tuple(str, str)): start date and end date of simulation
+                - tau (int): tau value [min]
+                - initial_dict (dict of {str: int}): initial values
+                - param_dict (dict of {str: float}): non-dimensional parameter values
+        """
+        return {
             "date_range": (self._start.strftime(self.DATE_FORMAT), self._end.strftime(self.DATE_FORMAT)),
             "tau": self._tau,
             "initial_dict": self._initial_dict,
             "param_dict": self._param_dict,
         }
-        return f"{type(self).__name__}({', '.join([f'{k}={v}' for k, v in _dict.items()])})"
 
     @classmethod
     def from_sample(cls, date_range=None, tau=1440):
@@ -88,10 +103,10 @@ class ODEModel(Term):
 
         Args:
             t (int): discrete time-steps
-            X (numpy.array): current values of the model
+            X (numpy.array): the current values of the model
 
-        Note:
-            This method must be defined by child classes.
+        Returns:
+            X (numpy.array): the next values of the model
         """
         raise NotImplementedError
 
@@ -99,9 +114,9 @@ class ODEModel(Term):
         """Solve an initial value problem.
 
         Return:
-            pandas.DataFrame: numerical solution
+            pandas.DataFrame: analytical solution
                 Index
-                    reset index: time steps
+                    Date (pandas.Timestamp): dates from start date to end date
                 Columns
                     (pandas.Int64): dimensional variables of the model
         """
@@ -110,10 +125,12 @@ class ODEModel(Term):
             fun=self._discretize,
             t_span=[0, step_n],
             y0=np.array([self._initial_dict[variable] for variable in self._VARIABLES]),
-            t_eval=np.arrange(0, step_n + 1, 1),
+            t_eval=np.arange(0, step_n + 1, 1),
             dense_output=False
         )
-        df = pd.DataFrame(data=sol["y"].T.copy(), columns=self._VARIABLES)
+        dates = pd.date_range(start=self._start, end=self._end, freq="D")
+        df = pd.DataFrame(data=sol["y"].T.copy(), index=dates, columns=self._VARIABLES)
+        df.index.name = self.DATE
         return df.round().convert_dtypes()
 
     @classmethod
