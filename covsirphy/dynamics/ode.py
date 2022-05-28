@@ -106,7 +106,7 @@ class ODEModel(Term):
             X (numpy.array): the current values of the model
 
         Returns:
-            X (numpy.array): the next values of the model
+            numpy.array: the next values of the model
         """
         raise NotImplementedError
 

@@ -40,7 +40,8 @@ class SIRModel(ODEModel):
 
     def __init__(self, date_range, tau, initial_dict, param_dict):
         super().__init__(date_range, tau, initial_dict, param_dict)
-        self._rho, self._sigma = self._param_dict["rho"], self._param_dict["sigma"]
+        self._rho = Validator(self._param_dict["rho"], "rho", accept_none=False).float(value_range=(0, 1))
+        self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
 
     def _discretize(self, t, X):
         """Discretize the ODE.
