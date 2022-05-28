@@ -117,7 +117,7 @@ class Validator(object):
             raise UnExpectedTypeError(self._name, self._target, float) from None
         if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
             raise UnExpectedValueRangeError(self._name, value, value_range)
-        if digits is None:
+        if digits is None or value == 0:
             return value
         return round(value, digits - 1 - math.floor(math.log10(abs(value))))
 
