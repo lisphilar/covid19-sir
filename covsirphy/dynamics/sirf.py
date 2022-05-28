@@ -82,9 +82,9 @@ class SIRFModel(SIRDModel):
         Returns:
             dict of {str: int or float}: dictionary of dimensional parameter values
                 - "alpha1 [-]" (float): direct fatality probability of un-categorized confirmed cases
-                - "1/alpha2 [day]" (int): inverse value of mortality rate of infected cases
-                - "1/beta [day]" (int): inverse value of effective contact rate
-                - "1/gamma [day]" (int): inverse value of recovery rate
+                - "1/alpha2 [day]" (int): mortality period of infected cases
+                - "1/beta [day]" (int): infection period
+                - "1/gamma [day]" (int): recovery period
         """
         try:
             return {

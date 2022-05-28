@@ -78,9 +78,9 @@ class SIRModel(ODEModel):
                 Index
                     as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
                 Columns
-                    - Susceptible: the number of susceptible cases
-                    - Infected: the number of infected cases
-                    - Fatal or Recovered: the number of fatal or recovered cases
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of infected cases
+                    - Fatal or Recovered (int): the number of fatal or recovered cases
         """
         df = Validator(data, "data").dataframe(columns=cls._SIFR)
         df.index = cls._date_to_non_dim(df.index, tau=tau)
@@ -96,9 +96,9 @@ class SIRModel(ODEModel):
                 Index
                     any index
                 Columns
-                    - Susceptible: the number of susceptible cases
-                    - Infected: the number of infected cases
-                    - Fatal or Recovered: the number of fatal or recovered cases
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of infected cases
+                    - Fatal or Recovered (int): the number of fatal or recovered cases
             tau (int or None): tau value [min]
             start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
 
@@ -141,8 +141,8 @@ class SIRModel(ODEModel):
 
         Returns:
             dict of {str: int}: dictionary of dimensional parameter values
-                - "1/beta [day]" (int): inverse value of effective contact rate
-                - "1/gamma [day]" (int): inverse value of recovery rate
+                - "1/beta [day]" (int): infection period
+                - "1/gamma [day]" (int): recovery period
         """
         try:
             return {
