@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
 import pytest
 from covsirphy import ODEModel, SIRModel
-from covsirphy import Term, Validator
+from covsirphy import Term, Validator, NotNoneError, UnExpectedNoneError
 
 
 def test_not_implemented():
@@ -45,7 +45,11 @@ class TestODEModel(object):
         model = model_class.from_sample(tau=tau or 360)
         start_date = model.to_dict()["date_range"][0]
         solved_df = model.solve()
-        actual_df = model_class.inverse_transform(solved_df, tau=tau, start_date=start_date)
+        with pytest.raises(NotNoneError):
+            model_class.inverse_transform(solved_df.reset_index(drop=True), tau=None, start_date=start_date)
+        with pytest.raises(UnExpectedNoneError):
+            model_class.inverse_transform(solved_df.reset_index(drop=True), tau=tau or 360, start_date=None)
+        actual_df = model_class.inverse_transform(solved_df, tau=tau, start_date=None if tau is None else start_date)
         assert_frame_equal(model_class.transform(actual_df), solved_df)
         trans_df = model_class.transform(actual_df, tau=tau)
         assert_frame_equal(trans_df.reset_index(drop=True), solved_df.reset_index(drop=True))
