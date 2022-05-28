@@ -86,6 +86,9 @@ class ODEModel(Term):
             date_range (tuple(str or None, str or None) or None): start date and end date of simulation
             tau (int): tau value [min]
 
+        Returns:
+            covsirphy.ODEModel: initialized model
+
         Note:
             When @date_range or the first value of @date_range is None, today when executed will be set as start date.
 
@@ -118,7 +121,7 @@ class ODEModel(Term):
                 Index
                     Date (pandas.Timestamp): dates from start date to end date
                 Columns
-                    (pandas.Int64): dimensional variables of the model
+                    (pandas.Int64): model-specific dimensional variables of the model
         """
         step_n = math.ceil((self._end - self._start) / timedelta(minutes=self._tau))
         sol = solve_ivp(
@@ -129,28 +132,79 @@ class ODEModel(Term):
             dense_output=False
         )
         df = pd.DataFrame(data=sol["y"].T.copy(), columns=self._VARIABLES)
-        df[self.DATE] = self._start + pd.Series(df.index * self._tau).apply(lambda x: timedelta(minutes=x))
-        df = df.set_index(self.DATE).resample("D").last()
+        df = self._non_dim_to_date(data=df, tau=self._tau, start_date=self._start)
         return df.round().convert_dtypes()
 
+    @staticmethod
+    def _date_to_non_dim(series, tau):
+        """Convert date information (TIME) to time(x) = (TIME(x) - TIME(0)) / tau
+
+        Args:
+            series (pandas.DatetimeIndex): date information
+            tau (int or None): tau value [min]
+
+        Returns:
+            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name
+        """
+        Validator(series, "index of data").instance(pd.DatetimeIndex)
+        if tau is None:
+            return series
+        Validator(tau, "tau", accept_none=False).tau()
+        converted = (series - series.min()) / np.timedelta64(tau, "m")
+        return converted.rename(None).astype("Int64")
+
     @classmethod
-    def transform(cls, data):
+    def _non_dim_to_date(cls, data, tau, start_date):
+        """Convert non-dimensional date information (time) to TIME(x) = TIME(0) + tau * time(x) and resample with dates.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index or pandas.DatetimeIndex (when @tau is not None)
+                Columns
+                    any columns
+            tau (int or None): tau value [min]
+            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
+                Columns
+                    any columns of @data
+            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name
+
+        Note:
+            The first values on date will be selected when resampling.
+        """
+        df = Validator(data, "data").dataframe()
+        if tau is None or start_date is None or isinstance(df.index, pd.DatetimeIndex):
+            return data
+        Validator(tau, "tau", accept_none=False).tau()
+        start = Validator(start_date, "start_date", accept_none=False).date()
+        df[cls.DATE] = pd.date_range(start=start, periods=len(data), freq=f"{tau}min")
+        return df.set_index(cls.DATE).resample("D").first()
+
+    @classmethod
+    def transform(cls, data, tau=None):
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
             data (pandas.DataFrame):
                 Index
-                    any index
+                    reset index or pandas.DatetimeIndex (when tau is not None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            tau (int or None): tau value [min]
+
 
         Returns:
             pandas.DataFrame:
                 Index
-                    as the same as index if @data
+                    as the same as index of @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
                 Columns
                     model-specific variables
 
@@ -160,7 +214,7 @@ class ODEModel(Term):
         raise NotImplementedError
 
     @classmethod
-    def inverse_transform(cls, data):
+    def inverse_transform(cls, data, tau=None, start_date=None):
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
@@ -169,11 +223,13 @@ class ODEModel(Term):
                     any index
                 Columns
                     model-specific variables
+            tau (int or None): tau value [min]
+            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
 
         Returns:
             pandas.DataFrame:
                 Index
-                    as the same as index if @data
+                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
@@ -206,3 +262,66 @@ class ODEModel(Term):
             This method must be defined by child classes.
         """
         raise NotImplementedError
+
+    @classmethod
+    def from_data_with_quantile(cls, data, tau=1440, q=0.5, digits=None):
+        """Initialize model with data, estimating ODE parameters with quantiles.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+            q (float): the quantiles to compute, values between (0, 1)
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            covsirphy.ODEModel: initialized model
+        """
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(tau, "tau", accept_none=False).tau()
+        Validator(q, "q", accept_none=False).float(value_range=(0, 1))
+        start, end = data[cls.DATE].min(), data[cls.DATE].max()
+        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
+        initial_dict = trans_df.iloc[0].to_dict()
+        param_dict = cls._param_quantile(data=trans_df, q=q)
+        if digits is not None:
+            param_dict = {k: Validator(v, k).float(value_range=(0, 1), digits=digits) for k, v in param_dict.items()}
+        return cls(date_range=(start, end), tau=tau, initial_dict=initial_dict, param_dict=param_dict)
+
+    @classmethod
+    def _param_quantile(cls, data, q=0.5):
+        """With combinations (X, dX/dt) for variables, calculate quantile values of ODE parameters.
+
+        Args:
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
+
+        Returns:
+            dict of {str: float or pandas.Series}: parameter values at the quantile(s)
+
+        Note:
+            This method must be defined by child classes.
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def _clip(cls, values, lower, upper):
+        """
+        Trim values at input threshold.
+
+        Args:
+            values (float or array-like): values to trim
+            lower (float): minimum threshold
+            upper (float): maximum threshold
+
+        Returns:
+            float or pandas.Series: clipped array
+        """
+        return min(max(values, lower), upper) if isinstance(values, float) else pd.Series(values).clip()

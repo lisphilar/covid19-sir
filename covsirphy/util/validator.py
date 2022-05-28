@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from inspect import signature
+import math
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
@@ -89,15 +90,17 @@ class Validator(object):
             expected_cols = sorted(set(columns) - set(df.columns), key=columns.index)
             for col in expected_cols:
                 raise NotIncludedError(
-                    col, "column list of '{self._name}'", details="The dataframe has {', '.join(df.columns.tolist())} as columns.")
+                    col, f"column list of {self._name}",
+                    details=f"The dataframe has {', '.join(df.columns.tolist())} as columns")
         return df
 
-    def float(self, value_range=(0, None), default=None):
+    def float(self, value_range=(0, None), default=None, digits=None):
         """Convert a value to a float value.
 
         Args:
             value_range (tuple(int or None, int or None)): value range, None means un-specified
             default (float or None): default value when the target is None
+            digits (int or None): effective digits or None (skip rounding)
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to a float value
@@ -107,14 +110,16 @@ class Validator(object):
             float or None: converted float value or None (when both of the target and @default are None)
         """
         if self._target is None:
-            return None if default is None else Validator(default, name="default").float(value_range=value_range)
+            return None if default is None else Validator(default, "default").float(value_range=value_range, digits=digits)
         try:
             value = float(self._target)
         except ValueError:
             raise UnExpectedTypeError(self._name, self._target, float) from None
         if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
             raise UnExpectedValueRangeError(self._name, value, value_range)
-        return value
+        if digits is None:
+            return value
+        return round(value, digits - 1 - math.floor(math.log10(abs(value))))
 
     def int(self, value_range=(0, None), default=None, round_ok=False):
         """Convert a value to an integer.
@@ -216,7 +221,7 @@ class Validator(object):
             return None if default is None else Validator(default, name="default").sequence(flatten=flatten, unique=unique, candidates=candidates)
         if not isinstance(self._target, (list, tuple)):
             raise UnExpectedTypeError(
-                self._name, self._target, list, details="A tuple can be used, but it will be converted to a list.")
+                self._name, self._target, list, details="A tuple can be used, but it will be converted to a list")
         if flatten:
             try:
                 targets = sum(self._target, [])

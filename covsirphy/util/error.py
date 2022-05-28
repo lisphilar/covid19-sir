@@ -151,7 +151,7 @@ class NotSubclassError(_BaseException):
     """
 
     def __init__(self, name, target, parent, details=None):
-        message = f"'{name}' must be a sub-class of {type(parent)}, but {type(target)} was applied"
+        message = f"'{name}' must be a sub-class of {parent}, but {type(target)} was applied"
         super().__init__(message=message, details=details)
 
 
@@ -166,7 +166,7 @@ class UnExpectedTypeError(_BaseException):
     """
 
     def __init__(self, name, target, expected, details=None):
-        message = f"'{name}' could not converted to an instance of {type(expected)} because that of {type(target)} was applied"
+        message = f"We could not convert '{name}' to an instance of {expected} because that of {type(target)} was applied"
         super().__init__(message=message, details=details)
 
 

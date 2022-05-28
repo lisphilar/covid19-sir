@@ -61,37 +61,36 @@ class SIRModel(ODEModel):
         return np.array([dsdt, didt, drdt])
 
     @classmethod
-    def transform(cls, data):
+    def transform(cls, data, tau=None):
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
             data (pandas.DataFrame):
                 Index
-                    any index
+                    reset index or pandas.DatetimeIndex (when tau is not None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            tau (int or None): tau value [min]
 
         Returns:
             pandas.DataFrame:
                 Index
-                    as the same as index if @data
+                    as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
                 Columns
                     - Susceptible: the number of susceptible cases
                     - Infected: the number of infected cases
                     - Fatal or Recovered: the number of fatal or recovered cases
-
-        Note:
-            This method must be defined by child classes.
         """
         df = Validator(data, "data").dataframe(columns=cls._SIFR)
+        df.index = cls._date_to_non_dim(df.index, tau=tau)
         df[cls.FR] = df[cls.F] + df[cls.R]
-        return df.loc[:, cls._VARIABLES]
+        return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @classmethod
-    def inverse_transform(cls, data):
+    def inverse_transform(cls, data, tau=None, start_date=None):
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
@@ -102,24 +101,24 @@ class SIRModel(ODEModel):
                     - Susceptible: the number of susceptible cases
                     - Infected: the number of infected cases
                     - Fatal or Recovered: the number of fatal or recovered cases
+            tau (int or None): tau value [min]
+            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
 
         Returns:
             pandas.DataFrame:
                 Index
-                    as the same as index if @data
+                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-
-        Note:
-            This method must be defined by child classes.
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
+        df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
         df[cls.F] = 0
         df[cls.R] = df.loc[:, cls.FR]
-        return df.loc[:, cls._SIFR]
+        return df.loc[:, cls._SIFR].convert_dtypes()
 
     def r0(self):
         """Calculate basic reproduction number.
@@ -153,3 +152,33 @@ class SIRModel(ODEModel):
         except ZeroDivisionError:
             raise ZeroDivisionError(
                 f"Rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
+
+    @classmethod
+    def _param_quantile(cls, data, q=0.5):
+        """With combinations (X, dX/dt) for X=S, I, R, calculate quantile values of ODE parameters.
+
+        Args:
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
+
+        Returns:
+            dict of {str: float or pandas.Series}: parameter values at the quantile(s)
+
+        Note:
+            We can guess parameter values with difference equations as follows.
+            - rho = - n * (dS/dt) / S / I
+            - sigma = (dR/dt) / I
+        """
+        df = data.copy()
+        periods = round((df.index.max() - df.index.min()) / len(df))
+        # Remove negative values and set variables
+        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
+        n = df.loc[df.index[0], [cls.S, cls.CI, cls.FR]].sum()
+        # Calculate parameter values with non-dimensional difference equation
+        rho_series = 0 - n * df[cls.S].diff() / periods / df[cls.S] / df[cls.CI]
+        sigma_series = df[cls.FR].diff() / periods / df[cls.CI]
+        # Guess representative values
+        return {
+            "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
+            "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
+        }
