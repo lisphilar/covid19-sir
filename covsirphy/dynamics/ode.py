@@ -128,9 +128,9 @@ class ODEModel(Term):
             t_eval=np.arange(0, step_n + 1, 1),
             dense_output=False
         )
-        dates = pd.date_range(start=self._start, end=self._end, freq="D")
-        df = pd.DataFrame(data=sol["y"].T.copy(), index=dates, columns=self._VARIABLES)
-        df.index.name = self.DATE
+        df = pd.DataFrame(data=sol["y"].T.copy(), columns=self._VARIABLES)
+        df[self.DATE] = self._start + pd.Series(df.index * self._tau).apply(lambda x: timedelta(minutes=x))
+        df = df.set_index(self.DATE).resample("D").last()
         return df.round().convert_dtypes()
 
     @classmethod
