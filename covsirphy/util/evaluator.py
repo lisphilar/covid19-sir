@@ -94,7 +94,7 @@ class Evaluator(object):
         try:
             return float(self._METRICS_DICT[metric][0](self._true, self._pred))
         except ValueError:
-            # Multioutput not supported
+            # Multi-output not supported
             raise ValueError(
                 f"When the targets have multiple columns, we cannot select {metric}.") from None
 

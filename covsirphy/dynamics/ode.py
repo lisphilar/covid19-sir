@@ -2,10 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+from functools import partial
 import math
+import optuna
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
+from covsirphy.util.stopwatch import StopWatch
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -49,7 +53,9 @@ class ODEModel(Term):
         self._param_dict = Validator(param_dict, "param_dict", accept_none=False).dict(
             required_keys=self._PARAMETERS, errors="raise")
         # Total population
-        self._population = sum(list(initial_dict.values()))
+        self._population = sum(initial_dict.values())
+        # Information regarding ODE parameter estimation
+        self._estimation_dict = None
 
     def __str__(self):
         return self._NAME
@@ -61,8 +67,11 @@ class ODEModel(Term):
     def __eq__(self, other):
         return repr(self) == repr(other)
 
-    def to_dict(self):
+    def to_dict(self, with_estimation=False):
         """Return conditions as a dictionary.
+
+        Args:
+            with_estimation (bool): whether includes information regarding ODE parameter estimation or not
 
         Returns:
             dict of {str: object}:
@@ -70,13 +79,23 @@ class ODEModel(Term):
                 - tau (int): tau value [min]
                 - initial_dict (dict of {str: int}): initial values
                 - param_dict (dict of {str: float}): non-dimensional parameter values
+                - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True
+                    - method (str): method of estimation, "with_quantile" or "with_optimization" or "not_performed"
+                    - {metrics} (int): score of hyperparameter optimization, if available
+                    - trials (int) : the number of trials of hyperparameter optimization, if available
+                    - runtime (str): runtime of hyperparameter optimization, if available
+                    - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available
+                    - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available
         """
-        return {
+        _dict = {
             "date_range": (self._start.strftime(self.DATE_FORMAT), self._end.strftime(self.DATE_FORMAT)),
             "tau": self._tau,
             "initial_dict": self._initial_dict,
             "param_dict": self._param_dict,
         }
+        if with_estimation:
+            _dict["estimation_dict"] = self._estimation_dict or {"method": "not_performed"}
+        return _dict
 
     @classmethod
     def from_sample(cls, date_range=None, tau=1440):
@@ -264,6 +283,39 @@ class ODEModel(Term):
         raise NotImplementedError
 
     @classmethod
+    def from_data(cls, data, param_dict, tau=1440, digits=None):
+        """Initialize model with data and ODE parameter values.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            param_dict (dict of {str: float}): non-dimensional parameter values
+            tau (int): tau value [min]
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            covsirphy.ODEModel: initialized model
+        """
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(tau, "tau", accept_none=False).tau()
+        Validator(param_dict, "param_dict", accept_none=False).dict(required_keys=cls._PARAMETERS)
+        start, end = data[cls.DATE].min(), data[cls.DATE].max()
+        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
+        initial_dict = trans_df.iloc[0].to_dict()
+        return cls(
+            date_range=(start, end), tau=tau, initial_dict=initial_dict,
+            param_dict=param_dict if digits is None else {k: Validator(v, k).float(
+                value_range=(0, 1), digits=digits) for k, v in param_dict.items()}
+        )
+
+    @classmethod
     def from_data_with_quantile(cls, data, tau=1440, q=0.5, digits=None):
         """Initialize model with data, estimating ODE parameters with quantiles.
 
@@ -273,9 +325,9 @@ class ODEModel(Term):
                     reset index
                 Columns
                     - Date (pd.Timestamp): Observation date
-                    - Susceptible(int): the number of susceptible cases
+                    - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal(int): the number of fatal cases
+                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             tau (int): tau value [min]
             q (float): the quantiles to compute, values between (0, 1)
@@ -287,13 +339,10 @@ class ODEModel(Term):
         Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator(q, "q", accept_none=False).float(value_range=(0, 1))
-        start, end = data[cls.DATE].min(), data[cls.DATE].max()
         trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
-        initial_dict = trans_df.iloc[0].to_dict()
-        param_dict = cls._param_quantile(data=trans_df, q=q)
-        if digits is not None:
-            param_dict = {k: Validator(v, k).float(value_range=(0, 1), digits=digits) for k, v in param_dict.items()}
-        return cls(date_range=(start, end), tau=tau, initial_dict=initial_dict, param_dict=param_dict)
+        cls_obj = cls.from_data(data=data, param_dict=cls._param_quantile(data=trans_df, q=q), tau=tau, digits=digits)
+        cls_obj._estimation_dict = dict(method="with_quantile", tau=tau, q=q, digits=digits)
+        return cls_obj
 
     @classmethod
     def _param_quantile(cls, data, q=0.5):
@@ -325,3 +374,188 @@ class ODEModel(Term):
             float or pandas.Series: clipped array
         """
         return min(max(values, lower), upper) if isinstance(values, float) else pd.Series(values).clip()
+
+    @classmethod
+    def from_data_with_optimization(cls, data, tau=1440, metric="RMSLE", digits=None, **kwargs):
+        """Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            **kwargs: keyword arguments of optimization
+                - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval, (0.1, 0.9) as default
+                - timeout (int): timeout of optimization, 180 as default
+                - timeout_iteration (int): timeout of one iteration, 1 as default
+                - tail_n (int): the number of iterations to decide whether score did not change for the last iterations, 4 as default
+                - allowance (tuple(float, float)): the allowance of the max predicted values, (0.99, 1.01) as default
+                - pruner (str): kind of pruner (hyperband, median, threshold or percentile), "threshold" as default
+                - upper (float): works for "threshold" pruner, intermediate score is larger than this value, it prunes, 0.5 as default
+                - percentile (float): works for "Percentile" pruner, the best intermediate value is in the bottom percentile among trials, it prunes, 50 as default
+                - constant_liar (bool): whether use constant liar to reduce search effort or not, False as default
+
+        Returns:
+            covsirphy.ODEModel: initialized model
+        """
+        kwargs_default = {
+            "quantiles": (0.1, 0.9),
+            "timeout": 180,
+            "timeout_iteration": 1,
+            "tail_n": 4,
+            "allowance": (0.99, 1.01),
+            "pruner": "threshold",
+            "upper": 0.5,
+            "percentile": 50,
+            "constant_liar": False,
+        }
+        kwargs_dict = Validator(kwargs, "kwargs").dict(default=kwargs_default)
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(tau, "tau", accept_none=False).tau()
+        Validator([metric], "metric").sequence(candidates=Evaluator.metrics())
+        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
+        param_dict, score, n_trials, runtime = cls._estimate_params(
+            data=trans_df, tau=tau, metric=metric, **kwargs_dict)
+        cls_obj = cls.from_data(data=data, param_dict=param_dict, tau=tau, digits=digits)
+        cls_obj._estimation_dict = dict(
+            method="with_optimization", n_trials=n_trials, runtime=runtime, data=data, tau=tau, metric=score, digits=digits, **kwargs_dict)
+        return cls_obj
+
+    @classmethod
+    def _estimate_params(cls, data, tau, metric, **kwargs):
+        """Estimate ODE parameter values with hyperparameter optimization.
+
+        Args:
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau (int): tau value [min]
+            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            **kwargs: keyword arguments of optimization and must includes
+                - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
+                - timeout (int): timeout of optimization
+                - timeout_iteration (int): timeout of one iteration
+                - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
+                - allowance (tuple(float, float)): the allowance of the max predicted values
+                - pruner (str): kind of pruner (hyperband, median, threshold or percentile)
+                - upper (float): works for "threshold" pruner, intermediate score is larger than this value, it prunes
+                - percentile (float): works for "Percentile" pruner, the best intermediate value is in the bottom percentile among trials, it prunes
+                - constant_liar (bool): whether use constant liar to reduce search effort or not
+
+        Returns:
+            tuple of (dict of {str: float}, str, int):
+                - dict of {str: float}: dictionary of parameter values
+                - float: score with metrics
+                - str: runtime of hyperparameter optimization
+                - int: the number of trials of hyperparameter optimization
+        """
+        optuna.logging.set_verbosity(optuna.logging.WARNING)
+        # Create study of optimization
+        pruner_dict = {
+            "hyperband": optuna.pruners.HyperbandPruner,
+            "median": optuna.pruners.MedianPruner,
+            "threshold": optuna.pruners.ThresholdPruner,
+            "percentile": optuna.pruners.PercentilePruner,
+        }
+        pruner_name = Validator([kwargs["pruner"]], "pruner", accept_none=False).sequence(
+            candidates=pruner_dict.keys(), length=1)[0]
+        pruner_class = pruner_dict[pruner_name]
+        pruner = pruner_class(**Validator(kwargs, "keyword arguments").kwargs(pruner_class))
+        sampler = optuna.samplers.TPESampler(
+            **Validator(kwargs, "keyword arguments").kwargs(optuna.samplers.TPESampler))
+        study = optuna.create_study(direction="minimize", sampler=sampler, pruner=pruner)
+        # Create objective function
+        value_range_dict = cls._param_quantile(data, q=kwargs["quantiles"])
+        objective_func = partial(
+            cls._optuna_objective, data=data, tau=tau, value_range_dict=value_range_dict, metric=metric)
+        allowance = Validator(kwargs["allowance"], "allowance", accept_none=False).sequence(length=2)
+        # Iteration of optimization
+        iter_n = math.ceil(kwargs["timeout"] / kwargs["timeout_iteration"])
+        stopwatch = StopWatch()
+        scores = []
+        param_dict = {}
+        tail_n = Validator(kwargs["tail_n"], "tail_n").int(value_range=(1, None))
+        for _ in range(iter_n):
+            # Run iteration
+            study.optimize(objective_func, n_jobs=1, timeout=kwargs["timeout_iteration"])
+            param_dict = study.best_params.copy()
+            # If score did not change in the last iterations, stop running
+            scores.append(cls._optuna_score(param_dict, data, tau, metric))
+            if len(scores) >= tail_n and len(set(scores[-tail_n:])) == 1:
+                break
+            # Check max values are in the allowance
+            if cls._optuna_is_in_allowance(param_dict, data, tau, allowance):
+                break
+        return param_dict, scores[-1], len(study.trials), stopwatch.stop_show()
+
+    @classmethod
+    def _optuna_objective(cls, trial, data, tau, value_range_dict, metric):
+        """Objective function to minimize (evaluation score of the difference of actual data and solved data) by Optuna.
+
+        Args:
+            trial (optuna.trial): a trial of the study
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau (int): tau value [min]
+            value_range_dict (dict of {str: pandas.Series}): dictionary of value range of ODE parameters
+            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+
+        Returns:
+            float: score to minimize
+        """
+        param_dict = {}
+        for (k, v) in value_range_dict.items():
+            try:
+                param_dict[k] = trial.suggest_uniform(k, *v)
+            except OverflowError:
+                param_dict[k] = trial.suggest_uniform(k, 0, 1)
+        return cls._optuna_score(param_dict, data, tau, metric)
+
+    @classmethod
+    def _optuna_score(cls, param_dict, data, tau, metric):
+        """Score function to minimize (i.e. evaluation score of the difference of actual data and solved data).
+
+        Args:
+            param_dict (dict of {str: float}): non-dimensional parameter values
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau (int): tau value [min]
+            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+
+        Returns:
+            float: score to minimize
+        """
+        df = cls.inverse_transform(data=data, tau=tau, start_date="01Jan2022").reset_index()
+        model = cls.from_data(data=df, param_dict=param_dict, tau=tau, digits=None)
+        sim_df = model.solve()
+        evaluator = Evaluator(data.reset_index(drop=True), sim_df.reset_index(drop=True), how="inner", on=None)
+        return evaluator.score(metric=metric)
+
+    @classmethod
+    def _optuna_is_in_allowance(cls, param_dict, data, tau, allowance):
+        """
+        Return whether all max values of estimated values are in allowance or not.
+
+        Args:
+            param_dict (dict of {str: float}): non-dimensional parameter values
+            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau (int): tau value [min]
+            allowance (tuple(float, float)): the allowance of the predicted value
+
+        Returns:
+            (bool): True when all max values of predicted values are in allowance
+        """
+        df = cls.inverse_transform(data=data, tau=tau, start_date="01Jan2022").reset_index()
+        max_dict = {v: data[v].max() for v in cls._VARIABLES}
+        model = cls.from_data(data=df, param_dict=param_dict, tau=tau, digits=None)
+        sim_df = model.solve()
+        sim_max_dict = {v: sim_df[v].max() for v in cls._VARIABLES}
+        # Check all max values are in allowance
+        allowance0, allowance1 = allowance
+        ok_list = [
+            a * allowance0 <= p <= a * allowance1 for (a, p) in zip(max_dict.values(), sim_max_dict.values())]
+        return all(ok_list)
