@@ -4,7 +4,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
 import pytest
-from covsirphy import ODEModel, SIRModel
+from covsirphy import ODEModel, SIRModel, SIRDModel
 from covsirphy import Term, Validator, NotNoneError, UnExpectedNoneError
 
 
@@ -24,7 +24,7 @@ def test_not_implemented():
         model._param_quantile(data=pd.DataFrame(), q=0.5)
 
 
-@pytest.mark.parametrize("model_class", [SIRModel])
+@pytest.mark.parametrize("model_class", [SIRModel, SIRDModel])
 class TestODEModel(object):
     def test_special(self, model_class):
         model = model_class.from_sample()
