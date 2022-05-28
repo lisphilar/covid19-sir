@@ -105,6 +105,20 @@ class UnExpectedNoneError(_BaseException):
         super().__init__(message=message, details=details)
 
 
+class NotNoneError(_BaseException):
+    """Error when a value must be None but not None un-expectedly.
+
+    Args:
+        name (str): name of the target
+        value (str): value of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, details=None):
+        message = f"'{name}' must be None, but has value '{value}'"
+        super().__init__(message=message, details=details)
+
+
 class UnExecutedError(_BaseException):
     """
     Error when we have unexecuted methods that we need to run in advance.

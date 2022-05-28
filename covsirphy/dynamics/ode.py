@@ -8,6 +8,7 @@ import optuna
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
+from covsirphy.util.error import UnExpectedNoneError, NotNoneError
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
@@ -179,16 +180,20 @@ class ODEModel(Term):
         Args:
             data (pandas.DataFrame):
                 Index
-                    reset index or pandas.DatetimeIndex (when @tau is not None)
+                    non-dimensional date information pandas.DatetimeIndex
                 Columns
                     any columns
             tau (int or None): tau value [min]
             start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
 
+        Raises:
+            NotNoneError: @tau is None, but start_date is not None
+            UnExpectedNoneError: @tau is not None, but start_date is None
+
         Returns:
             pandas.DataFrame:
                 Index
-                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
+                    Date (pandas.DatetimeIndex) or as-is @data (when @tau is None)
                 Columns
                     any columns of @data
             pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name
@@ -197,11 +202,15 @@ class ODEModel(Term):
             The first values on date will be selected when resampling.
         """
         df = Validator(data, "data").dataframe()
-        if tau is None or start_date is None or isinstance(df.index, pd.DatetimeIndex):
+        if (tau is None and start_date is None) or isinstance(df.index, pd.DatetimeIndex):
             return data
+        if tau is None:
+            raise NotNoneError("start_date", start_date, details="None is required because tau is None")
+        if start_date is None:
+            raise UnExpectedNoneError("start_date", details="Not None value is required because tau is not None")
         Validator(tau, "tau", accept_none=False).tau()
         start = Validator(start_date, "start_date", accept_none=False).date()
-        df[cls.DATE] = pd.date_range(start=start, periods=len(data), freq=f"{tau}min")
+        df[cls.DATE] = start + pd.Series(df.index * tau).apply(lambda x: timedelta(minutes=x))
         return df.set_index(cls.DATE).resample("D").first()
 
     @classmethod
