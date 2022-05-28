@@ -30,8 +30,6 @@ class SIRDModel(ODEModel):
     _PARAMETERS = ["kappa", "rho", "sigma"]
     # Dimensional parameters
     _DAY_PARAMETERS = ["1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
-    # Weights of variables in parameter estimation error function
-    _WEIGHTS = np.array([1, 10, 10, 2])
     # Variables that increases monotonically
     _VARS_INCREASE = [ODEModel.R, ODEModel.F]
     # Sample data
@@ -146,9 +144,9 @@ class SIRDModel(ODEModel):
 
         Returns:
             dict of {str: int}: dictionary of dimensional parameter values
-                - "1/alpha2 [day]" (int): inverse number of mortality rate
-                - "1/beta [day]" (int): inverse number of effective contact rate
-                - "1/gamma [day]" (int): inverse number of recovery rate
+                - "1/alpha2 [day]" (int): inverse value of mortality rate
+                - "1/beta [day]" (int): inverse value of effective contact rate
+                - "1/gamma [day]" (int): inverse value of recovery rate
         """
         try:
             return {
@@ -165,7 +163,7 @@ class SIRDModel(ODEModel):
         """With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            data (pandas.DataFrame): transformed data with covsirphy.SIRDModel.transform(data=data, tau=tau)
             q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:

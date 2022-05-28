@@ -71,6 +71,7 @@ from covsirphy.ode.ode_handler import ODEHandler
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.sir import SIRModel
 from covsirphy.dynamics.sird import SIRDModel
+from covsirphy.dynamics.sirf import SIRFModel
 # simulation
 from covsirphy.simulation.estimator import Estimator, Optimizer
 from covsirphy.simulation.simulator import ODESimulator
@@ -142,7 +143,7 @@ __all__ = [
     # ode
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     # dynamics
-    "ODEModel", "SIRModel", "SIRDModel",
+    "ODEModel", "SIRModel", "SIRDModel", "SIRFModel",
     # regression
     "RegressionHandler",
     # automl

@@ -33,8 +33,6 @@ class ODEModel(Term):
     _PARAMETERS = []
     # Dimensional parameters
     _DAY_PARAMETERS = []
-    # Weights of variables in parameter estimation error function
-    _WEIGHTS = np.array([])
     # Variables that increases monotonically
     _VARS_INCREASE = []
     # Sample data
@@ -284,7 +282,7 @@ class ODEModel(Term):
         """Calculate dimensional parameter values.
 
         Returns:
-            dict of {str: int}: dictionary of dimensional parameter values
+            dict of {str: int or float}: dictionary of dimensional parameter values
 
         Note:
             This method must be defined by child classes.

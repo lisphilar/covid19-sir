@@ -28,8 +28,6 @@ class SIRModel(ODEModel):
     _PARAMETERS = ["rho", "sigma"]
     # Dimensional parameters
     _DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
-    # Weights of variables in parameter estimation error function
-    _WEIGHTS = np.array([1, 1, 1])
     # Variables that increases monotonically
     _VARS_INCREASE = [ODEModel.FR]
     # Sample data
@@ -143,8 +141,8 @@ class SIRModel(ODEModel):
 
         Returns:
             dict of {str: int}: dictionary of dimensional parameter values
-                - "1/beta [day]" (int): inverse number of effective contact rate
-                - "1/gamma [day]" (int): inverse number of recovery rate
+                - "1/beta [day]" (int): inverse value of effective contact rate
+                - "1/gamma [day]" (int): inverse value of recovery rate
         """
         try:
             return {
@@ -160,7 +158,7 @@ class SIRModel(ODEModel):
         """With combinations (X, dX/dt) for X=S, I, R, calculate quantile values of ODE parameters.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            data (pandas.DataFrame): transformed data with covsirphy.SIRModel.transform(data=data, tau=tau)
             q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
