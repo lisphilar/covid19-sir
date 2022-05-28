@@ -67,12 +67,37 @@ class TestODEModel(object):
             model_class(**_dict).dimensional_parameters()
 
     @pytest.mark.parametrize("tau", [720, 1440])
+    def test_from_data(self, model_class, tau):
+        sample_model = model_class.from_sample(tau=tau)
+        sample_df = sample_model.solve()
+        sample_dict = sample_model.to_dict()
+        trans_df = model_class.inverse_transform(sample_df).reset_index()
+        model = model_class.from_data(data=trans_df, param_dict=sample_dict["param_dict"], tau=tau, digits=None)
+        assert model.to_dict(with_estimation=True)["estimation_dict"]["method"] == "not_performed"
+        solved_df = model.solve()
+        assert_index_equal(solved_df.index, sample_df.index)
+        assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
+
+    @pytest.mark.parametrize("tau", [720, 1440])
     @pytest.mark.parametrize("q", [0.5])
     def test_from_data_with_quantile(self, model_class, tau, q):
         sample_model = model_class.from_sample(tau=tau)
         sample_df = sample_model.solve()
         trans_df = model_class.inverse_transform(sample_df).reset_index()
         model = model_class.from_data_with_quantile(data=trans_df, tau=tau, q=q, digits=2)
+        assert model.to_dict(with_estimation=True)["estimation_dict"]["method"] == "with_quantile"
+        solved_df = model.solve()
+        assert_index_equal(solved_df.index, sample_df.index)
+        assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
+
+    @pytest.mark.parametrize("tau", [720, 1440])
+    @pytest.mark.parametrize("metric", ["RMSLE"])
+    def test_from_data_with_optimization(self, model_class, tau, metric):
+        sample_model = model_class.from_sample(tau=tau)
+        sample_df = sample_model.solve()
+        trans_df = model_class.inverse_transform(sample_df).reset_index()
+        model = model_class.from_data_with_optimization(data=trans_df, tau=tau, metric=metric, digits=4)
+        assert model.to_dict(with_estimation=True)["estimation_dict"]["method"] == "with_optimization"
         solved_df = model.solve()
         assert_index_equal(solved_df.index, sample_df.index)
         assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
