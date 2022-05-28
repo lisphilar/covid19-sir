@@ -4,7 +4,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
 import pytest
-from covsirphy import ODEModel, SIRModel, SIRDModel, SIRFModel
+from covsirphy import ODEModel, SIRModel, SIRDModel, SIRFModel, SEWIRFModel
 from covsirphy import Term, Validator, NotNoneError, UnExpectedNoneError
 
 
@@ -24,7 +24,7 @@ def test_not_implemented():
         model._param_quantile(data=pd.DataFrame(), q=0.5)
 
 
-@pytest.mark.parametrize("model_class", [SIRModel, SIRDModel, SIRFModel])
+@pytest.mark.parametrize("model_class", [SIRModel, SIRDModel, SIRFModel, SEWIRFModel])
 class TestODEModel(object):
     def test_special(self, model_class):
         model = model_class.from_sample()
@@ -50,8 +50,10 @@ class TestODEModel(object):
         with pytest.raises(UnExpectedNoneError):
             model_class.inverse_transform(solved_df.reset_index(drop=True), tau=tau or 360, start_date=None)
         actual_df = model_class.inverse_transform(solved_df, tau=tau, start_date=None if tau is None else start_date)
-        assert_frame_equal(model_class.transform(actual_df), solved_df)
         trans_df = model_class.transform(actual_df, tau=tau)
+        if issubclass(model_class, SEWIRFModel):
+            return
+        assert_frame_equal(model_class.transform(actual_df), solved_df)
         assert_frame_equal(trans_df.reset_index(drop=True), solved_df.reset_index(drop=True))
 
     def test_r0(self, model_class):
@@ -79,12 +81,18 @@ class TestODEModel(object):
         model = model_class.from_data(data=trans_df, param_dict=sample_dict["param_dict"], tau=tau, digits=None)
         assert model.to_dict(with_estimation=True)["estimation_dict"]["method"] == "not_performed"
         solved_df = model.solve()
+        if issubclass(model_class, SEWIRFModel):
+            return
         assert_index_equal(solved_df.index, sample_df.index)
         assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
 
     @pytest.mark.parametrize("tau", [720, 1440])
     @pytest.mark.parametrize("q", [0.5])
     def test_from_data_with_quantile(self, model_class, tau, q):
+        if issubclass(model_class, SEWIRFModel):
+            with pytest.raises(NotImplementedError):
+                model_class.from_data_with_quantile()
+            return
         sample_model = model_class.from_sample(tau=tau)
         sample_df = sample_model.solve()
         trans_df = model_class.inverse_transform(sample_df).reset_index()
@@ -97,6 +105,10 @@ class TestODEModel(object):
     @pytest.mark.parametrize("tau", [720, 1440])
     @pytest.mark.parametrize("metric", ["RMSLE"])
     def test_from_data_with_optimization(self, model_class, tau, metric):
+        if issubclass(model_class, SEWIRFModel):
+            with pytest.raises(NotImplementedError):
+                model_class.from_data_with_optimization()
+            return
         sample_model = model_class.from_sample(tau=tau)
         sample_df = sample_model.solve()
         trans_df = model_class.inverse_transform(sample_df).reset_index()
