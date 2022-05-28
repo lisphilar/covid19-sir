@@ -30,8 +30,9 @@ class TestODEModel(object):
         assert model == model_class(**model.to_dict())
         assert model == eval(repr(model))
 
-    def test_solve(self, model_class):
-        model = model_class.from_sample()
+    @pytest.mark.parametrize("tau", [720, 1440])
+    def test_solve(self, model_class, tau):
+        model = model_class.from_sample(tau=tau)
         df = model.solve()
         Validator(df, name="analytical solution").dataframe(time_index=True, columns=model_class._VARIABLES)
         assert df.index.name == Term.DATE
