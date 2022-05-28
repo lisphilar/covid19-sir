@@ -52,6 +52,7 @@ class TestValidator(object):
             Validator(1.2).float(value_range=(1.5, 2))
         assert Validator(1.2).float() == 1.2
         assert Validator(1.6564).float(digits=3) == 1.66
+        assert Validator(0).float(digits=3) == 0
 
     def test_int(self):
         assert Validator(None).int(default=2) == 2
