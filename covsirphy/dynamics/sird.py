@@ -6,8 +6,8 @@ from covsirphy.util.validator import Validator
 from covsirphy.dynamics.ode import ODEModel
 
 
-class SIRModel(ODEModel):
-    """Class of SIR model.
+class SIRDModel(ODEModel):
+    """Class of SIR-D model.
 
     Args:
         date_range (tuple of (str, str)): start date and end date of simulation
@@ -15,31 +15,34 @@ class SIRModel(ODEModel):
         initial_dict (dict of {str: int}): initial values
             - Susceptible (int): the number of susceptible cases
             - Infected (int): the number of infected cases
-            - Fatal or Recovered (int): the number of fatal or recovered cases
+            - Fatal (int): the number of fatal cases
+            - Recovered (int): the number of recovered cases
         param_dict (dict of {str: float}): non-dimensional parameter values
+            - kappa: non-dimensional mortality rate
             - rho: non-dimensional effective contact rate
-            - sigma: non-dimensional recovery plus mortality rate
+            - sigma: non-dimensional recovery rate
     """
     # Name of ODE model
-    _NAME = "SIR Model"
+    _NAME = "SIR-D Model"
     # Variables
-    _VARIABLES = [ODEModel.S, ODEModel.CI, ODEModel.FR]
+    _VARIABLES = [ODEModel.S, ODEModel.CI, ODEModel.R, ODEModel.F]
     # Non-dimensional parameters
-    _PARAMETERS = ["rho", "sigma"]
+    _PARAMETERS = ["kappa", "rho", "sigma"]
     # Dimensional parameters
-    _DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
+    _DAY_PARAMETERS = ["1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
     # Weights of variables in parameter estimation error function
-    _WEIGHTS = np.array([1, 1, 1])
+    _WEIGHTS = np.array([1, 10, 10, 2])
     # Variables that increases monotonically
-    _VARS_INCREASE = [ODEModel.FR]
+    _VARS_INCREASE = [ODEModel.R, ODEModel.F]
     # Sample data
     _SAMPLE_DICT = {
-        "initial_dict": {ODEModel.S: 999_000, ODEModel.CI: 1000, ODEModel.FR: 0},
-        "param_dict": {"rho": 0.2, "sigma": 0.075}
+        "initial_dict": {ODEModel.S: 999_000, ODEModel.CI: 1000, ODEModel.R: 0, ODEModel.F: 0},
+        "param_dict": {"kappa": 0.005, "rho": 0.2, "sigma": 0.075}
     }
 
     def __init__(self, date_range, tau, initial_dict, param_dict):
         super().__init__(date_range, tau, initial_dict, param_dict)
+        self._kappa = Validator(self._param_dict["kappa"], "kappa", accept_none=False).float(value_range=(0, 1))
         self._rho = Validator(self._param_dict["rho"], "rho", accept_none=False).float(value_range=(0, 1))
         self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
 
@@ -57,8 +60,9 @@ class SIRModel(ODEModel):
         s, i, *_ = X
         dsdt = 0 - self._rho * s * i / n
         drdt = self._sigma * i
-        didt = 0 - dsdt - drdt
-        return np.array([dsdt, didt, drdt])
+        dfdt = self._kappa * i
+        didt = 0 - dsdt - drdt - dfdt
+        return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
     def transform(cls, data, tau=None):
@@ -82,11 +86,11 @@ class SIRModel(ODEModel):
                 Columns
                     - Susceptible: the number of susceptible cases
                     - Infected: the number of infected cases
-                    - Fatal or Recovered: the number of fatal or recovered cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
         """
         df = Validator(data, "data").dataframe(columns=cls._SIFR)
         df.index = cls._date_to_non_dim(df.index, tau=tau)
-        df[cls.FR] = df[cls.F] + df[cls.R]
         return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @classmethod
@@ -100,7 +104,8 @@ class SIRModel(ODEModel):
                 Columns
                     - Susceptible: the number of susceptible cases
                     - Infected: the number of infected cases
-                    - Fatal or Recovered: the number of fatal or recovered cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
             tau (int or None): tau value [min]
             start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
 
@@ -116,48 +121,48 @@ class SIRModel(ODEModel):
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
         df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
-        df[cls.F] = 0
-        df[cls.R] = df.loc[:, cls.FR]
         return df.loc[:, cls._SIFR].convert_dtypes()
 
     def r0(self):
         """Calculate basic reproduction number.
 
         Raises:
-            ZeroDivisionError: Sigma value was over 0
+            ZeroDivisionError: sigma + kappa value was over 0
 
         Returns:
             float: reproduction number of the ODE model and parameters
         """
         try:
-            return round(self._rho / self._sigma, 2)
+            return round(self._rho / (self._sigma + self._kappa), 2)
         except ZeroDivisionError:
             raise ZeroDivisionError(
-                f"Sigma must be over 0 to calculate reproduction number with {self._NAME}.") from None
+                f"Sigma + kappa must be over 0 to calculate reproduction number with {self._NAME}.") from None
 
     def dimensional_parameters(self):
         """Calculate dimensional parameter values.
 
         Raises:
-            ZeroDivisionError: either rho or sigma value was over 0
+            ZeroDivisionError: either kappa or rho or sigma value was over 0
 
         Returns:
             dict of {str: int}: dictionary of dimensional parameter values
+                - "1/alpha2 [day]" (int): inverse number of mortality rate
                 - "1/beta [day]" (int): inverse number of effective contact rate
                 - "1/gamma [day]" (int): inverse number of recovery rate
         """
         try:
             return {
+                "1/alpha2 [day]": round(self._tau / 24 / 60 / self._kappa),
                 "1/beta [day]": round(self._tau / 24 / 60 / self._rho),
                 "1/gamma [day]": round(self._tau / 24 / 60 / self._sigma)
             }
         except ZeroDivisionError:
             raise ZeroDivisionError(
-                f"Rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
+                f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
     def _param_quantile(cls, data, q=0.5):
-        """With combinations (X, dX/dt) for X=S, I, R, calculate quantile values of ODE parameters.
+        """With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.
 
         Args:
             data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
@@ -168,8 +173,9 @@ class SIRModel(ODEModel):
 
         Note:
             We can get approximate parameter values with difference equations as follows.
-            - rho = - n * (dS/dt) / S / I
-            - sigma = (dR/dt) / I
+                - kappa = (dF/dt) / I
+                - rho = - n * (dS/dt) / S / I
+                - sigma = (dR/dt) / I
         """
         df = data.copy()
         periods = round((df.index.max() - df.index.min()) / len(df))
@@ -177,10 +183,12 @@ class SIRModel(ODEModel):
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n = df.loc[df.index[0], cls._VARIABLES].sum()
         # Calculate parameter values with non-dimensional difference equation
+        kappa_series = df[cls.F].diff() / periods / df[cls.CI]
         rho_series = 0 - n * df[cls.S].diff() / periods / df[cls.S] / df[cls.CI]
-        sigma_series = df[cls.FR].diff() / periods / df[cls.CI]
+        sigma_series = df[cls.R].diff() / periods / df[cls.CI]
         # Guess representative values
         return {
+            "kappa": cls._clip(kappa_series.quantile(q=q), 0, 1),
             "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
             "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }

@@ -19,7 +19,7 @@ class ODEModel(Term):
     """Basic class of ordinary differential equation (ODE) model.
 
     Args:
-        date_range (tuple(str, str)): start date and end date of simulation
+        date_range (tuple of (str, str)): start date and end date of simulation
         tau (int): tau value [min]
         initial_dict (dict of {str: int}): initial values
         param_dict (dict of {str: float}): non-dimensional parameter values
@@ -76,7 +76,7 @@ class ODEModel(Term):
 
         Returns:
             dict of {str: object}:
-                - date_range (tuple(str, str)): start date and end date of simulation
+                - date_range (tuple of (str, str)): start date and end date of simulation
                 - tau (int): tau value [min]
                 - initial_dict (dict of {str: int}): initial values
                 - param_dict (dict of {str: float}): non-dimensional parameter values
@@ -284,7 +284,7 @@ class ODEModel(Term):
         """Calculate dimensional parameter values.
 
         Returns:
-            dict of {str: int or float}: dictionary of dimensional parameter values
+            dict of {str: int}: dictionary of dimensional parameter values
 
         Note:
             This method must be defined by child classes.
