@@ -60,14 +60,32 @@ class ODEModel(Term):
         return self._NAME
 
     def __repr__(self):
-        _dict = self.to_dict()
+        _dict = self.settings()
         return f"{type(self).__name__}({', '.join([f'{k}={v}' for k, v in _dict.items()])})"
 
     def __eq__(self, other):
         return repr(self) == repr(other)
 
-    def to_dict(self, with_estimation=False):
-        """Return conditions as a dictionary.
+    @classmethod
+    def definitions(cls):
+        """Return definitions of ODE model.
+
+        Returns:
+            dict of {str: object}:
+                - "name" (str): ODE model name
+                - "variables" (list of [str]): variable names
+                - "parameters" (list of [str]): non-dimensional parameter names
+                - "dimensional_parameters" (list of [str]): dimensional parameter names
+        """
+        return {
+            "name": cls._NAME,
+            "variables": cls._VARIABLES,
+            "parameters": cls._PARAMETERS,
+            "dimensional_parameters": cls._DAY_PARAMETERS,
+        }
+
+    def settings(self, with_estimation=False):
+        """Return settings.
 
         Args:
             with_estimation (bool): whether includes information regarding ODE parameter estimation or not
