@@ -193,7 +193,7 @@ class EmptyError(_BaseException):
     """
 
     def __init__(self, name, details=None):
-        message = f"'Empty dataframe was applied as {name}' un-expectedly"
+        message = f"'Empty dataframe/series was applied as {name}' un-expectedly"
         super().__init__(message=message, details=details)
 
 
