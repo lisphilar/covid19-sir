@@ -25,6 +25,8 @@ class ODEModel(Term):
         param_dict (dict of {str: float}): non-dimensional parameter values
     """
     _SIFR = [Term.S, Term.CI, Term.F, Term.R]
+    _logS = "log10(S)"
+    _r = "R"
     # Name of ODE model
     _NAME = "ODE Model"
     # Variables
@@ -584,3 +586,28 @@ class ODEModel(Term):
         ok_list = [
             a * allowance0 <= p <= a * allowance1 for (a, p) in zip(max_dict.values(), sim_max_dict.values())]
         return all(ok_list)
+
+    @classmethod
+    def sr(cls, data):
+        """Return log10(S) and R of model-specific variables for S-R trend analysis.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    Date (pd.Timestamp): Observation date
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): date
+                Columns
+                    log10(S) (np.float64): common logarithm of S of the ODE model
+                    R (np.int64): R of the model
+        """
+        raise NotImplementedError

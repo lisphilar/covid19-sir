@@ -92,6 +92,21 @@ class NAFoundError(_BaseException):
         super().__init__(message=message, details=details)
 
 
+class NotEnoughDataError(_BaseException):
+    """Error when we do not have enough data for analysis.
+
+    Args:
+        name (str): name of the target
+        value (str): value of the target
+        required_n (int): required number of records
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, required_n, details=None):
+        message = f"We need more than {required_n} records, but '{name}' has only {len(value)} records at this time"
+        super().__init__(message=message, details=details)
+
+
 class UnExpectedNoneError(_BaseException):
     """Error when a value is None un-expectedly.
 

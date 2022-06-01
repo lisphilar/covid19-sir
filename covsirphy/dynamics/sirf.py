@@ -23,6 +23,9 @@ class SIRFModel(SIRDModel):
             - kappa: non-dimensional mortality rate of infected cases
             - rho: non-dimensional effective contact rate
             - sigma: non-dimensional recovery rate
+
+    Note:
+        SIR-F model is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook
     """
     # Name of ODE model
     _NAME = "SIR-F Model"
@@ -131,3 +134,31 @@ class SIRFModel(SIRDModel):
             "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
             "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }
+
+    @classmethod
+    def sr(cls, data):
+        """Return log10(S) and R of model-specific variables for S-R trend analysis.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): date
+                Columns
+                    log10(S) (np.float64): common logarithm of Susceptible
+                    R (np.int64): Recovered
+        """
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR])
+        df = data.set_index(cls.DATE).rename(columns={cls.R: cls._r})
+        df[cls._logS] = np.log10(df[cls.S])
+        return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})

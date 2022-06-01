@@ -17,7 +17,7 @@ from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import UnExpectedReturnValueError, UnExpectedNoneError
-from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError
+from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError, NotEnoughDataError
 from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
 from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
 from covsirphy.util.filer import save_dataframe
@@ -125,7 +125,7 @@ __all__ = [
     "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
     "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
     "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
-    "Validator", "UnExpectedNoneError", "NotNoneError",
+    "Validator", "UnExpectedNoneError", "NotNoneError", "NotEnoughDataError",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",

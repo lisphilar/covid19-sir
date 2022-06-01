@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import matplotlib
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import EmptyError
+import ruptures as rpt
+from scipy.optimize import curve_fit
+from covsirphy.util.error import EmptyError, NotEnoughDataError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
+from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.dynamics.ode import ODEModel
 
 
@@ -20,6 +25,7 @@ class Dynamics(Term):
         name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
     _PH = "Phase_ID"
+    _ACTUAL = "Actual"
     _SIFR = [Term.S, Term.CI, Term.F, Term.R]
 
     def __init__(self, model, date_range, tau=None, name=None):
@@ -35,6 +41,9 @@ class Dynamics(Term):
         self._df = pd.DataFrame(
             {self._PH: 0}, index=pd.date_range(start=self._first, end=self._last, freq="D"),
             columns=[self._PH, *self._SIFR, *self._parameters])
+
+    def __len__(self):
+        return self._df[self._PH].nunique()
 
     @property
     def name(self):
@@ -75,11 +84,41 @@ class Dynamics(Term):
         instance.register(data=df.reset_index())
         return instance
 
+    @classmethod
+    def from_data(cls, model, data, tau=1440, name=None):
+        """Initialize model with data.
+
+        Args:
+            data (pandas.DataFrame): new data to overwrite the current information
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - (numpy.float64): ODE parameter values defined with model.PARAMETERS
+            tau (int): tau value [min]
+            name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
+
+        Returns:
+            covsirphy.ODEModel: initialized model
+
+        Note:
+            Regarding @date_range, refer to covsirphy.ODEModel.from_sample().
+        """
+        Validator(model, "model", accept_none=False).subclass(ODEModel)
+        Validator(data, "data").dataframe(columns=[cls.DATE])
+        instance = cls(model=model, date_range=(data[cls.DATE].min(), data[cls.DATE].max()), tau=tau, name=name)
+        instance.register(data=data)
+        return instance
+
     def register(self, data=None):
         """Register data to get initial values and ODE parameter values (if available).
 
         Args:
-            data (pandas.DataFrame or None): new data to overwrite the current information
+            data (pandas.DataFrame or None): new data to overwrite the current information or None (no new records)
                 Index
                     reset index
                 Columns
@@ -122,10 +161,11 @@ class Dynamics(Term):
             self._df = all_df.convert_dtypes()
             # Find change points with parameter values
             param_df = all_df.loc[:, self._parameters].dropna(how="all", axis=0).ffill()
-            self.segment(points=param_df.index.tolist(), overwrite=True)
+            if not param_df.empty:
+                self._segment(points=param_df.index.tolist(), overwrite=True)
         return self._df.reset_index().loc[:, [self.DATE, *self._SIFR, *self._parameters]]
 
-    def segment(self, points, overwrite=False):
+    def _segment(self, points, overwrite):
         """Perform time-series segmentation with points.
 
         Args:
@@ -149,7 +189,127 @@ class Dynamics(Term):
         for point in change_points:
             df.loc[point:, self._PH] += 1
         self._df = df.convert_dtypes()
-        return self
+
+    def segment(self, points=None, overwrite=False, **kwargs):
+        """Perform time-series segmentation with points manually selected or found with S-R trend analysis.
+
+        Args:
+            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .trend_analysis() method)
+            overwrite (bool): whether remove all phases before segmentation or not
+            **kwargs: keyword arguments of covsirphy.Dynamics.trend_analysis()
+
+        Returns:
+            covsirphy.Dynamics: self
+
+        Note:
+            @points can include the first date, but not required.
+
+        Note:
+            @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
+        """
+        return self._segment(points=points or self.trend_analysis(**kwargs)[0], overwrite=overwrite)
+
+    def trend_analysis(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
+        """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
+
+        Args:
+            algo (str): detection algorithms and models
+            min_size (int): minimum value of phase length [days], be equal to or over 3
+            display (bool or str): whether display figure of log10(S) - R plane or not
+            **kwargs: keyword arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp) except for "model",
+                covsirphy.VisualizeBase(), matplotlib.legend.Legend()
+
+        Raises:
+            NotEnoughDataError: we have not enough records, the length of the records must be equal to or over min_size * 2
+
+        Returns:
+            tuple of (pandas.Timestamp, pandas.DataFrame):
+                pandas.Timestamp: date of change points
+                pandas.Dataframe:
+                    Index
+                        R (int): actual R (R of the ODE model) values
+                    Columns
+                        Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
+                        0th (float): log10(S) values fitted with y = a * R + b
+                        1st, 2nd... (float): fitted values of 1st, 2nd phases
+
+        Note:
+            Python library `ruptures` will be used for off-line change point detection.
+            Refer to documentation of `ruptures` library, https://centre-borelli.github.io/ruptures-docs/
+            Candidates of @algo are "Pelt-rbf", "Binseg-rbf", "Binseg-normal", "BottomUp-rbf", "BottomUp-normal".
+
+        Note:
+            S-R trend analysis is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook
+            "Phase" means a sequential dates in which the parameters of SIR-derived models are fixed.
+            "Change points" means the dates when trend was changed.
+            "Change points" is the same as the start dates of phases except for the 0th phase.
+        """
+        Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
+        all_df = self._model.sr(self._df.dropna(how="any", subset=self._SIFR).reset_index())
+        if len(all_df) < min_size * 2:
+            raise NotEnoughDataError("the registered data", all_df, required_n=min_size * 2)
+        algo_dict = {
+            "Pelt-rbf": (rpt.Pelt, {"model": "rbf", "jump": 1, "min_size": min_size}),
+            "Binseg-rbf": (rpt.Binseg, {"model": "rbf", "jump": 1, "min_size": min_size}),
+            "Binseg-normal": (rpt.Binseg, {"model": "normal", "jump": 1, "min_size": min_size}),
+            "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf", "jump": 1, "min_size": min_size}),
+            "BottomUp-normal": (rpt.BottomUp, {"model": "normal", "jump": 1, "min_size": min_size}),
+        }
+        Validator([algo], "algo").sequence(candidates=algo_dict.keys())
+        # S-R trend analysis
+        r, logS = self._model._r, self._model._logS
+        sr_df = all_df.pivot_table(index=r, values=logS, aggfunc="last")
+        sr_df.index.name = None
+        detector = algo_dict[algo][0](**algo_dict[algo][1], **Validator(kwargs).kwargs(algo_dict[algo][0]))
+        results = detector.fit_predict(sr_df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
+        logs_df = sr_df.iloc[[result - 1 for result in results]]
+        merge_df = pd.merge_asof(
+            logs_df.sort_values(logS), all_df.reset_index().sort_values(logS), on=logS, direction="nearest")
+        points = merge_df[self.DATE].sort_values().tolist()
+        # Start dates, end dates of phases
+        starts = [self._first, *points]
+        ends = [point - timedelta(days=1) for point in points] + [self._last]
+        # Fitting with lines
+        for i, (start, end) in enumerate(zip(starts, ends)):
+            phase_df = all_df.loc[start: end, :]
+            param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
+            all_df[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
+        fit_df = all_df.rename(columns={logS: self._ACTUAL}).set_index(r)
+        # Display log10(S) - R plane
+        if display:
+            with VisualizeBase(**Validator(kwargs, "keyword arguments").kwargs([VisualizeBase, plt.savefig])) as lp:
+                # _, lp.ax = plt.subplots(1, 1)
+                lp.ax.plot(
+                    fit_df.index, fit_df[self._ACTUAL], label=self._ACTUAL,
+                    color="black", marker=".", markeredgewidth=0, linewidth=0)
+                for phase in fit_df.drop(self._ACTUAL, axis=1).columns:
+                    lp.ax.plot(fit_df.index, fit_df[phase], label=phase)
+                for r_value in [all_df.loc[point, r] for point in points]:
+                    lp.ax.axvline(x=r_value, color="black", linestyle=":")
+                name = "" if self._name is None else self._name + ": "
+                lp.title = f"{name}phases detected by S-R trend analysis of {self._model._NAME}"
+                lp.ax.set_xlim(max(0, min(fit_df.index)), None)
+                lp.ax.set_xlabel(xlabel=f"R of {self._model._NAME}")
+                lp.ax.set_ylabel(ylabel=f"log10(S) of {self._model._NAME}")
+                legend_kwargs = Validator(kwargs, "keyword arguments").kwargs(
+                    matplotlib.legend.Legend, default=dict(bbox_to_anchor=(0.5, -0.5), loc="lower center", borderaxespad=0, ncol=7))
+                lp.ax.legend(**legend_kwargs)
+        return points, fit_df
+
+    @staticmethod
+    def _linear_f(x, a, b):
+        """
+        Linear function f(x) = A * x + b.
+
+        Args:
+            x (float): x values
+            a (float): the first parameter of the function
+            b (float): the second parameter of the function
+
+        Returns:
+            float
+        """
+        return a * x + b
 
     def summary(self):
         """Summarize phase information.
@@ -159,18 +319,18 @@ class Dynamics(Term):
                 Index
                     Phase (str): phase names, 0th, 1st,...
                 Columns
-                    - Start (pandas.Timestamp): start date of the phase
-                    - End (pandas.Timestamp): end date of the phase
-                    - Population (numpy.Int64): population value of the start date
-                    - ODE (str): ODE model names, like "SIR"
-                    - (float): estimated parameter values, including rho
-                    - tau (int): tau value [min]
-                    - If available,
-                        - Rt (float): phase-dependent reproduction number
-                        - (int or float): day parameters, including 1/beta [days]
-                        - {metric}: score with the estimated parameter values
-                        - Trials (int): the number of trials
-                        - Runtime (str): runtime of optimization
+                    Start (pandas.Timestamp): start date of the phase
+                    End (pandas.Timestamp): end date of the phase
+                    Population (numpy.Int64): population value of the start date
+                    ODE (str): ODE model names, like "SIR"
+                    (float): estimated parameter values, including rho
+                    tau (int): tau value [min]
+                    If available,
+                    Rt (float): phase-dependent reproduction number
+                    (int or float): day parameters, including 1/beta [days]
+                    {metric}: score with the estimated parameter values
+                    Trials (int): the number of trials
+                    Runtime (str): runtime of optimization
         """
         df = self._df.reset_index()
         df[self._PH], _ = df[self._PH].factorize()
