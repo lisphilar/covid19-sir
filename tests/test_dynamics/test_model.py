@@ -22,6 +22,8 @@ def test_not_implemented():
         model.dimensional_parameters()
     with pytest.raises(NotImplementedError):
         model._param_quantile(data=pd.DataFrame(), q=0.5)
+    with pytest.raises(NotImplementedError):
+        model.sr(data=pd.DataFrame())
 
 
 @pytest.mark.parametrize("model_class", [SIRModel, SIRDModel, SIRFModel, SEWIRFModel])
@@ -118,3 +120,10 @@ class TestODEModel(object):
         solved_df = model.solve()
         assert_index_equal(solved_df.index, sample_df.index)
         assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
+
+    def test_sr(self, model_class):
+        sample_model = model_class.from_sample()
+        record_df = model_class.inverse_transform(sample_model.solve()).reset_index()
+        sr_df = sample_model.sr(record_df)
+        sr_df.corr()
+        assert set(sr_df.reset_index().columns) == {model_class.DATE, model_class._logS, model_class._r}

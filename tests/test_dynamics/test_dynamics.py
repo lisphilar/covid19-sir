@@ -3,7 +3,7 @@
 
 import numpy as np
 import pytest
-from covsirphy import Dynamics, SIRFModel, Term, Validator, EmptyError
+from covsirphy import Dynamics, SIRFModel, Term, Validator, EmptyError, NotEnoughDataError
 
 
 @pytest.mark.parametrize("model", [SIRFModel])
@@ -32,3 +32,16 @@ class TestDynamics(object):
         summary_df = dyn.summary()
         assert len(summary_df) == 2
         Validator(dyn.simulate()).dataframe(columns=[Term.DATE, Term.S, Term.CI, Term.F, Term.R])
+
+    def test_trend(self, model, imgfile):
+        model_instance = model.from_sample()
+        solved_df = model.inverse_transform(model_instance.solve())
+        dyn = Dynamics.from_data(model=model, data=solved_df.reset_index())
+        points, df = dyn.trend_analysis(filename=imgfile)
+        assert isinstance(points, list)
+        assert {Dynamics._ACTUAL, "0th"}.issubset(df.columns)
+        dyn.segment(filename=imgfile)
+        assert len(dyn) > 1
+        with pytest.raises(NotEnoughDataError):
+            dyn_failed = Dynamics.from_sample(model=SIRFModel)
+            dyn_failed.trend_analysis()
