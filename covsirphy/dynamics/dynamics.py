@@ -2,17 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
-import matplotlib
-from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
-import ruptures as rpt
-from scipy.optimize import curve_fit
 from covsirphy.util.error import EmptyError, NotEnoughDataError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.dynamics.ode import ODEModel
+from covsirphy.dynamics._trend import _TrendAnalyzer
 
 
 class Dynamics(Term):
@@ -25,7 +21,6 @@ class Dynamics(Term):
         name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
     _PH = "Phase_ID"
-    _ACTUAL = "Actual"
     _SIFR = [Term.S, Term.CI, Term.F, Term.R]
 
     def __init__(self, model, date_range, tau=None, name=None):
@@ -215,7 +210,7 @@ class Dynamics(Term):
         Args:
             algo (str): detection algorithms and models
             min_size (int): minimum value of phase length [days], be equal to or over 3
-            display (bool or str): whether display figure of log10(S) - R plane or not
+            display (bool): whether display figure of log10(S) - R plane or not
             **kwargs: keyword arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp) except for "model",
                 covsirphy.VisualizeBase(), matplotlib.legend.Legend()
 
@@ -245,71 +240,15 @@ class Dynamics(Term):
             "Change points" is the same as the start dates of phases except for the 0th phase.
         """
         Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
-        all_df = self._model.sr(self._df.dropna(how="any", subset=self._SIFR).reset_index())
-        if len(all_df) < min_size * 2:
-            raise NotEnoughDataError("the registered data", all_df, required_n=min_size * 2)
-        algo_dict = {
-            "Pelt-rbf": (rpt.Pelt, {"model": "rbf", "jump": 1, "min_size": min_size}),
-            "Binseg-rbf": (rpt.Binseg, {"model": "rbf", "jump": 1, "min_size": min_size}),
-            "Binseg-normal": (rpt.Binseg, {"model": "normal", "jump": 1, "min_size": min_size}),
-            "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf", "jump": 1, "min_size": min_size}),
-            "BottomUp-normal": (rpt.BottomUp, {"model": "normal", "jump": 1, "min_size": min_size}),
-        }
-        Validator([algo], "algo").sequence(candidates=algo_dict.keys())
-        # S-R trend analysis
-        r, logS = self._model._r, self._model._logS
-        sr_df = all_df.pivot_table(index=r, values=logS, aggfunc="last")
-        sr_df.index.name = None
-        detector = algo_dict[algo][0](**algo_dict[algo][1], **Validator(kwargs).kwargs(algo_dict[algo][0]))
-        results = detector.fit_predict(sr_df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
-        logs_df = sr_df.iloc[[result - 1 for result in results]]
-        merge_df = pd.merge_asof(
-            logs_df.sort_values(logS), all_df.reset_index().sort_values(logS), on=logS, direction="nearest")
-        points = merge_df[self.DATE].sort_values().tolist()
-        # Start dates, end dates of phases
-        starts = [self._first, *points]
-        ends = [point - timedelta(days=1) for point in points] + [self._last]
-        # Fitting with lines
-        for i, (start, end) in enumerate(zip(starts, ends)):
-            phase_df = all_df.loc[start: end, :]
-            param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
-            all_df[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
-        fit_df = all_df.rename(columns={logS: self._ACTUAL}).set_index(r)
-        # Display log10(S) - R plane
+        df = self._df.dropna(how="any", subset=self._SIFR).reset_index()
+        if len(df) < min_size * 2:
+            raise NotEnoughDataError("the records of the number of cases without NAs", df, required_n=min_size * 2)
+        analyzer = _TrendAnalyzer(data=df, model=self._model, min_size=min_size)
+        points = analyzer.find_points(algo=algo, **kwargs)
+        fit_df = analyzer.fitting(points=points)
         if display:
-            with VisualizeBase(**Validator(kwargs, "keyword arguments").kwargs([VisualizeBase, plt.savefig])) as lp:
-                # _, lp.ax = plt.subplots(1, 1)
-                lp.ax.plot(
-                    fit_df.index, fit_df[self._ACTUAL], label=self._ACTUAL,
-                    color="black", marker=".", markeredgewidth=0, linewidth=0)
-                for phase in fit_df.drop(self._ACTUAL, axis=1).columns:
-                    lp.ax.plot(fit_df.index, fit_df[phase], label=phase)
-                for r_value in [all_df.loc[point, r] for point in points]:
-                    lp.ax.axvline(x=r_value, color="black", linestyle=":")
-                name = "" if self._name is None else self._name + ": "
-                lp.title = f"{name}phases detected by S-R trend analysis of {self._model._NAME}"
-                lp.ax.set_xlim(max(0, min(fit_df.index)), None)
-                lp.ax.set_xlabel(xlabel=f"R of {self._model._NAME}")
-                lp.ax.set_ylabel(ylabel=f"log10(S) of {self._model._NAME}")
-                legend_kwargs = Validator(kwargs, "keyword arguments").kwargs(
-                    matplotlib.legend.Legend, default=dict(bbox_to_anchor=(0.5, -0.5), loc="lower center", borderaxespad=0, ncol=7))
-                lp.ax.legend(**legend_kwargs)
+            analyzer.display(points=points, fit_df=fit_df, name=self._name, **kwargs)
         return points, fit_df
-
-    @staticmethod
-    def _linear_f(x, a, b):
-        """
-        Linear function f(x) = A * x + b.
-
-        Args:
-            x (float): x values
-            a (float): the first parameter of the function
-            b (float): the second parameter of the function
-
-        Returns:
-            float
-        """
-        return a * x + b
 
     def summary(self):
         """Summarize phase information.
