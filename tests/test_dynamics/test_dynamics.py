@@ -39,7 +39,7 @@ class TestDynamics(object):
         dyn = Dynamics.from_data(model=model, data=solved_df.reset_index())
         points, df = dyn.trend_analysis(filename=imgfile)
         assert isinstance(points, list)
-        assert {Dynamics._ACTUAL, "0th"}.issubset(df.columns)
+        assert {"Actual", "0th"}.issubset(df.columns)
         dyn.segment(filename=imgfile)
         assert len(dyn) > 1
         with pytest.raises(NotEnoughDataError):
