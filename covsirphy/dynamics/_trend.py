@@ -37,6 +37,7 @@ class _TrendAnalyzer(Term):
         "Change points" is the same as the start dates of phases except for the 0th phase.
     """
     _ACTUAL = "Actual"
+    _FITTED = "Fitted"
     _SIFR = [Term.S, Term.CI, Term.F, Term.R]
 
     def __init__(self, data, model, min_size):
@@ -92,7 +93,8 @@ class _TrendAnalyzer(Term):
                     R (int): actual R (R of the ODE model) values
                 Columns
                     Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
-                    0th (float): log10(S) values fitted with y = a * R + b
+                    Fitted (float): log10(S) values fitted with y = a * R + b
+                    0th (float): log10(S) values fitted with y = a * R + b and 0th phase data
                     1st, 2nd... (float): fitted values of 1st, 2nd phases
         """
         r, logS = self._r, self._logS
@@ -103,6 +105,7 @@ class _TrendAnalyzer(Term):
             phase_df = all_df.loc[start: end, :]
             param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
             all_df[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
+        all_df[self._FITTED] = all_df.drop([logS, r], axis=1).sum(axis=1)
         return all_df.rename(columns={logS: self._ACTUAL}).set_index(r)
 
     @staticmethod
@@ -130,7 +133,8 @@ class _TrendAnalyzer(Term):
                     R (int): actual R (R of the ODE model) values
                 Columns
                     Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
-                    0th (float): log10(S) values fitted with y = a * R + b
+                    Fitted (float): log10(S) values fitted with y = a * R + b
+                    0th (float): log10(S) values fitted with y = a * R + b and 0th phase data
                     1st, 2nd... (float): fitted values of 1st, 2nd phases
             name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
             **kwargs: keyword arguments of covsirphy.VisualizeBase() and matplotlib.legend.Legend()
@@ -140,7 +144,7 @@ class _TrendAnalyzer(Term):
             lp.ax.plot(
                 fit_df.index, fit_df[self._ACTUAL], label=self._ACTUAL,
                 color="black", marker=".", markeredgewidth=0, linewidth=0)
-            for phase in fit_df.drop(self._ACTUAL, axis=1).columns:
+            for phase in fit_df.drop([self._ACTUAL, self._FITTED], axis=1).columns:
                 lp.ax.plot(fit_df.index, fit_df[phase], label=phase)
             for r_value in [self._all_df.loc[point, self._r] for point in points]:
                 lp.ax.axvline(x=r_value, color="black", linestyle=":")

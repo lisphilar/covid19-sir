@@ -225,7 +225,8 @@ class Dynamics(Term):
                         R (int): actual R (R of the ODE model) values
                     Columns
                         Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
-                        0th (float): log10(S) values fitted with y = a * R + b
+                        Fitted (float): log10(S) values fitted with y = a * R + b
+                        0th (float): log10(S) values fitted with y = a * R + b and 0th phase data
                         1st, 2nd... (float): fitted values of 1st, 2nd phases
 
         Note:
