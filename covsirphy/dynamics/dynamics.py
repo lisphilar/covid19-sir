@@ -4,11 +4,12 @@
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import EmptyError, NotEnoughDataError
+from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics._trend import _TrendAnalyzer
+from covsirphy.dynamics._simulator import _Simulator
 
 
 class Dynamics(Term):
@@ -20,8 +21,6 @@ class Dynamics(Term):
         tau (int or None): tau value [min] or None (set later with data)
         name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
-    _PH = "Phase_ID"
-    _SIFR = [Term.S, Term.CI, Term.F, Term.R]
 
     def __init__(self, model, date_range, tau=None, name=None):
         self._model = Validator(model, "model", accept_none=False).subclass(ODEModel)
@@ -312,29 +311,8 @@ class Dynamics(Term):
                         - Recovered (int): the number of recovered cases
                     - if @model_specific is True, variables defined by model.VARIABLES of covsirphy.Dynamics(model)
         """
-        all_df = self._df.copy()
-        all_df[self._PH], _ = all_df[self._PH].factorize()
-        date_groupby = all_df.reset_index().groupby(self._PH)
-        start_dates = date_groupby.first()[self.DATE].sort_values()
-        end_dates = date_groupby.last()[self.DATE].sort_values()
-        variables, parameters = self._model._VARIABLES[:], self._model._PARAMETERS[:]
-        param_df = all_df.ffill().loc[:, parameters]
-        # Simulation
-        dataframes = []
-        for (start, end) in zip(start_dates, end_dates):
-            variable_df = all_df.loc[start: end + timedelta(days=1), variables]
-            if variable_df.iloc[0].isna().any():
-                variable_df = pd.DataFrame(
-                    index=pd.date_range(start, end + timedelta(days=1), freq="D"), columns=self._SIFR)
-                variable_df.update(self._model.inverse_transform(dataframes[-1]))
-            variable_df.index.name = self.DATE
-            param_dict = param_df.loc[start].to_dict()
-            instance = self._model.from_data(data=variable_df.reset_index(), param_dict=param_dict, tau=self._tau)
-            dataframes.append(instance.solve())
-        # Combine results of phases
-        df = pd.concat(dataframes, axis=0).drop_duplicates(keep="first").loc[self._first: self._last]
-        if model_specific:
-            return df.reset_index().convert_dtypes()
-        df = self._model.inverse_transform(data=df)
-        df.index.name = self.DATE
-        return df.reset_index().convert_dtypes()
+        if self._tau is None:
+            raise UnExpectedNoneError(
+                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.estimate_tau()")
+        simulator = _Simulator(model=self._model, data=self._df)
+        return simulator.run(tau=self._tau, model_specific=model_specific)

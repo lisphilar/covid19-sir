@@ -24,7 +24,6 @@ class ODEModel(Term):
         initial_dict (dict of {str: int}): initial values
         param_dict (dict of {str: float}): non-dimensional parameter values
     """
-    _SIFR = [Term.S, Term.CI, Term.F, Term.R]
     _logS = "log10(S)"
     _r = "R"
     # Name of ODE model

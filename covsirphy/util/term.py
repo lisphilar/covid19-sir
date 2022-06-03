@@ -55,6 +55,8 @@ class Term(object):
     Y0_DICT = "y0_dict"
     PARAM_DICT = "param_dict"
     ID = "ID"
+    _PH = "Phase_ID"
+    _SIFR = [S, CI, F, R]
     AREA_COLUMNS = [COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
