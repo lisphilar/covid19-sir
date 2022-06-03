@@ -33,7 +33,7 @@ class Validator(object):
         """Ensure the target is a subclass of the parent class.
 
         Args:
-            parent (object): parent class
+            parent (object): parent class or sequence of parent classes
 
         Raises:
             NotSubclassError: the target is not the subclass
@@ -49,7 +49,7 @@ class Validator(object):
         """Ensure that the target is an instance of a specified class.
 
         Args:
-            expected (object): expected class
+            expected (object): expected class or sequence of expected classes
 
         Raises:
             UnExpectedTypeError: the target is not an instance of the class

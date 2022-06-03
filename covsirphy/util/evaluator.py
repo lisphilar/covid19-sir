@@ -4,7 +4,8 @@
 import numpy as np
 import pandas as pd
 import sklearn.metrics
-from covsirphy.util.error import UnExpectedValueError
+from covsirphy.util.error import UnExpectedValueError, NAFoundError
+from covsirphy.util.validator import Validator
 
 
 class Evaluator(object):
@@ -18,7 +19,7 @@ class Evaluator(object):
         on (str or list[str] or None): column names to join on or None (join on index)
 
     Raises:
-        TypeError: un-expected types were used for the arguments
+        NAFoundError: either @y_true or @pred has NA values
 
     Note:
         Evaluation with metrics will be done with sklearn.metrics package.
@@ -42,9 +43,9 @@ class Evaluator(object):
     def __init__(self, y_true, y_pred, how="inner", on=None):
         # Check types
         for (y, name) in zip([y_true, y_pred], ["y_true", "y_pred"]):
-            if not isinstance(y, (pd.DataFrame, pd.Series)):
-                raise TypeError(
-                    f"@{name} must be pandas.DataFrame, pandas.Series, but {type(y)} was applied.")
+            Validator(y, name, accept_none=False).instance(expected=(pd.DataFrame, pd.Series, list, tuple))
+            if pd.DataFrame(y).isna().any().any():
+                raise NAFoundError(name, y)
         # Join dataframes
         true_df, pred_df = pd.DataFrame(y_true), pd.DataFrame(y_pred)
         if how == "all":
