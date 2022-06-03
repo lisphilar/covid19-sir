@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+from functools import partial
+from multiprocessing import cpu_count, Pool
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError
+from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.dynamics.ode import ODEModel
@@ -35,9 +39,31 @@ class Dynamics(Term):
         self._df = pd.DataFrame(
             {self._PH: 0}, index=pd.date_range(start=self._first, end=self._last, freq="D"),
             columns=[self._PH, *self._SIFR, *self._parameters])
+        # Cache
+        self._estimate_cache_dict = {"tau": None, "param": {}}
 
     def __len__(self):
         return self._df[self._PH].nunique()
+
+    @property
+    def model_name(self):
+        """str: name of ODE model
+        """
+        return self._model._NAME
+
+    @property
+    def tau(self):
+        """int or None: tau value [min] or None (un-set)
+        """
+        return self._tau
+
+    @tau.setter
+    def tau(self, value):
+        self._tau = Validator(value, "tau", accept_none=True).tau()
+
+    @tau.deleter
+    def tau(self):
+        self._tau = None
 
     @property
     def name(self):
@@ -87,12 +113,12 @@ class Dynamics(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    Date (pandas.Timestamp): Observation dates
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
             tau (int): tau value [min]
             name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
 
@@ -116,24 +142,24 @@ class Dynamics(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    Date (pandas.Timestamp): Observation dates
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
 
         Returns:
             pandas.DataFrame: the current information
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): Observation date
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    Date (pandas.Timestamp): Observation dates
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
 
         Note:
             Change points of ODE parameter values will be recognized as the change points of phases.
@@ -267,9 +293,6 @@ class Dynamics(Term):
                     If available,
                     Rt (float): phase-dependent reproduction number
                     (int or float): day parameters, including 1/beta [days]
-                    {metric}: score with the estimated parameter values
-                    Trials (int): the number of trials
-                    Runtime (str): runtime of optimization
         """
         df = self._df.reset_index()
         df[self._PH], _ = df[self._PH].factorize()
@@ -298,21 +321,147 @@ class Dynamics(Term):
         Args:
             model_specific (bool): whether convert S, I, F, R to model-specific variables or not
 
+        Raises:
+            UnExpectedNoneError: tau value is un-set
+            NAFoundError: ODE parameter values on the start dates of phases are un-set
+
         Returns:
             pandas.DataFrame:
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - if @model_specific is False:
-                        - Susceptible (int): the number of susceptible cases
-                        - Infected (int): the number of currently infected cases
-                        - Fatal (int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
-                    - if @model_specific is True, variables defined by model.VARIABLES of covsirphy.Dynamics(model)
+                    Date (pd.Timestamp): Observation date
+                    if @model_specific is False:
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    if @model_specific is True, variables defined by model.VARIABLES of covsirphy.Dynamics(model)
         """
         if self._tau is None:
             raise UnExpectedNoneError(
-                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.estimate_tau()")
+                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
         simulator = _Simulator(model=self._model, data=self._df)
         return simulator.run(tau=self._tau, model_specific=model_specific)
+
+    def estimate(self, **kwargs):
+        """Set tau value with covsirphy.Dynamics.best_tau() if un-set and set estimated ODE parameters with covsirphy.Dynamics.optimized_params().
+
+        Args:
+            **kwargs: keyword arguments of covsirphy.Dynamics.best_tau() and covsirphy.Dynamics.optimized_params()
+
+        Returns:
+            covsirphy.Dynamics: self
+        """
+        self._tau = self._tau or self._estimate_cache_dict.get(
+            "tau", self.best_tau(**Validator(kwargs).kwargs(self.best_tau))[0])
+        df = self.register()
+        df.update(self.optimized_params(**kwargs)[0], overwrite=True)
+        self.register(data=df)
+        return self
+
+    def best_tau(self, metric="RMSLE", q=0.5, digits=None, n_jobs=None):
+        """Return the best tau value with the registered data, estimating ODE parameters with quantiles.
+
+        Args:
+            metric (str): metric name for scoring when selecting best tau value
+            q (float): the quantiles to compute, values between (0, 1)
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+
+        Returns:
+            tuple of (float, pandas.DataFrame):
+                float: tau value with best metric score
+                pandas.DataFrame: metric scores of tau candidates
+                    Index
+                        tau (int): candidate of tau values
+                    Columns
+                        {metric}: score of estimation with metric
+
+        """
+        score_f = partial(self._score_with_tau, metric=metric, q=q, digits=digits)
+        divisors = [i for i in range(1, 1441) if 1440 % i == 0]
+        with Pool(Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())) as p:
+            scores = p.map(score_f, divisors)
+        score_dict = dict(zip(divisors, scores))
+        comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
+        best = comp_f(score_dict.items(), key=lambda x: x[1])[0]
+        self._estimate_cache_dict["tau"] = best
+        return best, pd.DataFrame.from_dict(score_dict, orient="index", columns=[metric])
+
+    def _score_with_tau(self, tau, metric, q, digits):
+        """Return the metric score with tau.
+
+        Args:
+            tau (int): tau value [min]
+            metric (str): metric name for scoring when selecting best tau value
+            q (float): the quantiles to compute, values between (0, 1)
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            tuple of (float, pandas.DataFrame):
+                float: tau value with best metric score
+                pandas.DataFrame: metric scores of tau candidates
+                    Index
+                        tau (int): candidate of tau values
+                    Columns
+                        {metric}: score of estimation with metric
+
+        """
+        parameters = self._model._PARAMETERS[:]
+        all_df = self._df.dropna(how="any", subset=self._SIFR)
+        all_df[parameters] = all_df[parameters].astype("Float64")
+        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
+        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
+        for start, end in zip(starts, ends):
+            model_instance = self._model.from_data_with_quantile(
+                data=all_df.loc[start: end].reset_index(), tau=tau, q=q, digits=digits)
+            all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
+        simulator = _Simulator(model=self._model, data=all_df)
+        sim_df = simulator.run(tau=tau, model_specific=False).set_index(self.DATE)
+        evaluator = Evaluator(all_df[self._SIFR], sim_df[self._SIFR])
+        return evaluator.score(metric=metric)
+
+    def optimized_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):
+        """Return ODE parameter values optimized with the registered data, estimating ODE parameters hyperparameter optimization using Optuna.
+
+        Args:
+            metric (str): metric name for scoring when optimizing ODE parameter values of phases
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+
+        Raises:
+            UnExpectedNoneError: tau value is un-set
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    (pandas.Timestamp): dates
+                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    {metric}: score with the estimated parameter values
+                    Trials (int): the number of trials
+                    Runtime (str): runtime of optimization, like 0 min 10 sec
+        """
+        if self._tau is None:
+            raise UnExpectedNoneError(
+                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
+        print(f"\n<{self._model._NAME}: parameter estimation>")
+        print(f"Running optimization with {n_jobs} CPUs...")
+        stopwatch = StopWatch()
+        parameters = self._model._PARAMETERS[:]
+        all_df = self._df.dropna(how="any", subset=self._SIFR)
+        all_df[parameters] = all_df[parameters].astype("Float64")
+        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
+        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
+        for start, end in zip(starts, ends):
+            # ODE parameter optimization
+            model_instance = self._model.from_data_with_optimization(
+                data=all_df.loc[start: end].reset_index(), tau=self._tau, metric=metric, digits=digits, **kwargs)
+            all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
+            # Get information regarding optimization
+            est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
+            all_df.loc[start, list(est_dict.keys())] = pd.Series(est_dict)
+        print(f"Completed optimization. Total: {stopwatch.stop_show()}")
+        return all_df.loc[:, [*parameters, metric, self.TRIALS, self.RUNTIME]].ffill().reset_index()

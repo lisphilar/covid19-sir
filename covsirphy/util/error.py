@@ -88,7 +88,7 @@ class NAFoundError(_BaseException):
     def __init__(self, name, value=None, details=None):
         message = f"'{name}' has NA(s) un-expectedly"
         if value is not None:
-            message += ", '{value}'"
+            message += f", '{value}'"
         super().__init__(message=message, details=details)
 
 
