@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import ruptures as rpt
 from scipy.optimize import curve_fit
-from covsirphy.util.error import NotEnoughDataError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.visualization.vbase import VisualizeBase
@@ -42,8 +41,6 @@ class _TrendAnalyzer(Term):
 
     def __init__(self, data, model, min_size):
         self._all_df = model.sr(data)
-        if len(self._all_df) < min_size * 2:
-            raise NotEnoughDataError("the registered data", self._all_df, required_n=min_size * 2)
         self._algo_dict = {
             "Pelt-rbf": (rpt.Pelt, {"model": "rbf", "jump": 1, "min_size": min_size}),
             "Binseg-rbf": (rpt.Binseg, {"model": "rbf", "jump": 1, "min_size": min_size}),
