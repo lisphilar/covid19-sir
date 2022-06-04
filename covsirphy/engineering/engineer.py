@@ -426,10 +426,13 @@ class DataEngineer(Term):
                     Index
                         reset index
                     Columns
-                        Date (pd.Timestamp): Observation date
-                        Confirmed (int): the number of confirmed cases
-                        Fatal (int): the number of fatal cases
-                        Recovered (int): the number of recovered cases
+                        Date (pandas.DataFrame): observation dates
+                        Population (int): total population, optional
+                        Tests (int): column of the number of tests, optional
+                        Confirmed (int): the number of confirmed cases, optional
+                        Fatal (int): the number of fatal cases, optional
+                        Recovered (int): the number of recovered cases, optional
+                        the other columns registered
                 str: status code: will be selected from
                     - '' (not complemented)
                     - 'monotonic increasing complemented confirmed data'
@@ -468,10 +471,12 @@ class DataEngineer(Term):
         handler = _ComplementHandler(
             **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
         c_df, status, status_dict = handler.run(data=subset_df)
-        transformer = _DataTransformer(data=c_df, layers=self._layers, date=self.DATE)
+        df = pd.concat([subset_df.drop([self.C, self.F, self.R], axis=1), c_df], axis=1)
+        df["location"] = self.NA
+        transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
-        return transformer.all(), status, status_dict
+        return transformer.all().drop("location", axis=1), status, status_dict
 
     def subset_alias(self, alias=None, update=False, **kwargs):
         """Set/get/list-up alias name(s) of subset.
