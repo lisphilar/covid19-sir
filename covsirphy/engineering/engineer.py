@@ -87,7 +87,7 @@ class DataEngineer(Term):
         """
         default_dict = {"country": country, "province": province, "verbose": self._verbose}
         validator = Validator(kwargs, name="the other keyword arguments")
-        downloader = DataDownloader(**validator.kwargs(DataEngineer, default=default_dict))
+        downloader = DataDownloader(**validator.kwargs(DataDownloader, default=default_dict))
         df = downloader.layer(**validator.kwargs(DataDownloader.layer, default=default_dict))
         citations = downloader.citations()
         self.register(
