@@ -76,3 +76,13 @@ class TestDynamics(object):
         dyn.estimate().summary()
         assert dyn.tau is not None
         dyn.simulate()
+
+    def test_parse(self, model):
+        dyn = Dynamics.from_sample(model=model, date_range=("01Jan2022", "31Mar2022"))
+        dyn.segment(points=["01Feb2022", "01Mar2022"])
+        assert len(dyn) == 3
+        assert dyn.parse_phases(phases=None) == tuple(pd.to_datetime(["01Jan2022", "31Mar2022"]))
+        assert dyn.parse_phases(phases=["1st", "last"]) == tuple(pd.to_datetime(["01Feb2022", "31Mar2022"]))
+        assert dyn.parse_days(days=-10, ref="last") == tuple(pd.to_datetime(["21Mar2022", "31Mar2022"]))
+        assert dyn.parse_days(days=10, ref="first") == tuple(pd.to_datetime(["01Jan2022", "11Jan2022"]))
+        assert dyn.parse_days(days=10, ref="01Feb2022") == tuple(pd.to_datetime(["01Feb2022", "11Feb2022"]))
