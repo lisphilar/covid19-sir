@@ -54,11 +54,11 @@ class TestDataEngineer(object):
         assert len(engineer.subset(geo="Japan", complement=False)) == len(engineer.subset(geo="Japan"))
         df, *_ = engineer.subset_alias(alias="UK", geo="UK")
         assert_frame_equal(engineer.subset_alias(alias="UK")[0], df)
+        assert engineer.subset_alias(alias=None)
         assert isinstance(DataEngineer.recovery_period(data=df), int)
 
-    def test_alias(self):
+    def test_variables_alias(self):
         engineer = DataEngineer()
-        assert engineer.subset_alias(alias=None)
         assert engineer.variables_alias(alias=None)
         engineer.variables_alias(alias="nc", variables=[Term.N, Term.C])
         assert engineer.variables_alias(alias="nc") == [Term.N, Term.C]
