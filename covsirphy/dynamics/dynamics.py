@@ -283,13 +283,9 @@ class Dynamics(Term):
                 Columns
                     Start (pandas.Timestamp): start date of the phase
                     End (pandas.Timestamp): end date of the phase
-                    Population (numpy.Int64): population value of the start date
-                    ODE (str): ODE model names, like "SIR"
-                    (float): estimated parameter values, including rho
-                    tau (int): tau value [min]
-                    If available,
-                    Rt (float): phase-dependent reproduction number
-                    (int or float): day parameters, including 1/beta [days]
+                    Rt (float): phase-dependent reproduction number (if parameters are available)
+                    (float): estimated parameter values, including rho (if available)
+                    (int or float): day parameters, including 1/beta [days] (if tau and parameters are available)
         """
         df = self._df.reset_index()
         df[self._PH], _ = df[self._PH].factorize()
@@ -299,16 +295,20 @@ class Dynamics(Term):
         df = df.loc[:, [col for col in df.columns if "_last" not in col]]
         df.index.name = self.PHASE
         df.index = [self.num2str(num) for num in df.index]
-        # ODE model and tau value
-        df[self.ODE] = self._model._NAME.replace(" Model", "")
-        df[self.TAU] = self._tau
-        # Calculate population values
-        df[self.N] = df[self._SIFR].sum(axis=1).replace(0, np.nan)
         # Reproduction number
-        df[self.RT] = 0
+        df[self.RT] = df[self._parameters].apply(
+            lambda x: np.nan if x.isna().any() else self._model.from_data(data=self._df.reset_index(), param_dict=x.to_dict(), tau=self._tau).r0(), axis=1)
+        # Day parameters
+        if self._tau is not None:
+            days_df = df[self._parameters].apply(
+                lambda x: np.nan if x.isna().any() else self._model.from_data(
+                    data=self._df.reset_index(), param_dict=x.to_dict(), tau=self._tau).dimensional_parameters(),
+                axis=1, result_type="expand"
+            )
+            df = pd.concat([df, days_df], axis=1)
         # Set the order of columns
         fixed_cols = [
-            self.START, self.END, self.N, self.RT, *self._model._PARAMETERS, self.TAU, *self._model._DAY_PARAMETERS]
+            self.START, self.END, self.RT, *self._model._PARAMETERS, *self._model._DAY_PARAMETERS]
         others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIFR)]
         return df.reindex(columns=[*fixed_cols, *others]).dropna(how="all", axis=1).ffill().convert_dtypes()
 
