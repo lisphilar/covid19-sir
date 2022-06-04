@@ -160,12 +160,12 @@ class _ComplementHandler(Term):
         data.loc[sel_invalid_R, self.CI] = data[self.C] - data[self.F] - data[self.R]
         return data.set_index(self.DATE).loc[:, self.RAW_COLS]
 
-    def _post_processing(self, df):
+    def _post_processing(self, data):
         """
         Select Confirmed/Fatal/Recovered class from the dataset.
 
         Args:
-            df (pandas.DataFrame)
+            data (pandas.DataFrame):
                 Index
                     Date (pandas.TimeStamp)
                 Columns
@@ -178,11 +178,9 @@ class _ComplementHandler(Term):
                 Columns
                     Date (pandas.TimeStamp), Confirmed, Fatal, Recovered (int)
         """
-        df = df.astype(np.int64)
-        df = df.loc[:, self.RAW_COLUMNS]
-        return df.reset_index()
+        return data.loc[:, self.RAW_COLS].astype(np.int64).reset_index()
 
-    def _monotonic(self, df, variable):
+    def _monotonic(self, data, variable):
         """
         Force the variable show monotonic increasing.
 
@@ -201,6 +199,7 @@ class _ComplementHandler(Term):
                 Columns
                     Confirmed, Fatal, Recovered
         """
+        df = data.astype(np.float64)
         warnings.simplefilter("ignore", UserWarning)
         # Whether complement is necessary or not
         if df[variable].is_monotonic_increasing:
