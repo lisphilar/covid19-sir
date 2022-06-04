@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from pandas.testing import assert_frame_equal
+import pytest
 from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
+from covsirphy.util.error import NotIncludedError
 
 
 class TestDataEngineer(object):
@@ -62,3 +64,5 @@ class TestDataEngineer(object):
         assert engineer.variables_alias(alias=None)
         engineer.variables_alias(alias="nc", variables=[Term.N, Term.C])
         assert engineer.variables_alias(alias="nc") == [Term.N, Term.C]
+        with pytest.raises(NotIncludedError):
+            engineer.variables_alias(alias="unknown")
