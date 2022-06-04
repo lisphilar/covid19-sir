@@ -100,8 +100,8 @@ class ODEModel(Term):
                 - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True
                     - method (str): method of estimation, "with_quantile" or "with_optimization" or "not_performed"
                     - {metrics} (int): score of hyperparameter optimization, if available
-                    - trials (int) : the number of trials of hyperparameter optimization, if available
-                    - runtime (str): runtime of hyperparameter optimization, if available
+                    - Trials (int) : the number of trials of hyperparameter optimization, if available
+                    - Runtime (str): runtime of hyperparameter optimization, if available
                     - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available
                     - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available
         """
@@ -451,8 +451,10 @@ class ODEModel(Term):
         param_dict, score, n_trials, runtime = cls._estimate_params(
             data=trans_df, tau=tau, metric=metric, **kwargs_dict)
         cls_obj = cls.from_data(data=data, param_dict=param_dict, tau=tau, digits=digits)
-        cls_obj._estimation_dict = dict(
-            method="with_optimization", n_trials=n_trials, runtime=runtime, data=data, tau=tau, metric=score, digits=digits, **kwargs_dict)
+        cls_obj._estimation_dict = {
+            "method": "with_optimization", metric: score, cls.TRIALS: n_trials, cls.RUNTIME: runtime,
+            cls.TAU: tau, "digits": digits, **kwargs_dict, "data": data,
+        }
         return cls_obj
 
     @classmethod

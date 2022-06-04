@@ -39,8 +39,6 @@ class Dynamics(Term):
         self._df = pd.DataFrame(
             {self._PH: 0}, index=pd.date_range(start=self._first, end=self._last, freq="D"),
             columns=[self._PH, *self._SIFR, *self._parameters])
-        # Cache
-        self._estimate_cache_dict = {"tau": None, "param": {}}
 
     def __len__(self):
         return self._df[self._PH].nunique()
@@ -101,7 +99,7 @@ class Dynamics(Term):
         param_df.index.name = cls.DATE
         df = pd.concat([variable_df, param_df], axis=1)
         instance = cls(model=model, date_range=settings_dict["date_range"], tau=tau, name="Sample data")
-        instance.register(data=df.reset_index())
+        instance.register(data=df)
         return instance
 
     @classmethod
@@ -111,9 +109,8 @@ class Dynamics(Term):
         Args:
             data (pandas.DataFrame): new data to overwrite the current information
                 Index
-                    reset index
-                Columns
                     Date (pandas.Timestamp): Observation dates
+                Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
                     Fatal (int): the number of fatal cases
@@ -129,7 +126,7 @@ class Dynamics(Term):
             Regarding @date_range, refer to covsirphy.ODEModel.from_sample().
         """
         Validator(model, "model", accept_none=False).subclass(ODEModel)
-        Validator(data, "data").dataframe(columns=[cls.DATE])
+        Validator(data, "data").dataframe(time_index=True)
         instance = cls(model=model, date_range=(data[cls.DATE].min(), data[cls.DATE].max()), tau=tau, name=name)
         instance.register(data=data)
         return instance
@@ -140,9 +137,8 @@ class Dynamics(Term):
         Args:
             data (pandas.DataFrame or None): new data to overwrite the current information or None (no new records)
                 Index
-                    reset index
-                Columns
                     Date (pandas.Timestamp): Observation dates
+                Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
                     Fatal (int): the number of fatal cases
@@ -152,9 +148,8 @@ class Dynamics(Term):
         Returns:
             pandas.DataFrame: the current information
                 Index
-                    reset index
-                Columns
                     Date (pandas.Timestamp): Observation dates
+                Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
                     Fatal (int): the number of fatal cases
@@ -169,8 +164,8 @@ class Dynamics(Term):
         """
         if data is not None:
             all_df = self._df.copy()
-            new_df = Validator(data, "data").dataframe(columns=[self.DATE])
-            new_df.index = pd.to_datetime(new_df[self.DATE]).dt.round("D")
+            new_df = Validator(data, "data").dataframe(time_index=True)
+            new_df.index = pd.to_datetime(new_df.index).round("D")
             all_df.loc[:] = np.nan
             all_df[self._PH] = 0
             all_df.update(new_df)
@@ -180,10 +175,10 @@ class Dynamics(Term):
             all_df.index.name = self.DATE
             self._df = all_df.convert_dtypes()
             # Find change points with parameter values
-            param_df = all_df.loc[:, self._parameters].dropna(how="all", axis=0).ffill()
+            param_df = all_df.loc[:, self._parameters].ffill().drop_duplicates().dropna(axis=0)
             if not param_df.empty:
                 self._segment(points=param_df.index.tolist(), overwrite=True)
-        return self._df.reset_index().loc[:, [self.DATE, *self._SIFR, *self._parameters]]
+        return self._df.loc[:, [*self._SIFR, *self._parameters]]
 
     def _segment(self, points, overwrite):
         """Perform time-series segmentation with points.
@@ -328,9 +323,8 @@ class Dynamics(Term):
         Returns:
             pandas.DataFrame:
                 Index
-                    reset index
+                    Date (pd.Timestamp): dates
                 Columns
-                    Date (pd.Timestamp): Observation date
                     if @model_specific is False:
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
@@ -342,26 +336,23 @@ class Dynamics(Term):
             raise UnExpectedNoneError(
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
         simulator = _Simulator(model=self._model, data=self._df)
-        return simulator.run(tau=self._tau, model_specific=model_specific)
+        return simulator.run(tau=self._tau, model_specific=model_specific).set_index(self.DATE)
 
     def estimate(self, **kwargs):
-        """Set tau value with covsirphy.Dynamics.best_tau() if un-set and set estimated ODE parameters with covsirphy.Dynamics.optimized_params().
+        """Run covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params().
 
         Args:
-            **kwargs: keyword arguments of covsirphy.Dynamics.best_tau() and covsirphy.Dynamics.optimized_params()
+            **kwargs: keyword arguments of covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params()
 
         Returns:
             covsirphy.Dynamics: self
         """
-        self._tau = self._tau or self._estimate_cache_dict.get(
-            "tau", self.best_tau(**Validator(kwargs).kwargs(self.best_tau))[0])
-        df = self.register()
-        df.update(self.optimized_params(**kwargs)[0], overwrite=True)
-        self.register(data=df)
+        self.estimate_tau(**Validator(kwargs).kwargs(self.estimate_tau))
+        self.estimate_params(**kwargs)
         return self
 
-    def best_tau(self, metric="RMSLE", q=0.5, digits=None, n_jobs=None):
-        """Return the best tau value with the registered data, estimating ODE parameters with quantiles.
+    def estimate_tau(self, metric="RMSLE", q=0.5, digits=None, n_jobs=None):
+        """Set the best tau value for the registered data, estimating ODE parameters with quantiles.
 
         Args:
             metric (str): metric name for scoring when selecting best tau value
@@ -381,13 +372,13 @@ class Dynamics(Term):
         """
         score_f = partial(self._score_with_tau, metric=metric, q=q, digits=digits)
         divisors = [i for i in range(1, 1441) if 1440 % i == 0]
-        with Pool(Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())) as p:
+        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
+        with Pool(n_jobs_validated) as p:
             scores = p.map(score_f, divisors)
         score_dict = dict(zip(divisors, scores))
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
-        best = comp_f(score_dict.items(), key=lambda x: x[1])[0]
-        self._estimate_cache_dict["tau"] = best
-        return best, pd.DataFrame.from_dict(score_dict, orient="index", columns=[metric])
+        self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
+        return self._tau, pd.DataFrame.from_dict(score_dict, orient="index", columns=[metric])
 
     def _score_with_tau(self, tau, metric, q, digits):
         """Return the metric score with tau.
@@ -422,7 +413,52 @@ class Dynamics(Term):
         evaluator = Evaluator(all_df[self._SIFR], sim_df[self._SIFR])
         return evaluator.score(metric=metric)
 
-    def optimized_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):
+    def estimate_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):
+        """Set ODE parameter values optimized for the registered data with hyperparameter optimization using Optuna.
+
+        Args:
+            metric (str): metric name for scoring when optimizing ODE parameter values of phases
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+
+        Raises:
+            UnExpectedNoneError: tau value is un-set
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): dates
+                Columns
+                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    {metric}: score with the estimated parameter values
+                    Trials (int): the number of trials
+                    Runtime (str): runtime of optimization, like 0 min 10 sec
+        """
+        if self._tau is None:
+            raise UnExpectedNoneError(
+                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
+        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
+        all_df = self._df.loc[:, [self._PH, *self._SIFR]].dropna(how="any")
+        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
+        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
+        est_f = partial(
+            self._optimized_params, model=self._model, tau=self._tau, metric=metric, digits=digits, **kwargs)
+        phase_dataframes = [all_df[start: end] for start, end in zip(starts, ends)]
+        print(f"\n<{self._model._NAME}: parameter estimation>")
+        print(f"Running optimization with {n_jobs_validated} CPUs...")
+        stopwatch = StopWatch()
+        with Pool(n_jobs_validated) as p:
+            results = p.map(est_f, phase_dataframes)
+        print(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
+        est_df = pd.concat(results, sort=True, axis=0)
+        est_df = est_df.loc[:, [*self._model._PARAMETERS, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
+        # Update registered parameter values
+        r_df = self.register()
+        r_df.update(est_df, overwrite=True)
+        self.register(data=r_df)
+        return est_df
+
+    def _optimized_params(self, phase_df, model, tau, metric, digits, **kwargs):
         """Return ODE parameter values optimized with the registered data, estimating ODE parameters hyperparameter optimization using Optuna.
 
         Args:
@@ -436,32 +472,23 @@ class Dynamics(Term):
         Returns:
             pandas.DataFrame:
                 Index
-                    reset index
+                    Date (pandas.Timestamp): dates
                 Columns
-                    (pandas.Timestamp): dates
                     (numpy.float64): ODE parameter values defined with model.PARAMETERS
                     {metric}: score with the estimated parameter values
                     Trials (int): the number of trials
                     Runtime (str): runtime of optimization, like 0 min 10 sec
         """
-        if self._tau is None:
-            raise UnExpectedNoneError(
-                "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
-        print(f"\n<{self._model._NAME}: parameter estimation>")
-        print(f"Running optimization with {n_jobs} CPUs...")
-        stopwatch = StopWatch()
-        parameters = self._model._PARAMETERS[:]
-        all_df = self._df.dropna(how="any", subset=self._SIFR)
-        all_df[parameters] = all_df[parameters].astype("Float64")
-        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
-        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
-        for start, end in zip(starts, ends):
-            # ODE parameter optimization
-            model_instance = self._model.from_data_with_optimization(
-                data=all_df.loc[start: end].reset_index(), tau=self._tau, metric=metric, digits=digits, **kwargs)
-            all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
-            # Get information regarding optimization
-            est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
-            all_df.loc[start, list(est_dict.keys())] = pd.Series(est_dict)
-        print(f"Completed optimization. Total: {stopwatch.stop_show()}")
-        return all_df.loc[:, [*parameters, metric, self.TRIALS, self.RUNTIME]].ffill().reset_index()
+        df = phase_df.copy()
+        # ODE parameter optimization
+        model_instance = model.from_data_with_optimization(
+            data=df.reset_index(), tau=tau, metric=metric, digits=digits, **kwargs)
+        df.loc[df.index[0], model._PARAMETERS] = pd.Series(model_instance.settings()["param_dict"])
+        # Get information regarding optimization
+        est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
+        est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
+        df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
+        _format = "%Y-%m-%d"
+        n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
+        print(f"\t{df.index.min().strftime(_format)} - {df.index.max().strftime(_format)}: finished {n_trials:>4} trials in {runtime}")
+        return df
