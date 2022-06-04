@@ -20,6 +20,7 @@ from covsirphy.util.error import UnExpectedReturnValueError, UnExpectedNoneError
 from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError, NotEnoughDataError
 from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
 from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
+from covsirphy.util.alias import Alias
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -117,8 +118,7 @@ def get_citation():
 
 
 __all__ = [
-    # util
-    "StopWatch", "deprecate", "Term", "Filer", "Evaluator",
+    # util-error
     "SubsetNotFoundError", "ScenarioNotFoundError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
@@ -126,6 +126,8 @@ __all__ = [
     "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
     "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
     "Validator", "UnExpectedNoneError", "NotNoneError", "NotEnoughDataError",
+    # util
+    "StopWatch", "deprecate", "Term", "Filer", "Evaluator", "Alias",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
