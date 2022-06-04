@@ -51,5 +51,5 @@ class TestDataEngineer(object):
         engineer.choropleth(geo=None, variable=Term.C, filename=imgfile)
         engineer.clean()
         engineer.transform()
-        df = engineer.subset_alias(alias="Japan", geo="Japan")
-        assert assert_frame_equal(engineer.subset_alias(alias="Japan"), df)
+        df, *_ = engineer.subset_alias(alias="Japan", geo="Japan")
+        assert assert_frame_equal(engineer.subset_alias(alias="Japan")[0], df)
