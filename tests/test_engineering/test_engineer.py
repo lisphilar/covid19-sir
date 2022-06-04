@@ -47,9 +47,18 @@ class TestDataEngineer(object):
         engineer.download()
         all_df = engineer.all()
         layer_df = engineer.layer()
-        assert all_df.shape == layer_df.shape
+        assert_frame_equal(all_df, layer_df, check_dtype=False, check_categorical=False)
         engineer.choropleth(geo=None, variable=Term.C, filename=imgfile)
         engineer.clean()
         engineer.transform()
-        df, *_ = engineer.subset_alias(alias="Japan", geo="Japan")
-        assert_frame_equal(engineer.subset_alias(alias="Japan")[0], df)
+        assert len(engineer.subset(geo="Japan", complement=False)) == len(engineer.subset(geo="Japan"))
+        df, *_ = engineer.subset_alias(alias="UK", geo="UK")
+        assert_frame_equal(engineer.subset_alias(alias="UK")[0], df)
+        assert isinstance(DataEngineer.recovery_period(data=df), int)
+
+    def test_alias(self):
+        engineer = DataEngineer()
+        assert engineer.subset_alias(alias=None)
+        assert engineer.variables_alias(alias=None)
+        engineer.variables_alias(alias="nc", variables=[Term.N, Term.C])
+        assert engineer.variables_alias(alias="nc") == [Term.N, Term.C]
