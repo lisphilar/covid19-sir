@@ -127,7 +127,7 @@ class Dynamics(Term):
         """
         Validator(model, "model", accept_none=False).subclass(ODEModel)
         Validator(data, "data").dataframe(time_index=True)
-        instance = cls(model=model, date_range=(data[cls.DATE].min(), data[cls.DATE].max()), tau=tau, name=name)
+        instance = cls(model=model, date_range=(data.index.min(), data.index.max()), tau=tau, name=name)
         instance.register(data=data)
         return instance
 
@@ -451,7 +451,7 @@ class Dynamics(Term):
             results = p.map(est_f, phase_dataframes)
         print(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
-        est_df = est_df.loc[:, [*self._model._PARAMETERS, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
+        est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
         r_df.update(est_df, overwrite=True)
