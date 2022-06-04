@@ -327,7 +327,7 @@ class Dynamics(Term):
         df = self.summary()
         df[self.DATE] = df[[self.START, self.END]].apply(
             lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
-        return df.explode(self.DATE).set_index(self.DATE)
+        return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
 
     def simulate(self, model_specific=False):
         """Perform simulation with phase-dependent ODE model.
