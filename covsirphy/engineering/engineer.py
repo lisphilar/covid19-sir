@@ -467,7 +467,7 @@ class DataEngineer(Term):
         handler = _ComplementHandler(
             **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
         c_df, status, status_dict = handler.run(data=subset_df)
-        df = pd.concat([subset_df.drop([self.C, self.F, self.R], axis=1), c_df], axis=1)
+        df = pd.concat([subset_df.drop([self.DATE, self.C, self.F, self.R], axis=1), c_df], axis=1)
         df["location"] = self.NA
         transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
@@ -550,7 +550,7 @@ class DataEngineer(Term):
             int: mode value of recovery period [days]
         """
         df = Validator(data, "data").dataframe(columns=[cls.DATE, cls.C, cls.F, cls.R], empty_ok=False)
-        df[cls.DATE] = pd.to_datetime(df[cls.DATE])
+        df[cls.DATE] = pd.to_datetime(df[cls.DATE]).dt.round("D")
         kwargs_dict = Validator(kwargs, "keyword arguments").dict(
             default={"upper_limit_days": 90, "lower_limit_days": 7, "upper_percentage": 0.5, "lower_percentage": 0.5})
         df = df.groupby(cls.DATE).sum()
