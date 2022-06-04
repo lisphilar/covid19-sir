@@ -71,13 +71,11 @@ class DataEngineer(Term):
             citations=citations or ["my own dataset"], convert_iso3=(self._country in self._layers), **kwargs)
         return self
 
-    def download(self, country=None, province=None, **kwargs):
+    def download(self, **kwargs):
         """Download datasets from the recommended data servers using covsirphy.DataDownloader.
 
         Args:
-            country(str or None): country name or None
-            province(str or None): province / state / prefecture name or None
-            **kwargs: the other keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()
+            **kwargs: keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()
 
         Returns:
             covsirphy.DataEngineer: self
@@ -85,13 +83,14 @@ class DataEngineer(Term):
         Note:
             When @verbose is not included in **kwargs, covsirphy.DataEngineer(verbose) will be used.
         """
-        default_dict = {"country": country, "province": province, "verbose": self._verbose}
-        validator = Validator(kwargs, name="the other keyword arguments")
+        default_dict = {"verbose": self._verbose}
+        validator = Validator(kwargs, name="keyword arguments")
         downloader = DataDownloader(**validator.kwargs(DataDownloader, default=default_dict))
         df = downloader.layer(**validator.kwargs(DataDownloader.layer, default=default_dict))
         citations = downloader.citations()
-        self.register(
-            data=df, layers=[self.ISO3, self.PROVINCE, self.CITY], date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        self._gis.register(
+            data=df, layers=[self.ISO3, self.PROVINCE, self.CITY], date=self.DATE, variables=None,
+            citations=citations, convert_iso3=False, **kwargs)
         return self
 
     def all(self, variables=None):
