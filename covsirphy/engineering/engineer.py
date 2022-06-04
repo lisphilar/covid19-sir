@@ -550,7 +550,7 @@ class DataEngineer(Term):
             int: mode value of recovery period [days]
         """
         df = Validator(data, "data").dataframe(columns=[cls.DATE, cls.C, cls.F, cls.R], empty_ok=False)
-        Validator(df[cls.DATE], "Date column of the data").instance(pd.DatetimeIndex)
+        df[cls.DATE] = pd.to_datetime(df[cls.DATE])
         kwargs_dict = Validator(kwargs, "keyword arguments").dict(
             default={"upper_limit_days": 90, "lower_limit_days": 7, "upper_percentage": 0.5, "lower_percentage": 0.5})
         df = df.groupby(cls.DATE).sum()
