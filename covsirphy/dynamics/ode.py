@@ -68,6 +68,12 @@ class ODEModel(Term):
         return repr(self) == repr(other)
 
     @classmethod
+    def name(cls):
+        """Return name of ODE model.
+        """
+        return cls._NAME
+
+    @classmethod
     def definitions(cls):
         """Return definitions of ODE model.
 
