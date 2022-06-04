@@ -567,4 +567,4 @@ class DataEngineer(Term):
         per_lw = (df["Elapsed"] < kwargs_dict["lower_limit_days"]).sum()
         if df.empty or per_up / len(df) >= kwargs_dict["upper_percentage"] or per_lw / len(df) >= kwargs_dict["lower_percentage"]:
             raise UnExpectedReturnValueError("recovery period", df)
-        return df["Elapsed"].mode().mean()
+        return round(df["Elapsed"].mode().mean())
