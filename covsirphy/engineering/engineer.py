@@ -499,7 +499,7 @@ class DataEngineer(Term):
         result = self._subset_alias.find(alias, default=None)
         if update or result is None:
             self._subset_alias.update(name=alias, target=self.subset(**kwargs))
-        return self.subset_alias.find(alias)
+        return self._subset_alias.find(alias)
 
     def variables_alias(self, alias=None, variables=None):
         """Set/get/list-up alias name(s) of variables.
