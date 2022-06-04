@@ -62,7 +62,7 @@ class TestDynamics(object):
         dyn.segment(filename=imgfile)
         assert len(dyn) > 1
 
-    def test_estimate(self, model):
+    def test_estimate(self, model, imgfile):
         dyn = Dynamics.from_sample(model)
         dyn.register(dyn.simulate())
         dyn.segment()
@@ -76,6 +76,13 @@ class TestDynamics(object):
         dyn.estimate().summary()
         assert dyn.tau is not None
         dyn.simulate()
+        dyn.evaluate(display=True, filename=imgfile)
+        with pytest.raises(NotEnoughDataError):
+            dyn_failed = Dynamics.from_sample(model)
+            dyn_failed.estimate_tau()
+        with pytest.raises(NotEnoughDataError):
+            dyn_failed = Dynamics.from_sample(model)
+            dyn_failed.estimate_params()
 
     def test_parse(self, model):
         dyn = Dynamics.from_sample(model=model, date_range=("01Jan2022", "31Mar2022"))
