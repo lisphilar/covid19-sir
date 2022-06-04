@@ -82,12 +82,12 @@ class _ComplementHandler(Term):
             (None, self._post_processing, 0)
         ]
 
-    def run(self, subset_df):
+    def run(self, data):
         """
         Perform complement.
 
         Args:
-            subset_df (pandas.DataFrame): Subset of records
+            data (pandas.DataFrame): Subset of records
                 Index
                     reset index
                 Columns
@@ -121,9 +121,9 @@ class _ComplementHandler(Term):
                     - Full_recovered
                     - Partial_recovered
         """
-        Validator(subset_df, "subset_df").dataframe(columns=[self.DATE, *self.RAW_COLS])
+        Validator(data, "data").dataframe(columns=[self.DATE, *self.RAW_COLS])
         # Initialize
-        after_df = subset_df.copy()
+        after_df = data.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
         self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
         # Perform complement one by one
@@ -137,12 +137,12 @@ class _ComplementHandler(Term):
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data" for (v, score) in status_dict.items() if score]
         return (after_df.convert_dtypes(), " and \n".join(status_list), self.complement_dict)
 
-    def _pre_processing(self, subset_df):
+    def _pre_processing(self, data):
         """
         Select Confirmed/Fatal/Recovered class from the dataset.
 
         Args:
-            subset_df (pandas.DataFrame): Subset of records
+            data (pandas.DataFrame): Subset of records
                 Index
                     reset index
                 Columns
@@ -155,10 +155,10 @@ class _ComplementHandler(Term):
                 Columns
                     Confirmed, Fatal, Recovered
         """
-        sel_invalid_R = subset_df[self.C] - subset_df[self.F] < subset_df[self.R]
-        subset_df.loc[sel_invalid_R, self.R] = subset_df[self.C] - subset_df[self.F]
-        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - subset_df[self.F] - subset_df[self.R]
-        return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
+        sel_invalid_R = data[self.C] - data[self.F] < data[self.R]
+        data.loc[sel_invalid_R, self.R] = data[self.C] - data[self.F]
+        data.loc[sel_invalid_R, self.CI] = data[self.C] - data[self.F] - data[self.R]
+        return data.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, df):
         """
