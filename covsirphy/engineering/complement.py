@@ -213,8 +213,10 @@ class _ComplementHandler(Term):
             # Extrapolated value on the date
             series = df.loc[:date, variable]
             series.iloc[-1] = None
-            series.interpolate(method="linear", inplace=True, limit_direction="both")
-            series.fillna(method="ffill", inplace=True)
+            try:
+                series = series.interpolate().ffill()
+            except ValueError:
+                series.ffill(inplace=True)
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
             df[variable] = df[variable].fillna(0)
