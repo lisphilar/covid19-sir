@@ -42,13 +42,13 @@ class TestDataEngineer(object):
         engineer.assign(**{"Positive_rate_%": lambda x: x["Positive_rate"] * 100})
         assert engineer.all()["Positive_rate_%"].unique() == 10
 
-    def test_with_actual_data(self):
+    def test_with_actual_data(self, imgfile):
         engineer = DataEngineer()
         engineer.download()
         all_df = engineer.all()
         layer_df = engineer.layer()
         assert all_df.shape == layer_df.shape
-        engineer.choropleth(geo=None, variable=Term.C)
+        engineer.choropleth(geo=None, variable=Term.C, filename=imgfile)
         engineer.clean()
         engineer.transform()
         df = engineer.subset_alias(alias="Japan", geo="Japan")
