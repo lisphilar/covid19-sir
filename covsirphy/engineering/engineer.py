@@ -41,7 +41,7 @@ class DataEngineer(Term):
         self._gis = GIS(**self._gis_kwargs)
         # Aliases
         self._var_alias = Alias.for_variables()
-        self._subset_alias = Alias(target_class=pd.DataFrame)
+        self._subset_alias = Alias(target_class=tuple)
 
     def register(self, data, citations=None, **kwargs):
         """Register new data.
