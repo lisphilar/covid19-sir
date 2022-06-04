@@ -61,7 +61,7 @@ class _Simulator(Term):
         date_groupby = all_df.reset_index().groupby(self._PH)
         start_dates = date_groupby.first()[self.DATE].sort_values()
         end_dates = date_groupby.last()[self.DATE].sort_values()
-        variables, parameters = self._model._VARIABLES[:], self._model._PARAMETERS[:]
+        variables, parameters = self._SIFR, self._model._PARAMETERS[:]
         param_df = all_df.ffill().loc[:, parameters]
         # Simulation
         dataframes = []

@@ -11,6 +11,7 @@ from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
+from covsirphy.visualization.compare_plot import compare_plot
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics._trend import _TrendAnalyzer
 from covsirphy.dynamics._simulator import _Simulator
@@ -361,6 +362,9 @@ class Dynamics(Term):
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
             n_jobs (int or None): the number of parallel jobs or None (CPU count)
 
+        Raises:
+            NotEnoughDataError: less than three non-NA records are registered
+
         Returns:
             tuple of (float, pandas.DataFrame):
                 float: tau value with best metric score
@@ -371,6 +375,9 @@ class Dynamics(Term):
                         {metric}: score of estimation with metric
 
         """
+        all_df = self._df.dropna(how="any", subset=self._SIFR)
+        if len(all_df) < 3:
+            raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
         score_f = partial(self._score_with_tau, metric=metric, q=q, digits=digits)
         divisors = [i for i in range(1, 1441) if 1440 % i == 0]
         n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
@@ -424,6 +431,7 @@ class Dynamics(Term):
 
         Raises:
             UnExpectedNoneError: tau value is un-set
+            NotEnoughDataError: less than three non-NA records are registered
 
         Returns:
             pandas.DataFrame:
@@ -438,8 +446,10 @@ class Dynamics(Term):
         if self._tau is None:
             raise UnExpectedNoneError(
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
-        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
         all_df = self._df.loc[:, [self._PH, *self._SIFR]].dropna(how="any")
+        if len(all_df) < 3:
+            raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
+        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
         starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
         ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         est_f = partial(
@@ -531,3 +541,26 @@ class Dynamics(Term):
         min_date = min(ref_date, ref_date + timedelta(days=days_n))
         max_date = max(ref_date, ref_date + timedelta(days=days_n))
         return max(min_date, self._first), min(max_date, self._last)
+
+    def evaluate(self, date_range=None, metric="RMSLE", display=True, **kwargs):
+        """Compare the simulated results and actual records, and evaluate the differences.
+
+        Args:
+            date_range (tuple of (str or pandas.Timestamp or None) or None): range of dates to evaluate or None (the first and the last date)
+            metric (str): metric to evaluate the difference
+            display (bool): whether display figure of comparison or not
+            kwargs: keyword arguments of covsirphy.compare_plot()
+
+        Returns:
+            float: evaluation score
+        """
+        variables = [self.CI, self.F, self.R]
+        start_date, end_date = Validator(date_range, "date_range").sequence(default=(self._first, self._last), length=2)
+        start = Validator(start_date, "date_range[0]").date(value_range=(self._first, self._last), default=self._first)
+        end = Validator(end_date, "date_range[1]").date(value_range=(self._first, self._last), default=self._last)
+        actual_df = self._df.loc[start:end, variables].dropna(how="any", axis=0)
+        sim_df = self.simulate(model_specific=False).loc[start: end, variables].dropna(how="any", axis=0)
+        df = actual_df.join(sim_df, how="inner", lsuffix="_actual", rsuffix="_simulated")
+        if display:
+            compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
+        return Evaluator(actual_df, sim_df).score(metric=metric)
