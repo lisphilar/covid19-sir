@@ -52,4 +52,4 @@ class TestDataEngineer(object):
         engineer.clean()
         engineer.transform()
         df, *_ = engineer.subset_alias(alias="Japan", geo="Japan")
-        assert assert_frame_equal(engineer.subset_alias(alias="Japan")[0], df)
+        assert_frame_equal(engineer.subset_alias(alias="Japan")[0], df)
