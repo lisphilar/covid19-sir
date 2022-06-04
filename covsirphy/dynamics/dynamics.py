@@ -284,8 +284,8 @@ class Dynamics(Term):
                     Start (pandas.Timestamp): start date of the phase
                     End (pandas.Timestamp): end date of the phase
                     Rt (float): phase-dependent reproduction number (if parameters are available)
-                    (float): estimated parameter values, including rho (if available)
-                    (int or float): day parameters, including 1/beta [days] (if tau and parameters are available)
+                    (float): parameter values, including rho (if available)
+                    (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)
         """
         df = self._df.reset_index()
         df[self._PH], _ = df[self._PH].factorize()
@@ -311,6 +311,23 @@ class Dynamics(Term):
             self.START, self.END, self.RT, *self._model._PARAMETERS, *self._model._DAY_PARAMETERS]
         others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIFR)]
         return df.reindex(columns=[*fixed_cols, *others]).dropna(how="all", axis=1).ffill().convert_dtypes()
+
+    def track(self):
+        """Track reproduction number, parameter value and dimensional parameter values.
+
+        Returns:
+            pandas.DataFrame
+                Index
+                    Date (pandas.Timestamp): dates
+                Columns
+                    Rt (float): phase-dependent reproduction number (if parameters are available)
+                    (float): parameter values, including rho (if available)
+                    (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)
+        """
+        df = self.summary()
+        df[self.DATE] = df[[self.START, self.END]].apply(
+            lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
+        return df.explode(self.DATE).set_index(self.DATE)
 
     def simulate(self, model_specific=False):
         """Perform simulation with phase-dependent ODE model.
