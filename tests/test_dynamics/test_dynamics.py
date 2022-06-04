@@ -65,7 +65,6 @@ class TestDynamics(object):
     def test_estimate(self, model, imgfile):
         dyn = Dynamics.from_sample(model)
         dyn.register(dyn.simulate())
-        dyn.segment()
         dyn.tau = 1440
         del dyn.tau
         assert dyn.tau is None
@@ -74,6 +73,7 @@ class TestDynamics(object):
         with pytest.raises(UnExpectedNoneError):
             dyn.estimate_params()
         dyn.estimate().summary()
+        dyn.track()
         assert dyn.tau is not None
         dyn.simulate()
         dyn.evaluate(display=True, filename=imgfile)

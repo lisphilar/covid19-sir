@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pandas.testing import assert_frame_equal
 from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
 
 
@@ -44,9 +45,11 @@ class TestDataEngineer(object):
     def test_with_actual_data(self):
         engineer = DataEngineer()
         engineer.download()
-        assert engineer.all().equals(engineer.layer())
+        all_df = engineer.all()
+        layer_df = engineer.layer()
+        assert all_df.shape == layer_df.shape
         engineer.choropleth(geo=None, variable=Term.C)
         engineer.clean()
         engineer.transform()
         df = engineer.subset_alias(alias="Japan", geo="Japan")
-        assert engineer.subset_alias(alias="Japan").equals(df)
+        assert assert_frame_equal(engineer.subset_alias(alias="Japan"), df)
