@@ -3,7 +3,6 @@
 
 import contextlib
 import pandas as pd
-from covsirphy.util.error import UnExecutedError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -58,13 +57,10 @@ class _DataCleaner(Term):
     def resample(self):
         """Resample records with dates.
         """
+        self.convert_date()
         df = self._df.copy()
         grouped = df.set_index(self._date).groupby(self._layers, as_index=False)
-        try:
-            df = grouped.resample("D").ffill()
-        except TypeError as e:
-            raise UnExecutedError(
-                f"{self._date} column was not a column of date. Please run _DataEngineer.convert_date()") from e
+        df = grouped.resample("D").ffill()
         self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
 
     def fillna(self):

@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import NotIncludedError, UnExecutedError, UnExpectedReturnValueError
+from covsirphy.util.error import NotIncludedError, UnExpectedReturnValueError
 from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -151,11 +151,7 @@ class DataEngineer(Term):
         all_kinds = list(kind_dict.keys())
         selected = Validator(kinds, "kind").sequence(default=all_kinds, candidates=all_kinds)
         for kind in selected:
-            try:
-                kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
-            except UnExecutedError:
-                raise UnExecutedError(
-                    "DataEngineer.clean(kinds=['convert_date'])", details=f"Column {self.DATE} was not a column of date") from None
+            kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
             data=cleaner.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
