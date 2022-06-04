@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import NotIncludedError, UnExecutedError, UnExpectedReturnValueError
+from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
@@ -39,13 +40,8 @@ class DataEngineer(Term):
         self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE, verbose=verbose)
         self._gis = GIS(**self._gis_kwargs)
         # Aliases
-        _variable_preset_dict = {
-            "N": [self.N], "S": [self.S], "T": [self.TESTS], "C": [self.C], "I": [self.CI], "F": [self.F], "R": [self.R],
-            "CFR": [self.C, self.F, self.R],
-            "CIFR": [self.C, self.CI, self.F, self.R],
-            "CR": [self.C, self.R],
-        }
-        self._alias_dict = {"subset": {}, "variables": _variable_preset_dict.copy()}
+        self._var_alias = Alias.for_variables()
+        self._subset_alias = Alias(target_class=pd.DataFrame)
 
     def register(self, data, citations=None, **kwargs):
         """Register new data.
@@ -55,14 +51,14 @@ class DataEngineer(Term):
                 Index
                     reset index
                 Columns
-                    - columns defined by covsirphy.DataEngineer(layer)
-                    - Date (pandas.DataFrame): observation dates
-                    - Population (int): total population, optional
-                    - Tests (int): column of the number of tests, optional
-                    - Confirmed (int): the number of confirmed cases, optional
-                    - Fatal (int): the number of fatal cases, optional
-                    - Recovered (int): the number of recovered cases, optional
-                    - the other columns will be also registered
+                    columns defined by covsirphy.DataEngineer(layer)
+                    Date (pandas.DataFrame): observation dates
+                    Population (int): total population, optional
+                    Tests (int): column of the number of tests, optional
+                    Confirmed (int): the number of confirmed cases, optional
+                    Fatal (int): the number of fatal cases, optional
+                    Recovered (int): the number of recovered cases, optional
+                    the other columns will be also registered
             citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
             **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
 
@@ -116,9 +112,7 @@ class DataEngineer(Term):
                     - (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
                     - the other columns
         """
-        v_converted = self.variables_alias(variables) if isinstance(
-            variables, str) and variables in self._alias_dict["variables"] else variables
-        return self._gis.all(variables=v_converted, errors="raise").convert_dtypes()
+        return self._gis.all(variables=self._var_alias.find(name=variables, default=variables), errors="raise").convert_dtypes()
 
     def citations(self, variables=None):
         """
@@ -130,9 +124,7 @@ class DataEngineer(Term):
         Returns:
             list[str]: citation list
         """
-        v_converted = self.variables_alias(variables) if isinstance(
-            variables, str) and variables in self._alias_dict["variables"] else variables
-        return self._gis.citations(variables=v_converted)
+        return self._gis.citations(variables=self._var_alias.find(name=variables, default=variables))
 
     def clean(self, kinds=None, **kwargs):
         """Clean all registered data.
@@ -192,7 +184,7 @@ class DataEngineer(Term):
             data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
         return self
 
-    def transform_inverse(self):
+    def inverse_transform(self):
         """Perform inverse transformation, calculating total population and confirmed.
 
         Returns:
@@ -229,7 +221,8 @@ class DataEngineer(Term):
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.diff(
-            column=self.variables_alias(column, length=1)[0] if column in self._alias_dict["variables"] else column,
+            column=Validator(
+                self._var_alias.find(name=column, default=[column]), "column", accept_none=False).sequence(length=1)[0],
             suffix=suffix, freq=freq)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
@@ -247,8 +240,7 @@ class DataEngineer(Term):
         Returns:
             covsirphy.DataEngineer: self
         """
-        var_dict = self._alias_dict["variables"].copy()
-        col_names = self.variables_alias(columns) if isinstance(columns, str) and columns in var_dict else columns
+        col_names = self._var_alias.find(name=columns, default=columns)
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
@@ -268,8 +260,7 @@ class DataEngineer(Term):
         Returns:
             covsirphy.DataEngineer: self
         """
-        var_dict = self._alias_dict["variables"].copy()
-        col_names = self.variables_alias(columns) if isinstance(columns, str) and columns in var_dict else columns
+        col_names = self._var_alias.find(name=columns, default=columns)
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.mul(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
@@ -290,12 +281,13 @@ class DataEngineer(Term):
         Returns:
             covsirphy.DataEngineer: self
         """
-        var_dict = self._alias_dict["variables"].copy()
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.sub(
-            minuend=self.variables_alias(minuend, length=1)[0] if minuend in var_dict else minuend,
-            subtrahend=self.variables_alias(subtrahend, length=1)[0] if subtrahend in var_dict else subtrahend,
+            minuend=Validator(
+                self._var_alias.find(name=minuend, default=[minuend]), "minuend", accept_none=False).sequence(length=1)[0],
+            subtrahend=Validator(
+                self._var_alias.find(name=subtrahend, default=[subtrahend]), "subtrahend", accept_none=False).sequence(length=1)[0],
             new=new or f"{minuend}-{subtrahend}", fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
@@ -317,12 +309,13 @@ class DataEngineer(Term):
         Note:
             Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
-        var_dict = self._alias_dict["variables"].copy()
         citations = self._gis.citations(variables=None)
         transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
         transformer.div(
-            numerator=self.variables_alias(numerator, length=1)[0] if numerator in var_dict else numerator,
-            denominator=self.variables_alias(denominator, length=1)[0] if denominator in var_dict else denominator,
+            numerator=Validator(
+                self._var_alias.find(name=numerator, default=[numerator]), "numerator", accept_none=False).sequence(length=1)[0],
+            denominator=Validator(
+                self._var_alias.find(name=denominator, default=[denominator]), "denominator", accept_none=False).sequence(length=1)[0],
             new=new or f"{numerator}_per_({denominator.replace(' ', '_')})", fill_value=fill_value)
         self._gis = GIS(**self._gis_kwargs)
         self._gis.register(
@@ -375,7 +368,7 @@ class DataEngineer(Term):
         Note:
             Regarding @geo argument, please refer to covsirphy.GIS.layer().
         """
-        v_converted = self.variables_alias(variables) if variables in self._alias_dict["variables"] else variables
+        v_converted = self._var_alias.find(name=variables, default=variables)
         return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
 
     def choropleth(self, geo, variable, on=None, title="Choropleth map", filename="choropleth.jpg", logscale=True, natural_earth=None, **kwargs):
@@ -433,10 +426,10 @@ class DataEngineer(Term):
                     Index
                         reset index
                     Columns
-                        - Date (pd.Timestamp): Observation date
-                        - Confirmed (int): the number of confirmed cases
-                        - Fatal (int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
+                        Date (pd.Timestamp): Observation date
+                        Confirmed (int): the number of confirmed cases
+                        Fatal (int): the number of fatal cases
+                        Recovered (int): the number of recovered cases
                 str: status code: will be selected from
                     - '' (not complemented)
                     - 'monotonic increasing complemented confirmed data'
@@ -457,8 +450,9 @@ class DataEngineer(Term):
         Note:
             Re-calculation of Susceptible and Infected will be done automatically.
         """
+        v_converted = self._var_alias.find(name=variables, default=variables)
         subset_df = self._gis.subset(
-            geo=geo, start_date=start_date, end_date=end_date, variables=variables, errors="raise")
+            geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
         if not complement:
             return subset_df.convert_dtypes(), "", {}
         default_kwargs = {
@@ -484,7 +478,7 @@ class DataEngineer(Term):
         Args:
             alias (str or None): alias name or None (list-up alias names)
             update (bool): force updating the alias when @alias is not None
-            **kwargs: keyword arguments of covsirphy.DataEngineer.subset()
+            **kwargs: keyword arguments of covsirphy.DataEngineer().subset()
 
         Returns:
             tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]:
@@ -495,22 +489,21 @@ class DataEngineer(Term):
             When the alias name was a new one, subset will be registered with covsirphy.DataEngineer.subset(**kwargs).
         """
         if alias is None:
-            return self._alias_dict["subset"]
-        if update or alias not in self._alias_dict["subset"]:
-            self._alias_dict["subset"][alias] = self.subset(**kwargs)
-        return self._alias_dict["subset"][alias]
+            return self._subset_alias.all()
+        result = self._subset_alias.find(alias, default=None)
+        if update or result is None:
+            self._subset_alias.update(name=alias, target=self.subset(**kwargs))
+        return self.subset_alias.find(alias)
 
-    def variables_alias(self, alias=None, variables=None, length=None):
+    def variables_alias(self, alias=None, variables=None):
         """Set/get/list-up alias name(s) of variables.
 
         Args:
             alias (str or None): alias name or None (list-up alias names)
             variables (list[str]): variables to register with the alias
-            length (int or None): the number of the variables for validation when return or None (no validation)
 
         Raises:
             NotIncludedError: the alias is not None and un-registered
-            UnExpectedLengthError: the number of elements is not the same as @length
 
         Returns:
             list[str] or dict[str, list[str]]:
@@ -524,15 +517,12 @@ class DataEngineer(Term):
             Some aliases are preset. We can check them with covsirphy.DataEngineer().variables_alias().
         """
         if alias is None:
-            return self._alias_dict["variables"]
+            return self._var_alias.all()
         if variables is not None:
-            Validator(variables, "variables").sequence(candidates=self._gis.all().columns.tolist())
-            self._alias_dict["variables"][alias] = variables[:]
-        try:
-            selected = self._alias_dict["variables"][alias]
-        except KeyError:
-            raise NotIncludedError(alias, "keys of alias dictionary of variables") from None
-        return Validator(selected, f"variables selected with alias '{alias}'").sequence(length=length)
+            self._var_alias.update(name=alias, target=variables)
+        elif alias not in self._var_alias.all():
+            raise NotIncludedError(alias, "keys of alias dictionary of variables")
+        return self._var_alias.find(name=alias)
 
     @classmethod
     def recovery_period(cls, data, **kwargs):
@@ -543,11 +533,11 @@ class DataEngineer(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): observation dates
-                    - Confirmed (int): the number of confirmed cases, optional
-                    - Fatal (int): the number of fatal cases, optional
-                    - Recovered (int): the number of recovered cases, optional
-                    - the other columns will be ignored
+                    Date (pandas.Timestamp): observation dates
+                    Confirmed (int): the number of confirmed cases, optional
+                    Fatal (int): the number of fatal cases, optional
+                    Recovered (int): the number of recovered cases, optional
+                    the other columns will be ignored
             **kwargs: keyword arguments as follows
                 - upper_limit_days (int): maximum number of valid partial recovery periods [days], 90 as default
                 - lower_limit_days (int): minimum number of valid partial recovery periods [days], 7 as default
