@@ -30,7 +30,7 @@ def test_not_implemented():
 class TestODEModel(object):
     def test_special(self, model_class):
         model = model_class.from_sample()
-        assert str(model) == model._NAME
+        assert str(model) == model._NAME == model_class.name()
         assert model == model_class(**model.settings())
         assert model == eval(repr(model))
         assert model.definitions() == model_class.definitions()

@@ -1,28 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy import DataEngineer, Term, Dynamics, SIRF
+from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
 
 
 class TestDataEngineer(object):
     def test_from_sample_data(self):
-        dynamics = Dynamics.from_sample(model=SIRF)
-        data = dynamics.simulate()
-        data.insert(0, "Model", SIRF.NAME)
+        dynamics = Dynamics.from_sample(model=SIRFModel)
+        data = dynamics.simulate().reset_index()
+        data.insert(0, "Model", SIRFModel.name())
         engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
         engineer.register(data, citations="Simulated data")
         assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R}
         assert engineer.citations() == ["Simulated data"]
-        engineer.transform_inverse()
+        engineer.inverse_transform()
         assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R, Term.N, Term.C}
 
     def test_operations(self):
-        dynamics = Dynamics.from_sample(model=SIRF)
-        data = dynamics.simulate()
-        data.insert(0, "Model", SIRF.NAME)
+        dynamics = Dynamics.from_sample(model=SIRFModel)
+        data = dynamics.simulate().reset_index()
+        data.insert(0, "Model", SIRFModel.name())
         engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
         engineer.register(data, citations="Simulated data")
-        engineer.transform_inverse()
+        engineer.inverse_transform()
         # Diff
         engineer.diff(column=Term.C, suffix="_diff", freq="D")
         assert f"{Term.C}_diff" in engineer.all()
@@ -40,3 +40,13 @@ class TestDataEngineer(object):
         engineer.div(numerator=Term.C, denominator="Tests", new="Positive_rate")
         engineer.assign(**{"Positive_rate_%": lambda x: x["Positive_rate"] * 100})
         assert engineer.all()["Positive_rate_%"].unique() == 10
+
+    def test_with_actual_data(self):
+        engineer = DataEngineer()
+        engineer.download()
+        assert engineer.all().equals(engineer.layer())
+        engineer.choropleth(geo=None, variable=Term.C)
+        engineer.clean()
+        engineer.transform()
+        df = engineer.subset_alias(alias="Japan", geo="Japan")
+        assert engineer.subset_alias(alias="Japan").equals(df)
