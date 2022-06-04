@@ -196,8 +196,9 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
+        point_dates = [Validator(point, "a change point", accept_none=False).date() for point in points]
         candidates = pd.date_range(start=self._first, end=self._last - timedelta(days=2), freq="D")
-        change_points = Validator(points, "points", accept_none=False).sequence(unique=True, candidates=candidates)
+        change_points = Validator(point_dates, "points", accept_none=False).sequence(unique=True, candidates=candidates)
         df = self._df.copy()
         if overwrite:
             df[self._PH] = 0
@@ -402,8 +403,8 @@ class Dynamics(Term):
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIFR)
         all_df[parameters] = all_df[parameters].astype("Float64")
-        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
-        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
+        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
+        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         for start, end in zip(starts, ends):
             model_instance = self._model.from_data_with_quantile(
                 data=all_df.loc[start: end].reset_index(), tau=tau, q=q, digits=digits)
@@ -439,8 +440,8 @@ class Dynamics(Term):
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
         n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
         all_df = self._df.loc[:, [self._PH, *self._SIFR]].dropna(how="any")
-        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first()
-        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last()
+        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
+        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         est_f = partial(
             self._optimized_params, model=self._model, tau=self._tau, metric=metric, digits=digits, **kwargs)
         phase_dataframes = [all_df[start: end] for start, end in zip(starts, ends)]
@@ -492,3 +493,41 @@ class Dynamics(Term):
         n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
         print(f"\t{df.index.min().strftime(_format)} - {df.index.max().strftime(_format)}: finished {n_trials:>4} trials in {runtime}")
         return df
+
+    def parse_phases(self, phases=None):
+        """Return minimum date and maximum date of the phases.
+
+        Args:
+            phases (list of [str], or None): phases (0th, 1st, 2nd,... last) or None (all phases)
+
+        Returns:
+            tuple of (pandas.Timestamp): minimum date and maximum date of the phases
+
+        Note:
+            "last" can be used to specify the last phase.
+        """
+        if phases is None:
+            return self._first, self._last
+        all_df = self._df.copy()
+        all_df[self._PH], _ = all_df[self._PH].factorize()
+        phase_numbers = [all_df[self._PH].max() if ph == "last" else self.str2num(ph) for ph in phases]
+        df = all_df.loc[all_df[self._PH].isin(phase_numbers)]
+        return df.index.min(), df.index.max()
+
+    def parse_days(self, days, ref="last"):
+        """Return min(ref, ref + days) and max(ref, ref + days).
+
+        Args:
+            days (int): the number of days
+            ref (pandas.Timestamp or None): reference date or "first" (the first date of records) or "last" (the last date)
+
+        Note:
+            Note that the days clipped with the first and the last dates of records.
+        """
+        days_n = Validator(days, "days", accept_none=False).int()
+        ref_dict = {"first": self._first, "last": self._last}
+        ref_date = Validator(ref_dict.get(ref, ref), "ref").date(
+            value_range=(self._first, self._last), default=self._last)
+        min_date = min(ref_date, ref_date + timedelta(days=days_n))
+        max_date = max(ref_date, ref_date + timedelta(days=days_n))
+        return max(min_date, self._first), min(max_date, self._last)
