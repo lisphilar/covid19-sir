@@ -107,9 +107,9 @@ class DataEngineer(Term):
                 Index
                     reset index
                 Column
-                    - columns defined by @layers of _DataEngineer()
-                    - (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
-                    - the other columns
+                    columns defined by @layers of _DataEngineer()
+                    (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
+                    the other columns
         """
         return self._gis.all(variables=self._var_alias.find(name=variables, default=variables), errors="raise").convert_dtypes()
 
@@ -467,10 +467,11 @@ class DataEngineer(Term):
         }
         handler = _ComplementHandler(
             **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
-        transformer = _DataTransformer(data=handler.run(), layers=self._layers, date=self.DATE)
+        c_df, status, status_dict = handler.run(data=subset_df)
+        transformer = _DataTransformer(data=c_df, layers=self._layers, date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
-        return transformer.all()
+        return transformer.all(), status, status_dict
 
     def subset_alias(self, alias=None, update=False, **kwargs):
         """Set/get/list-up alias name(s) of subset.

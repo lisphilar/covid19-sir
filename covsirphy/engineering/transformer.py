@@ -13,9 +13,9 @@ class _DataTransformer(Term):
             Index
                 reset index
             Column
-                - columns defined by @layers
-                - column defined by @date
-                - the other columns
+                columns defined by @layers
+                column defined by @date
+                the other columns
         layers (list[str]): location layers of the data
         date (str): column name of observation dates of the data
     """

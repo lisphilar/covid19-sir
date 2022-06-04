@@ -16,9 +16,9 @@ class _DataCleaner(Term):
             Index
                 reset index
             Column
-                - columns defined by @layers
-                - column defined by @date
-                - the other columns
+                columns defined by @layers
+                column defined by @date
+                the other columns
         layers (list[str]): location layers of the data
         date (str): column name of observation dates of the data
     """
@@ -37,9 +37,9 @@ class _DataCleaner(Term):
                 Index
                     reset index
                 Column
-                    - columns defined by @layers of _DataCleaner()
-                    - (pandas.Timestamp): observation dates defined by @date of _DataCleaner()
-                    - the other columns
+                    columns defined by @layers of _DataCleaner()
+                    (pandas.Timestamp): observation dates defined by @date of _DataCleaner()
+                    the other columns
         """
         return self._df
 

@@ -91,11 +91,11 @@ class _ComplementHandler(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - The other columns will be ignored
+                    Date (pd.Timestamp): Observation date
+                    Confirmed (int): the number of confirmed cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    The other columns will be ignored
 
         Returns:
             tuple(pandas.DataFrame, str, dict):
@@ -103,10 +103,10 @@ class _ComplementHandler(Term):
                     Index
                         reset index
                     Columns
-                        - Date (pd.Timestamp): Observation date
-                        - Confirmed (int): the number of confirmed cases
-                        - Fatal (int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
+                        Date (pd.Timestamp): Observation date
+                        Confirmed (int): the number of confirmed cases
+                        Fatal (int): the number of fatal cases
+                        Recovered (int): the number of recovered cases
                 str: status code: will be selected from
                     - '' (not complemented)
                     - 'monotonic increasing complemented confirmed data'
