@@ -370,7 +370,7 @@ class DataEngineer(Term):
         v_converted = self._var_alias.find(name=variables, default=variables)
         return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
 
-    def choropleth(self, geo, variable, on=None, title="Choropleth map", filename="choropleth.jpg", logscale=True, natural_earth=None, **kwargs):
+    def choropleth(self, geo, variable, on=None, title="Choropleth map", filename="choropleth.jpg", logscale=True, directory="input", natural_earth=None, **kwargs):
         """Create choropleth map.
 
         Args:
@@ -380,6 +380,7 @@ class DataEngineer(Term):
             title (str): title of the map
             filename (str or None): filename to save the figure or None (display)
             logscale (bool): whether convert the value to log10 scale values or not
+            directory (str): directory to save GeoJSON file of "Natural Earth" GitHub repository
             natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
             kwargs: keyword arguments of the following classes and methods.
                 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
@@ -399,7 +400,7 @@ class DataEngineer(Term):
         gis.register(data=layer_df, date=self.DATE)
         gis.choropleth(
             variable=variable, filename=filename, title=title, logscale=logscale,
-            geo=geo, on=on, directory=[self._directory, "natural_earth"], natural_earth=natural_earth, **kwargs)
+            geo=geo, on=on, directory=[directory, "natural_earth"], natural_earth=natural_earth, **kwargs)
 
     def subset(self, geo=None, start_date=None, end_date=None, variables=None, complement=True, **kwargs):
         """Return subset of the location and date range.
