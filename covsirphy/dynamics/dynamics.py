@@ -45,6 +45,12 @@ class Dynamics(Term):
         return self._df[self._PH].nunique()
 
     @property
+    def model(self):
+        """covsirphy.ODEModel: model class
+        """
+        return self._model
+
+    @property
     def model_name(self):
         """str: name of ODE model
         """
@@ -277,7 +283,7 @@ class Dynamics(Term):
         """Summarize phase information.
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
                 Index
                     Phase (str): phase names, 0th, 1st,...
                 Columns
