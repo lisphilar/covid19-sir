@@ -116,7 +116,7 @@ class Dynamics(Term):
                     Infected (int): the number of currently infected cases
                     Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
-                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    (numpy.float64): ODE parameter values defined with the ODE model (optional)
             tau (int): tau value [min]
             name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
 
@@ -144,7 +144,7 @@ class Dynamics(Term):
                     Infected (int): the number of currently infected cases
                     Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
-                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                    (numpy.float64): ODE parameter values defined with the model
 
         Returns:
             pandas.DataFrame: the current information
