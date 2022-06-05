@@ -21,6 +21,7 @@ class TestDynamics(object):
         assert len(summary_df) == 1
         Validator(dyn.simulate()).dataframe(columns=[Term.S, Term.CI, Term.F, Term.R])
         Validator(dyn.simulate(model_specific=True)).dataframe(columns=SIRFModel._VARIABLES)
+        assert dyn.model == model
         assert dyn.model_name == model._NAME
 
     def test_two_phase(self, model):

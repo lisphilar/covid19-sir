@@ -18,6 +18,7 @@ class TestDataEngineer(object):
         assert engineer.citations() == ["Simulated data"]
         engineer.inverse_transform()
         assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R, Term.N, Term.C}
+        assert len(engineer.subset(geo=SIRFModel.name())[0]) == len(data)
 
     def test_operations(self):
         dynamics = Dynamics.from_sample(model=SIRFModel)
