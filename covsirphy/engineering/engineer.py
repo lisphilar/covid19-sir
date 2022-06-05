@@ -420,14 +420,13 @@ class DataEngineer(Term):
             tuple(pandas.DataFrame, str, dict):
                 pandas.DataFrame
                     Index
-                        reset index
-                    Columns
                         Date (pandas.DataFrame): observation dates
-                        Population (int): total population, optional
-                        Tests (int): column of the number of tests, optional
-                        Confirmed (int): the number of confirmed cases, optional
-                        Fatal (int): the number of fatal cases, optional
-                        Recovered (int): the number of recovered cases, optional
+                    Columns
+                        Population (int): total population
+                        Tests (int): column of the number of tests
+                        Confirmed (int): the number of confirmed cases
+                        Fatal (int): the number of fatal cases
+                        Recovered (int): the number of recovered cases
                         the other columns registered
                 str: status code: will be selected from
                     - '' (not complemented)
@@ -453,7 +452,7 @@ class DataEngineer(Term):
         subset_df = self._gis.subset(
             geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
         if not complement:
-            return subset_df.convert_dtypes(), "", {}
+            return subset_df.convert_dtypes().set_index(self.DATE), "", {}
         default_kwargs = {
             "recovery_period": 17,
             "interval": 2,
@@ -472,7 +471,7 @@ class DataEngineer(Term):
         transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
-        return transformer.all().drop("location", axis=1), status, status_dict
+        return transformer.all().drop("location", axis=1).set_index(self.DATE), status, status_dict
 
     def subset_alias(self, alias=None, update=False, **kwargs):
         """Set/get/list-up alias name(s) of subset.
@@ -533,9 +532,8 @@ class DataEngineer(Term):
         Args:
             data (pandas.DataFrame): data for calculation
                 Index
-                    reset index
-                Columns
                     Date (pandas.Timestamp): observation dates
+                Columns
                     Confirmed (int): the number of confirmed cases, optional
                     Fatal (int): the number of fatal cases, optional
                     Recovered (int): the number of recovered cases, optional
@@ -549,11 +547,10 @@ class DataEngineer(Term):
         Returns:
             int: mode value of recovery period [days]
         """
-        df = Validator(data, "data").dataframe(columns=[cls.DATE, cls.C, cls.F, cls.R], empty_ok=False)
-        df[cls.DATE] = pd.to_datetime(df[cls.DATE]).dt.round("D")
+        df = Validator(data, "data").dataframe(time_index=True, columns=[cls.C, cls.F, cls.R], empty_ok=False)
         kwargs_dict = Validator(kwargs, "keyword arguments").dict(
             default={"upper_limit_days": 90, "lower_limit_days": 7, "upper_percentage": 0.5, "lower_percentage": 0.5})
-        df = df.groupby(cls.DATE).sum()
+        df = df.resample("D").sum()
         df["diff"] = df[cls.C] - df[cls.F]
         df = df.loc[:, ["diff", cls.R]].unstack().reset_index()
         df.columns = ["Variable", "Date", "Number"]
