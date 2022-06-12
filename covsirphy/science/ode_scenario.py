@@ -53,7 +53,7 @@ class ODEScenario(Term):
             geo=self._location_name, variables=[self.S, self.CI, self.F, self.R], complement=complement)
         self._first, self._last = self._actual_df.index.min(), self._actual_df.index.max()
         # {scenario_name: {"ODE": ODEModel, "tau": int, "param": pd.DataFrame(index: Date, columns: ODE parameters)}}
-        self._snl_alias = Alias(target_class=dict)
+        self._snr_alias = Alias(target_class=dict)
         # Aliases of variable names
         self._variable_alias = Alias.for_variables()
 
@@ -69,7 +69,7 @@ class ODEScenario(Term):
         """
         dyn = Validator(dynamics, "dynamics").instance(Dynamics)
         snl_dict = {self.ODE: dyn.model, self.TAU: dyn.tau, self._PARAM: dyn.track().loc[:, dyn.model._PARAMETERS]}
-        self._snl_alias.update(name=name, target=snl_dict)
+        self._snr_alias.update(name=name, target=snl_dict)
         return self
 
     def build_with_model(self, name, model, date_range=None, tau=None):
@@ -108,10 +108,10 @@ class ODEScenario(Term):
         Return:
             covsirphy.ODEScenario: self
         """
-        temp_snl_dict = self._snl_alias.find(name=template)
+        temp_snl_dict = self._snr_alias.find(name=template)
         if temp_snl_dict is None:
             raise ScenarioNotFoundError(name=template)
-        self._snl_alias.update(name=name, target=deepcopy(temp_snl_dict))
+        self._snr_alias.update(name=name, target=deepcopy(temp_snl_dict))
         return self
 
     @classmethod
@@ -163,6 +163,24 @@ class ODEScenario(Term):
         snl.build_with_model(name="Baseline", model=model)
         return snl
 
+    def delete(self, name):
+        """Delete a scenario.
+
+        Args:
+            name (str): scenario name
+
+        Raises:
+            SubsetNotFoundError: scenario with the name is not registered
+
+        Return:
+            covsirphy.ODEScenario: self
+        """
+        try:
+            self._snr_alias.delete(name=name)
+        except KeyError:
+            raise ScenarioNotFoundError(name=name) from None
+        return self
+
     def to_dynamics(self, name):
         """Create covsirphy.Dynamics instance of the scenario.
 
@@ -175,7 +193,7 @@ class ODEScenario(Term):
         Returns:
             covsirphy.Dynamics: instance which has ODE model, tau value and ODE parameter values
         """
-        temp_snl_dict = self._snl_alias.find(name=name)
+        temp_snl_dict = self._snr_alias.find(name=name)
         if temp_snl_dict is None:
             raise ScenarioNotFoundError(name=name)
         model, tau, param_df = [temp_snl_dict[k] for k in [self.ODE, self.TAU, self._PARAM]]
@@ -200,7 +218,7 @@ class ODEScenario(Term):
                     (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)
         """
         dataframes = []
-        for name, snl_dict in self._snl_alias.all().items():
+        for name, snl_dict in self._snr_alias.all().items():
             dyn = self.to_dynamics(name=name)
             df = dyn.summary().reset_index()
             df.insert(0, self.SERIES, name)
@@ -287,7 +305,7 @@ class ODEScenario(Term):
         Return:
             covsirphy.ODEScenario: self
         """
-        snl_dict = self._snl_alias.find(name=name)
+        snl_dict = self._snr_alias.find(name=name)
         if snl_dict is None:
             raise ScenarioNotFoundError(name=name)
         param_df = snl_dict[self._PARAM].copy()
@@ -302,5 +320,5 @@ class ODEScenario(Term):
             default=last_param_dict, required_keys=list(last_param_dict.keys()))
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
         snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
-        self._snl_alias.update(name=name, target=snl_dict.copy())
+        self._snr_alias.update(name=name, target=snl_dict.copy())
         return self

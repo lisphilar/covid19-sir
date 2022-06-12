@@ -66,3 +66,21 @@ class Alias(Term):
             dict of {str: object}
         """
         return self._dict
+
+    def delete(self, name):
+        """Delete alias.
+
+        Args:
+            name (str): alias name
+
+        Raises:
+            KeyError: the alias has not been registered as an alias
+
+        Return:
+            covsirphy.Alias: self
+        """
+        try:
+            del self._dict[name]
+        except KeyError:
+            raise KeyError(f"{name} has not been registered as an alias.") from None
+        return self
