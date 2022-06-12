@@ -170,19 +170,13 @@ class ODEScenario(Term):
         Args:
             pattern (str): scenario name or pattern to search
 
-        Raises:
-            SubsetNotFoundError: scenario with the name is un-registered
-
         Return:
             covsirphy.ODEScenario: self
         """
         p = re.compile(pattern)
         names = [name for name in self._snr_alias.all().keys() if p.search(name)]
         for name in names:
-            try:
-                self._snr_alias.delete(name=name)
-            except KeyError:
-                raise ScenarioNotFoundError(name=name) from None
+            self._snr_alias.delete(name=name)
         return self
 
     def to_dynamics(self, name):
