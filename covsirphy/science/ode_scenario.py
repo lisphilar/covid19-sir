@@ -281,12 +281,12 @@ class ODEScenario(Term):
 
         Args:
             name (str or None): scenario name registered or None (actual data)
-            variables (list of [str] or None): variables to return or None (["Confirmed", "Fatal", "Recovered"])
+            variables (list of [str] or None): variables/alias to return or None (["Confirmed", "Fatal", "Recovered"])
             display (bool): whether display figure of the result or not
             **kwargs: keyword arguments of covsirphy.line_plot() except for @df
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame or pandas.Series:
                 Index
                     Date (pd.Timestamp): dates
                 Columns
@@ -313,11 +313,41 @@ class ODEScenario(Term):
         v_converted = self._variable_alias.find(name=variables, default=[self.C, self.F, self.R])
         df = engineer.all().set_index(self.DATE).loc[self._first:self._last, v_converted]
         # Show figure
-        if not display:
-            return df
-        plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": "the number of cases"}
-        plot_kwargs.update(kwargs)
-        line_plot(df=df, **plot_kwargs)
+        if display:
+            plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": "the number of cases"}
+            plot_kwargs.update(kwargs)
+            line_plot(df=df, **plot_kwargs)
+        return df
+
+    def compare_cases(self, variable, ref=None, display=True, **kwargs):
+        """Compare the number of cases of scenarios.
+
+        Args:
+            variable (str): variable name or alias
+            ref (str): name of reference scenario to specify phases and dates
+            display (bool): whether display figure of the result or not
+            **kwargs: keyword arguments of covsirphy.line_plot() except for @df
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp)
+                Columns
+                    {scenario name} (str): values of the scenario
+        """
+        v_converted = self._variable_alias.find(name=variable, default=variable)
+        Validator(v_converted, "variable", accept_none=False).sequence(length=1)
+        dataframes = [self._actual_df.loc[:, v_converted]]
+        dataframes.extend(
+            self.simulate(name=name, variables=[variable], display=False) for name in self._snr_alias.all().keys())
+        df = pd.concat(dataframes, axis=1)
+        if display:
+            ylabel = f"the number of {v_converted[0]} cases"
+            title = f"{self._location_name}: {ylabel} overt time"
+            v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
+            plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
+            plot_kwargs.update(kwargs)
+            line_plot(df=df, **plot_kwargs)
         return df
 
     def _append(self, name, end, **kwargs):
