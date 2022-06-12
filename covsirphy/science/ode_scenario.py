@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
+from datetime import timedelta
 import pandas as pd
-from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError
+from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
 from covsirphy.util.term import Term
@@ -192,15 +193,19 @@ class ODEScenario(Term):
                 Columns
                     Start (pandas.Timestamp): start date of the phase
                     End (pandas.Timestamp): end date of the phase
+                    ODE (str): ODE model name
                     Rt (float): phase-dependent reproduction number (if parameters are available)
                     (float): parameter values, including rho (if available)
+                    tau (int): tau value [min]
                     (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)
         """
         dataframes = []
-        for name in self._snl_alias.all().keys():
+        for name, snl_dict in self._snl_alias.all().items():
             dyn = self.to_dynamics(name=name)
             df = dyn.summary().reset_index()
             df.insert(0, self.SERIES, name)
+            df.insert(4, self.ODE, snl_dict[self.ODE])
+            df.insert(7, self.TAU, snl_dict[self.TAU])
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
 
@@ -267,3 +272,35 @@ class ODEScenario(Term):
         plot_kwargs.update(kwargs)
         line_plot(df=df, **plot_kwargs)
         return df
+
+    def append(self, end, name, **kwargs):
+        """Append a new phase, specifying ODE parameter values.
+
+        Args:
+            end (pandas.Timestamp or int): end date or the number days of new phase
+            name (str): scenario name registered
+            **kwargs: keyword arguments of ODE parameter values (default: values of the last phase)
+
+        Raises:
+            SubsetNotFoundError: scenario with the name is not registered
+
+        Return:
+            covsirphy.ODEScenario: self
+        """
+        snl_dict = self._snl_alias.find(name=name)
+        if snl_dict is None:
+            raise ScenarioNotFoundError(name=name)
+        param_df = snl_dict[self._PARAM].copy()
+        last_param_dict = param_df.iloc[-1].to_dict()
+        start_date = param_df.index[-1] + timedelta(days=1)
+        try:
+            delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(1, None)))
+            end_date = param_df.index[-1] + delta
+        except UnExpectedTypeError:
+            end_date = Validator(end, "end", accept_none=False).date(value_range=(start_date, None))
+        new_param_dict = Validator(kwargs, "keyword arguments").dict(
+            default=last_param_dict, required_keys=list(last_param_dict.keys()))
+        new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
+        snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
+        self._snl_alias.update(name=name, target=snl_dict.copy())
+        return self

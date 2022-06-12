@@ -196,7 +196,8 @@ class Validator(object):
             except ValueError:
                 raise UnExpectedTypeError(self._name, self._target, pd.Timestamp) from None
         if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
-            raise UnExpectedValueRangeError(self._name, value, value_range)
+            raise UnExpectedValueRangeError(
+                self._name, value.strftime("%Y-%m-%d"), [None if value is None else value.strftime("%Y-%m-%d") for value in value_range])
         return value
 
     def sequence(self, default=None, flatten=False, unique=False, candidates=None, length=None):
