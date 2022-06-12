@@ -185,7 +185,7 @@ class ODEScenario(Term):
         """Create covsirphy.Dynamics instance of the scenario.
 
         Args:
-            name (str): scenario name registered
+            name (str): scenario name
 
         Raises:
             SubsetNotFoundError: scenario with the name is not registered
@@ -291,19 +291,16 @@ class ODEScenario(Term):
         line_plot(df=df, **plot_kwargs)
         return df
 
-    def append(self, end, name, **kwargs):
+    def _append(self, name, end, **kwargs):
         """Append a new phase, specifying ODE parameter values.
 
         Args:
+            name (str): scenario name
             end (pandas.Timestamp or int): end date or the number days of new phase
-            name (str): scenario name registered
             **kwargs: keyword arguments of ODE parameter values (default: values of the last phase)
 
         Raises:
             SubsetNotFoundError: scenario with the name is not registered
-
-        Return:
-            covsirphy.ODEScenario: self
         """
         snl_dict = self._snr_alias.find(name=name)
         if snl_dict is None:
@@ -321,4 +318,28 @@ class ODEScenario(Term):
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
         snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
         self._snr_alias.update(name=name, target=snl_dict.copy())
+
+    def append(self, name=None, end=None, **kwargs):
+        """Append a new phase, specifying ODE parameter values.
+
+        Args:
+            name (str or list[str] None): scenario name(s) or None (all scenarios)
+            end (pandas.Timestamp or int or None): end date or the number days of new phase or None (the max date of all scenarios and actual data)
+            **kwargs: keyword arguments of ODE parameter values (default: values of the last phase)
+
+        Raises:
+            SubsetNotFoundError: scenario with the name is not registered
+
+        Return:
+            covsirphy.ODEScenario: self
+        """
+        if end is None:
+            last_end = self._last
+            for snl_dict in self._snr_alias.all().values():
+                end_date = snl_dict[self._PARAM].index[-1]
+                last_end = max(last_end, end_date)
+        names = [name] if isinstance(name, str) else Validator(name, "name").sequence(
+            default=list(self._snr_alias.all().keys()))
+        for _name in names:
+            self._append(name=_name, end=end or last_end, **kwargs)
         return self
