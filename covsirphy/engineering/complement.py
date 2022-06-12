@@ -79,6 +79,7 @@ class _ComplementHandler(Term):
             (self.R, self._recovered_sort, 1),
             (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_sort, 1),
+            (self.C, self._confirmed_over_fr, 1),
             (None, self._post_processing, 0)
         ]
 
@@ -410,4 +411,28 @@ class _ComplementHandler(Term):
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
         df[self.R] = df[self.R].interpolate(method="time").fillna(0).round()
+        return df
+
+    def _confirmed_over_fr(self, df):
+        """
+        Force Confirmed > Fatal + Recovered.
+
+        Args:
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+
+        Note:
+            _recovered_sort() must always be called after _recovered_partial_ending()
+        """
+        df[self.C] = df[[self.C, self.F, self.R]].apply(lambda x: max(x[0], x[1] + x[2]), axis=1)
         return df
