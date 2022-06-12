@@ -314,12 +314,12 @@ class ODEScenario(Term):
                 Index
                     Date (pd.Timestamp): dates
                 Columns
-                    Population (int): total population
-                    Confirmed (int): the number of confirmed cases
-                    Fatal (int): the number of fatal cases
-                    Recovered (int): the number of recovered cases
-                    Susceptible (int): the number of susceptible cases
-                    Infected (int): the number of currently infected cases
+                    Population (int): total population (if selected with @variables)
+                    Confirmed (int): the number of confirmed cases (if selected with @variables)
+                    Fatal (int): the number of fatal cases (if selected with @variables)
+                    Recovered (int): the number of recovered cases (if selected with @variables)
+                    Susceptible (int): the number of susceptible cases (if selected with @variables)
+                    Infected (int): the number of currently infected cases (if selected with @variables)
         """
         if name is None:
             sifr_df = self._actual_df.copy()
@@ -362,15 +362,15 @@ class ODEScenario(Term):
         """
         v_converted = self._variable_alias.find(name=variable, default=[variable])
         Validator(v_converted, "variable", accept_none=False).sequence(length=1)
-        dataframes = [self._actual_df.assign(**{self.SERIES: self.ACTUAL})]
-        dataframes.extend(
-            self.simulate(name=name, display=False).assign(**{self.SERIES: name}) for name in self._snr_alias.all().keys())
-        df = pd.concat(
-            [DataEngineer(layers=[self.SERIES]).register(data=_df.reset_index()).inverse_transform().all() for _df in dataframes], axis=1)
+        dataframes = [self._actual_df.assign(**{
+            self.N: lambda x: x[[self.CI, self.F, self.R, self.S]].sum(axis=1),
+            self.C: lambda x: x[[self.CI, self.F, self.R]].sum(axis=1)})]
+        dataframes.extend(self.simulate(name=name, display=False) for name in self._snr_alias.all().keys())
+        df = pd.concat(dataframes, axis=1)
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
-        start = Validator(start_date, name="the first value of @date_range").date(default=df[self.DATE].min())
+        start = Validator(start_date, name="the first value of @date_range").date(default=df.index.min())
         end = Validator(
-            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df[self.DATE].max())
+            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df.index.max())
         df = df.loc[start: end]
         if display:
             ylabel = f"the number of {v_converted[0]} cases"
@@ -398,20 +398,23 @@ class ODEScenario(Term):
                 Columns
                     {scenario name} (str): values of the scenario
         """
-        df = self.track().pivot_table(values=param, index=self.DATE, columns=self.SERIES)
+        df = self.track()
+        Validator([param], "param", accept_none=False).sequence(candidates=df.columns)
+        df[param] = df[param].astype("float64")
+        df = df.pivot_table(values=param, index=self.DATE, columns=self.SERIES)
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
-        start = Validator(start_date, name="the first value of @date_range").date(default=df[self.DATE].min())
+        start = Validator(start_date, name="the first value of @date_range").date(default=df.index.min())
         end = Validator(
-            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df[self.DATE].max())
+            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df.index.max())
         df = df.loc[start: end]
         if display:
-            ylabel, h = self.RT_FULL, 1.0 if param == self.RT else param, None
+            ylabel, h = (self.RT_FULL, 1.0) if param == self.RT else (param, None)
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
             plot_kwargs = {"title": title, "math_scale": False, "v": v, "ylabel": ylabel, "h": h}
             plot_kwargs.update(kwargs)
             line_plot(df=df, **plot_kwargs)
-        return df
+        return df.convert_dtypes()
 
     def _append(self, name, end, **kwargs):
         """Append a new phase, specifying ODE parameter values.
@@ -479,7 +482,7 @@ class ODEScenario(Term):
             covsirphy.ODEScenario: self
         """
         track_df = self.to_dynamics(name=name).track()
-        model = self._snr_alias(name=name)[self.ODE]
+        model = self._snr_alias.find(name=name)[self.ODE]
         Y = track_df.loc[:, model._PARAMETERS]
         handler = AutoMLHandler(X=pd.DataFrame(index=Y.index), Y=Y, model=model, days=days, **kwargs)
         handler.predict(method="univariate")
@@ -493,3 +496,43 @@ class ODEScenario(Term):
             self.build_with_template(name=new_name, template=name)
             self.append(name=new_name, **phase_dict)
         return self
+
+    def represent(self, q, variable, date=None, included=None, excluded=None):
+        """
+        Return the names of representative scenarios using quantiles of the variable on on the date.
+
+        Args:
+            q (list[float] or float): quantiles
+            variable (str): reference variable, Confirmed, Infected, Fatal or Recovered
+            date (str or None): reference date or None (the last end date in the all scenarios)
+            included (list[str] or None): included scenarios or None (all included)
+            excluded (list[str] or None): excluded scenarios or None (no scenarios not excluded)
+
+        Raises:
+            ValueError: the end dates of the last phase is not aligned
+
+        Returns:
+            list[float] or float: the nearest scenarios which has the values at the given quantiles
+
+        Note:
+            Dimension of returned object corresponds to the type of @q.
+        """
+        quantiles = [q] if isinstance(q, float) else Validator(q, "q").sequence()
+        v_converted = self._variable_alias.find(name=variable, default=[variable])
+        Validator(v_converted, "variable", accept_none=False).sequence(length=1)
+        # Target scenario to included
+        all_set = set(self._snr_alias.all().keys())
+        in_set = all_set if included is None else set(Validator(included, "included").sequence())
+        ex_set = set() if excluded is None else set(Validator(excluded, "excluded").sequence())
+        scenarios = list(all_set & (in_set) - ex_set)
+        # Get simulation data of the variable of the target scenarios
+        sim_dict = {name: self.simulate(name=name)[variable] for name in scenarios}
+        sim_df = pd.DataFrame(sim_dict)
+        if sim_df.isna().to_numpy().sum():
+            raise ValueError(
+                "The end dates of the last phases must be aligned. Scenario.adjust_end() method may fix this issue.")
+        # Find representative scenario
+        date_obj = Validator(date, "date").date(default=sim_df.index[-1])
+        series = sim_df.loc[date_obj].squeeze()
+        values = series.quantile(q=quantiles, interpolation="nearest")
+        return [series[series == v].index.tolist()[0] for v in values]
