@@ -246,6 +246,36 @@ class ODEScenario(Term):
             lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
         return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
 
+    def describe(self):
+        """Describe representative values.
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    str: scenario name
+                Columns
+                    - max(Infected): max value of Infected
+                    - argmax(Infected): the date when Infected shows max value
+                    - Confirmed({date}): Confirmed on the last date
+                    - Infected({date}): Infected on the last date
+                    - Fatal({date}): Fatal on the last date
+                    - nth_Rt etc.: Rt value if the values are not the same values
+        """
+        _dict = {}
+        for name in self._snr_alias.all().keys():
+            dyn = self.to_dynamics(name=name)
+            sim_df = dyn.simulate(model_specific=False)
+            last_date = sim_df.index[-1]
+            last_date_str = last_date.strftime(self.DATE_FORMAT)
+            _dict[name] = {
+                f"max({self.CI})": sim_df[self.CI].max(),
+                f"argmax({self.CI})": sim_df[self.CI].idxmax().strftime(self.DATE_FORMAT),
+                f"{self.C} on {last_date_str}": sim_df.loc[last_date, self.C],
+                f"{self.CI} on {last_date_str}": sim_df.loc[last_date, self.CI],
+                f"{self.F} on {last_date_str}": sim_df.loc[last_date, self.F],
+            }
+        return pd.DataFrame.from_dict(_dict, orient="index")
+
     def simulate(self, name=None, variables=None, display=True, **kwargs):
         """Perform simulation with phase-dependent ODE model.
 
