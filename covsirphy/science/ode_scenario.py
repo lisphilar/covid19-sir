@@ -265,6 +265,11 @@ class ODEScenario(Term):
         for name in self._snr_alias.all().keys():
             dyn = self.to_dynamics(name=name)
             sim_df = dyn.simulate(model_specific=False)
+            sim_df[self.SERIES] = name
+            engineer = DataEngineer(layers=[self.SERIES])
+            engineer.register(data=sim_df.reset_index())
+            engineer.inverse_transform()
+            sim_df = engineer.all().set_index(self.DATE)
             last_date = sim_df.index[-1]
             last_date_str = last_date.strftime(self.DATE_FORMAT)
             _dict[name] = {
@@ -319,12 +324,13 @@ class ODEScenario(Term):
             line_plot(df=df, **plot_kwargs)
         return df
 
-    def compare_cases(self, variable, ref=None, display=True, **kwargs):
+    def compare_cases(self, variable, date_range=None, ref=None, display=True, **kwargs):
         """Compare the number of cases of scenarios.
 
         Args:
             variable (str): variable name or alias
-            ref (str): name of reference scenario to specify phases and dates
+            date_range (tuple of (str, str)): start date and end date to analyze
+            ref (str or None): name of reference scenario to specify phases and dates or None (the first scenario)
             display (bool): whether display figure of the result or not
             **kwargs: keyword arguments of covsirphy.line_plot() except for @df
 
@@ -341,11 +347,48 @@ class ODEScenario(Term):
         dataframes.extend(
             self.simulate(name=name, variables=[variable], display=False) for name in self._snr_alias.all().keys())
         df = pd.concat(dataframes, axis=1)
+        start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
+        start = Validator(start_date, name="the first value of @date_range").date(default=df[self.DATE].min())
+        end = Validator(
+            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df[self.DATE].max())
+        df = df.loc[start: end]
         if display:
             ylabel = f"the number of {v_converted[0]} cases"
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
+            plot_kwargs.update(kwargs)
+            line_plot(df=df, **plot_kwargs)
+        return df
+
+    def compare_param(self, param, date_range=None, ref=None, display=True, **kwargs):
+        """Compare the number of cases of scenarios.
+
+        Args:
+            param (str): one of ODE parameters, "Rt", dimensional parameters
+            date_range (tuple of (str, str)): start date and end date to analyze
+            ref (str or None): name of reference scenario to specify phases and dates or None (the first scenario)
+            display (bool): whether display figure of the result or not
+            **kwargs: keyword arguments of covsirphy.line_plot() except for @df
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp)
+                Columns
+                    {scenario name} (str): values of the scenario
+        """
+        df = self.track().pivot_table(values=param, index=self.DATE, columns=self.SERIES)
+        start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
+        start = Validator(start_date, name="the first value of @date_range").date(default=df[self.DATE].min())
+        end = Validator(
+            end_date, name="the second date of @date_range").date(value_range=(start, None), default=df[self.DATE].max())
+        df = df.loc[start: end]
+        if display:
+            ylabel, h = self.RT_FULL, 1.0 if param == self.RT else param, None
+            title = f"{self._location_name}: {ylabel} overt time"
+            v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
+            plot_kwargs = {"title": title, "math_scale": False, "v": v, "ylabel": ylabel, "h": h}
             plot_kwargs.update(kwargs)
             line_plot(df=df, **plot_kwargs)
         return df
