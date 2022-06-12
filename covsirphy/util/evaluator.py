@@ -93,11 +93,10 @@ class Evaluator(object):
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
         # Calculate score
         try:
-            return float(self._METRICS_DICT[metric][0](self._true, self._pred))
+            return float(self._METRICS_DICT[metric][0](self._true.values, self._pred.values))
         except ValueError:
-            # Multi-output not supported
             raise ValueError(
-                f"When the targets have multiple columns, we cannot select {metric}.") from None
+                f"When the targets have multiple columns or negative values, we cannot select {metric}.") from None
 
     @classmethod
     def metrics(cls):

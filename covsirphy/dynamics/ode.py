@@ -233,7 +233,7 @@ class ODEModel(Term):
             raise UnExpectedNoneError("start_date", details="Not None value is required because tau is not None")
         Validator(tau, "tau", accept_none=False).tau()
         start = Validator(start_date, "start_date", accept_none=False).date()
-        df[cls.DATE] = start + pd.Series(df.index * tau).apply(lambda x: timedelta(minutes=x))
+        df[cls.DATE] = (start + pd.Series(df.index * tau).apply(lambda x: timedelta(minutes=x))).tolist()
         return df.set_index(cls.DATE).resample("D").first()
 
     @classmethod
@@ -561,12 +561,12 @@ class ODEModel(Term):
             metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
 
         Returns:
-            float: score to minimize
+            float: score to minimize or positive infinity (when negative values are included in simulated values)
         """
-        df = cls.inverse_transform(data=data, tau=tau, start_date="01Jan2022").reset_index()
-        model = cls.from_data(data=df, param_dict=param_dict, tau=tau, digits=None)
+        df = cls._non_dim_to_date(data=data, tau=tau, start_date="01Jan2022")
+        model = cls.from_data(data=df.reset_index(), param_dict=param_dict, tau=tau, digits=None)
         sim_df = model.solve()
-        evaluator = Evaluator(data.reset_index(drop=True), sim_df.reset_index(drop=True), how="inner", on=None)
+        evaluator = Evaluator(df, sim_df, how="inner", on=None)
         return evaluator.score(metric=metric)
 
     @classmethod

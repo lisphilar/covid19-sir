@@ -6,7 +6,7 @@ from functools import partial
 from multiprocessing import cpu_count, Pool
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError
+from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError, UnExpectedValueRangeError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.validator import Validator
@@ -175,10 +175,12 @@ class Dynamics(Term):
             new_df.index = pd.to_datetime(new_df.index).round("D")
             all_df.loc[:] = np.nan
             all_df[self._PH] = 0
-            all_df.update(new_df)
+            all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIFR].isna().any():
                 raise EmptyError(
                     f"records on {self._first.strftime(self.DATE_FORMAT)}", details="Records must be registered for simulation")
+            if all_df.min().min() < 0:
+                raise UnExpectedValueRangeError("minimum value of the data", all_df.min().min(), (0, None))
             all_df.index.name = self.DATE
             self._df = all_df.convert_dtypes()
             # Find change points with parameter values
@@ -299,8 +301,8 @@ class Dynamics(Term):
         df = first_df.join(df.groupby(self._PH).last(), rsuffix="_last")
         df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
         df = df.loc[:, [col for col in df.columns if "_last" not in col]]
-        df.index.name = self.PHASE
         df.index = [self.num2str(num) for num in df.index]
+        df.index.name = self.PHASE
         # Reproduction number
         df[self.RT] = df[self._parameters].apply(
             lambda x: np.nan if x.isna().any() else self._model.from_data(data=self._df.reset_index(), param_dict=x.to_dict(), tau=self._tau).r0(), axis=1)
@@ -421,14 +423,7 @@ class Dynamics(Term):
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
 
         Returns:
-            tuple of (float, pandas.DataFrame):
-                float: tau value with best metric score
-                pandas.DataFrame: metric scores of tau candidates
-                    Index
-                        tau (int): candidate of tau values
-                    Columns
-                        {metric}: score of estimation with metric
-
+            float: score to minimize
         """
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIFR)
@@ -441,7 +436,7 @@ class Dynamics(Term):
             all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
         simulator = _Simulator(model=self._model, data=all_df)
         sim_df = simulator.run(tau=tau, model_specific=False).set_index(self.DATE)
-        evaluator = Evaluator(all_df[self._SIFR], sim_df[self._SIFR])
+        evaluator = Evaluator(all_df[self._SIFR], sim_df[self._SIFR], how="inner")
         return evaluator.score(metric=metric)
 
     def estimate_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):

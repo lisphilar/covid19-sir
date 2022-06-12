@@ -448,9 +448,7 @@ class DataEngineer(Term):
         Note:
             Re-calculation of Susceptible and Infected will be done automatically.
         """
-        v_converted = self._var_alias.find(name=variables, default=variables)
-        subset_df = self._gis.subset(
-            geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
+        subset_df = self._gis.subset(geo=geo, start_date=start_date, end_date=end_date, variables=None, errors="raise")
         if not complement:
             return subset_df.convert_dtypes().set_index(self.DATE), "", {}
         default_kwargs = {
@@ -471,7 +469,9 @@ class DataEngineer(Term):
         transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
-        return transformer.all().drop("location", axis=1).set_index(self.DATE), status, status_dict
+        v_converted = self._var_alias.find(name=variables, default=variables)
+        transformed_df = transformer.all().drop("location", axis=1).set_index(self.DATE)
+        return transformed_df.loc[:, v_converted or transformed_df.columns], status, status_dict
 
     def subset_alias(self, alias=None, update=False, **kwargs):
         """Set/get/list-up alias name(s) of subset.
