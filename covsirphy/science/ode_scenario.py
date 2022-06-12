@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from copy import deepcopy
 from datetime import timedelta
 import re
 import pandas as pd
-from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError
+from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
 from covsirphy.util.term import Term
@@ -307,7 +308,7 @@ class ODEScenario(Term):
         last_param_dict = param_df.iloc[-1].to_dict()
         start_date = param_df.index[-1] + timedelta(days=1)
         try:
-            delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(1, None)))
+            delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
             end_date = param_df.index[-1] + delta
         except UnExpectedTypeError:
             end_date = Validator(end, "end", accept_none=False).date(value_range=(start_date, None))
@@ -339,5 +340,6 @@ class ODEScenario(Term):
         names = [name] if isinstance(name, str) else Validator(name, "name").sequence(
             default=list(self._snr_alias.all().keys()))
         for _name in names:
-            self._append(name=_name, end=end or last_end, **kwargs)
+            with contextlib.suppress(UnExpectedValueRangeError):
+                self._append(name=_name, end=end or last_end, **kwargs)
         return self
