@@ -204,6 +204,26 @@ class ODEScenario(Term):
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
 
+    def track(self):
+        """Track reproduction number, parameter value and dimensional parameter values.
+
+        Returns:
+            pandas.DataFrame
+                Index
+                    reset index
+                Columns
+                    Scenario (str): scenario names
+                    Phase (str): phase names
+                    Date (pandas.Timestamp): dates
+                    Rt (float): phase-dependent reproduction number (if parameters are available)
+                    (float): parameter values, including rho (if available)
+                    (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)
+        """
+        df = self.summary().reset_index(drop=False)
+        df[self.DATE] = df[[self.START, self.END]].apply(
+            lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
+        return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
+
     def simulate(self, name=None, variables=None, display=True, **kwargs):
         """Perform simulation with phase-dependent ODE model.
 
@@ -227,12 +247,12 @@ class ODEScenario(Term):
         """
         if name is None:
             sifr_df = self._actual_df.copy()
-            title = f"{self._location_name}: actual number of cases"
+            title = f"{self._location_name}: actual number of cases over time"
             v = None
         else:
             dyn = self.to_dynamics(name=name)
             sifr_df = dyn.simulate(model_specific=False)
-            title = f"{self._location_name} ({name} scenario): simulated number of cases"
+            title = f"{self._location_name} ({name} scenario): simulated number of cases over time"
             v = dyn.start_dates()[1:]
         sifr_df[self.SERIES] = name or self.ACTUAL
         engineer = DataEngineer(layers=[self.SERIES])
