@@ -26,7 +26,7 @@ class AutoMLHandler(Term):
                 observed ODE parameter values (float)
         model (covsirphy.ModelBase): ODE model
         days (int): days to predict
-        kwargs: keyword arguments of autots.AutoTS.
+        kwargs: keyword arguments of autots.AutoTS()
 
     Note:
         When X is a empty dataframe, only "univariate" can be used as @method with AutoHandler.predict().
@@ -85,7 +85,7 @@ class AutoMLHandler(Term):
                     - columns of Y data
 
         Note:
-            "Univariate_Likely" scenario is the most likely scenario when univariate forcasting is used.
+            "Univariate_Likely" scenario is the most likely scenario when univariate forecasting is used.
 
         Note:
             "Univariate_01" scenario is the created with upper values of ODE parameter values.
@@ -113,17 +113,17 @@ class AutoMLHandler(Term):
 
         Args:
             method (str): machine learning method name
-            likely_df (pandas.DataFrame): the most likely values with a forcasting method
+            likely_df (pandas.DataFrame): the most likely values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
                     predicted values (float)
-            upper_df (pandas.DataFrame): the upper values with a forcasting method
+            upper_df (pandas.DataFrame): the upper values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
                     predicted values (float)
-            lower_df (pandas.DataFrame): the lower values with a forcasting method
+            lower_df (pandas.DataFrame): the lower values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
@@ -151,7 +151,7 @@ class AutoMLHandler(Term):
 
     def _univariate(self):
         """
-        Perform univaria forecasting of Y without X.
+        Perform univariate forecasting of Y without X.
 
         Returns:
             tuple(pandas.DataFrame, pandas.DataFrame, pandas.DataFrame): the most likely, upper, lower values

@@ -11,10 +11,11 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
+from covsirphy.visualization.line_plot import line_plot
 from covsirphy.engineering.engineer import DataEngineer
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.dynamics import Dynamics
-from covsirphy.visualization.line_plot import line_plot
+from covsirphy.automl.automl_handler import AutoMLHandler
 
 
 class ODEScenario(Term):
@@ -341,7 +342,7 @@ class ODEScenario(Term):
                 Columns
                     {scenario name} (str): values of the scenario
         """
-        v_converted = self._variable_alias.find(name=variable, default=variable)
+        v_converted = self._variable_alias.find(name=variable, default=[variable])
         Validator(v_converted, "variable", accept_none=False).sequence(length=1)
         dataframes = [self._actual_df.loc[:, v_converted]]
         dataframes.extend(
@@ -445,4 +446,31 @@ class ODEScenario(Term):
         for _name in names:
             with contextlib.suppress(UnExpectedValueRangeError):
                 self._append(name=_name, end=end or last_end, **kwargs)
+        return self
+
+    def predict(self, days, name, **kwargs):
+        """Create scenarios and append a phase, performing univariate prediction of ODE parameters.
+
+        Args:
+            days (int): days to predict
+            name (str): scenario name
+            **kwargs: keyword arguments of autots.AutoTS()
+
+        Return:
+            covsirphy.ODEScenario: self
+        """
+        track_df = self.to_dynamics(name=name).track()
+        model = self._snr_alias(name=name)[self.ODE]
+        Y = track_df.loc[:, model._PARAMETERS]
+        handler = AutoMLHandler(X=pd.DataFrame(index=Y.index), Y=Y, model=model, days=days, **kwargs)
+        handler.predict(method="univariate")
+        phase_df = handler.summary()
+        phase_df = phase_df.rename(
+            columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
+        phase_df = phase_df.sort_values(["suffix", "end"], ignore_index=True)
+        # Set new future phases
+        for phase_dict in phase_df.to_dict(orient="records"):
+            new_name = f"{name}_{phase_dict['suffix']}"
+            self.build_with_template(name=new_name, template=name)
+            self.append(name=new_name, **phase_dict)
         return self
