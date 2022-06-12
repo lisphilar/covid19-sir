@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
 import pytest
 from covsirphy import ODEScenario, SIRFModel, SubsetNotFoundError, ScenarioNotFoundError, Term
 
@@ -24,10 +23,6 @@ class TestODEScenario(object):
         with pytest.raises(ScenarioNotFoundError):
             snr.to_dynamics(name="Un-registered")
 
-    def test_track(self, snr):
-        snr.summary()
-        snr.track()
-
     def test_simulate(self, snr, imgfile):
         snr.simulate(filename=imgfile)
         snr.simulate(name="Baseline", display=False)
@@ -45,7 +40,25 @@ class TestODEScenario(object):
         snr.delete(pattern="Lockdown^")
         assert not {"Lockdown", "Lockdown2", "Lockdown3"}.issubset(snr.summary().reset_index()[snr.SERIES].unique())
         snr.build_with_template(name="Medicine", template="Baseline")
-        snr.append(end=pd.to_datetime("01Jan2100"), name="Medicine", sigma=0.5)
+        snr.append(end="01Jan2100", name="Medicine", sigma=0.5)
         snr.append()
-        df = snr.summary().reset_index().groupby(Term.PHASE).last()
-        assert len(df[self.END].unique()) == 1
+        df = snr.summary().reset_index().groupby(Term.SERIES).last()
+        assert len(df[Term.END].unique()) == 1
+
+    def test_compare(self, snr):
+        snr.build_with_template(name="Lockdown", template="Baseline")
+        snr.append(end=30, name="Medicine", sigma=0.5)
+        snr.append()
+        snr.compare_cases(variable=Term.C)
+        snr.compare_param(param="rho")
+        snr.compare_param(param="Rt")
+        snr.compare_param(param="1/gamma [day]")
+
+    def test_summary_track_describe(self, snr):
+        snr.summary()
+        snr.track()
+        snr.describe()
+
+    def test_predict(self, snr):
+        snr.predict(days=30, name="Baseline")
+        snr.rename(old="Baseline_Univariate_regression_Likely", new="Likely")
