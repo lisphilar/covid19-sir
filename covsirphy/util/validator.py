@@ -140,7 +140,7 @@ class Validator(object):
             return None if default is None else Validator(default, name="default").int(value_range=value_range, round_ok=round_ok)
         try:
             value = int(self._target)
-        except ValueError:
+        except (ValueError, TypeError):
             raise UnExpectedTypeError(self._name, self._target, int) from None
         if value != self._target and not round_ok:
             raise UnExpectedTypeError(

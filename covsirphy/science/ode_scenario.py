@@ -3,6 +3,7 @@
 
 from copy import deepcopy
 from datetime import timedelta
+import re
 import pandas as pd
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError
 from covsirphy.util.validator import Validator
@@ -103,7 +104,7 @@ class ODEScenario(Term):
             template (str): template name
 
         Raises:
-            SubsetNotFoundError: scenario with the name is not registered
+            SubsetNotFoundError: scenario with the name is un-registered
 
         Return:
             covsirphy.ODEScenario: self
@@ -163,22 +164,25 @@ class ODEScenario(Term):
         snl.build_with_model(name="Baseline", model=model)
         return snl
 
-    def delete(self, name):
-        """Delete a scenario.
+    def delete(self, pattern):
+        """Delete scenario(s).
 
         Args:
-            name (str): scenario name
+            pattern (str): scenario name or pattern to search
 
         Raises:
-            SubsetNotFoundError: scenario with the name is not registered
+            SubsetNotFoundError: scenario with the name is un-registered
 
         Return:
             covsirphy.ODEScenario: self
         """
-        try:
-            self._snr_alias.delete(name=name)
-        except KeyError:
-            raise ScenarioNotFoundError(name=name) from None
+        p = re.compile(pattern)
+        names = [name for name in self._snr_alias.all().keys() if p.search(name)]
+        for name in names:
+            try:
+                self._snr_alias.delete(name=name)
+            except KeyError:
+                raise ScenarioNotFoundError(name=name) from None
         return self
 
     def to_dynamics(self, name):
@@ -188,7 +192,7 @@ class ODEScenario(Term):
             name (str): scenario name
 
         Raises:
-            SubsetNotFoundError: scenario with the name is not registered
+            SubsetNotFoundError: scenario with the name is un-registered
 
         Returns:
             covsirphy.Dynamics: instance which has ODE model, tau value and ODE parameter values
@@ -300,7 +304,7 @@ class ODEScenario(Term):
             **kwargs: keyword arguments of ODE parameter values (default: values of the last phase)
 
         Raises:
-            SubsetNotFoundError: scenario with the name is not registered
+            SubsetNotFoundError: scenario with the name is un-registered
         """
         snl_dict = self._snr_alias.find(name=name)
         if snl_dict is None:
@@ -328,7 +332,7 @@ class ODEScenario(Term):
             **kwargs: keyword arguments of ODE parameter values (default: values of the last phase)
 
         Raises:
-            SubsetNotFoundError: scenario with the name is not registered
+            SubsetNotFoundError: scenario with the name is un-registered
 
         Return:
             covsirphy.ODEScenario: self
