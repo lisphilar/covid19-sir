@@ -166,19 +166,37 @@ class ODEScenario(Term):
         snl.build_with_model(name="Baseline", model=model)
         return snl
 
-    def delete(self, pattern):
+    def delete(self, pattern, exact=False):
         """Delete scenario(s).
 
         Args:
             pattern (str): scenario name or pattern to search
+            exact (bool): if False, use regular expressions
 
         Return:
             covsirphy.ODEScenario: self
         """
+        if exact:
+            self._snr_alias.delete(name=pattern)
+            return self
         p = re.compile(pattern)
         names = [name for name in self._snr_alias.all().keys() if p.search(name)]
         for name in names:
             self._snr_alias.delete(name=name)
+        return self
+
+    def rename(self, old, new):
+        """Rename the given scenario names with a new one.
+
+        Args:
+            old (str): old name
+            new (str): new name
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        self.build_with_template(name=new, template=old)
+        self.delete(pattern=old, exact=True)
         return self
 
     def to_dynamics(self, name):
@@ -344,10 +362,11 @@ class ODEScenario(Term):
         """
         v_converted = self._variable_alias.find(name=variable, default=[variable])
         Validator(v_converted, "variable", accept_none=False).sequence(length=1)
-        dataframes = [self._actual_df.loc[:, v_converted]]
+        dataframes = [self._actual_df.assign(**{self.SERIES: self.ACTUAL})]
         dataframes.extend(
-            self.simulate(name=name, variables=[variable], display=False) for name in self._snr_alias.all().keys())
-        df = pd.concat(dataframes, axis=1)
+            self.simulate(name=name, display=False).assign(**{self.SERIES: name}) for name in self._snr_alias.all().keys())
+        df = pd.concat(
+            [DataEngineer(layers=[self.SERIES]).register(data=_df.reset_index()).inverse_transform().all() for _df in dataframes], axis=1)
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
         start = Validator(start_date, name="the first value of @date_range").date(default=df[self.DATE].min())
         end = Validator(
