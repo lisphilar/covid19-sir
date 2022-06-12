@@ -448,9 +448,11 @@ class DataEngineer(Term):
         Note:
             Re-calculation of Susceptible and Infected will be done automatically.
         """
+        v_converted = self._var_alias.find(name=variables, default=variables)
         subset_df = self._gis.subset(geo=geo, start_date=start_date, end_date=end_date, variables=None, errors="raise")
         if not complement:
-            return subset_df.convert_dtypes().set_index(self.DATE), "", {}
+            df = subset_df.set_index(self.DATE)
+            return df.loc[:, v_converted or df.columns].convert_dtypes(), "", {}
         default_kwargs = {
             "recovery_period": 17,
             "interval": 2,
@@ -469,7 +471,6 @@ class DataEngineer(Term):
         transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
-        v_converted = self._var_alias.find(name=variables, default=variables)
         transformed_df = transformer.all().drop("location", axis=1).set_index(self.DATE)
         return transformed_df.loc[:, v_converted or transformed_df.columns], status, status_dict
 

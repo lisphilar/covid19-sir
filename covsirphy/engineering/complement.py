@@ -430,9 +430,6 @@ class _ComplementHandler(Term):
                     Date (pandas.TimeStamp)
                 Columns
                     Confirmed, Fatal, Recovered
-
-        Note:
-            _recovered_sort() must always be called after _recovered_partial_ending()
         """
         df[self.C] = df[[self.C, self.F, self.R]].apply(lambda x: max(x[0], x[1] + x[2]), axis=1)
         return df

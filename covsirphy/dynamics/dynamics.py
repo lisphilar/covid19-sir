@@ -582,3 +582,13 @@ class Dynamics(Term):
         if display:
             compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
         return Evaluator(actual_df, sim_df).score(metric=metric)
+
+    def start_dates(self):
+        """Return the start dates of phases.
+
+        Returns:
+            list of [str]: start dates
+        """
+        df = self._df.reset_index()
+        df[self._PH], _ = df[self._PH].factorize()
+        return df.groupby(self._PH).first()[self.DATE].tolist()

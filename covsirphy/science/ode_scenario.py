@@ -11,6 +11,7 @@ from covsirphy.gis.gis import GIS
 from covsirphy.engineering.engineer import DataEngineer
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.dynamics import Dynamics
+from covsirphy.visualization.line_plot import line_plot
 
 
 class ODEScenario(Term):
@@ -52,6 +53,8 @@ class ODEScenario(Term):
         self._first, self._last = self._actual_df.index.min(), self._actual_df.index.max()
         # {scenario_name: {"ODE": ODEModel, "tau": int, "param": pd.DataFrame(index: Date, columns: ODE parameters)}}
         self._snl_alias = Alias(target_class=dict)
+        # Aliases of variable names
+        self._variable_alias = Alias.for_variables()
 
     def build_with_dynamics(self, name, dynamics):
         """Build a scenario with covsirphy.Dynamics() instance.
@@ -111,12 +114,13 @@ class ODEScenario(Term):
         return self
 
     @classmethod
-    def auto_build(cls, geo, model):
+    def auto_build(cls, geo, model, complement=True):
         """Prepare cleaned and subset data from recommended dataset, create instance, build baseline scenario.
 
         Args:
             geo (tuple(list[str] or tuple(str) or str) or str or None): country, province, city
             model (covsirphy.ODEModel): definition of ODE model
+            complement (bool): whether perform complement or not
 
         Raises:
             SubsetNotFoundError: actual data of the location was not included in the recommended dataset
@@ -137,7 +141,7 @@ class ODEScenario(Term):
             `geo=("USA", "Alabama", "Baldwin")` means country level data of Baldwin/Alabama/USA, as an example.
 
         Note:
-            Complemented data with Recovered > 0 will be analyzed.
+            Complemented (if @complement is True) data with Recovered > 0 will be analyzed.
         """
         Validator(geo, "geo", accept_none=True).instance(expected=(str, tuple, list))
         Validator(model, "model", accept_none=False).subclass(ODEModel)
@@ -146,8 +150,9 @@ class ODEScenario(Term):
         engineer.download(
             country=geo[0] if isinstance(geo, (tuple, list)) and len(geo) > 1 else None,
             province=geo[1] if isinstance(geo, (tuple, list)) and len(geo) > 2 else None)
+        engineer.clean()
         try:
-            subset_df, *_ = engineer.subset(geo=geo, complement=True)
+            subset_df, *_ = engineer.subset(geo=geo, complement=complement)
         except SubsetNotFoundError:
             raise SubsetNotFoundError(
                 geo=geo, details="Please create covsirphy.DataEngineer() instance to prepare data") from None
@@ -196,6 +201,49 @@ class ODEScenario(Term):
             dyn = self.to_dynamics(name=name)
             df = dyn.summary().reset_index()
             df.insert(0, self.SERIES, name)
-            print(df)
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
+
+    def simulate(self, name=None, variables=None, display=True, **kwargs):
+        """Perform simulation with phase-dependent ODE model.
+
+        Args:
+            name (str or None): scenario name registered or None (actual data)
+            variables (list of [str] or None): variables to return or None (["Confirmed", "Fatal", "Recovered"])
+            display (bool): whether display figure of the result or not
+            **kwargs: keyword arguments of covsirphy.line_plot() except for @df
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pd.Timestamp): dates
+                Columns
+                    Population (int): total population
+                    Confirmed (int): the number of confirmed cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+        """
+        if name is None:
+            sifr_df = self._actual_df.copy()
+            title = f"{self._location_name}: actual number of cases"
+            v = None
+        else:
+            dyn = self.to_dynamics(name=name)
+            sifr_df = dyn.simulate(model_specific=False)
+            title = f"{self._location_name} ({name} scenario): simulated number of cases"
+            v = dyn.start_dates()[1:]
+        sifr_df[self.SERIES] = name or self.ACTUAL
+        engineer = DataEngineer(layers=[self.SERIES])
+        engineer.register(data=sifr_df.reset_index())
+        engineer.inverse_transform()
+        v_converted = self._variable_alias.find(name=variables, default=[self.C, self.F, self.R])
+        df = engineer.all().set_index(self.DATE).loc[self._first:self._last, v_converted]
+        # Show figure
+        if not display:
+            return df
+        plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": "the number of cases"}
+        plot_kwargs.update(kwargs)
+        line_plot(df=df, **plot_kwargs)
+        return df
