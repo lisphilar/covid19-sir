@@ -121,7 +121,20 @@ class TestODEModel(object):
         assert_index_equal(solved_df.index, sample_df.index)
         assert_series_equal(solved_df.iloc[0], sample_df.iloc[0])
 
+    @pytest.mark.parametrize("tau", [720])
+    @pytest.mark.parametrize("metric", ["RMSLE"])
+    def test_from_data_with_optimization_with_infinity(self, model_class, tau, metric):
+        if issubclass(model_class, SEWIRFModel):
+            return
+        sample_model = model_class.from_sample(tau=tau)
+        sample_df = sample_model.solve()
+        trans_df = model_class.inverse_transform(sample_df).reset_index()
+        trans_df[Term.R] = 0
+        model_class.from_data_with_optimization(data=trans_df, tau=tau, metric=metric, digits=4)
+
     def test_sr(self, model_class):
+        if issubclass(model_class, SEWIRFModel):
+            return
         sample_model = model_class.from_sample()
         record_df = model_class.inverse_transform(sample_model.solve()).reset_index()
         sr_df = sample_model.sr(record_df)
