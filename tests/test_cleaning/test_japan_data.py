@@ -8,7 +8,7 @@ from covsirphy import Term, JapanData
 
 
 @pytest.fixture(scope="module")
-def japan_data(data_loader):
+def japan_data():
     return JapanData(filename="japan.csv")
 
 
