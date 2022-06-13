@@ -564,7 +564,7 @@ class ODEModel(Term):
             float: score to minimize or positive infinity (when negative values are included in simulated values)
         """
         df = cls._non_dim_to_date(data=data, tau=tau, start_date="01Jan2022")
-        model = cls.from_data(data=df.reset_index(), param_dict=param_dict, tau=tau, digits=None)
+        model = cls.from_data(data=cls.inverse_transform(df).reset_index(), param_dict=param_dict, tau=tau, digits=None)
         sim_df = model.solve()
         evaluator = Evaluator(df, sim_df, how="inner", on=None)
         return evaluator.score(metric=metric)
@@ -581,7 +581,7 @@ class ODEModel(Term):
             allowance (tuple(float, float)): the allowance of the predicted value
 
         Returns:
-            (bool): True when all max values of predicted values are in allowance
+            bool: True when all max values of predicted values are in allowance
         """
         df = cls.inverse_transform(data=data, tau=tau, start_date="01Jan2022").reset_index()
         max_dict = {v: data[v].max() for v in cls._VARIABLES}
