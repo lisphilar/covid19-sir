@@ -101,7 +101,7 @@ class _DataProvider(Term):
         """
         try:
             with contextlib.redirect_stdout(open(os.devnull, "w")):
-                df = datatable.fread(path, header=True).to_pandas()
+                df = datatable.fread(path, header=True, na_strings=["", b""]).to_pandas()
             if date is not None:
                 df[date] = pd.to_datetime(df[date], format=date_format)
             return df.loc[:, columns or df.columns]
