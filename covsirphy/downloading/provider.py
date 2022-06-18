@@ -3,9 +3,11 @@
 
 import contextlib
 from datetime import datetime, timezone, timedelta
+import os
 from pathlib import Path
 import urllib
 import warnings
+import datatable
 import pandas as pd
 from covsirphy.util.term import Term
 
@@ -97,12 +99,16 @@ class _DataProvider(Term):
         Returns:
             pandas.DataFrame: downloaded data
         """
-        warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
-        kwargs = {
-            "header": 0, "usecols": columns,
-            "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
-        }
         try:
-            return pd.read_csv(path, **kwargs)
+            with contextlib.redirect_stdout(open(os.devnull, "w")):
+                df = datatable.fread(path, header=True, na_strings=["", b""]).to_pandas()
+            if date is not None:
+                df[date] = pd.to_datetime(df[date], format=date_format)
+            return df.loc[:, columns or df.columns]
         except urllib.error.HTTPError:
+            warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
+            kwargs = {
+                "header": 0, "usecols": columns,
+                "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
+            }
             return pd.read_csv(path, storage_options={"User-Agent": "Mozilla/5.0"}, **kwargs)

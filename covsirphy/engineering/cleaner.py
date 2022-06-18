@@ -3,7 +3,6 @@
 
 import contextlib
 import pandas as pd
-from covsirphy.util.error import UnExecutedError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -16,9 +15,9 @@ class _DataCleaner(Term):
             Index
                 reset index
             Column
-                - columns defined by @layers
-                - column defined by @date
-                - the other columns
+                columns defined by @layers
+                column defined by @date
+                the other columns
         layers (list[str]): location layers of the data
         date (str): column name of observation dates of the data
     """
@@ -37,9 +36,9 @@ class _DataCleaner(Term):
                 Index
                     reset index
                 Column
-                    - columns defined by @layers of _DataCleaner()
-                    - (pandas.Timestamp): observation dates defined by @date of _DataCleaner()
-                    - the other columns
+                    columns defined by @layers of _DataCleaner()
+                    (pandas.Timestamp): observation dates defined by @date of _DataCleaner()
+                    the other columns
         """
         return self._df
 
@@ -58,20 +57,17 @@ class _DataCleaner(Term):
     def resample(self):
         """Resample records with dates.
         """
+        self.convert_date()
         df = self._df.copy()
         grouped = df.set_index(self._date).groupby(self._layers, as_index=False)
-        try:
-            df = grouped.resample("D").ffill()
-        except TypeError as e:
-            raise UnExecutedError(
-                f"{self._date} column was not a column of date. Please run _DataEngineer.convert_date()") from e
+        df = grouped.resample("D").ffill()
         self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
 
     def fillna(self):
         """Fill NA values with '-' (layers) and the previous values and 0.
         """
         df = self._df.copy()
-        df.loc[:, self._layers] = df.loc[:, self._layers].fillna(self.NA)
+        df.loc[:, self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
         for col in set(df.columns) - set(self._id_cols):
             df[col] = df.groupby(self._layers)[col].ffill().fillna(0)
         self._df = df.copy()
