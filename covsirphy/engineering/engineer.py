@@ -553,4 +553,4 @@ class DataEngineer(Term):
         df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
         df["Elapsed"] = df[cls.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
-        return round(df["Elapsed"].mode().mean())
+        return 0 if df.empty else round(df["Elapsed"].mode().mean())
