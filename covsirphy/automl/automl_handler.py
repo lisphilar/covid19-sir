@@ -6,6 +6,7 @@ import pandas as pd
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.dynamics.ode import ODEModel
 from covsirphy.automl.autots_predictor import _AutoTSPredictor
 
 
@@ -24,9 +25,9 @@ class AutoMLHandler(Term):
                 pandas.Timestamp: Observation date
             Columns
                 observed ODE parameter values (float)
-        model (covsirphy.ModelBase): ODE model
+        model (covsirphy.ModelBase or covsirphy.ODEModel): ODE model
         days (int): days to predict
-        kwargs: keyword arguments of autots.AutoTS.
+        kwargs: keyword arguments of autots.AutoTS()
 
     Note:
         When X is a empty dataframe, only "univariate" can be used as @method with AutoHandler.predict().
@@ -36,9 +37,13 @@ class AutoMLHandler(Term):
     _LOWER = "Lower"
 
     def __init__(self, X, Y, model, days, **kwargs):
-        self._model = Validator(model, "model").subclass(ModelBase)
+        self._model = Validator(model, "model").subclass(parent=(ModelBase, ODEModel))
+        if issubclass(self._model, ModelBase):
+            self._parameters = self._model.PARAMETERS[:]
+        else:
+            self._parameters = self._model._PARAMETERS[:]
         self._X = Validator(X, "X").dataframe(time_index=True, empty_ok=True)
-        self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False, columns=model.PARAMETERS)
+        self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False, columns=self._parameters)
         self._days = Validator(days, name="days").int(value_range=(1, None))
         self._kwargs = kwargs.copy()
         self._pred_df = pd.DataFrame(columns=[self.SERIES, self.DATE, *Y.columns.tolist()])
@@ -85,7 +90,7 @@ class AutoMLHandler(Term):
                     - columns of Y data
 
         Note:
-            "Univariate_Likely" scenario is the most likely scenario when univariate forcasting is used.
+            "Univariate_Likely" scenario is the most likely scenario when univariate forecasting is used.
 
         Note:
             "Univariate_01" scenario is the created with upper values of ODE parameter values.
@@ -98,13 +103,18 @@ class AutoMLHandler(Term):
         """
         df = self._pred_df.copy()
         # Calculate reproduction number to create phases
-        df["param"] = df[self._model.PARAMETERS].to_dict(orient="records")
-        df[self.RT] = df.apply(lambda x: self._model(population=100, **x["param"]).calc_r0(), axis=1).round(1)
+        df["param"] = df[self._parameters].to_dict(orient="records")
+        if issubclass(self._model, ModelBase):
+            df[self.RT] = df.apply(lambda x: self._model(population=100, **x["param"]).calc_r0(), axis=1).round(1)
+        else:
+            dummy_df = pd.DataFrame(columns=[self.DATE, *self.SIFR])
+            df[self.RT] = df[self._parameters].apply(
+                lambda x: self._model.from_data(data=dummy_df, param_dict=x.to_dict(), tau=1440).r0(), axis=1).round(1)
         # Get start/end date
         criteria = [self.SERIES, self.RT]
         df = df.groupby(criteria).first().join(df[[*criteria, self.DATE]].groupby(criteria).last(), rsuffix="_last")
         df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
-        df = df.reset_index().loc[:, [self.SERIES, self.START, self.END, self.RT, *self._model.PARAMETERS]]
+        df = df.reset_index().loc[:, [self.SERIES, self.START, self.END, self.RT, *self._parameters]]
         return df.sort_values([self.SERIES, self.START], ignore_index=True)
 
     def _register_scenarios(self, method, likely_df, upper_df, lower_df):
@@ -113,17 +123,17 @@ class AutoMLHandler(Term):
 
         Args:
             method (str): machine learning method name
-            likely_df (pandas.DataFrame): the most likely values with a forcasting method
+            likely_df (pandas.DataFrame): the most likely values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
                     predicted values (float)
-            upper_df (pandas.DataFrame): the upper values with a forcasting method
+            upper_df (pandas.DataFrame): the upper values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
                     predicted values (float)
-            lower_df (pandas.DataFrame): the lower values with a forcasting method
+            lower_df (pandas.DataFrame): the lower values with a forecasting method
                 Index
                     Date (pandas.Timestamp): observation date
                 Columns
@@ -151,7 +161,7 @@ class AutoMLHandler(Term):
 
     def _univariate(self):
         """
-        Perform univaria forecasting of Y without X.
+        Perform univariate forecasting of Y without X.
 
         Returns:
             tuple(pandas.DataFrame, pandas.DataFrame, pandas.DataFrame): the most likely, upper, lower values
