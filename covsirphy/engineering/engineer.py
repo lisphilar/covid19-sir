@@ -1,69 +1,132 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import pandas as pd
-from covsirphy.util.error import UnExecutedError, UnExpectedValueError, SubsetNotFoundError
+from covsirphy.util.error import NotIncludedError
+from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
+from covsirphy.gis.gis import GIS
+from covsirphy.downloading.downloader import DataDownloader
 from covsirphy.engineering.cleaner import _DataCleaner
 from covsirphy.engineering.transformer import _DataTransformer
 from covsirphy.engineering.complement import _ComplementHandler
 
 
 class DataEngineer(Term):
-    """Class for data engineering including cleaning, transforming and complementing.
+    """Class for data engineering including loading, cleaning, transforming, complementing, EDA (explanatory data analysis).
 
     Args:
-        data (pandas.DataFrame): raw data
-            Index
-                reset index
-            Column
-                - columns defined by @layers
-                - column defined by @date
-                - the other columns
-        layers (list[str]): location layers of the data
-        date (str): column name of observation dates of the data
+        layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
+        country (str or None): layer name of countries or None (countries are not included in the layers)
+        verbose (int): level of verbosity of stdout
+
+        Raises:
+            ValueError: @layers has duplicates
+
+        Note:
+            Country level data specified with @country will be stored with ISO3 codes.
+
+        Note:
+            If @verbose is 0, no descriptions will be shown.
+            If @verbose is 1 or larger, details of layer adjustment will be shown.
     """
-    # Logs of complement
-    VARIABLE = "Variable"
-    DESCRIPTION = "Description"
-    SCORE = "Score"
-    # Default values of keyword arguments of complement
-    DEFAULT_COMPLEMENT_KWARGS = {
-        "recovery_period": 17,
-        "interval": 2,
-        "max_ignored": 100,
-        "max_ending_unupdated": 14,
-        "upper_limit_days": 90,
-        "lower_limit_days": 7,
-        "upper_percentage": 0.5,
-        "lower_percentage": 0.5,
-    }
 
-    def __init__(self, data, layers, date="Date"):
-        self._layers = Validator(layers, "layers").sequence()
-        self._date = str(date)
-        self._id_cols = [*self._layers, self._date]
-        self._df = Validator(data, "data").dataframe(columns=[*self._layers, self._date])
+    def __init__(self, layers=None, country="ISO3", verbose=1):
+        self._layers = Validator(layers, "layers").sequence(default=[self.ISO3, self.PROVINCE, self.CITY])
+        self._country = str(country)
+        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
+        self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE, verbose=verbose)
+        self._gis = GIS(**self._gis_kwargs)
+        # Aliases
+        self._var_alias = Alias.for_variables()
+        self._subset_alias = Alias(target_class=tuple)
 
-    def all(self):
+    def register(self, data, citations=None, **kwargs):
+        """Register new data.
+
+        Args:
+            data (pandas.DataFrame): new data
+                Index
+                    reset index
+                Columns
+                    columns defined by covsirphy.DataEngineer(layer)
+                    Date (pandas.DataFrame): observation dates
+                    Population (int): total population, optional
+                    Tests (int): column of the number of tests, optional
+                    Confirmed (int): the number of confirmed cases, optional
+                    Fatal (int): the number of fatal cases, optional
+                    Recovered (int): the number of recovered cases, optional
+                    the other columns will be also registered
+            citations (list[str] or str or None): citations of the dataset or None (["my own dataset"])
+            **kwargs: keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not"
+
+        Returns:
+            covsirphy.DataEngineer: self
+        """
+        Validator(data, "data").dataframe(columns=[*self._layers, self.DATE])
+        self._gis.register(
+            data=data, layers=self._layers, date=self.DATE, variables=None,
+            citations=citations or ["my own dataset"], convert_iso3=(self._country in self._layers), **kwargs)
+        return self
+
+    def download(self, **kwargs):
+        """Download datasets from the recommended data servers using covsirphy.DataDownloader.
+
+        Args:
+            **kwargs: keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()
+
+        Returns:
+            covsirphy.DataEngineer: self
+
+        Note:
+            When @verbose is not included in **kwargs, covsirphy.DataEngineer(verbose) will be used.
+        """
+        default_dict = {"verbose": self._verbose}
+        validator = Validator(kwargs, name="keyword arguments")
+        downloader = DataDownloader(**validator.kwargs(DataDownloader, default=default_dict))
+        df = downloader.layer(**validator.kwargs(DataDownloader.layer, default=default_dict))
+        citations = downloader.citations()
+        self._gis.register(
+            data=df, layers=[self.ISO3, self.PROVINCE, self.CITY], date=self.DATE, variables=None,
+            citations=citations, convert_iso3=False, **kwargs)
+        return self
+
+    def all(self, variables=None):
         """Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().
+
+        Args:
+            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)
+
+        Raises:
+            NotRegisteredError: No records have been registered yet
 
         Returns:
             pandas.DataFrame:
                 Index
                     reset index
                 Column
-                    - columns defined by @layers of _DataEngineer()
-                    - (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
-                    - the other columns
+                    columns defined by @layers of _DataEngineer()
+                    (pandas.Timestamp): observation dates defined by @date of _DataEngineer()
+                    the other columns
         """
-        all_cols = self._df.columns.tolist()
-        columns = self._id_cols + sorted(set(all_cols) - set(self._id_cols), key=all_cols.index)
-        return self._df.reindex(columns=columns).convert_dtypes()
+        return self._gis.all(variables=self._var_alias.find(name=variables, default=variables), errors="raise").convert_dtypes()
+
+    def citations(self, variables=None):
+        """
+        Return citation list of the secondary data sources.
+
+        Args:
+            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)
+
+        Returns:
+            list[str]: citation list
+        """
+        return self._gis.citations(variables=self._var_alias.find(name=variables, default=variables))
 
     def clean(self, kinds=None, **kwargs):
-        """Perform data cleaning.
+        """Clean all registered data.
 
         Args:
             kinds (list[str] or None): kinds of data cleaning with order or None (all available kinds as follows)
@@ -73,40 +136,32 @@ class DataEngineer(Term):
             **kwargs: keyword arguments of data cleaning refer to note
 
         Returns:
-            DataEngineer: self
+            covsirphy.DataEngineer: self
 
         Note:
             For "convert_date", keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not" can be used.
         """
-        cleaner = _DataCleaner(data=self._df, layers=self._layers, date=self._date)
+        citations = self._gis.citations(variables=None)
+        cleaner = _DataCleaner(data=self._gis.all(), layers=self._layers, date=self.DATE)
         kind_dict = {
             "convert_date": cleaner.convert_date,
             "resample": cleaner.resample,
             "fillna": cleaner.fillna,
         }
         all_kinds = list(kind_dict.keys())
-        selected = all_kinds if kinds is None else Validator(kinds, "kind").sequence(candidates=all_kinds)
+        selected = Validator(kinds, "kind").sequence(default=all_kinds, candidates=all_kinds)
         for kind in selected:
-            try:
-                kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
-            except UnExecutedError:
-                raise UnExecutedError(
-                    "DataEngineer.clean(kinds=['convert_date'])",
-                    details=f"Column {self._date} was not a column of date") from None
-        self._df = cleaner.all()
+            kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=cleaner.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
 
-    def transform(self, new_dict=None, **kwargs):
-        """Transform the data, calculating the number of susceptible and infected cases.
+    def transform(self):
+        """Transform all registered data, calculating the number of susceptible and infected cases.
 
-        Args:
-            new_dict (dict[str, str]): new column names (if not included, will not be calculated)
-                susceptible (str): the number of susceptible cases
-                infected (str): the number of infected cases
-            kwargs (dict[str, str]): dictionary of existed columns
-                - population (str): total population
-                - confirmed (str): the number of confirmed cases
-                - fatal (str): the number of fatal cases
-                - recovered (str): the number of recovered cases
+        Returns:
+            covsirphy.DataEngineer: self
 
         Note:
             Susceptible = Population - Confirmed.
@@ -114,175 +169,388 @@ class DataEngineer(Term):
         Note:
             Infected = Confirmed - Fatal - Recovered.
         """
-        transformer = _DataTransformer(data=self._df, layers=self._layers, date=self._date)
-        method_dict = {
-            "susceptible": transformer.susceptible,
-            "infected": transformer.infected,
-        }
-        for (variable, new_column) in (new_dict or {}).items():
-            if variable in method_dict:
-                method_dict[variable](new=new_column, **kwargs)
-        self._df = transformer.all()
+        all_df = self._gis.all()
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=all_df, layers=self._layers, date=self.DATE)
+        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
+        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def inverse_transform(self):
+        """Perform inverse transformation, calculating total population and confirmed.
+
+        Returns:
+            covsirphy.DataEngineer: self
+
+        Note:
+            Population = Susceptible + Confirmed.
+
+        Note:
+            Confirmed = Infected + Fatal + Recovered.
+        """
+        Validator(self._gis.all(), "all registered data").dataframe(columns=[self.S, self.CI, self.F, self.R])
+        self.add(columns=[self.CI, self.F, self.R], new=self.C)
+        self.add(columns=[self.S, self.C], new=self.N)
+        return self
 
     def diff(self, column, suffix="_diff", freq="D"):
-        """Calculate daily new cases with "x(x>0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers".
+        """Calculate daily new cases with "f(x>0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers".
 
         Args:
             column (str): column name of the cumulative numbers
             suffix (str): suffix if the column (new column name will be '{column}{suffix}')
             freq (str): offset aliases of shifting dates
 
+        Returns:
+            covsirphy.DataEngineer: self
+
         Note:
             Regarding @freq, refer to https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
-        """
-        transformer = _DataTransformer(data=self._df, layers=self._layers, date=self._date)
-        transformer.diff(column=column, suffix=suffix, freq=freq)
-        self._df = transformer.all()
 
-    def complement_assess(self, address, col_dict, **kwargs):
-        """Assess the data of a location and list-up necessary complement procedures.
+        Note:
+            If the alias of values
+        """
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.diff(
+            column=Validator(
+                self._var_alias.find(name=column, default=[column]), "column", accept_none=False).sequence(length=1)[0],
+            suffix=suffix, freq=freq)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def add(self, columns, new=None, fill_value=0):
+        """Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +...
 
         Args:
-            address (list[str] or str): list/str to specify location, like ["Japan", "Tokyo"] when layers=["Country", "Prefecture"]
-            col_dict (dict[str, str]): dictionary of column names
-                - confirmed (str): column of the number of confirmed cases
-                - fatal (str): column of the number of fatal cases
-                - recovered (str): column of the number of recovered cases
-                - tests (str): column of the number of tests
-            kwargs: Keyword arguments of the following
-                recovery_period (int): expected value of recovery period [days]
-                interval (int): expected update interval of the number of recovered cases [days]
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-                max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]
-                upper_limit_days (int): maximum number of valid partial recovery periods [days]
-                lower_limit_days (int): minimum number of valid partial recovery periods [days]
-                upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
-                lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
-
-        Raises:
-            ValueError: the length of @address is not the same as @layers of DataEngineer
-            SubsetNotFoundError: no records were found with the address
+            columns (str): columns to add
+            new (str): column name of addition or None (f"{X1}+{X2}+{X3}...")
+            fill_value (float): value to fill in NAs
 
         Returns:
-            list[tuple(str or list[str], str, dict[str])]: list of the combinations of variables (columns), rules and conditions
-
-        Note:
-            Available rules are
-                - monotonic increasing complemented confirmed data,
-                - monotonic increasing complemented fatal data,
-                - monotonic increasing complemented recovered data,
-                - monotonic increasing complemented tests data,
-                - fully complemented recovered data,
-                - partially complemented recovered data (internal),
-                - partially complemented tests data (internal),
-                - partially complemented recovered data (ending),
-                - partially complemented tests data (ending).
-
-        Note:
-            Regarding @address, None is equal to '-' (NA).
-
-        Note:
-            Default values of **kwargs can be confirmed with class variable DataEngineer.DEFAULT_COMPLEMENT_KWARGS.
+            covsirphy.DataEngineer: self
         """
-        comp_kwargs = self.DEFAULT_COMPLEMENT_KWARGS.copy()
-        comp_kwargs.update(kwargs)
-        # Location
-        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
-        if len(address_converted) != len(self._layers):
-            raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
-        df = self._df.copy()
-        for location, layer in zip(address_converted, self._layers):
-            df = df.loc[df[layer] == (location or self.NA)]
-        if df.empty:
-            raise SubsetNotFoundError(geo=address)
-        # Set-up handler with variables
-        c_dict = dict.fromkeys(["confirmed", "fatal", "recovered", "tests"])
-        c_dict.update(col_dict)
-        cfr = [c_dict["confirmed"], c_dict["fatal"], c_dict["recovered"]]
-        confirmed, _, recovered, tests = *cfr, c_dict["tests"]
-        handler = _ComplementHandler(data=df, date=self._date)
-        procedures = [
-            ([col], f"monotonic increasing complemented {key} data", None)
-            for (key, col) in c_dict.items() if col is not None and handler.assess_monotonic_increase(col)]
-        if None not in cfr and handler.assess_recovered_full(*cfr, **comp_kwargs):
-            procedures.append((cfr, "fully complemented recovered data", comp_kwargs))
-        if None not in [confirmed, recovered] and handler.assess_partial_internal(recovered, **comp_kwargs):
-            procedures.append(([confirmed, recovered], "partially complemented recovered data (internal)", comp_kwargs))
-        if None not in [confirmed, tests] and handler.assess_partial_internal(tests, **comp_kwargs):
-            procedures.append(([confirmed, tests], "partially complemented tests data (internal)", comp_kwargs))
-        if None not in cfr and handler.assess_partial_ending(recovered, **comp_kwargs):
-            procedures.append((cfr, "partially complemented recovered data (ending)", comp_kwargs))
-        if tests is not None and handler.assess_partial_ending(tests, **comp_kwargs):
-            procedures.append(([tests], "partially complemented tests data (ending)", comp_kwargs))
-        return procedures
+        col_names = self._var_alias.find(name=columns, default=columns)
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
 
-    def complement_force(self, address, procedures):
-        """Perform complement per the operation procedures.
+    def mul(self, columns, new=None, fill_value=0):
+        """Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 *...
 
         Args:
-            address (list[str] or str): list/str to specify location, like ["Japan", "Tokyo"] when layers=["Country", "Prefecture"]
-            procedures (list[tuple(str, str)]): list of the combinations of variables (columns), rules and conditions
-
-        Raises:
-            ValueError: the length of @address is not the same as @layers of DataEngineer
-            SubsetNotFoundError: no records were found with the address
+            columns (str): columns to multiply
+            new (str): column name of multiplication or None (f"{X1}*{X2}*{X3}...")
+            fill_value (float): value to fill in NAs
 
         Returns:
-            pandas.DataFrame: logs of complement
-                Index
+            covsirphy.DataEngineer: self
+        """
+        col_names = self._var_alias.find(name=columns, default=columns)
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.mul(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def sub(self, minuend, subtrahend, new=None, fill_value=0):
+        """Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.
+
+        Args:
+            minuend (str): numerator column
+            subtrahend (str): subtrahend column
+            new (str): column name of subtraction or None (f"{minuend}-{subtrahend}")
+            fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
+        """
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.sub(
+            minuend=Validator(
+                self._var_alias.find(name=minuend, default=[minuend]), "minuend", accept_none=False).sequence(length=1)[0],
+            subtrahend=Validator(
+                self._var_alias.find(name=subtrahend, default=[subtrahend]), "subtrahend", accept_none=False).sequence(length=1)[0],
+            new=new or f"{minuend}-{subtrahend}", fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def div(self, numerator, denominator, new=None, fill_value=0):
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.
+
+        Args:
+            numerator (str): numerator column
+            denominator (str): denominator column
+            new (str or None): column name of floating division or None (f"{numerator}_per_({denominator.replace(' ', '_')})")
+            fill_value (float): value to fill in NAs
+
+        Returns:
+            covsirphy.DataEngineer: self
+
+        Note:
+            Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
+        """
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.div(
+            numerator=Validator(
+                self._var_alias.find(name=numerator, default=[numerator]), "numerator", accept_none=False).sequence(length=1)[0],
+            denominator=Validator(
+                self._var_alias.find(name=denominator, default=[denominator]), "denominator", accept_none=False).sequence(length=1)[0],
+            new=new or f"{numerator}_per_({denominator.replace(' ', '_')})", fill_value=fill_value)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def assign(self, **kwargs):
+        """Assign a new column with pandas.DataFrame.assign().
+
+        Args:
+            **kwargs: dict of {str: callable or pandas.Series}
+
+        Note:
+            Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
+        """
+        citations = self._gis.citations(variables=None)
+        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer.assign(**kwargs)
+        self._gis = GIS(**self._gis_kwargs)
+        self._gis.register(
+            data=transformer.all(), layers=self._layers, date=self.DATE, variables=None, citations=citations, convert_iso3=False)
+        return self
+
+    def layer(self, geo=None, start_date=None, end_date=None, variables=None):
+        """Return the data at the selected layer in the date range.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            variables (list[str] or None): list of variables to add or None (all available columns)
+
+        Raises:
+            TypeError: @geo has un-expected types
+            ValueError: the length of @geo is larger than the length of layers
+            NotRegisteredError: No records have been registered at the layer yet
+
+        Returns:
+            pandas.DataFrame:
+                Index:
                     reset index
                 Columns
-                    - Variable (str): variable names
-                    - Description (str): description of complement procedures
-                    - Score (str): levels of complement (high score means more significant change) or 0 (not complemented)
+                    - (str): columns defined by covsirphy.GIS(layers)
+                    - Date (pandas.Timestamp): observation dates
+                    - columns defined by @variables
 
         Note:
-            Regarding rules, please refer to DataEngineer.complement_assess().
+           Note that records with NAs as country names will be always removed.
 
         Note:
-            Scores are
-            - "monotonic increasing complemented confirmed data": 1,
-            - "monotonic increasing complemented fatal data": 1,
-            - "monotonic increasing complemented recovered data": 1,
-            - "monotonic increasing complemented tests data": 1,
-            - "fully complemented recovered data": 3,
-            - "partially complemented recovered data (internal)": 2,
-            - "partially complemented tests data (internal)": 2,
-            - "partially complemented recovered data (ending)": 2,
-            - "partially complemented tests data (ending)": 2.
+            Regarding @geo argument, please refer to covsirphy.GIS.layer().
         """
-        # Location
-        address_converted = Validator([address] if isinstance(address, str) else address, "address").sequence()
-        if len(address_converted) != len(self._layers):
-            raise ValueError(f"@address ({address}) must have the same length with layers ({self._layers}), but not.")
-        df, remain_df = self._df.copy(), self._df.copy()
-        for location, layer in zip(address_converted, self._layers):
-            df = df.loc[df[layer] == (location or self.NA)]
-            remain_df = remain_df.loc[remain_df[layer] != (location or self.NA)]
-        if df.empty:
-            raise SubsetNotFoundError(geo=address)
-        # Complements
-        handler = _ComplementHandler(data=self._df, date=self._date)
-        method_dict = {
-            "monotonic increasing complemented confirmed data": {"method": handler.force_monotonic_increase, "score": 1},
-            "monotonic increasing complemented fatal data": {"method": handler.force_monotonic_increase, "score": 1},
-            "monotonic increasing complemented recovered data": {"method": handler.force_monotonic_increase, "score": 1},
-            "monotonic increasing complemented tests data": {"method": handler.force_monotonic_increase, "score": 1},
-            "fully complemented recovered data": {"method": handler.force_recovered_full, "score": 3},
-            "partially complemented recovered data (internal)": {"method": handler.force_partial_internal, "score": 2},
-            "partially complemented tests data (internal)": {"method": handler.force_partial_internal, "score": 2},
-            "partially complemented recovered data (ending)": {"method": handler.force_recovered_partial_ending, "score": 2},
-            "partially complemented tests data (ending)": {"method": handler.force_tests_partial_ending, "score": 2},
+        v_converted = self._var_alias.find(name=variables, default=variables)
+        return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
+
+    def choropleth(self, geo, variable, on=None, title="Choropleth map", filename="choropleth.jpg", logscale=True, directory="input", natural_earth=None, **kwargs):
+        """Create choropleth map.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
+            variable (str): variable name to show
+            on (str or None): the date, like 22Jan2020, or None (the last date of each location)
+            title (str): title of the map
+            filename (str or None): filename to save the figure or None (display)
+            logscale (bool): whether convert the value to log10 scale values or not
+            directory (str): directory to save GeoJSON file of "Natural Earth" GitHub repository
+            natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
+            kwargs: keyword arguments of the following classes and methods.
+                - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
+                - pandas.DataFrame.plot()
+
+        Note:
+            Regarding @geo argument, please refer to covsirphy.GIS.layer().
+
+        Note:
+            GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson
+            https://www.naturalearthdata.com/
+            https://github.com/nvkelso/natural-earth-vector
+            Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)
+        """
+        layer_df = self.layer(geo=geo, variables=[variable])
+        gis = GIS(**self._gis_kwargs)
+        gis.register(data=layer_df, date=self.DATE)
+        gis.choropleth(
+            variable=variable, filename=filename, title=title, logscale=logscale,
+            geo=geo, on=on, directory=[directory, "natural_earth"], natural_earth=natural_earth, **kwargs)
+
+    def subset(self, geo=None, start_date=None, end_date=None, variables=None, complement=True, **kwargs):
+        """Return subset of the location and date range.
+
+        Args:
+            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            variables (list[str] or None): list of variables to add or None (all available columns)
+            **Kwargs: keyword arguments for complement and default values
+                recovery_period (int): expected value of recovery period [days], 17
+                interval (int): expected update interval of the number of recovered cases [days], 2
+                max_ignored (int): Max number of recovered cases to be ignored [cases], 100
+                max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days], 14
+                upper_limit_days (int): maximum number of valid partial recovery periods [days], 90
+                lower_limit_days (int): minimum number of valid partial recovery periods [days], 7
+                upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5
+                lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5
+
+        Returns:
+            tuple(pandas.DataFrame, str, dict):
+                pandas.DataFrame
+                    Index
+                        Date (pandas.DataFrame): observation dates
+                    Columns
+                        Population (int): total population
+                        Tests (int): column of the number of tests
+                        Confirmed (int): the number of confirmed cases
+                        Fatal (int): the number of fatal cases
+                        Recovered (int): the number of recovered cases
+                        the other columns registered
+                str: status code: will be selected from
+                    - '' (not complemented)
+                    - 'monotonic increasing complemented confirmed data'
+                    - 'monotonic increasing complemented fatal data'
+                    - 'monotonic increasing complemented recovered data'
+                    - 'fully complemented recovered data'
+                    - 'partially complemented recovered data'
+                dict[str, bool]: status for each complement type, keys are
+                    - Monotonic_confirmed
+                    - Monotonic_fatal
+                    - Monotonic_recovered
+                    - Full_recovered
+                    - Partial_recovered
+
+        Note:
+            Regarding @geo argument, please refer to covsirphy.GIS.subset().
+
+        Note:
+            Re-calculation of Susceptible and Infected will be done automatically.
+        """
+        v_converted = self._var_alias.find(name=variables, default=variables)
+        subset_df = self._gis.subset(geo=geo, start_date=start_date, end_date=end_date, variables=None, errors="raise")
+        if not complement:
+            df = subset_df.set_index(self.DATE)
+            return df.loc[:, v_converted or df.columns].convert_dtypes(), "", {}
+        default_kwargs = {
+            "recovery_period": 17,
+            "interval": 2,
+            "max_ignored": 100,
+            "max_ending_unupdated": 14,
+            "upper_limit_days": 90,
+            "lower_limit_days": 7,
+            "upper_percentage": 0.5,
+            "lower_percentage": 0.5,
         }
-        forced_dict = {}
-        for i, (cols, description, comp_kwargs) in enumerate(procedures):
-            if description not in method_dict:
-                raise UnExpectedValueError(name="procedure", value=description, candidates=list(method_dict.keys()))
-            is_forced = method_dict[description]["method"](*cols, **(comp_kwargs or {}))
-            score = method_dict[description]["score"] if is_forced else 0
-            forced_dict[i] = [cols[-1], description, score]
-        # Logs
-        log_columns = [self.VARIABLE, self.DESCRIPTION, self.SCORE]
-        log_df = pd.DataFrame.from_dict(forced_dict, orient="index", columns=log_columns)
-        self._df = pd.concat([handler.all(), remain_df], axis=0, ignore_index=True)
-        return log_df
+        handler = _ComplementHandler(
+            **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
+        c_df, status, status_dict = handler.run(data=subset_df)
+        df = pd.concat([subset_df.drop([self.DATE, self.C, self.F, self.R], axis=1), c_df], axis=1)
+        df["location"] = self.NA
+        transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
+        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
+        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
+        transformed_df = transformer.all().drop("location", axis=1).set_index(self.DATE)
+        return transformed_df.loc[:, v_converted or transformed_df.columns], status, status_dict
+
+    def subset_alias(self, alias=None, update=False, **kwargs):
+        """Set/get/list-up alias name(s) of subset.
+
+        Args:
+            alias (str or None): alias name or None (list-up alias names)
+            update (bool): force updating the alias when @alias is not None
+            **kwargs: keyword arguments of covsirphy.DataEngineer().subset()
+
+        Returns:
+            tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]:
+                - tuple(pandas.DataFrame, str, dict): when @alias is not None, the subset of the alias
+                - dict[str, tuple(pandas.DataFrame, str, dict)]: when @alias is None, dictionary of aliases and subsets
+
+        Note:
+            When the alias name was a new one, subset will be registered with covsirphy.DataEngineer.subset(**kwargs).
+        """
+        if alias is None:
+            return self._subset_alias.all()
+        result = self._subset_alias.find(alias, default=None)
+        if update or result is None:
+            self._subset_alias.update(name=alias, target=self.subset(**kwargs))
+        return self._subset_alias.find(alias)
+
+    def variables_alias(self, alias=None, variables=None):
+        """Set/get/list-up alias name(s) of variables.
+
+        Args:
+            alias (str or None): alias name or None (list-up alias names)
+            variables (list[str]): variables to register with the alias
+
+        Raises:
+            NotIncludedError: the alias is not None and un-registered
+
+        Returns:
+            list[str] or dict[str, list[str]]:
+                - list[str]: when @alias is not None, the variables of the alias
+                - dict[str, list[str]]: when @alias is None, dictionary of aliases and variables
+
+        Note:
+            When @variables is not None, alias will be registered/updated.
+
+        Note:
+            Some aliases are preset. We can check them with covsirphy.DataEngineer().variables_alias().
+        """
+        if alias is None:
+            return self._var_alias.all()
+        if variables is not None:
+            self._var_alias.update(name=alias, target=variables)
+        elif alias not in self._var_alias.all():
+            raise NotIncludedError(alias, "keys of alias dictionary of variables")
+        return self._var_alias.find(name=alias)
+
+    @classmethod
+    def recovery_period(cls, data):
+        """Calculate mode value of recovery period of the data.
+
+        Args:
+            data (pandas.DataFrame): data for calculation
+                Index
+                    Date (pandas.Timestamp): observation dates
+                Columns
+                    Confirmed (int): the number of confirmed cases, optional
+                    Fatal (int): the number of fatal cases, optional
+                    Recovered (int): the number of recovered cases, optional
+                    the other columns will be ignored
+
+        Returns:
+            int: mode value of recovery period [days]
+        """
+        df = Validator(data, "data").dataframe(time_index=True, columns=[cls.C, cls.F, cls.R], empty_ok=False)
+        df = df.resample("D").sum()
+        df["diff"] = df[cls.C] - df[cls.F]
+        df = df.loc[:, ["diff", cls.R]].unstack().reset_index()
+        df.columns = ["Variable", "Date", "Number"]
+        df["Days"] = (df["Date"] - df["Date"].min()).dt.days
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        df["Elapsed"] = df[cls.R] - df["diff"]
+        df = df.loc[df["Elapsed"] > 0]
+        return 0 if df.empty else round(df["Elapsed"].mode().mean())

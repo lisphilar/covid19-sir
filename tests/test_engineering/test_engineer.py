@@ -1,55 +1,69 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pandas.testing import assert_frame_equal
 import pytest
-from covsirphy import DataEngineer, UnExecutedError, SubsetNotFoundError
+from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
+from covsirphy.util.error import NotIncludedError
 
 
 class TestDataEngineer(object):
-    def test_clean(self, japan_df):
-        engineer = DataEngineer(data=japan_df, layers=["Country", "Prefecture"], date="date")
-        with pytest.raises(UnExecutedError):
-            engineer.clean(kinds=["resample"])
-        engineer.clean(kinds=None)
-        df = engineer.all()
-        assert not df.isna().values.any()
-        assert df.columns.tolist() == ["Country", "Prefecture", "date", "Positive", "Tested", "Discharged", "Fatal"]
+    def test_from_sample_data(self):
+        dynamics = Dynamics.from_sample(model=SIRFModel)
+        data = dynamics.simulate().reset_index()
+        data.insert(0, "Model", SIRFModel.name())
+        engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
+        engineer.register(data, citations="Simulated data")
+        assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R}
+        assert engineer.citations() == ["Simulated data"]
+        engineer.inverse_transform()
+        assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R, Term.N, Term.C}
+        assert len(engineer.subset(geo=SIRFModel.name())[0]) == len(data)
 
-    def test_transform(self, c_df):
-        df = c_df.copy()
-        df["Population"] = 125_190_000
-        engineer = DataEngineer(data=df, layers=["Country"], date="date")
-        engineer.clean(kinds=None)
-        new_dict = {
-            "susceptible": "Susceptible", "infected": "Infected",
-        }
-        col_dict = {
-            "population": "Population", "confirmed": "Positive", "fatal": "Fatal", "recovered": "Discharged",
-        }
-        engineer.transform(new_dict, **col_dict)
-        df = engineer.all()
-        assert {"Susceptible", "Infected"}.issubset(df.columns)
+    def test_operations(self):
+        dynamics = Dynamics.from_sample(model=SIRFModel)
+        data = dynamics.simulate().reset_index()
+        data.insert(0, "Model", SIRFModel.name())
+        engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
+        engineer.register(data, citations="Simulated data")
+        engineer.inverse_transform()
+        # Diff
+        engineer.diff(column=Term.C, suffix="_diff", freq="D")
+        assert f"{Term.C}_diff" in engineer.all()
+        # Addition
+        engineer.add(columns=[Term.F, Term.R])
+        assert f"{Term.F}+{Term.R}" in engineer.all()
+        # Multiplication
+        engineer.mul(columns=[Term.C, Term.R])
+        assert f"{Term.C}*{Term.R}" in engineer.all()
+        # Subtraction
+        engineer.sub(minuend=Term.C, subtrahend=Term.R)
+        assert f"{Term.C}-{Term.R}" in engineer.all()
+        # Division and assign
+        engineer.assign(Tests=lambda x: x[Term.C] * 10)
+        engineer.div(numerator=Term.C, denominator="Tests", new="Positive_rate")
+        engineer.assign(**{"Positive_rate_%": lambda x: x["Positive_rate"] * 100})
+        assert engineer.all()["Positive_rate_%"].unique() == 10
 
-    def test_diff(self, c_df):
-        df = c_df.copy()
-        engineer = DataEngineer(data=df, layers=["Country"], date="date")
-        engineer.clean(kinds=None)
-        engineer.diff(column="Tested", suffix="_diff", freq="D")
-        df = engineer.all()
-        assert {"Tested_diff"}.issubset(df.columns)
+    def test_with_actual_data(self, imgfile):
+        engineer = DataEngineer()
+        engineer.download()
+        all_df = engineer.all()
+        layer_df = engineer.layer()
+        assert_frame_equal(all_df, layer_df, check_dtype=False, check_categorical=False)
+        engineer.choropleth(geo=None, variable=Term.C, filename=imgfile)
+        engineer.clean()
+        engineer.transform()
+        assert len(engineer.subset(geo="Japan", complement=False)) == len(engineer.subset(geo="Japan"))
+        df, *_ = engineer.subset_alias(alias="UK", geo="UK")
+        assert_frame_equal(engineer.subset_alias(alias="UK")[0], df)
+        assert engineer.subset_alias(alias=None)
+        assert isinstance(DataEngineer.recovery_period(data=df), int)
 
-    def test_complement(self, c_df):
-        col_dict = {"confirmed": "Positive", "fatal": "Fatal", "recovered": "Discharged", "tests": "Tested"}
-        engineer = DataEngineer(data=c_df, layers=["Country"], date="date")
-        engineer.clean(kinds=None)
-        with pytest.raises(ValueError):
-            engineer.complement_assess(address=["Japan", "Tokyo"], col_dict=col_dict)
-        with pytest.raises(SubsetNotFoundError):
-            engineer.complement_assess(address=["Moon"], col_dict=col_dict)
-        with pytest.raises(ValueError):
-            engineer.complement_force(address=["Japan", "Tokyo"], procedures=None)
-        with pytest.raises(SubsetNotFoundError):
-            engineer.complement_force(address=["Moon"], procedures=None)
-        procedures = engineer.complement_assess(address="Japan", col_dict=col_dict)
-        log_df = engineer.complement_force(address="Japan", procedures=procedures)
-        assert len(log_df) == len(procedures)
+    def test_variables_alias(self):
+        engineer = DataEngineer()
+        assert engineer.variables_alias(alias=None)
+        engineer.variables_alias(alias="nc", variables=[Term.N, Term.C])
+        assert engineer.variables_alias(alias="nc") == [Term.N, Term.C]
+        with pytest.raises(NotIncludedError):
+            engineer.variables_alias(alias="unknown")
