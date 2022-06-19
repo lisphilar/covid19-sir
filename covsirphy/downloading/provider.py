@@ -8,7 +8,9 @@ from pathlib import Path
 import urllib
 import warnings
 import datatable
+import numpy as np
 import pandas as pd
+from unidecode import unidecode
 from covsirphy.util.term import Term
 
 
@@ -101,7 +103,11 @@ class _DataProvider(Term):
         """
         try:
             with contextlib.redirect_stdout(open(os.devnull, "w")):
-                df = datatable.fread(path, header=True, na_strings=["", b""]).to_pandas()
+                df = datatable.fread(path, header=True).to_pandas()
+            df = df.loc[:, columns or df.columns]
+            for col in df:
+                with contextlib.suppress(TypeError):
+                    df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
             if date is not None:
                 df[date] = pd.to_datetime(df[date], format=date_format)
             return df.loc[:, columns or df.columns]
