@@ -107,8 +107,9 @@ class AutoMLHandler(Term):
         if issubclass(self._model, ModelBase):
             df[self.RT] = df.apply(lambda x: self._model(population=100, **x["param"]).calc_r0(), axis=1).round(1)
         else:
+            dummy_df = pd.DataFrame(columns=[self.DATE, self.SIFR])
             df[self.RT] = df[self._parameters].apply(
-                lambda x: self._model.from_data(data=self._X.reset_index(), param_dict=x.to_dict(), tau=1440).r0(), axis=1).round(1)
+                lambda x: self._model.from_data(data=dummy_df, param_dict=x.to_dict(), tau=1440).r0(), axis=1).round(1)
         # Get start/end date
         criteria = [self.SERIES, self.RT]
         df = df.groupby(criteria).first().join(df[[*criteria, self.DATE]].groupby(criteria).last(), rsuffix="_last")
