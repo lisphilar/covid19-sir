@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import NotIncludedError, UnExpectedReturnValueError
+from covsirphy.util.error import NotIncludedError
 from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -527,7 +527,7 @@ class DataEngineer(Term):
         return self._var_alias.find(name=alias)
 
     @classmethod
-    def recovery_period(cls, data, **kwargs):
+    def recovery_period(cls, data):
         """Calculate mode value of recovery period of the data.
 
         Args:
@@ -539,18 +539,11 @@ class DataEngineer(Term):
                     Fatal (int): the number of fatal cases, optional
                     Recovered (int): the number of recovered cases, optional
                     the other columns will be ignored
-            **kwargs: keyword arguments as follows
-                - upper_limit_days (int): maximum number of valid partial recovery periods [days], 90 as default
-                - lower_limit_days (int): minimum number of valid partial recovery periods [days], 7 as default
-                - upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5 as default
-                - lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5 as default
 
         Returns:
             int: mode value of recovery period [days]
         """
         df = Validator(data, "data").dataframe(time_index=True, columns=[cls.C, cls.F, cls.R], empty_ok=False)
-        kwargs_dict = Validator(kwargs, "keyword arguments").dict(
-            default={"upper_limit_days": 90, "lower_limit_days": 7, "upper_percentage": 0.5, "lower_percentage": 0.5})
         df = df.resample("D").sum()
         df["diff"] = df[cls.C] - df[cls.F]
         df = df.loc[:, ["diff", cls.R]].unstack().reset_index()
@@ -560,9 +553,4 @@ class DataEngineer(Term):
         df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
         df["Elapsed"] = df[cls.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
-        # Check partial recovery periods
-        per_up = (df["Elapsed"] > kwargs_dict["upper_limit_days"]).sum()
-        per_lw = (df["Elapsed"] < kwargs_dict["lower_limit_days"]).sum()
-        if df.empty or per_up / len(df) >= kwargs_dict["upper_percentage"] or per_lw / len(df) >= kwargs_dict["lower_percentage"]:
-            raise UnExpectedReturnValueError("recovery period", df)
         return round(df["Elapsed"].mode().mean())
