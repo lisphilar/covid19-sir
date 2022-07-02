@@ -7,10 +7,15 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from covsirphy import Validator, ModelBase, SIR, SIRF
 from covsirphy import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy import UnExpectedValueRangeError, UnExpectedValueError
+from covsirphy import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
 
 class TestValidator(object):
+    def test_none(self):
+        Validator(1, "target", accept_none=True)
+        with pytest.raises(UnExpectedNoneError):
+            Validator(None, "target", accept_none=False)
+
     def test_subclass(self):
         v = Validator(SIRF, name="model")
         with pytest.raises(NotSubclassError):
@@ -46,6 +51,8 @@ class TestValidator(object):
         with pytest.raises(UnExpectedValueRangeError):
             Validator(1.2).float(value_range=(1.5, 2))
         assert Validator(1.2).float() == 1.2
+        assert Validator(1.6564).float(digits=3) == 1.66
+        assert Validator(0).float(digits=3) == 0
 
     def test_int(self):
         assert Validator(None).int(default=2) == 2
@@ -90,6 +97,9 @@ class TestValidator(object):
         with pytest.raises(UnExpectedValueError):
             v.sequence(candidates=[1, 4, 5])
         assert v.sequence(candidates=[1, 2, 3, 4]) == [1, 2, 3]
+        with pytest.raises(UnExpectedLengthError):
+            v.sequence(length=2)
+        assert v.sequence(length=3) == [1, 2, 3]
 
     def test_dict(self):
         assert Validator(None).dict(default={1: 2}) == {1: 2}

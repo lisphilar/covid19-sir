@@ -30,4 +30,4 @@ class TestDataDownloader(object):
     def test_download_error(self, country, province):
         downloader = DataDownloader()
         with pytest.raises(SubsetNotFoundError):
-            downloader.layer(country=country, province=province)
+            downloader.layer(country=country, province=province, databases=["covid19dh"])
