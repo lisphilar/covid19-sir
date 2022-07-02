@@ -13,9 +13,9 @@ class _DataTransformer(Term):
             Index
                 reset index
             Column
-                - columns defined by @layers
-                - column defined by @date
-                - the other columns
+                columns defined by @layers
+                column defined by @date
+                the other columns
         layers (list[str]): location layers of the data
         date (str): column name of observation dates of the data
     """
@@ -80,3 +80,73 @@ class _DataTransformer(Term):
         df = df.merge(series, how="left", left_on=[*self._layers, self._date], right_index=True)
         df[new_column] = (df[column] - df[new_column]).fillna(0)
         self._df = df.copy()
+
+    def add(self, columns, new, fill_value):
+        """Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +...
+
+        Args:
+            columns (str): columns to add
+            new (str): column name of addition
+            fill_value (float): value to fill in NAs
+        """
+        Validator(columns, "columns").sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
+        df[new] = df[columns].sum(axis=1).fillna(Validator(fill_value, "fill_value").float())
+        self._df = df.copy()
+
+    def mul(self, columns, new, fill_value):
+        """Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 *...
+
+        Args:
+            columns (str): columns to multiply
+            new (str): column name of multiplication
+            fill_value (float): value to fill in NAs
+        """
+        Validator(columns, "columns").sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
+        df[new] = df[columns].product(axis=1).fillna(Validator(fill_value, "fill_value").float())
+        self._df = df.copy()
+
+    def sub(self, minuend, subtrahend, new, fill_value):
+        """Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.
+
+        Args:
+            minuend (str): numerator column
+            subtrahend (str): subtrahend column
+            new (str): column name of subtraction
+            fill_value (float): value to fill in NAs
+        """
+        v = Validator([minuend, subtrahend], "columns of numerator and subtrahend")
+        v.sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
+        df[new] = df[minuend].sub(df[subtrahend], fill_value=Validator(fill_value, "fill_value").float())
+        self._df = df.copy()
+
+    def div(self, numerator, denominator, new, fill_value):
+        """Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.
+
+        Args:
+            numerator (str): numerator column
+            denominator (str): denominator column
+            new (str): column name of floating division
+            fill_value (float): value to fill in NAs
+
+        Note:
+            Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
+        """
+        v = Validator([numerator, denominator], "columns of numerator and denominator")
+        v.sequence(candidates=list(self._df.columns))
+        df = self._df.copy()
+        df[new] = df[numerator].div(df[denominator], fill_value=Validator(fill_value, "fill_value").float())
+        self._df = df.copy()
+
+    def assign(self, **kwargs):
+        """Assign a new column with pandas.DataFrame.assign().
+
+        Args:
+            **kwargs: dict of {str: callable or pandas.Series}
+
+        Note:
+            Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
+        """
+        self._df = self._df.assign(**kwargs)
