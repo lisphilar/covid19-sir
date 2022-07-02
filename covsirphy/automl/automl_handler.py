@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, timedelta
 from itertools import product
 import pandas as pd
 from covsirphy.util.validator import Validator
@@ -107,9 +108,15 @@ class AutoMLHandler(Term):
         if issubclass(self._model, ModelBase):
             df[self.RT] = df.apply(lambda x: self._model(population=100, **x["param"]).calc_r0(), axis=1).round(1)
         else:
-            dummy_df = pd.DataFrame(columns=[self.DATE, *self._SIFR])
-            df[self.RT] = df[self._parameters].apply(
-                lambda x: self._model.from_data(data=dummy_df, param_dict=x.to_dict(), tau=1440).r0(), axis=1).round(1)
+            model = self._model
+            today = datetime.now()
+            model_dict = {
+                "date_range": (today, today + timedelta(days=10)),
+                "tau": 1440,
+                **model._SAMPLE_DICT["initial_dict"]
+            }
+            df[self.RT] = df[self._parameters].apply(lambda x: model(
+                param_dict=x.to_dict(), **model_dict).r0(), axis=1).round(1)
         # Get start/end date
         criteria = [self.SERIES, self.RT]
         df = df.groupby(criteria).first().join(df[[*criteria, self.DATE]].groupby(criteria).last(), rsuffix="_last")
