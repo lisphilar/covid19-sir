@@ -113,7 +113,7 @@ class AutoMLHandler(Term):
             model_dict = {
                 "date_range": (today, today + timedelta(days=10)),
                 "tau": 1440,
-                **model._SAMPLE_DICT["initial_dict"]
+                "initial_dict": model._SAMPLE_DICT["initial_dict"]
             }
             df[self.RT] = df[self._parameters].apply(lambda x: model(
                 param_dict=x.to_dict(), **model_dict).r0(), axis=1).round(1)
