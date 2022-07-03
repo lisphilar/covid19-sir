@@ -492,7 +492,7 @@ class ODEScenario(Term):
         phase_df = phase_df.sort_values(["name", "end"], ignore_index=True)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
-            new_name = f"{name}_{phase_dict['suffix']}"
+            new_name = f"{name}_{phase_dict['name']}"
             self.build_with_template(name=new_name, template=name)
             self.append(name=new_name, **phase_dict)
         return self
