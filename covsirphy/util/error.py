@@ -88,7 +88,49 @@ class NAFoundError(_BaseException):
     def __init__(self, name, value=None, details=None):
         message = f"'{name}' has NA(s) un-expectedly"
         if value is not None:
-            message += ", '{value}'"
+            message += f", '{value}'"
+        super().__init__(message=message, details=details)
+
+
+class NotEnoughDataError(_BaseException):
+    """Error when we do not have enough data for analysis.
+
+    Args:
+        name (str): name of the target
+        value (str): value of the target
+        required_n (int): required number of records
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, required_n, details=None):
+        message = f"We need more than {required_n} records, but '{name}' has only {len(value)} records at this time"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedNoneError(_BaseException):
+    """Error when a value is None un-expectedly.
+
+    Args:
+        name (str): name of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, details=None):
+        message = f"'{name}' is None un-expectedly"
+        super().__init__(message=message, details=details)
+
+
+class NotNoneError(_BaseException):
+    """Error when a value must be None but not None un-expectedly.
+
+    Args:
+        name (str): name of the target
+        value (str): value of the target
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, details=None):
+        message = f"'{name}' must be None, but has value '{value}'"
         super().__init__(message=message, details=details)
 
 
@@ -138,7 +180,7 @@ class NotSubclassError(_BaseException):
     """
 
     def __init__(self, name, target, parent, details=None):
-        message = f"'{name}' must be a sub-class of {type(parent)}, but {type(target)} was applied"
+        message = f"'{name}' must be a sub-class of {parent}, but {type(target)} was applied"
         super().__init__(message=message, details=details)
 
 
@@ -153,7 +195,7 @@ class UnExpectedTypeError(_BaseException):
     """
 
     def __init__(self, name, target, expected, details=None):
-        message = f"'{name}' could not converted to an instance of {type(expected)} because that of {type(target)} was applied"
+        message = f"We could not convert '{name}' to an instance of {expected} because that of {type(target)} was applied"
         super().__init__(message=message, details=details)
 
 
@@ -166,7 +208,7 @@ class EmptyError(_BaseException):
     """
 
     def __init__(self, name, details=None):
-        message = f"'Empty dataframe was applied as {name}' un-expectedly"
+        message = f"'Empty dataframe/series was applied as {name}' un-expectedly"
         super().__init__(message=message, details=details)
 
 
@@ -203,7 +245,23 @@ class UnExpectedValueError(_BaseException):
 
     def __init__(self, name, value, candidates, details=None):
         c_str = ", ".join(candidates)
-        message = f"{name} must be selected from [{c_str}], but {value} was applied"
+        message = f"'{name}' must be selected from [{c_str}], but {value} was applied"
+        super().__init__(message=message, details=details)
+
+
+class UnExpectedLengthError(_BaseException):
+    """
+    Error when a sequence has un-expended length.
+
+    Args:
+        name (str): argument name
+        value (object): value user applied
+        length (int): length of the sequence
+        details (str or None): details of error
+    """
+
+    def __init__(self, name, value, length, details=None):
+        message = f"The length of '{name}' must be {length}, but {len(value)} was applied"
         super().__init__(message=message, details=details)
 
 
