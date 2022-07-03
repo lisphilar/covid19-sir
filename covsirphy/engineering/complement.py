@@ -1,359 +1,435 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
+import functools
 import warnings
 import numpy as np
+from datetime import timedelta
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
 
 class _ComplementHandler(Term):
-    """Class for data complement.
+    """
+    Complement records, if necessary.
 
     Args:
-        data (pandas.DataFrame): raw data
-            Index
-                reset index
-            Column
-                - column defined by @date
-                - the other columns
-        date (str): column name of observation dates of the data
+        recovery_period (int): expected value of recovery period [days]
+        interval (int): expected update interval of the number of recovered cases [days]
+        max_ignored (int): Max number of recovered cases to be ignored [cases]
+        max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]
+        upper_limit_days (int): maximum number of valid partial recovery periods [days]
+        lower_limit_days (int): minimum number of valid partial recovery periods [days]
+        upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
+        lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
 
     Note:
-        Layers should be removed in advance.
+        To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
+        Status names with high scores will be prioritized when status code will be determined.
+        Status code: 'fully complemented recovered data' and so on as noted in self.run() docstring.
     """
+    # Column names
+    RAW_COLS = [Term.C, Term.F, Term.R]
+    MONOTONIC_CONFIRMED = "Monotonic_confirmed"
+    MONOTONIC_FATAL = "Monotonic_fatal"
+    MONOTONIC_RECOVERED = "Monotonic_recovered"
+    FULL_RECOVERED = "Full_recovered"
+    PARTIAL_RECOVERED = "Partial_recovered"
+    RECOVERED_COLS = [MONOTONIC_RECOVERED, FULL_RECOVERED, PARTIAL_RECOVERED]
+    SHOW_COMPLEMENT_FULL_COLS = [
+        MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
+    # Kind of complement: {score: name}
+    STATUS_NAME_DICT = {
+        1: "sorting",
+        2: "monotonic increasing",
+        3: "partially",
+        4: "fully",
+    }
 
-    def __init__(self, data, date):
-        self._df = data.set_index(date).resample("D").ffill()
-        self._date = date
+    def __init__(self, recovery_period, interval, max_ignored, max_ending_unupdated,
+                 upper_limit_days, lower_limit_days, upper_percentage, lower_percentage):
+        # Arguments for complement
+        self.recovery_period = Validator(recovery_period, "recovery_period").int(value_range=(1, None))
+        self.interval = Validator(interval, "interval").int(value_range=(0, None))
+        self.max_ignored = Validator(max_ignored, "max_ignored").int(value_range=(1, None))
+        self.max_ending_unupdated = Validator(max_ending_unupdated, "max_ending_unupdated").int(value_range=(0, None))
+        self.upper_limit_days = Validator(upper_limit_days, "upper_limit_days").int(value_range=(0, None))
+        self.lower_limit_days = Validator(lower_limit_days, "lower_limit_days").int(value_range=(0, None))
+        self.upper_percentage = Validator(upper_percentage, "upper_percentage").float(value_range=(0, 100))
+        self.lower_percentage = Validator(lower_percentage, "lower_percentage").float(value_range=(0, 100))
+        self.complement_dict = None
 
-    def all(self):
-        """Return all available data.
+    def _protocol(self):
+        """
+        Return the list of complement solutions and scores.
 
         Returns:
-            pandas.DataFrame: transformed data
+            list[str/None, function, int]: nested list of variables to be updated, methods and scores
         """
-        return self._df.reset_index()
+        return [
+            (None, self._pre_processing, 0),
+            (self.C, functools.partial(self._monotonic, variable=self.C), 2),
+            (self.F, functools.partial(self._monotonic, variable=self.F), 2),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
+            (self.R, self._recovered_full, 4),
+            (self.R, self._recovered_sort, 1),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
+            (self.R, self._recovered_partial, 3),
+            (self.R, self._recovered_partial_ending, 3),
+            (self.R, self._recovered_sort, 1),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
+            (self.R, self._recovered_sort, 1),
+            (self.C, self._confirmed_over_fr, 1),
+            (None, self._post_processing, 0)
+        ]
 
-    def assess_monotonic_increase(self, column):
-        """Assess the column shows a monotonic increase.
+    def run(self, data):
+        """
+        Perform complement.
 
         Args:
-            column (str): column name
-
-        Return:
-            bool: whether complement is required or not
-        """
-        Validator(self._df, "data").dataframe(columns=[column])
-        return not self._df[column].drop_duplicates().is_monotonic_increasing
-
-    def force_monotonic_increase(self, column):
-        """Force the column shows monotonic increase.
-
-        Args:
-            column (str): column name
+            data (pandas.DataFrame): Subset of records
+                Index
+                    reset index
+                Columns
+                    Date (pd.Timestamp): Observation date
+                    Confirmed (int): the number of confirmed cases
+                    Fatal (int): the number of fatal cases
+                    Recovered (int): the number of recovered cases
+                    The other columns will be ignored
 
         Returns:
-            bool: whether complemented or not
+            tuple(pandas.DataFrame, str, dict):
+                pandas.DataFrame
+                    Index
+                        reset index
+                    Columns
+                        Date (pd.Timestamp): Observation date
+                        Confirmed (int): the number of confirmed cases
+                        Fatal (int): the number of fatal cases
+                        Recovered (int): the number of recovered cases
+                str: status code: will be selected from
+                    - '' (not complemented)
+                    - 'monotonic increasing complemented confirmed data'
+                    - 'monotonic increasing complemented fatal data'
+                    - 'monotonic increasing complemented recovered data'
+                    - 'fully complemented recovered data'
+                    - 'partially complemented recovered data'
+                dict[str, bool]: status for each complement type, keys are
+                    - Monotonic_confirmed
+                    - Monotonic_fatal
+                    - Monotonic_recovered
+                    - Full_recovered
+                    - Partial_recovered
         """
+        Validator(data, "data").dataframe(columns=[self.DATE, *self.RAW_COLS])
+        # Initialize
+        after_df = data.copy()
+        status_dict = dict.fromkeys(self.RAW_COLS, 0)
+        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
+        # Perform complement one by one
+        for (variable, func, score) in self._protocol():
+            before_df, after_df = after_df.copy(), func(after_df)
+            if after_df.equals(before_df) or variable is None:
+                continue
+            status_dict[variable] = max(status_dict[variable], score)
+        # Create status code
+        status_list = [
+            f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data" for (v, score) in status_dict.items() if score]
+        return (after_df.convert_dtypes(), " and \n".join(status_list), self.complement_dict)
+
+    def _pre_processing(self, data):
+        """
+        Select Confirmed/Fatal/Recovered class from the dataset.
+
+        Args:
+            data (pandas.DataFrame): Subset of records
+                Index
+                    reset index
+                Columns
+                    Date, Confirmed, Fatal, Recovered (the others will be ignored)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+        """
+        sel_invalid_R = data[self.C] - data[self.F] < data[self.R]
+        data.loc[sel_invalid_R, self.R] = data[self.C] - data[self.F]
+        data.loc[sel_invalid_R, self.CI] = data[self.C] - data[self.F] - data[self.R]
+        return data.set_index(self.DATE).loc[:, self.RAW_COLS]
+
+    def _post_processing(self, data):
+        """
+        Select Confirmed/Fatal/Recovered class from the dataset.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index
+                    reset index
+                Columns
+                    Date (pandas.TimeStamp), Confirmed, Fatal, Recovered (int)
+        """
+        return data.loc[:, self.RAW_COLS].astype(np.int64).reset_index()
+
+    def _monotonic(self, data, variable):
+        """
+        Force the variable show monotonic increasing.
+
+        Args:
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+            variable (str): variable name to show monotonic increasing
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+        """
+        df = data.astype(np.float64)
         warnings.simplefilter("ignore", UserWarning)
-        if not self.assess_monotonic_increase(column):
-            return False
-        df = self._df.copy()
-        decreased_dates = df[df[column].diff() < 0].index.tolist()
+        # Whether complement is necessary or not
+        if df[variable].is_monotonic_increasing:
+            return df
+        # Complement
+        decreased_dates = df[df[variable].diff() < 0].index.tolist()
         for date in decreased_dates:
             # Raw value on the decreased date
-            raw_last = df.loc[date, column]
+            raw_last = df.loc[date, variable]
             # Extrapolated value on the date
-            series = df.loc[:date, column]
+            series = df.loc[:date, variable]
             series.iloc[-1] = None
-            series = series.ffill()
-            # The last value must be equal to or lower than the last value of the raw data
-            df.loc[:date, column] = np.ceil(series * raw_last / series.iloc[-1])
-        self._df = df.copy()
-        return True
+            try:
+                series = series.interpolate().ffill()
+            except ValueError:
+                series.ffill(inplace=True)
+            # Reduce values to the previous date
+            df.loc[:date, variable] = series * raw_last / series.iloc[-1]
+            df[variable] = df[variable].fillna(0)
+        df[variable] = df[variable].apply(np.ceil).astype(np.int64)
+        self.complement_dict[f"Monotonic_{variable.lower()}"] = True
+        return df
 
-    def assess_recovered_full(self, confirmed, fatal, recovered, **kwargs):
-        """Assess the recovered curve to decide whether it is acceptable or not.
+    def _validate_recovery_period(self, country_df):
+        """
+        Calculates and validates recovery period for specific country
+        as an additional condition in order to apply full complement or not
 
         Args:
-            confirmed (str): column of the number of confirmed cases
-            fatal (str): column of the number of fatal cases
-            recovered (str): column name of the number of recovered cases
-            kwargs: Keyword arguments of the following (all required)
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-                upper_limit_days (int): maximum number of valid partial recovery periods [days]
-                lower_limit_days (int): minimum number of valid partial recovery periods [days]
-                upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
-                lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
+            country_df (pandas.DataFrame)
+                Index
+                    reset_index
+                Columns
+                    Date, Confirmed, Recovered, Fatal
 
-        Return:
-            bool: whether complement is required or not
+        Returns:
+            bool: true if recovery period is within valid range or false otherwise
+
+        Note: Passed argument df corresponds to specific country's df
+              upper_limit_days has default value of 3 months (90 days)
+              lower_limit_days has default value of 1 week (7 days)
         """
-        # Keyword arguments
-        max_ignored = self._ensure_natural_int(kwargs["max_ignored"], name="max_ignored")
-        upper_limit_days = self._ensure_natural_int(kwargs["upper_limit_days"], name="upper_limit_days")
-        lower_limit_days = self._ensure_natural_int(kwargs["lower_limit_days"], name="lower_limit_days")
-        upper_percentage = self._ensure_float(kwargs["upper_percentage"], name="upper_percentage")
-        lower_percentage = self._ensure_float(kwargs["lower_percentage"], name="lower_percentage")
-        # Complement is required if the max value of Recovered is small
-        df = self._df.copy()
-        if 0 < df[recovered].max() <= max_ignored:
-            return True
-        # Complement is required if sum of recovered is more than 99%
-        # or less than 1% of sum of recovered minus infected when out-breaking
-        sel_C1 = df[confirmed] > max_ignored
-        sel_R1 = df[recovered] > max_ignored
-        sel_2 = df[confirmed].diff().diff().rolling(14).mean() > 0
-        sel_3 = df[recovered] < 0.01 * (df[confirmed] - df[fatal]).rolling(14).mean()
-        if not df.loc[sel_C1 & sel_R1 & sel_2 & sel_3].empty:
-            return True
-        # Complement is required if recovered period of the data is not acceptable
-        df["diff"] = df[confirmed] - df[fatal]
-        df = df.loc[:, ["diff", recovered]]
+        df = country_df.copy()
+        # Calculate "Confirmed - Fatal"
+        df["diff"] = df[self.C] - df[self.F]
+        df = df.loc[:, ["diff", self.R]]
+        # Calculate how many days passed to reach the number of cases
         df = df.unstack().reset_index()
         df.columns = ["Variable", "Date", "Number"]
-        df["Days"] = (df["Date"] - df["Date"].min()).dt.days
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).dt.days
+        # Calculate partial recovery periods
         df = df.pivot_table(values="Days", index="Number", columns="Variable")
         df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
-        df["Elapsed"] = df[recovered] - df["diff"]
+        df["Elapsed"] = df[self.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
+        # Check partial recovery periods
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        per_up = (df["Elapsed"] > upper_limit_days).sum() / len(df)
-        per_lw = (df["Elapsed"] < lower_limit_days).sum() / len(df)
-        return per_up >= upper_percentage or per_lw >= lower_percentage
+        per_up = (df["Elapsed"] > self.upper_limit_days).sum() / len(df)
+        per_lw = (df["Elapsed"] < self.lower_limit_days).sum() / len(df)
+        return per_up < self.upper_percentage and per_lw < self.lower_percentage
 
-    def force_recovered_full(self, confirmed, fatal, recovered, **kwargs):
-        """Force full complement of recovered data.
+    def _recovered_full(self, df):
+        """
+        Estimate the number of recovered cases with the value of recovery period.
 
         Args:
-            confirmed (str): column of the number of confirmed cases
-            fatal (str): column of the number of fatal cases
-            recovered (str): column name of the number of recovered cases
-            kwargs: Keyword arguments of the following (all required)
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-                recovery_period (int): expected value of recovery period [days]
-                upper_limit_days (int): maximum number of valid partial recovery periods [days]
-                lower_limit_days (int): minimum number of valid partial recovery periods [days]
-                upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
-                lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
-            bool: whether complemented or not
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
-        if not self.assess_recovered_full(confirmed, recovered, **kwargs):
-            return False
-        df = self._df.copy()
-        recovery_period = self._ensure_natural_int(kwargs["recovery_period"], name="recovery_period")
-        self._df[recovered] = (df[confirmed] - df[fatal]).shift(periods=recovery_period, freq="D")
-        return True
-
-    def assess_partial_internal(self, column, **kwargs):
-        """Assess the data includes un-changed values internally.
-
-
-        Args:
-            column (str): column name of the number of recovered cases or the number of tests
-            kwargs: Keyword arguments of the following (all required)
-                interval (int): expected update interval of the number of recovered cases [days]
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-
-        Return:
-            bool: whether complement is required or not
-        """
-        # Keyword arguments
-        max_ignored = self._ensure_natural_int(kwargs["max_ignored"], name="max_ignored")
-        interval = self._ensure_natural_int(kwargs["interval"], name="interval")
         # Whether complement is necessary or not
-        df = self._df.copy()
-        series = df.loc[df[column] > max_ignored, column]
-        max_frequency = series.value_counts().max()
-        return max_frequency > interval
+        if df[self.R].max() > self.max_ignored:
+            # Necessary if sum of recovered is more than 99%
+            # or less than 1% of sum of recovered minus infected when out-breaking
+            sel_C1 = df[self.C] > self.max_ignored
+            sel_R1 = df[self.R] > self.max_ignored
+            sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
+            cf_diff = (df[self.C] - df[self.F]).rolling(14).mean()
+            sel_3 = df[self.R] < 0.01 * cf_diff
+            s_df = df.loc[sel_C1 & sel_R1 & sel_2 & sel_3]
+            if s_df.empty and self._validate_recovery_period(df):
+                return df
+        # Estimate recovered records
+        df[self.R] = (df[self.C] - df[self.F]).shift(periods=self.recovery_period, freq="D")
+        self.complement_dict[self.FULL_RECOVERED] = True
+        return df
 
-    def force_partial_internal(self, confirmed, column, **kwargs):
-        """Force partial complement of the data (internal).
-        If recovered values do not change for more than applied 'interval' days
-        after reached 'max_ignored' cases, interpolate the recovered values.
-
-        Args:
-            confirmed (str): column of the number of confirmed cases
-            column (str): column name of the number of recovered cases or the number of tests
-            kwargs: Keyword arguments of the following (all required)
-                interval (int): expected update interval of the number of recovered cases [days]
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-
-        Returns:
-            bool: whether complemented or not
+    def _recovered_partial_ending(self, df):
         """
-        if not self.assess_partial_internal(column, **kwargs):
-            return False
-        # Keyword arguments
-        max_ignored = self._ensure_natural_int(kwargs["max_ignored"], name="max_ignored")
-        # Complement
-        df = self._df.copy()
-        df.loc[(df[confirmed] > max_ignored) & df.duplicated(column), column] = None
-        df[column] = np.ceil(df[column].interpolate(method="linear", limit_direction="both").bfill())
-        self._df = df.copy()
-        return True
-
-    def assess_partial_ending(self, column, **kwargs):
-        """Assess the data includes un-changed values in the last values.
-
-
-        Args:
-            column (str): column name of the number of recovered cases or the number of tests
-            kwargs: Keyword arguments of the following (all required)
-                max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]
-
-        Return:
-            bool: whether complement is required or not
-        """
-        # Keyword arguments
-        max_ending_unupdated = self._ensure_natural_int(kwargs["max_ending_unupdated"], name="max_ending_unupdated")
-        # Whether complement is necessary or not
-        df = self._df.copy()
-        r_max = df[column].max()
-        sel_0 = (df[column] == r_max).sum() > max_ending_unupdated
-        return r_max and sel_0
-
-    def force_recovered_partial_ending(self, confirmed, fatal, recovered, **kwargs):
-        """Force partial complement of recovered data (ending).
-        If ending recovered values do not change for more than applied 'max_ending_unupdated' days
-        after reached 'max_ignored' cases, apply either previous diff() (with some variance)
+        If ending recovered values do not change for more than applied 'self.max_ending_unupdated' days
+        after reached 'self.max_ignored' cases, apply either previous diff() (with some variance)
         or full complement only to these ending unupdated values and keep the previous valid ones.
+        _recovered_partial() does not handle well such values, because
+        they are not in-between values and interpolation generates only similar values,
+        but small compared to confirmed cases.
 
         Args:
-            confirmed (str): column of the number of confirmed cases
-            fatal (str): column of the number of fatal cases
-            recovered (str): column name of the number of recovered cases
-            kwargs: Keyword arguments of the following (all required)
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
-                recovery_period (int): expected value of recovery period [days]
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
-            bool: whether complemented or not
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
+
+        Note: _recovered_partial_ending() must always be called
+              after _recovered_partial()
         """
-        if not self.assess_recovered_partial_ending(recovered, **kwargs):
-            return False
-        # Keyword arguments
-        max_ignored = self._ensure_natural_int(kwargs["max_ignored"], name="max_ignored")
-        recovery_period = self._ensure_natural_int(kwargs["recovery_period"], name="recovery_period")
-        # Complement
-        df = self._df.copy()
-        # Keeping and propagating forward previous valid diff()
+        # Whether complement is necessary or not
+        r_max = df[self.R].max()
+        sel_0 = (df[self.R] == r_max).sum() > self.max_ending_unupdated
+        if not (r_max and sel_0):
+            # full complement will be handled in _recovered_full()
+            return df
+        # Complement any ending unupdated values that are not updated
+        # for more than max_ending_unupdated days,
+        # by keeping and propagating forward previous valid diff()
         # min_index: index for first ending max R reoccurrence
-        min_index = df[recovered].idxmax() + timedelta(days=1)
-        first_value = df.loc[min_index, recovered]
+        min_index = df[self.R].idxmax() + timedelta(days=1)
+        first_value = df.loc[min_index, self.R]
         df_ending = df.copy()
-        df_ending.loc[df_ending.duplicated([recovered], keep="first"), recovered] = None
-        diff_series = df_ending[recovered].diff().ffill().fillna(0).astype("Int64")
+        df_ending.loc[df_ending.duplicated([self.R], keep="first"), self.R] = None
+        diff_series = df_ending[self.R].diff().ffill().fillna(0).astype(np.int64)
         diff_series.loc[diff_series.duplicated(keep="last")] = None
         diff_series.interpolate(method="linear", inplace=True, limit_direction="both")
-        df.loc[min_index:, recovered] = first_value + diff_series[min_index:].cumsum()
+        df.loc[min_index:, self.R] = first_value + diff_series[min_index:].cumsum()
         # Check if the ending complement is valid (too large recovered ending values)
         # If the validity check fails, then fully complement these ending values
-        sel_C1 = df[confirmed] > max_ignored
-        sel_R1 = df[recovered] > max_ignored
+        sel_C1 = df[self.C] > self.max_ignored
+        sel_R1 = df[self.R] > self.max_ignored
         # check all values one-by-one, no rolling window
-        sel_limit = df[recovered] > 0.99 * (df[confirmed] - df[fatal])
+        cf_diff = df[self.C] - df[self.F]
+        sel_limit = df[self.R] > 0.99 * cf_diff
         s_df_1 = df.loc[sel_C1 & sel_R1 & sel_limit]
         if not s_df_1.empty:
-            df.loc[min_index:, recovered] = (
-                df[confirmed] - df[fatal]).shift(periods=recovery_period, freq="D").loc[min_index:]
-        # Sorting
-        df.loc[:, recovered] = sorted(df[self.R].abs())
-        df[recovered] = np.ceil(df[recovered].interpolate(method="time").fillna(0))
-        self._df = df.copy()
-        return True
+            df.loc[min_index:, self.R] = (
+                df[self.C] - df[self.F]).shift(periods=self.recovery_period, freq="D").loc[min_index:]
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
+        return df
 
-    def force_tests_partial_ending(self, tests, **kwargs):
-        """Force partial complement of tests data (ending).
-        If ending recovered values do not change for more than applied 'max_ending_unupdated' days
-        after reached 'max_ignored' cases, apply either previous diff() (with some variance)
-        or full complement only to these ending unupdated values and keep the previous valid ones.
+    def _recovered_partial(self, df):
+        """
+        If recovered values do not change for more than applied 'self.interval' days
+        after reached 'self.max_ignored' cases, interpolate the recovered values.
 
         Args:
-            tests (str): column of the number of tests
-            kwargs: Keyword arguments of the following (all required)
-                max_ignored (int): max number of confirmed cases to be ignored [cases]
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
-            bool: whether complemented or not
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
-        if not self.assess_partial_ending(tests, **kwargs):
-            return False
-        # Keeping and propagating forward previous valid diff()
-        # min_index: index for first ending max test reoccurrence
-        df = self._df.copy()
-        min_index = df[tests].idxmax() + 1
-        first_value = df.loc[min_index, tests]
-        df_ending = df.copy()
-        df_ending.loc[df_ending.duplicated(tests, keep="first"), tests] = None
-        diff_series = df_ending[tests].diff().ffill().fillna(0).astype("Int64")
-        diff_series.loc[diff_series.duplicated(keep="last")] = None
-        diff_series.interpolate(method="linear", inplace=True, limit_direction="both")
-        df.loc[min_index:, tests] = np.ceil(first_value + diff_series.loc[min_index:].cumsum())
-        self._df = df.copy()
-        return True
+        # Whether complement is necessary or not
+        series = df.loc[df[self.R] > self.max_ignored, self.R]
+        max_frequency = series.value_counts().max()
+        if max_frequency <= self.interval:
+            return df
+        # Complement in-between recovered values when confirmed > max_ignored
+        sel_C = df[self.C] > self.max_ignored
+        sel_duplicate = df.duplicated([self.R], keep="first")
+        df.loc[sel_C & sel_duplicate, self.R] = None
+        df[self.R].interpolate(method="linear", inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].fillna(method="bfill")
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
+        return df
 
-    @staticmethod
-    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+    def _recovered_sort(self, df):
         """
-        Ensure a natural (non-negative) number.
+        Sort the absolute values of recovered data.
 
         Args:
-            target (int or float or str or None): value to ensure
-            name (str): argument name of the value
-            include_zero (bool): include 0 or not
-            none_ok (bool): None value can be applied or not.
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
-            int: as-is the target
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Note:
-            When @target is None and @none_ok is True, None will be returned.
-            If the value is a natural number and the type was float or string,
-            it will be converted to an integer.
+            _recovered_sort() must always be called after _recovered_partial_ending()
         """
-        if target is None and none_ok:
-            return None
-        s = f"@{name} must be a natural number, but {target} was applied"
-        try:
-            number = int(target)
-        except TypeError as e:
-            raise TypeError(f"{s} and not converted to integer.") from e
-        if number != target:
-            raise ValueError(f"{s}. |{target} - {number}| > 0")
-        min_value = 0 if include_zero else 1
-        if number < min_value:
-            raise ValueError(f"{s}. This value is under {min_value}")
-        return number
+        df.loc[:, self.R] = sorted(df[self.R].abs())
+        df[self.R] = df[self.R].interpolate(method="time").fillna(0).round()
+        return df
 
-    @staticmethod
-    def _ensure_float(target, name="value", value_range=(0, None)):
+    def _confirmed_over_fr(self, df):
         """
-        Ensure a float value.
-        If the value is a float value and the type was string,
-        it will be converted to a float.
+        Force Confirmed > Fatal + Recovered.
 
         Args:
-            target (float or str): value to ensure
-            name (str): argument name of the value
-            value_range(tuple(int or None, int or None)): value range, None means un-specified
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
-            float: as-is the target
+            pandas.DataFrame: complemented records
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
-        s = f"@{name} must be a float value, but {target} was applied"
-        try:
-            value = float(target)
-        except ValueError:
-            raise ValueError(f"{s} and not converted to float.") from None
-        # Minimum
-        if value_range[0] is not None and value < value_range[0]:
-            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {value} was applied.")
-        # Maximum
-        if value_range[1] is not None and value > value_range[1]:
-            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {value} was applied.")
-        return value
+        df[self.C] = df[[self.C, self.F, self.R]].apply(lambda x: max(x[0], x[1] + x[2]), axis=1)
+        return df
