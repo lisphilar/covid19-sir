@@ -177,7 +177,7 @@ class AutoMLHandler(Term):
                 Columns
                     predicted values (float)
         """
-        predictor = _AutoTSPredictor(days=self._days, model_list=["UnivariateRegression"])
+        predictor = _AutoTSPredictor(days=self._days, model_list="univariate")
         return predictor.predict(self._Y)
 
     def _multivariate_regression(self):
