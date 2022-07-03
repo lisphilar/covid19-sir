@@ -7,6 +7,11 @@ import pandas as pd
 from covsirphy import Term, JapanData
 
 
+@pytest.fixture(scope="module")
+def japan_data():
+    return JapanData(filename="japan.csv")
+
+
 class TestJapanData(object):
     def test_cleaning(self, japan_data):
         assert isinstance(japan_data.raw_columns(), list)

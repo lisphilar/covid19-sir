@@ -85,7 +85,7 @@ class TestLayerAdjuster(object):
                 data=raw, layers=["Country", "Country"], date="date", variables=["Confirmed", "Recovered"], citations="Manual")
         collector.register(
             data=raw, layers=list(data_dict.keys()), date="date", variables=["Confirmed"], citations="Manual")
-        # All data
+        # Expected all data
         all_df = pd.concat([pd.DataFrame(all_dict), pd.DataFrame(all_dict)], axis=0, ignore_index=True)
         all_df[Term.DATE] = [day0 for _ in range(len(all_df) // 2)] + [day1 for _ in range(len(all_df) // 2)]
         all_df["Confirmed"] = np.arange(len(all_df))
