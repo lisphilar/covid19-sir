@@ -489,7 +489,7 @@ class ODEScenario(Term):
         phase_df = handler.summary()
         phase_df = phase_df.rename(
             columns={self.SERIES: "name", self.END: "end_date"}).drop([self.START, self.RT], axis=1)
-        phase_df = phase_df.sort_values(["suffix", "end"], ignore_index=True)
+        phase_df = phase_df.sort_values(["name", "end"], ignore_index=True)
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             new_name = f"{name}_{phase_dict['suffix']}"
