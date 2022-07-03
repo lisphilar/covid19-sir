@@ -356,17 +356,24 @@ class ODEScenario(Term):
         Returns:
             pandas.DataFrame:
                 Index
-                    Date (pandas.Timestamp)
+                    Date (pandas.Timestamp): dates
                 Columns
-                    {scenario name} (str): values of the scenario
+                    Actual (numpy.int64): actual records
+                    {scenario name} (numpy.int64): values of the scenario
         """
-        v_converted = self._variable_alias.find(name=variable, default=[variable])
-        Validator(v_converted, "variable", accept_none=False).sequence(length=1)
-        dataframes = [self._actual_df.assign(**{
-            self.N: lambda x: x[[self.CI, self.F, self.R, self.S]].sum(axis=1),
-            self.C: lambda x: x[[self.CI, self.F, self.R]].sum(axis=1)})]
-        dataframes.extend(self.simulate(name=name, display=False) for name in self._snr_alias.all().keys())
-        df = pd.concat(dataframes, axis=1)
+        v_converted = Validator(
+            self._variable_alias.find(name=variable, default=[variable]), "variable", accept_none=False).sequence(
+            length=1, candidates=[self.C, self.N, *self._actual_df.columns.tolist()])[0]
+        df = pd.DataFrame(index=self._actual_df.index.tolist())
+        if v_converted == self.C:
+            df[self.ACTUAL] = self._actual_df[[self.CI, self.F, self.R]].sum(axis=1)
+        elif v_converted == self.N:
+            df[self.ACTUAL] = self._actual_df[[self.CI, self.F, self.R, self.S]].sum(axis=1)
+        else:
+            df[self.ACTUAL] = self._actual_df.loc[:, v_converted]
+        dataframes = [
+            self.simulate(name=name, display=False)[v_converted].rename(name) for name in self._snr_alias.all().keys()]
+        df = pd.concat([df, *dataframes], axis=1)
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
         start = Validator(start_date, name="the first value of @date_range").date(default=df.index.min())
         end = Validator(
@@ -379,7 +386,7 @@ class ODEScenario(Term):
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
             plot_kwargs.update(kwargs)
             line_plot(df=df, **plot_kwargs)
-        return df
+        return df.astype("int64")
 
     def compare_param(self, param, date_range=None, ref=None, display=True, **kwargs):
         """Compare the number of cases of scenarios.
