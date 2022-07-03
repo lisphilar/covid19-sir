@@ -339,7 +339,7 @@ class ODEScenario(Term):
         # Show figure
         if display:
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": "the number of cases"}
-            plot_kwargs.update(kwargs)
+            plot_kwargs |= kwargs
             line_plot(df=df, **plot_kwargs)
         return df
 
@@ -377,7 +377,7 @@ class ODEScenario(Term):
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
-            plot_kwargs.update(kwargs)
+            plot_kwargs |= kwargs
             line_plot(df=df, **plot_kwargs)
         return df
 
@@ -412,7 +412,7 @@ class ODEScenario(Term):
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
             plot_kwargs = {"title": title, "math_scale": False, "v": v, "ylabel": ylabel, "h": h}
-            plot_kwargs.update(kwargs)
+            plot_kwargs |= kwargs
             line_plot(df=df, **plot_kwargs)
         return df.convert_dtypes()
 
