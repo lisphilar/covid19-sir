@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import pandas as pd
 import pytest
-from covsirphy import Evaluator, UnExpectedValueError
+from covsirphy import Evaluator, UnExpectedValueError, NAFoundError
 
 
 class TestEvaluator(object):
@@ -48,8 +49,8 @@ class TestEvaluator(object):
         assert isinstance(evaluator.score(metric=metric), float)
 
     def test_error(self):
-        with pytest.raises(TypeError):
-            Evaluator([1, 2, 3], [2, 5, 7])
+        with pytest.raises(NAFoundError):
+            Evaluator([1, 2, 3, np.nan], [2, 5, 7, 10])
         true = pd.Series([5, 10, 8, 6])
         pred = pd.Series([8, 12, 6, 5])
         evaluator = Evaluator(true, pred, on=None)

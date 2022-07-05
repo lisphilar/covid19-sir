@@ -16,10 +16,11 @@ from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import UnExpectedReturnValueError
-from covsirphy.util.error import DBLockedError, NotDBLockedError
+from covsirphy.util.error import UnExpectedReturnValueError, UnExpectedNoneError
+from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError, NotEnoughDataError
 from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
-from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError
+from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
+from covsirphy.util.alias import Alias
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
@@ -40,8 +41,6 @@ from covsirphy.gis.gis import GIS
 from covsirphy.downloading.downloader import DataDownloader
 # engineering
 from covsirphy.engineering.engineer import DataEngineer
-# eda
-from covsirphy.eda.eda import EDA
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -69,6 +68,13 @@ from covsirphy.ode.sirf import SIRF
 from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
 from covsirphy.ode.ode_handler import ODEHandler
+# dynamics
+from covsirphy.dynamics.ode import ODEModel
+from covsirphy.dynamics.sir import SIRModel
+from covsirphy.dynamics.sird import SIRDModel
+from covsirphy.dynamics.sirf import SIRFModel
+from covsirphy.dynamics.sewirf import SEWIRFModel
+from covsirphy.dynamics.dynamics import Dynamics
 # simulation
 from covsirphy.simulation.estimator import Estimator, Optimizer
 from covsirphy.simulation.simulator import ODESimulator
@@ -81,7 +87,6 @@ from covsirphy.regression.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
-from covsirphy.analysis.dynamics import Dynamics
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.param_tracker import ParamTracker
@@ -90,6 +95,8 @@ from covsirphy.analysis.scenario import Scenario
 from covsirphy.analysis.model_validator import ModelValidator
 # worldwide
 from covsirphy.worldwide.policy import PolicyMeasures
+# science
+from covsirphy.science.ode_scenario import ODEScenario
 
 
 def get_version():
@@ -113,15 +120,16 @@ def get_citation():
 
 
 __all__ = [
-    # util
-    "StopWatch", "deprecate", "Term", "Filer", "Evaluator",
+    # util-error
     "SubsetNotFoundError", "ScenarioNotFoundError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
     "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
-    "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError",
-    "Validator",
+    "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
+    "Validator", "UnExpectedNoneError", "NotNoneError", "NotEnoughDataError",
+    # util
+    "StopWatch", "deprecate", "Term", "Filer", "Evaluator", "Alias",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
@@ -131,8 +139,6 @@ __all__ = [
     "DataDownloader",
     # engineer
     "DataEngineer",
-    # eda
-    "EDA",
     # cleaning
     "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
@@ -142,12 +148,16 @@ __all__ = [
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
+    # dynamics
+    "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # regression
     "RegressionHandler",
     # automl
     "AutoMLHandler",
     # analysis
-    "Dynamics", "Scenario", "DataHandler", "PhaseTracker",
+    "Scenario", "DataHandler", "PhaseTracker",
+    # science
+    "ODEScenario",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
