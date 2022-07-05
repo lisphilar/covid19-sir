@@ -62,4 +62,4 @@ class TestODEScenario(object):
     def test_predict(self, snr):
         snr.predict(days=30, name="Baseline")
         snr.rename(old="Baseline_Univariate_Likely", new="Likely")
-        snr.represent(q=(0.1, 0.9), excluded=["Baseline"])
+        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline", "Likely"])
