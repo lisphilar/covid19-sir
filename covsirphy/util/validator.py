@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from inspect import signature
+import math
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
-from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError
+from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
 
 class Validator(object):
@@ -13,17 +14,26 @@ class Validator(object):
     Args:
         target (object): target object to validate
         name (str): name of the target shown in error code
+        accept_none (str): whether accept None as the target value or not
+
+    Raises:
+        NAFoundError: @accept_none is False, but @target is None
+
+    Note:
+        When @accept_none is True and @target is None, default values will be returned with instance methods.
     """
 
-    def __init__(self, target, name="target"):
+    def __init__(self, target, name="target", accept_none=True):
         self._target = target
         self._name = str(name)
+        if target is None and not accept_none:
+            raise UnExpectedNoneError(self._name)
 
     def subclass(self, parent):
         """Ensure the target is a subclass of the parent class.
 
         Args:
-            parent (object): parent class
+            parent (object): parent class or sequence of parent classes
 
         Raises:
             NotSubclassError: the target is not the subclass
@@ -39,7 +49,7 @@ class Validator(object):
         """Ensure that the target is an instance of a specified class.
 
         Args:
-            expected (object): expected class
+            expected (object): expected class or sequence of expected classes
 
         Raises:
             UnExpectedTypeError: the target is not an instance of the class
@@ -80,15 +90,17 @@ class Validator(object):
             expected_cols = sorted(set(columns) - set(df.columns), key=columns.index)
             for col in expected_cols:
                 raise NotIncludedError(
-                    col, "column list of '{self._name}'", details="The dataframe has {', '.join(df.columns.tolist())} as columns.")
+                    col, f"column list of {self._name}",
+                    details=f"The dataframe has {', '.join(df.columns.tolist())} as columns")
         return df
 
-    def float(self, value_range=(0, None), default=None):
+    def float(self, value_range=(0, None), default=None, digits=None):
         """Convert a value to a float value.
 
         Args:
             value_range (tuple(int or None, int or None)): value range, None means un-specified
             default (float or None): default value when the target is None
+            digits (int or None): effective digits or None (skip rounding)
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to a float value
@@ -98,14 +110,16 @@ class Validator(object):
             float or None: converted float value or None (when both of the target and @default are None)
         """
         if self._target is None:
-            return None if default is None else Validator(default, name="default").float(value_range=value_range)
+            return None if default is None else Validator(default, "default").float(value_range=value_range, digits=digits)
         try:
             value = float(self._target)
         except ValueError:
             raise UnExpectedTypeError(self._name, self._target, float) from None
         if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
             raise UnExpectedValueRangeError(self._name, value, value_range)
-        return value
+        if digits is None or value == 0:
+            return value
+        return round(value, digits - 1 - math.floor(math.log10(abs(value))))
 
     def int(self, value_range=(0, None), default=None, round_ok=False):
         """Convert a value to an integer.
@@ -126,7 +140,7 @@ class Validator(object):
             return None if default is None else Validator(default, name="default").int(value_range=value_range, round_ok=round_ok)
         try:
             value = int(self._target)
-        except ValueError:
+        except (ValueError, TypeError):
             raise UnExpectedTypeError(self._name, self._target, int) from None
         if value != self._target and not round_ok:
             raise UnExpectedTypeError(
@@ -182,10 +196,11 @@ class Validator(object):
             except ValueError:
                 raise UnExpectedTypeError(self._name, self._target, pd.Timestamp) from None
         if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
-            raise UnExpectedValueRangeError(self._name, value, value_range)
+            raise UnExpectedValueRangeError(
+                self._name, value.strftime("%Y-%m-%d"), [None if value is None else value.strftime("%Y-%m-%d") for value in value_range])
         return value
 
-    def sequence(self, default=None, flatten=False, unique=False, candidates=None):
+    def sequence(self, default=None, flatten=False, unique=False, candidates=None, length=None):
         """Convert a sequence (list, tuple) to a list.
 
         Args:
@@ -193,10 +208,12 @@ class Validator(object):
             flatten (bool): whether flatten the sequence or not
             unique (bool): whether remove duplicated values or not, the first value will remain
             candidates (list[object] or tuple(object) or iter or None): list of candidates or None (no limitations)
+            length (int or None): length of the sequence or None (no limitations)
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to a list or failed in flattening
             UnExpectedValueError: the target has a value which is not included in the candidates
+            UnExpectedLengthError: the number of elements is not the same as @length
 
         Returns:
             list[object] or None: converted list or None (when both of the target and @default are None)
@@ -205,7 +222,7 @@ class Validator(object):
             return None if default is None else Validator(default, name="default").sequence(flatten=flatten, unique=unique, candidates=candidates)
         if not isinstance(self._target, (list, tuple)):
             raise UnExpectedTypeError(
-                self._name, self._target, list, details="A tuple can be used, but it will be converted to a list.")
+                self._name, self._target, list, details="A tuple can be used, but it will be converted to a list")
         if flatten:
             try:
                 targets = sum(self._target, [])
@@ -217,6 +234,8 @@ class Validator(object):
             targets = list(self._target)
         if unique:
             targets = sorted(set(targets), key=targets.index)
+        if length is not None and len(targets) != length:
+            raise UnExpectedLengthError(self._name, targets, length)
         if candidates is None or set(targets).issubset(candidates):
             return targets
         for value in (set(targets) - set(candidates)):
@@ -226,13 +245,13 @@ class Validator(object):
         """Ensure the target is a dictionary.
 
         Args:
-            default (dict[str, object] or None): default value, when the target is None or key is not included in the target
+            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
             required_keys (list): keys which must be included
             errors (str): "coerce" or "raise"
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
-            NAFoundError: values of the required keys are not specified when @errors="coerce"
+            NAFoundError: values of the required keys are not specified when @errors="raise"
 
         Returns:
             dict[str, object]: the target is self with default values and required keys
@@ -258,11 +277,10 @@ class Validator(object):
 
         Args:
             functions (list[function] or function): target functions
-            default (dict[str, object] or None): default value when the target is None
+            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
-            NAFoundError: values of the required keys are not specified when @errors="coerce"
 
         Returns:
             dict[str, object]: keyword arguments of the functions
