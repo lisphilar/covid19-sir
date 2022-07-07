@@ -65,7 +65,10 @@ class _SubsetManager(Term):
         df = df.loc[df[self._layers[0]] != self.NA]
         for (i, sel) in enumerate(geo_converted):
             if sel is None:
-                return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
+                try:
+                    return df.loc[df[self._layers[i + 1]] == self.NA].reset_index(drop=True)
+                except IndexError:
+                    return df.reset_index(drop=True)
             if not isinstance(sel, (str, list, tuple)):
                 raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
             if i >= len(self._layers):

@@ -18,7 +18,7 @@ class _AutoTSPredictor(Term):
         kwargs: keyword arguments of autots.AutoTS.
 
     Note:
-        Candidates of @model_list can be checked with from autots.models.model_list import model_lists; print(model_list).
+        Candidates of @model_list can be checked with `from autots.models.model_list import model_lists; print(model_lists)`.
     """
     warnings.filterwarnings("ignore", category=UserWarning)
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
