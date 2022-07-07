@@ -3,19 +3,17 @@
 
 import pytest
 from covsirphy import ScatterPlot, scatter_plot
-from covsirphy import Term, UnExecutedError
+from covsirphy import UnExecutedError
 
 
 class TestScatterPlot(object):
-    def test_plot(self, jhu_data, imgfile):
-        japan_df = jhu_data.subset(country="Japan")
-        df = japan_df.rename(columns={Term.C: "x", Term.R: "y"})
+    def test_plot(self, japan_df, imgfile):
+        df = japan_df.rename(columns={"Positive": "x", "Discharged": "y"})
         # Create a scatter plot
         scatter_plot(df, filename=imgfile)
 
-    def test_error(self, jhu_data, imgfile):
-        japan_df = jhu_data.subset(country="Japan")
-        df = japan_df.rename(columns={Term.C: "x", Term.R: "y"})
+    def test_error(self, japan_df, imgfile):
+        df = japan_df.rename(columns={"Positive": "x", "Discharged": "y"})
         # Plotting not done
         with ScatterPlot(filename=imgfile) as sp:
             with pytest.raises(UnExecutedError):
