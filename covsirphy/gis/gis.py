@@ -3,6 +3,7 @@
 
 import geopandas as gpd
 from matplotlib import pyplot as plt
+import pandas as pd
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -108,7 +109,7 @@ class GIS(Term):
         """
         self._adjuster.register(
             data=data, layers=layers, date=date, variables=variables, citations=citations,
-            convert_iso3=convert_iso3, **kwargs)
+            convert_iso3=convert_iso3, **Validator(kwargs, "keyword arguments").kwargs(pd.to_datetime))
         self._un_registered = False
         return self
 
