@@ -61,12 +61,12 @@ from covsirphy.loading.dataloader import DataLoader
 from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
-from covsirphy._deprecated.mbase import ModelBase
-from covsirphy._deprecated.sir import SIR
-from covsirphy._deprecated.sird import SIRD
-from covsirphy._deprecated.sirf import SIRF
-from covsirphy._deprecated.sirfv import SIRFV
-from covsirphy._deprecated.sewirf import SEWIRF
+from covsirphy.automl._mbase import ModelBase
+from covsirphy.automl._sir import SIR
+from covsirphy.automl._sird import SIRD
+from covsirphy.automl._sirf import SIRF
+from covsirphy.automl._sirfv import SIRFV
+from covsirphy.automl._sewirf import SEWIRF
 from covsirphy._deprecated.ode_handler import ODEHandler
 # dynamics
 from covsirphy.dynamics.ode import ODEModel

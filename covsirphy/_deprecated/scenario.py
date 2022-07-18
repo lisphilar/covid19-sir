@@ -20,10 +20,10 @@ from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.compare_plot import compare_plot
 from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy._deprecated.mbase import ModelBase
-from covsirphy._deprecated.sir import SIR
-from covsirphy._deprecated.sird import SIRD
-from covsirphy._deprecated.sirf import SIRF
+from covsirphy.automl._mbase import ModelBase
+from covsirphy.automl._sir import SIR
+from covsirphy.automl.sird import SIRD
+from covsirphy.automl.sirf import SIRF
 from covsirphy._deprecated.reg_handler import RegressionHandler
 from covsirphy.automl.automl_handler import AutoMLHandler
 from covsirphy._deprecated.data_handler import DataHandler
