@@ -22,8 +22,8 @@ from covsirphy.visualization.compare_plot import compare_plot
 from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy.automl._mbase import ModelBase
 from covsirphy.automl._sir import SIR
-from covsirphy.automl.sird import SIRD
-from covsirphy.automl.sirf import SIRF
+from covsirphy.automl._sird import SIRD
+from covsirphy.automl._sirf import SIRF
 from covsirphy._deprecated.reg_handler import RegressionHandler
 from covsirphy.automl.automl_handler import AutoMLHandler
 from covsirphy._deprecated.data_handler import DataHandler
