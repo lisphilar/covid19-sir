@@ -29,8 +29,8 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term, Word
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
-from covsirphy.visualization.colored_map import ColoredMap
-from covsirphy.visualization.japan_map import jpn_map
+from covsirphy._deprecated.colored_map import ColoredMap
+from covsirphy._deprecated.japan_map import jpn_map
 from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
 from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
