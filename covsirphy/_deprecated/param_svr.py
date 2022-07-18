@@ -8,9 +8,9 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVR
-from covsirphy.regression.regbase import _RegressorBase
-from covsirphy.regression.reg_rate_converter import _RateConverter
-from covsirphy.regression.reg_feature_selector import _FeatureSelector
+from covsirphy._deprecated.regbase import _RegressorBase
+from covsirphy._deprecated.reg_rate_converter import _RateConverter
+from covsirphy._deprecated.reg_feature_selector import _FeatureSelector
 
 
 class _ParamSVRegressor(_RegressorBase):

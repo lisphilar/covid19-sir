@@ -6,9 +6,9 @@ from sklearn.linear_model import MultiTaskElasticNetCV
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from covsirphy.regression.regbase import _RegressorBase
-from covsirphy.regression.reg_rate_converter import _RateConverter
-from covsirphy.regression.reg_feature_selector import _FeatureSelector
+from covsirphy._deprecated.regbase import _RegressorBase
+from covsirphy._deprecated.reg_rate_converter import _RateConverter
+from covsirphy._deprecated.reg_feature_selector import _FeatureSelector
 
 
 class _ParamElasticNetRegressor(_RegressorBase):

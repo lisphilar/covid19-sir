@@ -83,7 +83,7 @@ from covsirphy._deprecated.phase_unit import PhaseUnit
 from covsirphy._deprecated.phase_series import PhaseSeries
 from covsirphy._deprecated.phase_estimator import MPEstimator
 # regression
-from covsirphy.regression.reg_handler import RegressionHandler
+from covsirphy._deprecated.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
@@ -147,8 +147,6 @@ __all__ = [
     "DataLoader",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
-    # regression
-    "RegressionHandler",
     # automl
     "AutoMLHandler",
     # science
@@ -161,6 +159,7 @@ __all__ = [
     "Scenario", "DataHandler", "PhaseTracker",
     "TrendDetector", "TrendPlot", "trend_plot",
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
+    "RegressionHandler",
 ]
 
 # Show exceptions in better format if used from command line

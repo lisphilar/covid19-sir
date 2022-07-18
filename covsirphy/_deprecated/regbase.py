@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
-from covsirphy.regression.reg_pred_actual_plot import _PredActualPlot
+from covsirphy._deprecated.reg_pred_actual_plot import _PredActualPlot
 
 
 class _RegressorBase(Term):

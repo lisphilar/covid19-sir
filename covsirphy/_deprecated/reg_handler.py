@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
+from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError, deprecate
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy._deprecated.mbase import ModelBase
-from covsirphy.regression.feature_engineer import _FeatureEngineer
-from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
-from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
-from covsirphy.regression.param_lightgbm import _ParamLightGBMRegressor
-from covsirphy.regression.param_svr import _ParamSVRegressor
+from covsirphy._deprecated.feature_engineer import _FeatureEngineer
+from covsirphy._deprecated.param_elastic_net import _ParamElasticNetRegressor
+from covsirphy._deprecated.param_decision_tree import _ParamDecisionTreeRegressor
+from covsirphy._deprecated.param_lightgbm import _ParamLightGBMRegressor
+from covsirphy._deprecated.param_svr import _ParamSVRegressor
 
 
 class RegressionHandler(Term):
@@ -37,6 +37,7 @@ class RegressionHandler(Term):
         test_size=0.2, random_state=0, shuffle=False.
     """
 
+    @deprecate(old="RegressionHandler", new="AutoMLHandler", version="2.24.0-xi")
     def __init__(self, data, model, **kwargs):
         # ODE parameter values
         Validator(model, "model").subclass(ModelBase)

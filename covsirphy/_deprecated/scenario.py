@@ -24,7 +24,7 @@ from covsirphy._deprecated.mbase import ModelBase
 from covsirphy._deprecated.sir import SIR
 from covsirphy._deprecated.sird import SIRD
 from covsirphy._deprecated.sirf import SIRF
-from covsirphy.regression.reg_handler import RegressionHandler
+from covsirphy._deprecated.reg_handler import RegressionHandler
 from covsirphy.automl.automl_handler import AutoMLHandler
 from covsirphy._deprecated.data_handler import DataHandler
 from covsirphy._deprecated.phase_tracker import PhaseTracker

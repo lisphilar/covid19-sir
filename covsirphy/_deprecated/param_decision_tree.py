@@ -6,8 +6,8 @@ from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeRegressor
-from covsirphy.regression.regbase import _RegressorBase
-from covsirphy.regression.reg_rate_converter import _RateConverter
+from covsirphy._deprecated.regbase import _RegressorBase
+from covsirphy._deprecated.reg_rate_converter import _RateConverter
 
 
 class _ParamDecisionTreeRegressor(_RegressorBase):
