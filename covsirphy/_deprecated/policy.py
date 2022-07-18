@@ -8,9 +8,9 @@ import pandas as pd
 from covsirphy.util.error import deprecate, UnExecutedError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.population import PopulationData
-from covsirphy.cleaning.oxcgrt import OxCGRTData
+from covsirphy._deprecated.jhu_data import JHUData
+from covsirphy._deprecated.population import PopulationData
+from covsirphy._deprecated.oxcgrt import OxCGRTData
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy._deprecated.mbase import ModelBase
 from covsirphy._deprecated.phase_estimator import MPEstimator

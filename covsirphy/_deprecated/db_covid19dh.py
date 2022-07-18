@@ -7,7 +7,7 @@ from zipfile import ZipFile
 import pandas as pd
 import requests
 from covsirphy.util.term import Term
-from covsirphy.loading.db_base import _RemoteDatabase
+from covsirphy._deprecated.db_base import _RemoteDatabase
 
 
 class _COVID19dh(_RemoteDatabase):

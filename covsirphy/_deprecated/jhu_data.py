@@ -7,8 +7,8 @@ import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.cleaning.cbase import CleaningBase
-from covsirphy.cleaning.country_data import CountryData
-from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
+from covsirphy._deprecated.country_data import CountryData
+from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
 
 
 class JHUData(CleaningBase):
@@ -43,6 +43,7 @@ class JHUData(CleaningBase):
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R, CleaningBase.N
     ]
 
+    @deprecate(old="JHUData", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, filename=None, data=None, citation=None):
         variables = [self.C, self.CI, self.F, self.R, self.N]
         super().__init__(filename=filename, data=data, citation=citation, variables=variables)

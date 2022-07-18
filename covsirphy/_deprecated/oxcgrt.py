@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -59,6 +59,7 @@ class OxCGRTData(CleaningBase):
     # Indicators except for Stringency index
     OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
 
+    @deprecate(old="OxCGRTData", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, filename=None, data=None, citation=None, variables=None):
         self._variables = variables or self.OXCGRT_VARS[:]
         super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)

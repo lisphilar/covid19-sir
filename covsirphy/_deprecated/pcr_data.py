@@ -6,7 +6,7 @@ import pandas as pd
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError, deprecate
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.cleaning.cbase import CleaningBase
-from covsirphy.cleaning.country_data import CountryData
+from covsirphy._deprecated.country_data import CountryData
 
 
 class PCRData(CleaningBase):
@@ -32,6 +32,7 @@ class PCRData(CleaningBase):
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 
+    @deprecate(old="PCRData", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
         variables = [self.TESTS, self.C]
         super().__init__(filename=filename, data=data, citation=citation, variables=variables)

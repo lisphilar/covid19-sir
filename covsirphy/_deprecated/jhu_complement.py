@@ -5,6 +5,7 @@ import functools
 import warnings
 import numpy as np
 from datetime import timedelta
+from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -46,6 +47,7 @@ class JHUDataComplementHandler(Term):
         4: "fully",
     }
 
+    @deprecate(old="JHUDataComplementHandler", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, recovery_period, interval=2, max_ignored=100,
                  max_ending_unupdated=14, upper_limit_days=90,
                  lower_limit_days=7, upper_percentage=0.5, lower_percentage=0.5):

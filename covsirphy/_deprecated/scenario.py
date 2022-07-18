@@ -19,7 +19,7 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.compare_plot import compare_plot
-from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy.automl._mbase import ModelBase
 from covsirphy.automl._sir import SIR
 from covsirphy.automl.sird import SIRD

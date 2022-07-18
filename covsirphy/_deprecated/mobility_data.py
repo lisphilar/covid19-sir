@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -47,6 +47,7 @@ class MobilityData(CleaningBase):
         "Mobility_workplaces",
     ]
 
+    @deprecate(old="MobilityData", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, filename=None, data=None, citation=None, variables=None):
         self._variables = variables or self._MOBILITY_VARS[:]
         super().__init__(filename=filename, data=data, citation=citation, variables=self._variables)

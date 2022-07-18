@@ -4,7 +4,7 @@
 import pandas as pd
 from unidecode import unidecode
 from covsirphy.util.term import Term
-from covsirphy.loading.db_base import _RemoteDatabase
+from covsirphy._deprecated.db_base import _RemoteDatabase
 
 
 class _GoogleOpenData(_RemoteDatabase):

@@ -43,20 +43,20 @@ from covsirphy.downloading.downloader import DataDownloader
 from covsirphy.engineering.engineer import DataEngineer
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
-from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
-from covsirphy.cleaning.country_data import CountryData
+from covsirphy._deprecated.jhu_data import JHUData
+from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
+from covsirphy._deprecated.country_data import CountryData
 from covsirphy.cleaning.japan_data import JapanData
-from covsirphy.cleaning.population import PopulationData, Population
+from covsirphy._deprecated.population import PopulationData, Population
 from covsirphy.cleaning.pyramid import PopulationPyramidData
-from covsirphy.cleaning.oxcgrt import OxCGRTData
-from covsirphy.cleaning.pcr_data import PCRData
-from covsirphy.cleaning.linelist import LinelistData
-from covsirphy.cleaning.vaccine_data import VaccineData
-from covsirphy.cleaning.mobility_data import MobilityData
+from covsirphy._deprecated.oxcgrt import OxCGRTData
+from covsirphy._deprecated.pcr_data import PCRData
+from covsirphy._deprecated.linelist import LinelistData
+from covsirphy._deprecated.vaccine_data import VaccineData
+from covsirphy._deprecated.mobility_data import MobilityData
 # loading
-from covsirphy.loading.covid19datahub import COVID19DataHub
-from covsirphy.loading.dataloader import DataLoader
+from covsirphy._deprecated.covid19datahub import COVID19DataHub
+from covsirphy._deprecated.dataloader import DataLoader
 # trend
 from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
@@ -141,8 +141,7 @@ __all__ = [
     # engineer
     "DataEngineer",
     # cleaning
-    "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
-    "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
+    "CleaningBase", "JapanData", "PopulationPyramidData",
     # loading
     "DataLoader",
     # dynamics
@@ -160,6 +159,7 @@ __all__ = [
     "TrendDetector", "TrendPlot", "trend_plot",
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     "RegressionHandler",
+    "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
 ]
 
 # Show exceptions in better format if used from command line

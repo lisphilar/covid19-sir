@@ -44,9 +44,10 @@ class VaccineData(CleaningBase):
             - Vaccinations (int): cumulative number of vaccinations
             - Vaccinations (int): cumulative number of booster vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-            - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+            - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
     """
 
+    @deprecate(old="VaccineData", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, filename=None, data=None, citation=None, **kwargs):
         self._subset_cols = [self.DATE, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]
         self._raw_cols = [

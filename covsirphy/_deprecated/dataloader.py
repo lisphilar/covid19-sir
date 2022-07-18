@@ -7,18 +7,18 @@ import pandas as pd
 from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnExpectedValueError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
-from covsirphy.cleaning.oxcgrt import OxCGRTData
-from covsirphy.cleaning.population import PopulationData
+from covsirphy._deprecated.oxcgrt import OxCGRTData
+from covsirphy._deprecated.population import PopulationData
 from covsirphy.cleaning.pyramid import PopulationPyramidData
-from covsirphy.cleaning.linelist import LinelistData
-from covsirphy.cleaning.pcr_data import PCRData
-from covsirphy.cleaning.vaccine_data import VaccineData
-from covsirphy.cleaning.mobility_data import MobilityData
-from covsirphy.loading.db_covid19dh import _COVID19dh
-from covsirphy.loading.db_google import _GoogleOpenData
-from covsirphy.loading.recommended import _Recommended
+from covsirphy._deprecated.linelist import LinelistData
+from covsirphy._deprecated.pcr_data import PCRData
+from covsirphy._deprecated.vaccine_data import VaccineData
+from covsirphy._deprecated.mobility_data import MobilityData
+from covsirphy._deprecated.db_covid19dh import _COVID19dh
+from covsirphy._deprecated.db_google import _GoogleOpenData
+from covsirphy._deprecated.recommended import _Recommended
 
 
 class DataLoader(Term):
@@ -50,6 +50,7 @@ class DataLoader(Term):
         If @verbose is 2, detailed citation list will be show, if available.
     """
 
+    @deprecate(old="DataLoader", new="DataEngineer", version="2.24.0-xi")
     def __init__(self, directory="input", update_interval=12, country=None, basename_dict=None, verbose=1):
         # Directory
         try:

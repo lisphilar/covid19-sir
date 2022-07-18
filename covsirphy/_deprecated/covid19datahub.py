@@ -4,7 +4,7 @@
 from pathlib import Path
 from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
-from covsirphy.loading.dataloader import DataLoader
+from covsirphy._deprecated.dataloader import DataLoader
 
 
 class COVID19DataHub(Term):

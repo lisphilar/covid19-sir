@@ -8,8 +8,8 @@ from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.population import PopulationData
+from covsirphy._deprecated.jhu_data import JHUData
+from covsirphy._deprecated.population import PopulationData
 from covsirphy._deprecated.mbase import ModelBase
 from covsirphy._deprecated.phase_unit import PhaseUnit
 

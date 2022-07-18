@@ -6,10 +6,10 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import pandas as pd
 from covsirphy.util.term import Term
-from covsirphy.loading.db_cs_japan import _CSJapan
-from covsirphy.loading.db_covid19dh import _COVID19dh
-from covsirphy.loading.db_owid import _OWID
-from covsirphy.loading.db_google import _GoogleOpenData
+from covsirphy._deprecated.db_cs_japan import _CSJapan
+from covsirphy._deprecated.db_covid19dh import _COVID19dh
+from covsirphy._deprecated.db_owid import _OWID
+from covsirphy._deprecated.db_google import _GoogleOpenData
 
 
 class _Recommended(Term):
