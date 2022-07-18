@@ -6,7 +6,7 @@ from itertools import product
 import pandas as pd
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy._deprecated.mbase import ModelBase
+from covsirphy.automl._mbase import ModelBase
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.automl.autots_predictor import _AutoTSPredictor
 
