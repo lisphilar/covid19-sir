@@ -45,6 +45,7 @@ class TestODEScenario(object):
         df = snr.summary().reset_index().groupby(Term.SERIES).last()
         assert len(df[Term.END].unique()) == 1
 
+    @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_compare(self, snr):
         snr.build_with_template(name="Lockdown", template="Baseline")
         snr.append(end=30, name="Medicine", sigma=0.5)
@@ -54,11 +55,13 @@ class TestODEScenario(object):
         snr.compare_param(param="Rt")
         snr.compare_param(param="1/gamma [day]")
 
+    @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_summary_track_describe(self, snr):
         snr.summary()
         snr.track()
         snr.describe()
 
+    @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_predict(self, snr):
         snr.predict(days=30, name="Baseline")
         snr.rename(old="Baseline_Univariate_Likely", new="Likely")
