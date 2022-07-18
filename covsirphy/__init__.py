@@ -142,8 +142,6 @@ __all__ = [
     "DataEngineer",
     # cleaning
     "CleaningBase", "JapanData", "PopulationPyramidData",
-    # loading
-    "DataLoader",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # automl
@@ -160,6 +158,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     "RegressionHandler",
     "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
+    "DataLoader",
 ]
 
 # Show exceptions in better format if used from command line
