@@ -43,31 +43,31 @@ from covsirphy.downloading.downloader import DataDownloader
 from covsirphy.engineering.engineer import DataEngineer
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
-from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
-from covsirphy.cleaning.country_data import CountryData
+from covsirphy._deprecated.jhu_data import JHUData
+from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
+from covsirphy._deprecated.country_data import CountryData
 from covsirphy.cleaning.japan_data import JapanData
-from covsirphy.cleaning.population import PopulationData, Population
+from covsirphy._deprecated.population import PopulationData, Population
 from covsirphy.cleaning.pyramid import PopulationPyramidData
-from covsirphy.cleaning.oxcgrt import OxCGRTData
-from covsirphy.cleaning.pcr_data import PCRData
-from covsirphy.cleaning.linelist import LinelistData
-from covsirphy.cleaning.vaccine_data import VaccineData
-from covsirphy.cleaning.mobility_data import MobilityData
+from covsirphy._deprecated.oxcgrt import OxCGRTData
+from covsirphy._deprecated.pcr_data import PCRData
+from covsirphy._deprecated.linelist import LinelistData
+from covsirphy._deprecated.vaccine_data import VaccineData
+from covsirphy._deprecated.mobility_data import MobilityData
 # loading
-from covsirphy.loading.covid19datahub import COVID19DataHub
-from covsirphy.loading.dataloader import DataLoader
+from covsirphy._deprecated.covid19datahub import COVID19DataHub
+from covsirphy._deprecated.dataloader import DataLoader
 # trend
-from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
-from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
+from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
+from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.sir import SIR
-from covsirphy.ode.sird import SIRD
-from covsirphy.ode.sirf import SIRF
-from covsirphy.ode.sirfv import SIRFV
-from covsirphy.ode.sewirf import SEWIRF
-from covsirphy.ode.ode_handler import ODEHandler
+from covsirphy.automl._mbase import ModelBase
+from covsirphy.automl._sir import SIR
+from covsirphy.automl._sird import SIRD
+from covsirphy.automl._sirf import SIRF
+from covsirphy.automl._sirfv import SIRFV
+from covsirphy.automl._sewirf import SEWIRF
+from covsirphy._deprecated.ode_handler import ODEHandler
 # dynamics
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.sir import SIRModel
@@ -76,27 +76,28 @@ from covsirphy.dynamics.sirf import SIRFModel
 from covsirphy.dynamics.sewirf import SEWIRFModel
 from covsirphy.dynamics.dynamics import Dynamics
 # simulation
-from covsirphy.simulation.estimator import Estimator, Optimizer
-from covsirphy.simulation.simulator import ODESimulator
+from covsirphy._deprecated.estimator import Estimator, Optimizer
+from covsirphy._deprecated.simulator import ODESimulator
 # phase
-from covsirphy.phase.phase_unit import PhaseUnit
-from covsirphy.phase.phase_series import PhaseSeries
-from covsirphy.phase.phase_estimator import MPEstimator
+from covsirphy._deprecated.phase_unit import PhaseUnit
+from covsirphy._deprecated.phase_series import PhaseSeries
+from covsirphy._deprecated.phase_estimator import MPEstimator
 # regression
-from covsirphy.regression.reg_handler import RegressionHandler
+from covsirphy._deprecated.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
-from covsirphy.analysis.example_data import ExampleData
-from covsirphy.analysis.data_handler import DataHandler
-from covsirphy.analysis.param_tracker import ParamTracker
-from covsirphy.analysis.phase_tracker import PhaseTracker
-from covsirphy.analysis.scenario import Scenario
-from covsirphy.analysis.model_validator import ModelValidator
+from covsirphy._deprecated.example_data import ExampleData
+from covsirphy._deprecated.data_handler import DataHandler
+from covsirphy._deprecated.param_tracker import ParamTracker
+from covsirphy._deprecated.phase_tracker import PhaseTracker
+from covsirphy._deprecated.scenario import Scenario
+from covsirphy._deprecated.model_validator import ModelValidator
 # worldwide
-from covsirphy.worldwide.policy import PolicyMeasures
+from covsirphy._deprecated.policy import PolicyMeasures
 # science
 from covsirphy.science.ode_scenario import ODEScenario
+from covsirphy.science.causality import Causality
 
 
 def get_version():
@@ -140,29 +141,24 @@ __all__ = [
     # engineer
     "DataEngineer",
     # cleaning
-    "CleaningBase", "JHUData", "OxCGRTData", "VaccineData",
-    "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
-    # loading
-    "DataLoader",
-    # trend
-    "TrendDetector", "TrendPlot", "trend_plot",
-    # ode
-    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
+    "CleaningBase", "JapanData", "PopulationPyramidData",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
-    # regression
-    "RegressionHandler",
     # automl
     "AutoMLHandler",
-    # analysis
-    "Scenario", "DataHandler", "PhaseTracker",
     # science
-    "ODEScenario",
+    "ODEScenario", "Causality",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
     "CountryData", "ColoredMap", "ExampleData", "ModelValidator", "find_args",
+    "Scenario", "DataHandler", "PhaseTracker",
+    "TrendDetector", "TrendPlot", "trend_plot",
+    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
+    "RegressionHandler",
+    "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
+    "DataLoader",
 ]
 
 # Show exceptions in better format if used from command line
