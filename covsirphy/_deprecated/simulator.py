@@ -8,7 +8,7 @@ from scipy.integrate import solve_ivp
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy._deprecated.mbase import ModelBase
+from covsirphy.automl._mbase import ModelBase
 
 
 class ODESimulator(Term):

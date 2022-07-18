@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
-from covsirphy._deprecated.mbase import ModelBase
+from covsirphy.automl._mbase import ModelBase
 
 
 class SIRF(ModelBase):
