@@ -10,7 +10,7 @@ import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
 from covsirphy.util.term import Term
-from covsirphy.visualization.colored_map import ColoredMap
+from covsirphy._deprecated.colored_map import ColoredMap
 
 
 class CleaningBase(Term):

@@ -491,8 +491,34 @@ class ODEScenario(Term):
         track_df = self.to_dynamics(name=name).track()
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = track_df.loc[:, model._PARAMETERS]
-        handler = AutoMLHandler(X=pd.DataFrame(index=Y.index), Y=Y, model=model, days=days, **kwargs)
-        handler.predict(method="univariate")
+        X = pd.DataFrame(index=Y.index)
+        return self._predict(days=days, name=name, X=X, Y=Y, method="univariate", **kwargs)
+
+    def _predict(self, days, name, X, Y, method, **kwargs):
+        """Create scenarios and append a phase with X data, performing univariate prediction of ODE parameters.
+
+        Args:
+            days (int): days to predict
+            name (str): scenario name
+            X (pandas.DataFrame):
+                Index
+                    pandas.Timestamp: Observation date
+                Columns
+                    observed variables (int or float)
+            Y (pandas.DataFrame):
+                Index
+                    pandas.Timestamp: Observation date
+                Columns
+                    observed ODE parameter values (float)
+            method (str): machine learning method name, "univariate" or "multivariate_regression"
+            **kwargs: keyword arguments of autots.AutoTS()
+
+        Return:
+            covsirphy.ODEScenario: self
+        """
+        model = self._snr_alias.find(name=name)[self.ODE]
+        handler = AutoMLHandler(X=X, Y=Y, model=model, days=days, **kwargs)
+        handler.predict(method=method)
         phase_df = handler.summary()
         phase_df = phase_df.rename(
             columns={self.SERIES: "suffix", self.END: "end"}).drop([self.START, self.RT], axis=1)
