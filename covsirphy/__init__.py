@@ -97,6 +97,7 @@ from covsirphy.analysis.model_validator import ModelValidator
 from covsirphy.worldwide.policy import PolicyMeasures
 # science
 from covsirphy.science.ode_scenario import ODEScenario
+from covsirphy.science.causality import Causality
 
 
 def get_version():
@@ -157,7 +158,7 @@ __all__ = [
     # analysis
     "Scenario", "DataHandler", "PhaseTracker",
     # science
-    "ODEScenario",
+    "ODEScenario", "Causality",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
