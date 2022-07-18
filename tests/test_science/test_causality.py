@@ -17,5 +17,5 @@ class TestCausality(object):
         engineer.clean()
         X, *_ = engineer.subset(geo="Japan", variables=[Term.TESTS, Term.VAC])
         snr.predict(days=30, name="Baseline", X=X)
-        snr.rename(old="Baseline_Multivariate_Likely", new="Likely")
+        snr.rename(old="Baseline_Multivariate_regression_Likely", new="Likely")
         snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline", "Likely"])
