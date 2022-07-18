@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.ode.mbase import ModelBase
+from covsirphy.util.error import deprecate
+from covsirphy._deprecated.mbase import ModelBase
 
 
 class SIRFV(ModelBase):
@@ -52,6 +53,7 @@ class SIRFV(ModelBase):
         },
     }
 
+    @deprecate(old="ModelBase", new="ODEModel", version="2.24.0-xi")
     def __init__(self, *args, **kwargs):
         raise NotImplementedError(
             "SIR-FV model was removed because vaccinated persons may move "

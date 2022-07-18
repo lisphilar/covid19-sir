@@ -9,8 +9,8 @@ from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.ode_solver import _ODESolver
+from covsirphy._deprecated.mbase import ModelBase
+from covsirphy._deprecated.ode_solver import _ODESolver
 
 
 class _ParamEstimator(Term):

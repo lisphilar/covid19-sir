@@ -10,7 +10,7 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy._deprecated.trend_detector import TrendDetector
 from covsirphy._deprecated.trend_plot import trend_plot
-from covsirphy.ode.mbase import ModelBase
+from covsirphy._deprecated.mbase import ModelBase
 from covsirphy._deprecated.phase_unit import PhaseUnit
 from covsirphy._deprecated.phase_estimator import MPEstimator
 from covsirphy._deprecated.phase_series import PhaseSeries

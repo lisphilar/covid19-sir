@@ -33,6 +33,7 @@ class ModelBase(Term):
         Term.Y0_DICT: dict(),
     }
 
+    @deprecate(old="ModelBase", new="ODEModel", version="2.24.0-xi")
     def __init__(self, population):
         """
         This method should be overwritten in subclass.

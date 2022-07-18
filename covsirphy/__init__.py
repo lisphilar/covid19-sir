@@ -61,13 +61,13 @@ from covsirphy.loading.dataloader import DataLoader
 from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.sir import SIR
-from covsirphy.ode.sird import SIRD
-from covsirphy.ode.sirf import SIRF
-from covsirphy.ode.sirfv import SIRFV
-from covsirphy.ode.sewirf import SEWIRF
-from covsirphy.ode.ode_handler import ODEHandler
+from covsirphy._deprecated.mbase import ModelBase
+from covsirphy._deprecated.sir import SIR
+from covsirphy._deprecated.sird import SIRD
+from covsirphy._deprecated.sirf import SIRF
+from covsirphy._deprecated.sirfv import SIRFV
+from covsirphy._deprecated.sewirf import SEWIRF
+from covsirphy._deprecated.ode_handler import ODEHandler
 # dynamics
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.sir import SIRModel
@@ -145,8 +145,6 @@ __all__ = [
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
-    # ode
-    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # regression
@@ -162,6 +160,7 @@ __all__ = [
     "CountryData", "ColoredMap", "ExampleData", "ModelValidator", "find_args",
     "Scenario", "DataHandler", "PhaseTracker",
     "TrendDetector", "TrendPlot", "trend_plot",
+    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
 ]
 
 # Show exceptions in better format if used from command line

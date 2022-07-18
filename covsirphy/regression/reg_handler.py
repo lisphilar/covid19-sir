@@ -5,7 +5,7 @@ from covsirphy.util.error import UnExpectedReturnValueError, NotIncludedError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.ode.mbase import ModelBase
+from covsirphy._deprecated.mbase import ModelBase
 from covsirphy.regression.feature_engineer import _FeatureEngineer
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor

@@ -10,7 +10,7 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
-from covsirphy.ode.mbase import ModelBase
+from covsirphy._deprecated.mbase import ModelBase
 from covsirphy._deprecated.phase_unit import PhaseUnit
 
 

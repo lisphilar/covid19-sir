@@ -6,13 +6,13 @@ from datetime import timedelta
 import functools
 from multiprocessing import cpu_count, Pool
 import itertools
-from covsirphy.util.error import UnExecutedError
+from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.ode_solver_multi import _MultiPhaseODESolver
-from covsirphy.ode.param_estimator import _ParamEstimator
+from covsirphy._deprecated.mbase import ModelBase
+from covsirphy._deprecated.ode_solver_multi import _MultiPhaseODESolver
+from covsirphy._deprecated.param_estimator import _ParamEstimator
 
 
 class ODEHandler(Term):
@@ -27,6 +27,7 @@ class ODEHandler(Term):
         n_jobs (int): the number of parallel jobs or -1 (CPU count)
     """
 
+    @deprecate(old="ODEHandler", new="Dynamics", version="2.24.0-xi")
     def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = Validator(model, "model").subclass(ModelBase)
         self._first = Validator(first_date, "first_date").date()

@@ -11,8 +11,8 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy._deprecated.trend_plot import trend_plot
 from covsirphy._deprecated.trend_detector import TrendDetector
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.ode_handler import ODEHandler
+from covsirphy._deprecated.mbase import ModelBase
+from covsirphy._deprecated.ode_handler import ODEHandler
 
 
 class PhaseTracker(Term):
