@@ -8,8 +8,8 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.trend.trend_detector import TrendDetector
-from covsirphy.trend.trend_plot import trend_plot
+from covsirphy._deprecated.trend_detector import TrendDetector
+from covsirphy._deprecated.trend_plot import trend_plot
 from covsirphy.ode.mbase import ModelBase
 from covsirphy._deprecated.phase_unit import PhaseUnit
 from covsirphy._deprecated.phase_estimator import MPEstimator

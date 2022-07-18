@@ -20,6 +20,7 @@ class TrendPlot(LinePlot):
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
+    @deprecate(old="TrendPlot", new="Dynamics.trend_analysis()", version="2.24.0-xi")
     def __init__(self, filename=None, bbox_inches="tight", **kwargs):
         self._filename = filename
         self._savefig_dict = {"bbox_inches": bbox_inches, **kwargs}
@@ -123,6 +124,7 @@ class TrendPlot(LinePlot):
         super().legend(bbox_to_anchor=bbox_to_anchor, bbox_loc=bbox_loc, ncol=ncol, **kwargs)
 
 
+@deprecate(old="trend_plot()", new="Dynamics.trend_analysis()", version="2.24.0-xi")
 def trend_plot(df, title=None, filename=None, show_legend=True, **kwargs):
     """
     Wrapper function: show chronological change of the data.

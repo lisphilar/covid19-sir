@@ -58,8 +58,8 @@ from covsirphy.cleaning.mobility_data import MobilityData
 from covsirphy.loading.covid19datahub import COVID19DataHub
 from covsirphy.loading.dataloader import DataLoader
 # trend
-from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
-from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
+from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
+from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.sir import SIR
@@ -145,8 +145,6 @@ __all__ = [
     "PopulationPyramidData", "PCRData", "JapanData", "JHUDataComplementHandler", "MobilityData",
     # loading
     "DataLoader",
-    # trend
-    "TrendDetector", "TrendPlot", "trend_plot",
     # ode
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     # dynamics
@@ -163,6 +161,7 @@ __all__ = [
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
     "CountryData", "ColoredMap", "ExampleData", "ModelValidator", "find_args",
     "Scenario", "DataHandler", "PhaseTracker",
+    "TrendDetector", "TrendPlot", "trend_plot",
 ]
 
 # Show exceptions in better format if used from command line

@@ -9,8 +9,8 @@ from covsirphy.util.error import deprecate, NAFoundError, UnExecutedError, UnExp
 from covsirphy.util.argument import find_args
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.trend.trend_plot import trend_plot
-from covsirphy.trend.trend_detector import TrendDetector
+from covsirphy._deprecated.trend_plot import trend_plot
+from covsirphy._deprecated.trend_detector import TrendDetector
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_handler import ODEHandler
 

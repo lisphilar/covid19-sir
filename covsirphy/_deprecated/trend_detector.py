@@ -7,7 +7,7 @@ import ruptures as rpt
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.trend.sr_change import _SRChange
+from covsirphy._deprecated.sr_change import _SRChange
 
 
 class TrendDetector(Term):
@@ -31,6 +31,7 @@ class TrendDetector(Term):
         "Change points" is the same as the start dates of phases except for the 0th phase.
     """
 
+    @deprecate(old="TrendDetector", new="Dynamics", version="2.24.0-xi")
     def __init__(self, data, area="Selected area", min_size=7):
         Validator(data, "data").dataframe(columns=[self.DATE, self.S, self.R])
         # Index: Date, Columns: the number cases
