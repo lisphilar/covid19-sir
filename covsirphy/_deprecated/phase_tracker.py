@@ -5,7 +5,7 @@ import contextlib
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import NAFoundError, UnExecutedError, UnExpectedValueError
+from covsirphy.util.error import deprecate, NAFoundError, UnExecutedError, UnExpectedValueError
 from covsirphy.util.argument import find_args
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -37,6 +37,7 @@ class PhaseTracker(Term):
         (Internally) ID=0 means not registered, ID < 0 means disabled, IDs (>0) are active phase ID.
     """
 
+    @deprecate(old="PhaseTracker", version="2.24.0-xi")
     def __init__(self, data, today, area):
         self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
         self._today = Validator(today, "today").date()

@@ -47,6 +47,7 @@ class DataHandler(Term):
         __NAME_MOBILE: MobilityData,
     }
 
+    @deprecate(old="DataHandler", version="2.24.0-xi")
     def __init__(self, country, province=None, **kwargs):
         # Details of the area name
         self._area_dict = {"country": str(country), "province": str(province or self.NA)}

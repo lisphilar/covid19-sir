@@ -87,12 +87,12 @@ from covsirphy.regression.reg_handler import RegressionHandler
 # automl
 from covsirphy.automl.automl_handler import AutoMLHandler
 # analysis
-from covsirphy.analysis.example_data import ExampleData
-from covsirphy.analysis.data_handler import DataHandler
-from covsirphy.analysis.param_tracker import ParamTracker
-from covsirphy.analysis.phase_tracker import PhaseTracker
-from covsirphy.analysis.scenario import Scenario
-from covsirphy.analysis.model_validator import ModelValidator
+from covsirphy._deprecated.example_data import ExampleData
+from covsirphy._deprecated.data_handler import DataHandler
+from covsirphy._deprecated.param_tracker import ParamTracker
+from covsirphy._deprecated.phase_tracker import PhaseTracker
+from covsirphy._deprecated.scenario import Scenario
+from covsirphy._deprecated.model_validator import ModelValidator
 # worldwide
 from covsirphy.worldwide.policy import PolicyMeasures
 # science
@@ -155,8 +155,6 @@ __all__ = [
     "RegressionHandler",
     # automl
     "AutoMLHandler",
-    # analysis
-    "Scenario", "DataHandler", "PhaseTracker",
     # science
     "ODEScenario", "Causality",
     # Deprecated
@@ -164,6 +162,7 @@ __all__ = [
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
     "PhaseSeries", "PhaseUnit", "MPEstimator", "COVID19DataHub", "LinelistData", "PopulationData",
     "CountryData", "ColoredMap", "ExampleData", "ModelValidator", "find_args",
+    "Scenario", "DataHandler", "PhaseTracker",
 ]
 
 # Show exceptions in better format if used from command line

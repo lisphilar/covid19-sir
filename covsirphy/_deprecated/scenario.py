@@ -26,8 +26,8 @@ from covsirphy.ode.sird import SIRD
 from covsirphy.ode.sirf import SIRF
 from covsirphy.regression.reg_handler import RegressionHandler
 from covsirphy.automl.automl_handler import AutoMLHandler
-from covsirphy.analysis.data_handler import DataHandler
-from covsirphy.analysis.phase_tracker import PhaseTracker
+from covsirphy._deprecated.data_handler import DataHandler
+from covsirphy._deprecated.phase_tracker import PhaseTracker
 
 
 class Scenario(Term):
@@ -46,6 +46,7 @@ class Scenario(Term):
         @jhu_data and @population_data must be registered with Scenario.register() if not specified here.
     """
 
+    @deprecate(old="Scenario", new="ODEScenario", version="2.24.0-xi")
     def __init__(self, jhu_data=None, population_data=None,
                  country=None, province=None, tau=None, auto_complement=True):
         # Area name

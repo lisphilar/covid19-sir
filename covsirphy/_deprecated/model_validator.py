@@ -8,8 +8,8 @@ from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.analysis.scenario import Scenario
-from covsirphy.analysis.example_data import ExampleData
+from covsirphy._deprecated.scenario import Scenario
+from covsirphy._deprecated.example_data import ExampleData
 
 
 class ModelValidator(Term):
