@@ -76,12 +76,12 @@ from covsirphy.dynamics.sirf import SIRFModel
 from covsirphy.dynamics.sewirf import SEWIRFModel
 from covsirphy.dynamics.dynamics import Dynamics
 # simulation
-from covsirphy.simulation.estimator import Estimator, Optimizer
-from covsirphy.simulation.simulator import ODESimulator
+from covsirphy._deprecated.estimator import Estimator, Optimizer
+from covsirphy._deprecated.simulator import ODESimulator
 # phase
-from covsirphy.phase.phase_unit import PhaseUnit
-from covsirphy.phase.phase_series import PhaseSeries
-from covsirphy.phase.phase_estimator import MPEstimator
+from covsirphy._deprecated.phase_unit import PhaseUnit
+from covsirphy._deprecated.phase_series import PhaseSeries
+from covsirphy._deprecated.phase_estimator import MPEstimator
 # regression
 from covsirphy.regression.reg_handler import RegressionHandler
 # automl
@@ -94,7 +94,7 @@ from covsirphy._deprecated.phase_tracker import PhaseTracker
 from covsirphy._deprecated.scenario import Scenario
 from covsirphy._deprecated.model_validator import ModelValidator
 # worldwide
-from covsirphy.worldwide.policy import PolicyMeasures
+from covsirphy._deprecated.policy import PolicyMeasures
 # science
 from covsirphy.science.ode_scenario import ODEScenario
 from covsirphy.science.causality import Causality

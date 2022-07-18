@@ -11,7 +11,7 @@ from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.phase_unit import PhaseUnit
+from covsirphy._deprecated.phase_unit import PhaseUnit
 
 
 class MPEstimator(Term):

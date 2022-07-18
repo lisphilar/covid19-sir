@@ -11,9 +11,9 @@ from covsirphy.util.term import Term
 from covsirphy.trend.trend_detector import TrendDetector
 from covsirphy.trend.trend_plot import trend_plot
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.phase_unit import PhaseUnit
-from covsirphy.phase.phase_estimator import MPEstimator
-from covsirphy.phase.phase_series import PhaseSeries
+from covsirphy._deprecated.phase_unit import PhaseUnit
+from covsirphy._deprecated.phase_estimator import MPEstimator
+from covsirphy._deprecated.phase_series import PhaseSeries
 
 
 class ParamTracker(Term):
