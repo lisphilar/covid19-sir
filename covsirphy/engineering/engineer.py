@@ -378,7 +378,7 @@ class DataEngineer(Term):
             logscale (bool): whether convert the value to log10 scale values or not
             directory (str): directory to save GeoJSON file of "Natural Earth" GitHub repository
             natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
-            kwargs: keyword arguments of the following classes and methods.
+            **kwargs: keyword arguments of the following classes and methods.
                 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
                 - pandas.DataFrame.plot()
 
@@ -406,6 +406,7 @@ class DataEngineer(Term):
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             variables (list[str] or None): list of variables to add or None (all available columns)
+            complement (bool): whether perform data complement or not, True as default
             **Kwargs: keyword arguments for complement and default values
                 recovery_period (int): expected value of recovery period [days], 17
                 interval (int): expected update interval of the number of recovered cases [days], 2
