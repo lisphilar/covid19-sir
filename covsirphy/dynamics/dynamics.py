@@ -398,7 +398,6 @@ class Dynamics(Term):
                         tau (int): candidate of tau values
                     Columns
                         {metric}: score of estimation with metric
-
         """
         all_df = self._df.dropna(how="any", subset=self._SIFR)
         if len(all_df) < 3:
@@ -446,6 +445,7 @@ class Dynamics(Term):
             metric (str): metric name for scoring when optimizing ODE parameter values of phases
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
             n_jobs (int or None): the number of parallel jobs or None (CPU count)
+            **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()
 
         Raises:
             UnExpectedNoneError: tau value is un-set
@@ -494,6 +494,7 @@ class Dynamics(Term):
             metric (str): metric name for scoring when optimizing ODE parameter values of phases
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
             n_jobs (int or None): the number of parallel jobs or None (CPU count)
+            **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()
 
         Raises:
             UnExpectedNoneError: tau value is un-set
