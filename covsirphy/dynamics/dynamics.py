@@ -123,7 +123,7 @@ class Dynamics(Term):
                     Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
                     (numpy.float64): ODE parameter values defined with the ODE model (optional)
-            tau (int): tau value [min]
+            tau (int or None): tau value [min] or None (un-set)
             name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
 
         Returns:
