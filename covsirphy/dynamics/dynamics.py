@@ -234,7 +234,7 @@ class Dynamics(Term):
         """
         return self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
 
-    def trend_analysis(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
+    def detect(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
         """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
 
         Args:
