@@ -136,7 +136,7 @@ class TestODEModel(object):
         if issubclass(model_class, SEWIRFModel):
             return
         sample_model = model_class.from_sample()
-        record_df = model_class.inverse_transform(sample_model.solve()).reset_index()
+        record_df = model_class.inverse_transform(sample_model.solve())
         sr_df = sample_model.sr(record_df)
         sr_df.corr()
         assert set(sr_df.reset_index().columns) == {model_class.DATE, model_class._logS, model_class._r}
