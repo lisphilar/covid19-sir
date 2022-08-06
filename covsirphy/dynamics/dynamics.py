@@ -219,9 +219,9 @@ class Dynamics(Term):
         """Perform time-series segmentation with points manually selected or found with S-R trend analysis.
 
         Args:
-            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .trend_analysis() method)
+            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .detect() method)
             overwrite (bool): whether remove all phases before segmentation or not
-            **kwargs: keyword arguments of covsirphy.Dynamics.trend_analysis()
+            **kwargs: keyword arguments of covsirphy.Dynamics.detect()
 
         Returns:
             covsirphy.Dynamics: self
@@ -232,7 +232,7 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
-        return self._segment(points=points or self.trend_analysis(**kwargs)[0], overwrite=overwrite)
+        return self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
 
     def trend_analysis(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
         """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
