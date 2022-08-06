@@ -81,7 +81,7 @@ class ODEScenario(Term):
         Args:
             name (str): scenario name
             model (covsirphy.ODEModel): definition of ODE model
-            date_range (tuple of (str, str)): start date and end date of dynamics to analyze
+            date_range (tuple of (str, str) or None): start date and end date of dynamics to analyze
             tau (int or None): tau value [min] or None (set later with data)
 
         Return:
