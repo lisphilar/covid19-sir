@@ -184,10 +184,8 @@ class Term(object):
         Returns:
             list[object]
         """
-        flattened = sum(nested_list, list())
-        if unique:
-            return list(set(flattened))
-        return flattened
+        flattened = sum(nested_list, [])
+        return list(set(flattened)) if unique else flattened
 
     @classmethod
     @deprecate(".divisors()", version="2.25.0-mu")
