@@ -39,7 +39,7 @@ class Dynamics(Term):
         self._parameters = self._model._PARAMETERS[:]
         self._df = pd.DataFrame(
             {self._PH: 0}, index=pd.date_range(start=self._first, end=self._last, freq="D"),
-            columns=[self._PH, *self._SIFR, *self._parameters])
+            columns=[self._PH, *self._SIRF, *self._parameters])
 
     def __len__(self):
         return self._df[self._PH].nunique()
@@ -148,8 +148,8 @@ class Dynamics(Term):
                 Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
-                    Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
                     (numpy.float64): ODE parameter values defined with the model
 
         Returns:
@@ -159,8 +159,8 @@ class Dynamics(Term):
                 Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
-                    Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
                     (numpy.float64): ODE parameter values defined with model.PARAMETERS
 
         Note:
@@ -176,7 +176,7 @@ class Dynamics(Term):
             all_df.loc[:] = np.nan
             all_df[self._PH] = 0
             all_df.update(new_df, overwrite=True)
-            if all_df.loc[self._first, self._SIFR].isna().any():
+            if all_df.loc[self._first, self._SIRF].isna().any():
                 raise EmptyError(
                     f"records on {self._first.strftime(self.DATE_FORMAT)}", details="Records must be registered for simulation")
             if all_df.min().min() < 0:
@@ -187,7 +187,7 @@ class Dynamics(Term):
             param_df = all_df.loc[:, self._parameters].ffill().drop_duplicates().dropna(axis=0)
             if not param_df.empty:
                 self._segment(points=param_df.index.tolist(), overwrite=True)
-        return self._df.loc[:, [*self._SIFR, *self._parameters]]
+        return self._df.loc[:, [*self._SIRF, *self._parameters]]
 
     def _segment(self, points, overwrite):
         """Perform time-series segmentation with points.
@@ -219,9 +219,9 @@ class Dynamics(Term):
         """Perform time-series segmentation with points manually selected or found with S-R trend analysis.
 
         Args:
-            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .trend_analysis() method)
+            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .detect() method)
             overwrite (bool): whether remove all phases before segmentation or not
-            **kwargs: keyword arguments of covsirphy.Dynamics.trend_analysis()
+            **kwargs: keyword arguments of covsirphy.Dynamics.detect()
 
         Returns:
             covsirphy.Dynamics: self
@@ -232,9 +232,9 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
-        return self._segment(points=points or self.trend_analysis(**kwargs)[0], overwrite=overwrite)
+        return self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
 
-    def trend_analysis(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
+    def detect(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
         """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
 
         Args:
@@ -271,7 +271,7 @@ class Dynamics(Term):
             "Change points" is the same as the start dates of phases except for the 0th phase.
         """
         Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
-        df = self._df.dropna(how="any", subset=self._SIFR).reset_index()
+        df = self._df.dropna(how="any", subset=self._SIRF)
         if len(df) < min_size * 2:
             raise NotEnoughDataError("the records of the number of cases without NAs", df, required_n=min_size * 2)
         analyzer = _TrendAnalyzer(data=df, model=self._model, min_size=min_size)
@@ -317,7 +317,7 @@ class Dynamics(Term):
         # Set the order of columns
         fixed_cols = [
             self.START, self.END, self.RT, *self._model._PARAMETERS, *self._model._DAY_PARAMETERS]
-        others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIFR)]
+        others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIRF)]
         return df.reindex(columns=[*fixed_cols, *others]).dropna(how="all", axis=1).ffill().convert_dtypes()
 
     def track(self):
@@ -355,8 +355,8 @@ class Dynamics(Term):
                     if @model_specific is False:
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
-                    Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
                     if @model_specific is True, variables defined by model.VARIABLES of covsirphy.Dynamics(model)
         """
         if self._tau is None:
@@ -399,7 +399,7 @@ class Dynamics(Term):
                     Columns
                         {metric}: score of estimation with metric
         """
-        all_df = self._df.dropna(how="any", subset=self._SIFR)
+        all_df = self._df.dropna(how="any", subset=self._SIRF)
         if len(all_df) < 3:
             raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
         score_f = partial(self._score_with_tau, metric=metric, q=q, digits=digits)
@@ -425,8 +425,8 @@ class Dynamics(Term):
             float: score to minimize
         """
         parameters = self._model._PARAMETERS[:]
-        all_df = self._df.dropna(how="any", subset=self._SIFR)
-        all_df[parameters] = all_df[parameters].astype("Float64")
+        all_df = self._df.dropna(how="any", subset=self._SIRF)
+        all_df.loc[:, parameters] = all_df.loc[:, parameters].astype("Float64")
         starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
         ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         for start, end in zip(starts, ends):
@@ -435,7 +435,7 @@ class Dynamics(Term):
             all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
         simulator = _Simulator(model=self._model, data=all_df)
         sim_df = simulator.run(tau=tau, model_specific=False).set_index(self.DATE)
-        evaluator = Evaluator(all_df[self._SIFR], sim_df[self._SIFR], how="inner")
+        evaluator = Evaluator(all_df[self._SIRF], sim_df[self._SIRF], how="inner")
         return evaluator.score(metric=metric)
 
     def estimate_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):
@@ -464,7 +464,7 @@ class Dynamics(Term):
         if self._tau is None:
             raise UnExpectedNoneError(
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
-        all_df = self._df.loc[:, [self._PH, *self._SIFR]].dropna(how="any")
+        all_df = self._df.loc[:, [self._PH, *self._SIRF]].dropna(how="any")
         if len(all_df) < 3:
             raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
         n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())

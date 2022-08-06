@@ -69,8 +69,8 @@ class SIRModel(ODEModel):
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
             tau (int or None): tau value [min]
 
         Returns:
@@ -82,7 +82,7 @@ class SIRModel(ODEModel):
                     - Infected (int): the number of infected cases
                     - Fatal or Recovered (int): the number of fatal or recovered cases
         """
-        df = Validator(data, "data").dataframe(columns=cls._SIFR)
+        df = Validator(data, "data").dataframe(columns=cls._SIRF)
         df.index = cls._date_to_non_dim(df.index, tau=tau)
         df[cls.FR] = df[cls.F] + df[cls.R]
         return df.loc[:, cls._VARIABLES].convert_dtypes()
@@ -109,14 +109,14 @@ class SIRModel(ODEModel):
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
         df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
         df[cls.F] = 0
         df[cls.R] = df.loc[:, cls.FR]
-        return df.loc[:, cls._SIFR].convert_dtypes()
+        return df.loc[:, cls._SIRF].convert_dtypes()
 
     def r0(self):
         """Calculate basic reproduction number.
@@ -190,13 +190,12 @@ class SIRModel(ODEModel):
         Args:
             data (pandas.DataFrame):
                 Index
-                    reset index
+                    Date (pd.Timestamp): Observation date
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
 
         Returns:
             pandas.DataFrame:
@@ -206,8 +205,8 @@ class SIRModel(ODEModel):
                     log10(S) (np.float64): common logarithm of Susceptible
                     R (np.int64): Fatal or Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR])
-        df = data.set_index(cls.DATE)
+        Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
+        df = data.copy()
         df[cls._logS] = np.log10(df[cls.S])
         df[cls._r] = df[cls.F] + df[cls.R]
         return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
