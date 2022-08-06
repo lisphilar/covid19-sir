@@ -19,9 +19,8 @@ class _TrendAnalyzer(Term):
     Args:
         data (pandas.DataFrame): new data to overwrite the current information
             Index
-                reset index
-            Columns
                 Date (pandas.Timestamp): Observation date
+            Columns
                 Susceptible (int): the number of susceptible cases
                 Infected (int): the number of currently infected cases
                 Fatal (int): the number of fatal cases
@@ -100,7 +99,7 @@ class _TrendAnalyzer(Term):
             param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
             all_df[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
         all_df[self.FITTED] = all_df.drop([logS, r], axis=1).sum(axis=1)
-        return all_df.rename(columns={logS: self.ACTUAL}).set_index(r)
+        return all_df.rename(columns={logS: self.ACTUAL}).set_index(r).groupby(level=0).first()
 
     @staticmethod
     def _linear_f(x, a, b):

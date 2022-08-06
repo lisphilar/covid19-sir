@@ -54,10 +54,10 @@ class TestDynamics(object):
     def test_trend(self, model, imgfile):
         with pytest.raises(NotEnoughDataError):
             dyn_failed = Dynamics.from_sample(model=model)
-            dyn_failed.trend_analysis()
+            dyn_failed.detect()
         dyn = Dynamics.from_sample(model)
         dyn.register(dyn.simulate())
-        points, df = dyn.trend_analysis(filename=imgfile)
+        points, df = dyn.detect(filename=imgfile)
         assert isinstance(points, list)
         assert {"Actual", "0th"}.issubset(df.columns)
         dyn.segment(filename=imgfile)

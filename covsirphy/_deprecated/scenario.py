@@ -266,7 +266,7 @@ class Scenario(Term):
             - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
             - list[str]: return the selected variables
             - "all": the all available variables
-            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
+            - str: abbr, like "CIRF" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
         """
         if abbr is None:
             return [self.CI, self.F, self.R]
@@ -310,7 +310,7 @@ class Scenario(Term):
             - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
             - list[str]: return the selected variables
             - "all": the all available variables
-            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
+            - str: abbr, like "CIRF" (Confirmed/Infected/Recovered/Fatal), "CFR", "RC"
         """
         # Get necessary data for the variables
         all_df = self._data.records_all().set_index(self.DATE)

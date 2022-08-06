@@ -56,7 +56,7 @@ class Term(object):
     PARAM_DICT = "param_dict"
     ID = "ID"
     _PH = "Phase_ID"
-    _SIFR = [S, CI, F, R]
+    _SIRF = [S, CI, R, F]
     AREA_COLUMNS = [COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
@@ -184,10 +184,8 @@ class Term(object):
         Returns:
             list[object]
         """
-        flattened = sum(nested_list, list())
-        if unique:
-            return list(set(flattened))
-        return flattened
+        flattened = sum(nested_list, [])
+        return list(set(flattened)) if unique else flattened
 
     @classmethod
     @deprecate(".divisors()", version="2.25.0-mu")
