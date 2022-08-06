@@ -426,7 +426,7 @@ class Dynamics(Term):
         """
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIRF)
-        all_df[parameters] = all_df[parameters].astype("Float64")
+        all_df.loc[:, parameters] = all_df.loc[:, parameters].astype("Float64")
         starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
         ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         for start, end in zip(starts, ends):
