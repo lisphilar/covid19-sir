@@ -19,9 +19,8 @@ class _TrendAnalyzer(Term):
     Args:
         data (pandas.DataFrame): new data to overwrite the current information
             Index
-                reset index
-            Columns
                 Date (pandas.Timestamp): Observation date
+            Columns
                 Susceptible (int): the number of susceptible cases
                 Infected (int): the number of currently infected cases
                 Fatal (int): the number of fatal cases

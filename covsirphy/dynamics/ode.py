@@ -601,9 +601,8 @@ class ODEModel(Term):
         Args:
             data (pandas.DataFrame):
                 Index
-                    reset index
-                Columns
                     Date (pd.Timestamp): Observation date
+                Columns
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
                     Recovered (int): the number of recovered cases

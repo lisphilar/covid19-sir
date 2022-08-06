@@ -271,7 +271,7 @@ class Dynamics(Term):
             "Change points" is the same as the start dates of phases except for the 0th phase.
         """
         Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
-        df = self._df.dropna(how="any", subset=self._SIRF).reset_index()
+        df = self._df.dropna(how="any", subset=self._SIRF)
         if len(df) < min_size * 2:
             raise NotEnoughDataError("the records of the number of cases without NAs", df, required_n=min_size * 2)
         analyzer = _TrendAnalyzer(data=df, model=self._model, min_size=min_size)

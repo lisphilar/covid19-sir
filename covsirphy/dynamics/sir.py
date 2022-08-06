@@ -190,13 +190,12 @@ class SIRModel(ODEModel):
         Args:
             data (pandas.DataFrame):
                 Index
-                    reset index
+                    Date (pd.Timestamp): Observation date
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+                    Susceptible (int): the number of susceptible cases
+                    Infected (int): the number of currently infected cases
+                    Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
 
         Returns:
             pandas.DataFrame:
@@ -206,8 +205,8 @@ class SIRModel(ODEModel):
                     log10(S) (np.float64): common logarithm of Susceptible
                     R (np.int64): Fatal or Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF])
-        df = data.set_index(cls.DATE)
+        Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
+        df = data.copy()
         df[cls._logS] = np.log10(df[cls.S])
         df[cls._r] = df[cls.F] + df[cls.R]
         return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
