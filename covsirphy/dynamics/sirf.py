@@ -147,8 +147,8 @@ class SIRFModel(SIRDModel):
                     - Date (pd.Timestamp): Observation date
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
 
         Returns:
             pandas.DataFrame:
@@ -158,7 +158,7 @@ class SIRFModel(SIRDModel):
                     log10(S) (np.float64): common logarithm of Susceptible
                     R (np.int64): Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR])
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF])
         df = data.set_index(cls.DATE).rename(columns={cls.R: cls._r})
         df[cls._logS] = np.log10(df[cls.S])
         return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})

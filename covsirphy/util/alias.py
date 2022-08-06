@@ -24,8 +24,8 @@ class Alias(Term):
         _dict = {
             "N": [cls.N], "S": [cls.S], "T": [cls.TESTS], "C": [cls.C], "I": [cls.CI], "F": [cls.F], "R": [cls.R],
             "CFR": [cls.C, cls.F, cls.R],
-            "CIFR": [cls.C, cls.CI, cls.F, cls.R],
-            "SIFR": [cls.S, cls.CI, cls.F, cls.R],
+            "CIRF": [cls.C, cls.CI, cls.R, cls.F],
+            "SIRF": [cls.S, cls.CI, cls.R, cls.F],
             "CR": [cls.C, cls.R],
         }
         [class_obj.update(name, target) for name, target in _dict.items()]

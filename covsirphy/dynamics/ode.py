@@ -326,8 +326,8 @@ class ODEModel(Term):
                     - Date (pd.Timestamp): Observation date
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
             param_dict (dict of {str: float}): non-dimensional parameter values
             tau (int): tau value [min]
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
@@ -335,7 +335,7 @@ class ODEModel(Term):
         Returns:
             covsirphy.ODEModel: initialized model
         """
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator(param_dict, "param_dict", accept_none=False).dict(required_keys=cls._PARAMETERS)
         start, end = data[cls.DATE].min(), data[cls.DATE].max()
@@ -359,8 +359,8 @@ class ODEModel(Term):
                     - Date (pd.Timestamp): Observation date
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
             tau (int): tau value [min]
             q (float): the quantiles to compute, values between (0, 1)
             digits (int or None): effective digits of ODE parameter values or None (skip rounding)
@@ -368,7 +368,7 @@ class ODEModel(Term):
         Returns:
             covsirphy.ODEModel: initialized model
         """
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator(q, "q", accept_none=False).float(value_range=(0, 1))
         trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
@@ -450,7 +450,7 @@ class ODEModel(Term):
             "constant_liar": False,
         }
         kwargs_dict = Validator(kwargs, "kwargs").dict(default=kwargs_default)
-        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIFR], empty_ok=False)
+        Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator([metric], "metric").sequence(candidates=Evaluator.metrics())
         trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
@@ -606,8 +606,8 @@ class ODEModel(Term):
                     Date (pd.Timestamp): Observation date
                     Susceptible (int): the number of susceptible cases
                     Infected (int): the number of currently infected cases
-                    Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
+                    Fatal (int): the number of fatal cases
 
         Returns:
             pandas.DataFrame:

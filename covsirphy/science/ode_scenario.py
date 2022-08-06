@@ -28,8 +28,8 @@ class ODEScenario(Term):
             Columns
                 Population (int): total population
                 Confirmed (int): the number of confirmed cases
-                Fatal (int): the number of fatal cases
                 Recovered (int): the number of recovered cases, must be over 0
+                Fatal (int): the number of fatal cases
                 Susceptible (int): the number of susceptible cases, will be ignored because overwritten
                 Infected (int): the number of currently infected cases, will be ignored because overwritten
                 the other columns will be ignored
@@ -53,7 +53,7 @@ class ODEScenario(Term):
         engineer.clean()
         engineer.transform()
         self._actual_df, *_ = engineer.subset(
-            geo=self._location_name, variables=[self.S, self.CI, self.F, self.R], complement=complement)
+            geo=self._location_name, variables=[self.S, self.CI, self.R, self.F], complement=complement)
         self._first, self._last = self._actual_df.index.min(), self._actual_df.index.max()
         # {scenario_name: {"ODE": ODEModel, "tau": int, "param": pd.DataFrame(index: Date, columns: ODE parameters)}}
         self._snr_alias = Alias(target_class=dict)
@@ -93,7 +93,7 @@ class ODEScenario(Term):
         end = Validator(
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=self._last)
         dyn = Dynamics(model=model, date_range=(start, end), tau=tau)
-        dyn.register(data=self._actual_df.loc[:, self._SIFR])
+        dyn.register(data=self._actual_df.loc[:, self._SIRF])
         dyn.segment(points=None, overwrite=True, display=False)
         dyn.estimate()
         return self.build_with_dynamics(name=name, dynamics=dyn)
@@ -316,23 +316,23 @@ class ODEScenario(Term):
                 Columns
                     Population (int): total population (if selected with @variables)
                     Confirmed (int): the number of confirmed cases (if selected with @variables)
-                    Fatal (int): the number of fatal cases (if selected with @variables)
                     Recovered (int): the number of recovered cases (if selected with @variables)
+                    Fatal (int): the number of fatal cases (if selected with @variables)
                     Susceptible (int): the number of susceptible cases (if selected with @variables)
                     Infected (int): the number of currently infected cases (if selected with @variables)
         """
         if name is None:
-            sifr_df = self._actual_df.copy()
+            sirf_df = self._actual_df.copy()
             title = f"{self._location_name}: actual number of cases over time"
             v = None
         else:
             dyn = self.to_dynamics(name=name)
-            sifr_df = dyn.simulate(model_specific=False)
+            sirf_df = dyn.simulate(model_specific=False)
             title = f"{self._location_name} ({name} scenario): simulated number of cases over time"
             v = dyn.start_dates()[1:]
-        sifr_df[self.SERIES] = name or self.ACTUAL
+        sirf_df[self.SERIES] = name or self.ACTUAL
         engineer = DataEngineer(layers=[self.SERIES])
-        engineer.register(data=sifr_df.reset_index())
+        engineer.register(data=sirf_df.reset_index())
         engineer.inverse_transform()
         v_converted = self._variable_alias.find(name=variables, default=[self.C, self.F, self.R])
         df = engineer.all().set_index(self.DATE).loc[self._first:self._last, v_converted]
