@@ -80,7 +80,7 @@ class _Simulator(Term):
             instance = self._model.from_data(data=variable_df.reset_index(), param_dict=param_dict, tau=tau)
             dataframes.append(instance.solve())
         # Combine results of phases
-        df = pd.concat(dataframes, axis=0).drop_duplicates(keep="first").loc[self._first: self._last]
+        df = pd.concat(dataframes, axis=0).groupby(level=0).first().loc[self._first: self._last]
         if model_specific:
             return df.reset_index().convert_dtypes()
         df = self._model.inverse_transform(data=df)
