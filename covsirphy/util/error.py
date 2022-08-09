@@ -33,6 +33,41 @@ def deprecate(old, new=None, version=None, ref=None):
     return _deprecate
 
 
+def experimental(name, version):
+    """
+    Decorator to raise ExperimentalWarning because the method/function is experimental.
+
+    Args:
+        name (str): description of the method/function
+        version (str): version number, like 2.7.3-alpha
+    """
+    def _experimental(func):
+        def wrapper(*args, **kwargs):
+            comment = f"{name} can be used from {version}, but this is experimental." \
+                "Its name and arguments may be changed later."
+            warnings.warn(
+                comment,
+                ExperimentalWarning,
+                stacklevel=2
+            )
+            return func(*args, **kwargs)
+        return wrapper
+    return _experimental
+
+
+class _BaseWarning(Warning):
+    """Basic class of warning.
+    """
+    pass
+
+
+class ExperimentalWarning(Warning):
+    """Class to explain the method/function is experimental and its name,
+    features and arguments may changed later.
+    """
+    pass
+
+
 class _BaseException(Exception):
     """Basic class of exception.
 

@@ -6,6 +6,7 @@ from copy import deepcopy
 from datetime import timedelta
 import re
 import pandas as pd
+from covsirphy.util.error import experimental
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
@@ -239,9 +240,9 @@ class ODEScenario(Term):
         for name, snl_dict in self._snr_alias.all().items():
             dyn = self.to_dynamics(name=name)
             df = dyn.summary().reset_index()
-            df.insert(0, self.SERIES, name)
-            df.insert(4, self.ODE, snl_dict[self.ODE])
-            df.insert(7, self.TAU, snl_dict[self.TAU])
+            df[self.SERIES] = name
+            df[self.ODE] = snl_dict[self.ODE].name()
+            df[self.TAU] = snl_dict[self.TAU]
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
 
@@ -450,6 +451,7 @@ class ODEScenario(Term):
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
         snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
         self._snr_alias.update(name=name, target=snl_dict.copy())
+        self._last = max((self._last, end))
 
     def append(self, name=None, end=None, **kwargs):
         """Append a new phase, specifying ODE parameter values.
@@ -477,6 +479,7 @@ class ODEScenario(Term):
                 self._append(name=_name, end=end or last_end, **kwargs)
         return self
 
+    @experimental(name="covsirphy.ODEScenario().predict()", version="2.25.0")
     def predict(self, days, name, **kwargs):
         """Create scenarios and append a phase, performing univariate prediction of ODE parameters.
 
