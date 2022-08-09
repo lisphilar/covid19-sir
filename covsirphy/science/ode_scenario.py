@@ -6,6 +6,7 @@ from copy import deepcopy
 from datetime import timedelta
 import re
 import pandas as pd
+from covsirphy.util.error import experimental
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
@@ -477,6 +478,7 @@ class ODEScenario(Term):
                 self._append(name=_name, end=end or last_end, **kwargs)
         return self
 
+    @experimental(name="covsirphy.ODEScenario().predict()", version="2.25.0")
     def predict(self, days, name, **kwargs):
         """Create scenarios and append a phase, performing univariate prediction of ODE parameters.
 
