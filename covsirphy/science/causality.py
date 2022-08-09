@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.error import experimental
 from covsirphy.util.validator import Validator
 from covsirphy.science.ode_scenario import ODEScenario
 
@@ -27,6 +28,7 @@ class Causality(ODEScenario):
         Data cleaning will be performed with covsirphy.DataEngineer().clean() automatically.
     """
 
+    @experimental(name="covsirphy.Causality()", version="2.25.0")
     def predict(self, days, name, X=None, **kwargs):
         """Create scenarios and append a phase, performing multivariate/univariate prediction of ODE parameters.
 
