@@ -12,7 +12,8 @@ from covsirphy.__version__ import __version__
 from covsirphy.__citation__ import __citation__
 # util
 from covsirphy.util.stopwatch import StopWatch
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, experimental
+from covsirphy.util.error import ExperimentalWarning
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
@@ -122,6 +123,7 @@ def get_citation():
 
 __all__ = [
     # util-error
+    "experimental", "ExperimentalWarning",
     "SubsetNotFoundError", "ScenarioNotFoundError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
