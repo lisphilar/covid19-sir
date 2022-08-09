@@ -451,7 +451,7 @@ class ODEScenario(Term):
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
         snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
         self._snr_alias.update(name=name, target=snl_dict.copy())
-        self._last = max((self._last, end))
+        self._last = max((self._last, end_date))
 
     def append(self, name=None, end=None, **kwargs):
         """Append a new phase, specifying ODE parameter values.
