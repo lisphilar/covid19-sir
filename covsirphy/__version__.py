@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.24.0-pi"
+__version__ = "2.24.0-rho"
