@@ -241,7 +241,7 @@ class ODEScenario(Term):
             dyn = self.to_dynamics(name=name)
             df = dyn.summary().reset_index()
             df.insert(0, self.SERIES, name)
-            df.insert(4, self.ODE, snl_dict[self.ODE])
+            df.insert(4, self.ODE, snl_dict[self.ODE].name())
             df.insert(7, self.TAU, snl_dict[self.TAU])
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
