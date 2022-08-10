@@ -38,8 +38,8 @@ class _AutoTSHandler(Term):
             "random_seed": 0,
             "n_jobs": "auto",
             "verbose": 1,
-        }
-        autots_kwargs.update(kwargs)
+        } | kwargs
+
         self._autots = AutoTS(**autots_kwargs)
         self._autots.fit(self._Y)
 
