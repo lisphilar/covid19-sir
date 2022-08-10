@@ -484,9 +484,7 @@ class ParamTracker(Term):
         # Future phases
         future_nest = [
             [ph, unit] for (ph, unit) in all_nest if ph not in past_phases]
-        if not future_nest:
-            return ([], [])
-        return tuple(zip(*future_nest))
+        return tuple(zip(*future_nest)) if future_nest else ([], [])
 
     def estimate(self, model, phases=None, n_jobs=-1, **kwargs):
         """

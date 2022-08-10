@@ -269,11 +269,11 @@ class ODEHandler(Term):
                 details="Or specify tau when creating an instance of ODEHandler")
         # Arguments of _ParamEstimator
         check_kwargs = {"timeout": 180, "timeout_iteration": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
-        check_kwargs.update(check_dict or {})
+        check_kwargs |= (check_dict or {})
         check_kwargs.update(kwargs)
         study_kwargs = {
             "pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0, "constant_liar": False}
-        study_kwargs.update(study_dict or {})
+        study_kwargs |= (study_dict or {})
         study_kwargs.update(kwargs)
         # ODE parameter estimation
         phases = list(self._info_dict.keys())
