@@ -6,7 +6,6 @@ from copy import deepcopy
 from datetime import timedelta
 import re
 import pandas as pd
-from covsirphy.util.error import experimental
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
@@ -16,7 +15,7 @@ from covsirphy.visualization.line_plot import line_plot
 from covsirphy.engineering.engineer import DataEngineer
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.dynamics import Dynamics
-from covsirphy.automl.automl_handler import AutoMLHandler
+from covsirphy.science._autots import _AutoTSHandler
 
 
 class ODEScenario(Term):
@@ -479,58 +478,37 @@ class ODEScenario(Term):
                 self._append(name=_name, end=end or last_end, **kwargs)
         return self
 
-    @experimental(name="covsirphy.ODEScenario().predict()", version="2.25.0")
     def predict(self, days, name, **kwargs):
-        """Create scenarios and append a phase, performing univariate prediction of ODE parameters.
+        """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
             days (int): days to predict
             name (str): scenario name
-            **kwargs: keyword arguments of autots.AutoTS()
+            **kwargs: keyword arguments of autots.AutoTS() except for forecast_length (always the same as @days)
 
         Return:
             covsirphy.ODEScenario: self
-        """
-        track_df = self.to_dynamics(name=name).track()
-        model = self._snr_alias.find(name=name)[self.ODE]
-        Y = track_df.loc[:, model._PARAMETERS]
-        X = pd.DataFrame(index=Y.index)
-        return self._predict(days=days, name=name, X=X, Y=Y, method="univariate", **kwargs)
 
-    def _predict(self, days, name, X, Y, method, **kwargs):
-        """Create scenarios and append a phase with X data, performing univariate prediction of ODE parameters.
+        Note:
+            AutoTS package is developed at https://github.com/winedarksea/AutoTS
 
-        Args:
-            days (int): days to predict
-            name (str): scenario name
-            X (pandas.DataFrame):
-                Index
-                    pandas.Timestamp: Observation date
-                Columns
-                    observed variables (int or float)
-            Y (pandas.DataFrame):
-                Index
-                    pandas.Timestamp: Observation date
-                Columns
-                    observed ODE parameter values (float)
-            method (str): machine learning method name, "univariate" or "multivariate_regression"
-            **kwargs: keyword arguments of autots.AutoTS()
-
-        Return:
-            covsirphy.ODEScenario: self
+        Note:
+            Phases are determined with rounded reproduction number (one decimal place).
         """
         model = self._snr_alias.find(name=name)[self.ODE]
-        handler = AutoMLHandler(X=X, Y=Y, model=model, days=days, **kwargs)
-        handler.predict(method=method)
-        phase_df = handler.summary()
-        phase_df = phase_df.rename(
-            columns={self.SERIES: "suffix", self.END: "end"}).drop([self.START, self.RT], axis=1)
-        phase_df = phase_df.sort_values(["suffix", "end"], ignore_index=True)
-        # Set new future phases
+        Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
+        # Parameter prediction
+        handler = _AutoTSHandler(Y=Y, days=days, **kwargs)
+        param_df = handler.predict().reset_index()
+        # Create phases with Rt values
+        param_df[self.RT] = param_df[model._PARAMETERS].apply(
+            lambda x: model.from_data(data=self._actual_df.reset_index(), param_dict=x.to_dict(), tau=1440).r0(), axis=1)
+        param_df["Phase"] = (param_df[self.RT] != param_df[self.RT].shift()).cumsum()
+        phase_df = param_df.groupby("Phase").last().drop(self.RT, axis=1).rename(columns={self.DATE: "end"})
+        phase_df = phase_df.loc[
+            (phase_df.index[-1]) | (phase_df["end"] < phase_df["end"].shift(periods=-1) - timedelta(days=3))]
         for phase_dict in phase_df.to_dict(orient="records"):
-            new_name = f"{name}_{phase_dict['suffix']}"
-            self.build_with_template(name=new_name, template=name)
-            self.append(name=new_name, **phase_dict)
+            self._append(name=name, **phase_dict)
         return self
 
     def represent(self, q, variable, date=None, included=None, excluded=None):
