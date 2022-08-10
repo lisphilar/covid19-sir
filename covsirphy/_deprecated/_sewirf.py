@@ -4,7 +4,7 @@
 import numpy as np
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 
 
 class SEWIRF(ModelBase):
