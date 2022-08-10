@@ -153,7 +153,8 @@ class ODEScenario(Term):
         engineer = DataEngineer()
         engineer.download(
             country=geo[0] if isinstance(geo, (tuple, list)) and len(geo) > 1 else None,
-            province=geo[1] if isinstance(geo, (tuple, list)) and len(geo) > 2 else None)
+            province=geo[1] if isinstance(geo, (tuple, list)) and len(geo) > 2 else None,
+            databases=["japan", "covid19dh"])
         engineer.clean()
         try:
             subset_df, *_ = engineer.subset(geo=geo, complement=complement)
