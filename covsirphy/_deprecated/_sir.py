@@ -2,65 +2,56 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 
 
-class SIRF(ModelBase):
+class SIR(ModelBase):
     """
-    SIR-F model.
+    SIR model.
 
     Args:
         population (int): total population
-        theta (float)
-        kappa (float)
         rho (float)
         sigma (float)
     """
     # Model name
-    NAME = "SIR-F"
+    NAME = "SIR"
     # names of parameters
-    PARAMETERS = ["theta", "kappa", "rho", "sigma"]
-    DAY_PARAMETERS = [
-        "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
-    ]
+    PARAMETERS = ["rho", "sigma"]
+    DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
     # Variable names in (non-dim, dimensional) ODEs
     VAR_DICT = {
         "x": ModelBase.S,
         "y": ModelBase.CI,
-        "z": ModelBase.R,
-        "w": ModelBase.F
+        "z": ModelBase.FR
     }
     VARIABLES = list(VAR_DICT.values())
     # Weights of variables in parameter estimation error function
-    WEIGHTS = np.array([0, 1, 1, 1])
+    WEIGHTS = np.array([1, 1, 1])
     # Variables that increases monotonically
-    VARS_INCREASE = [ModelBase.R, ModelBase.F]
+    VARS_INCREASE = [ModelBase.FR]
     # Example set of parameters and initial values
     EXAMPLE = {
         ModelBase.STEP_N: 180,
         ModelBase.N.lower(): 1_000_000,
         ModelBase.PARAM_DICT: {
-            "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
+            "rho": 0.2, "sigma": 0.075,
         },
         ModelBase.Y0_DICT: {
-            ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
+            ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.FR: 0,
         },
     }
 
-    @deprecate(old="SIRF", new="SIRFModel", version="2.24.0-xi")
-    def __init__(self, population, theta, kappa, rho, sigma):
-        # Total
+    @deprecate(old="SIR", new="SIRModel", version="2.24.0-xi")
+    def __init__(self, population, rho, sigma):
+        # Total population
         self.population = Validator(population, "population").int(value_range=(1, None))
         # Non-dim parameters
-        self.theta = theta
-        self.kappa = kappa
         self.rho = rho
         self.sigma = sigma
-        self.non_param_dict = {
-            "theta": theta, "kappa": kappa, "rho": rho, "sigma": sigma}
+        self.non_param_dict = {"rho": rho, "sigma": sigma}
 
     def __call__(self, t, X):
         """
@@ -77,9 +68,8 @@ class SIRF(ModelBase):
         s, i, *_ = X
         dsdt = 0 - self.rho * s * i / n
         drdt = self.sigma * i
-        dfdt = self.kappa * i + (0 - dsdt) * self.theta
-        didt = 0 - dsdt - drdt - dfdt
-        return np.array([dsdt, didt, drdt, dfdt])
+        didt = 0 - dsdt - drdt
+        return np.array([dsdt, didt, drdt])
 
     def calc_r0(self):
         """
@@ -89,7 +79,7 @@ class SIRF(ModelBase):
             float
         """
         try:
-            rt = self.rho * (1 - self.theta) / (self.sigma + self.kappa)
+            rt = self.rho / self.sigma
         except ZeroDivisionError:
             return None
         return round(rt, 2)
@@ -106,8 +96,6 @@ class SIRF(ModelBase):
         """
         try:
             return {
-                "alpha1 [-]": round(self.theta, 3),
-                "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
                 "1/beta [day]": int(tau / 24 / 60 / self.rho),
                 "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
             }
@@ -139,18 +127,18 @@ class SIRF(ModelBase):
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+                    - Fatal or Recovered (int): the number of fatal/recovered cases
         """
         # Convert to tau-free if tau was specified
         df = cls._convert(data, tau)
-        # Conversion of variables: un-necessary for SIR-F model
-        return df.loc[:, [cls.S, cls.CI, cls.R, cls.F]]
+        # Conversion of variables
+        df[cls.FR] = df[cls.F] + df[cls.R]
+        return df.loc[:, [cls.S, cls.CI, cls.FR]]
 
     @classmethod
     def convert_reverse(cls, converted_df, start, tau):
         """
-        Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.
+        Calculate date with tau and start date, and restore Susceptible/Infected/"Fatal or Recovered".
 
         Args:
             converted_df (pandas.DataFrame):
@@ -159,8 +147,7 @@ class SIRF(ModelBase):
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+                    - Fatal or Recovered (int): the number of fatal/recovered cases
             start (pd.Timestamp): start date of simulation, like 14Apr2021
             tau (int): tau value [min]
 
@@ -177,13 +164,15 @@ class SIRF(ModelBase):
         """
         # Calculate date with tau and start date
         df = cls._convert_reverse(converted_df, start, tau)
-        # Conversion of variables: un-necessary for SIR-F model
+        # Conversion of variables
+        df[cls.F] = 0
+        df[cls.R] = df.loc[:, cls.FR]
         return df.loc[:, [cls.DATE, cls.S, cls.CI, cls.F, cls.R]]
 
     @classmethod
     def guess(cls, data, tau, q=0.5):
         """
-        With (X, dX/dt) for X=S, I, R, F, guess parameter values.
+        With (X, dX/dt) for X=S, I, R, guess parameter values.
 
         Args:
             data (pandas.DataFrame):
@@ -203,8 +192,6 @@ class SIRF(ModelBase):
 
         Note:
             We can guess parameter values with difference equations as follows.
-            - theta -> +0 (i.e. around 0 and not negative)
-            - kappa -> (dF/dt) / I when theta -> +0
             - rho = - n * (dS/dt) / S / I
             - sigma = (dR/dt) / I
         """
@@ -212,15 +199,12 @@ class SIRF(ModelBase):
         df = cls.convert(data=data, tau=tau)
         # Remove negative values and set variables
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
-        n = df.loc[df.index[0], [cls.S, cls.CI, cls.F, cls.R]].sum()
+        n = df.loc[df.index[0], [cls.S, cls.CI, cls.FR]].sum()
         # Calculate parameter values with difference equation and tau-free data
-        kappa_series = df[cls.F].diff() / df[cls.CI]
         rho_series = 0 - n * df[cls.S].diff() / df[cls.S] / df[cls.CI]
-        sigma_series = df[cls.R].diff() / df[cls.CI]
+        sigma_series = df[cls.FR].diff() / df[cls.CI]
         # Guess representative values
         return {
-            "theta": 0.0 if isinstance(q, float) else pd.Series([0.0, 0.5]).repeat([1, len(q) - 1]),
-            "kappa": cls._clip(kappa_series.quantile(q=q), 0, 1),
             "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
             "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }

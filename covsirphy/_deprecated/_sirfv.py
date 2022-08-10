@@ -3,7 +3,7 @@
 
 import numpy as np
 from covsirphy.util.error import deprecate
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 
 
 class SIRFV(ModelBase):

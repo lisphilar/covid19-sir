@@ -20,12 +20,12 @@ from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.compare_plot import compare_plot
 from covsirphy._deprecated.jhu_data import JHUData
-from covsirphy.automl._mbase import ModelBase
-from covsirphy.automl._sir import SIR
-from covsirphy.automl._sird import SIRD
-from covsirphy.automl._sirf import SIRF
+from covsirphy._deprecated._mbase import ModelBase
+from covsirphy._deprecated._sir import SIR
+from covsirphy._deprecated._sird import SIRD
+from covsirphy._deprecated._sirf import SIRF
 from covsirphy._deprecated.reg_handler import RegressionHandler
-from covsirphy.automl.automl_handler import AutoMLHandler
+from covsirphy._deprecated.automl_handler import AutoMLHandler
 from covsirphy._deprecated.data_handler import DataHandler
 from covsirphy._deprecated.phase_tracker import PhaseTracker
 
@@ -1408,7 +1408,7 @@ class Scenario(Term):
 
         Args:
             days (int): days to predict
-            method (str): machine learning method name, refer to covsirphy.automl.automl_handler.AutoMLHandler.predict().
+            method (str): machine learning method name, refer to covsirphy.automl_handler.AutoMLHandler.predict().
             name (str): scenario name
 
         Returns:

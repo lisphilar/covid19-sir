@@ -10,7 +10,7 @@ from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 from covsirphy._deprecated.ode_solver_multi import _MultiPhaseODESolver
 from covsirphy._deprecated.param_estimator import _ParamEstimator
 

@@ -11,7 +11,7 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy._deprecated.trend_plot import trend_plot
 from covsirphy._deprecated.trend_detector import TrendDetector
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 from covsirphy._deprecated.ode_handler import ODEHandler
 
 

@@ -62,12 +62,12 @@ from covsirphy._deprecated.dataloader import DataLoader
 from covsirphy._deprecated.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy._deprecated.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
-from covsirphy.automl._mbase import ModelBase
-from covsirphy.automl._sir import SIR
-from covsirphy.automl._sird import SIRD
-from covsirphy.automl._sirf import SIRF
-from covsirphy.automl._sirfv import SIRFV
-from covsirphy.automl._sewirf import SEWIRF
+from covsirphy._deprecated._mbase import ModelBase
+from covsirphy._deprecated._sir import SIR
+from covsirphy._deprecated._sird import SIRD
+from covsirphy._deprecated._sirf import SIRF
+from covsirphy._deprecated._sirfv import SIRFV
+from covsirphy._deprecated._sewirf import SEWIRF
 from covsirphy._deprecated.ode_handler import ODEHandler
 # dynamics
 from covsirphy.dynamics.ode import ODEModel
@@ -86,7 +86,7 @@ from covsirphy._deprecated.phase_estimator import MPEstimator
 # regression
 from covsirphy._deprecated.reg_handler import RegressionHandler
 # automl
-from covsirphy.automl.automl_handler import AutoMLHandler
+from covsirphy._deprecated.automl_handler import AutoMLHandler
 # analysis
 from covsirphy._deprecated.example_data import ExampleData
 from covsirphy._deprecated.data_handler import DataHandler
@@ -145,8 +145,6 @@ __all__ = [
     "CleaningBase", "JapanData", "PopulationPyramidData",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
-    # automl
-    "AutoMLHandler",
     # science
     "ODEScenario",
     # Deprecated
@@ -159,7 +157,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     "RegressionHandler",
     "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
-    "DataLoader",
+    "DataLoader", "AutoMLHandler",
 ]
 
 # Show exceptions in better format if used from command line

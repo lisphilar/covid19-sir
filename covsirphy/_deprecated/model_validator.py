@@ -7,7 +7,7 @@ import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 from covsirphy._deprecated.scenario import Scenario
 from covsirphy._deprecated.example_data import ExampleData
 
