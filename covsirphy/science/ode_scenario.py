@@ -274,12 +274,11 @@ class ODEScenario(Term):
                 Index
                     str: scenario name
                 Columns
-                    - max(Infected): max value of Infected
-                    - argmax(Infected): the date when Infected shows max value
-                    - Confirmed({date}): Confirmed on the last date
-                    - Infected({date}): Infected on the last date
-                    - Fatal({date}): Fatal on the last date
-                    - nth_Rt etc.: Rt value if the values are not the same values
+                    - max(Infected) (numpy.int64): max value of Infected
+                    - argmax(Infected) (pandas.Timestamp): the date when Infected shows max value
+                    - Confirmed({date}) (numpy.int64): Confirmed on the last date
+                    - Infected({date} (numpy.int64)): Infected on the last date
+                    - Fatal({date}) (numpy.int64): Fatal on the last date
         """
         _dict = {}
         for name in self._snr_alias.all().keys():
