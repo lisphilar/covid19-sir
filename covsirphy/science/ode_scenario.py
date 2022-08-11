@@ -338,8 +338,13 @@ class ODEScenario(Term):
         df = engineer.all().set_index(self.DATE).loc[self._first:self._last, v_converted]
         # Show figure
         if display:
-            plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": "the number of cases"}
-            plot_kwargs.update(kwargs)
+            plot_kwargs = {
+                "title": title,
+                "y_integer": True,
+                "v": v,
+                "ylabel": "the number of cases",
+            } | kwargs
+
             line_plot(df=df, **plot_kwargs)
         return df
 
@@ -383,8 +388,13 @@ class ODEScenario(Term):
             ylabel = f"the number of {v_converted[0]} cases"
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
-            plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
-            plot_kwargs.update(kwargs)
+            plot_kwargs = {
+                "title": title,
+                "y_integer": True,
+                "v": v,
+                "ylabel": ylabel,
+            } | kwargs
+
             line_plot(df=df, **plot_kwargs)
         return df.convert_dtypes()
 
@@ -418,8 +428,14 @@ class ODEScenario(Term):
             ylabel, h = (self.RT_FULL, 1.0) if param == self.RT else (param, None)
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
-            plot_kwargs = {"title": title, "math_scale": False, "v": v, "ylabel": ylabel, "h": h}
-            plot_kwargs.update(kwargs)
+            plot_kwargs = {
+                "title": title,
+                "math_scale": False,
+                "v": v,
+                "ylabel": ylabel,
+                "h": h,
+            } | kwargs
+
             line_plot(df=df, **plot_kwargs)
         return df.convert_dtypes()
 
