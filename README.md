@@ -25,18 +25,17 @@
 
 ## Functionalities
 
-- [Data preparation and data visualization](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
-- [Phase setting with S-R Trend analysis](https://lisphilar.github.io/covid19-sir/usage_phases.html)
-- [Numerical simulation of ODE models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html): SIR, SIR-D and SIR-F model
-- [Phase-dependent parameter estimation of ODE models](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
-- [Scenario analysis](https://lisphilar.github.io/covid19-sir/usage_quick.html): Simulate the number of cases with user-defined parameter values
-- [Predict the parameter value to forecast the number of cases](https://lisphilar.github.io/covid19-sir/usage_quick.html#Prediction-of-parameter-values)
+* [Data preparation](https://lisphilar.github.io/covid19-sir/01_data_preparation.html)
+* [Data Engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)
+* [SIR-derived ODE models](https://lisphilar.github.io/covid19-sir/03_ode.html)
+* [Phase-dependent SIR models](https://lisphilar.github.io/covid19-sir/04_phase_dependent.html)
+* [Scenario analysis and prediction](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html)
 
 ## Inspiration
 
-- Monitor the spread of COVID-19
-- Keep track parameter values/reproduction number in each country/province
-- Find the relationship of reproductive number and measures taken by each country
+* Monitor the spread of COVID-19
+* Keep track parameter values/reproduction number in each country/province
+* Find the relationship of reproductive number and measures taken by each country
 
 <strong>If you have ideas or need new functionalities, please join this project.
 Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Questions are also great. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
@@ -51,46 +50,36 @@ pip install --upgrade covsirphy
 
 ## Usage
 
-Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan, but we can change the country name when creating `Scenario` class instance for your own analysis.
+Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan.
 
 ```Python
 import covsirphy as cs
-# Download and update datasets
-loader = cs.DataLoader("input")
-data_dict = loader.collect()
-# Select country name and register the data
-snl = cs.Scenario(country="Japan")
-snl.register(**data_dict)
-# Check records
-snl.records()
-# S-R trend analysis
-snl.trend().summary()
-# Parameter estimation of SIR-F model
-snl.estimate(cs.SIRF)
-# History of reproduction number
-snl.history(target="Rt")
-# History of parameters
-snl.history_rate()
-snl.history(target="rho")
-# Baseline
-snl.add(days=30)
-# Forecasting
-snl.predict(days=30)
-snl.adjust_end()
-snl.rename(old="Multivariate_regression_Likely", new="Likely")
-snl.delete_matched(pattern=r"^Multi")
-# Compare scenarios
-snl.describe()
-# Summary
-snl.summary()
-# Simulation
-snl.simulate()
+# Data preparation,time-series segmentation, parameter estimation with SIR-F model
+snr = cs.ODEScenario.auto_build(geo="Japan", model=cs.SIRFModel)
+# Check actual records
+snr.simulate(name=None);
+# Show the result of time-series segmentation
+snr.to_dynamics(name="Baseline").detect();
+# Perform simulation with estimated ODE parameter values
+snr.simulate(name="Baseline");
+# Predict ODE parameter values (30 days from the last date of actual records)
+snr.build_with_template(name="Predicted", template="Baseline");
+snr.predict(days=30, name="Predicted");
+# Perform simulation with estimated and predicted ODE parameter values
+snr.simulate(name="Predicted");
+# Add a future phase to the baseline (ODE parameters will not be changed)
+snr.append();
+# Show created phases and ODE parameter values
+snr.summary()
+# Compare reproduction number of scenarios (predicted/baseline)
+snr.compare_param("Rt");
+# Compare simulated number of cases
+snr.compare_cases("Confirmed");
+# Describe representative values
+snr.describe()
 ```
 
-Further information:
-
-- [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html)
-- [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
+Further information: [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html)
 
 ## Release notes
 
@@ -119,7 +108,7 @@ We have no original papers the author and contributors wrote, but please cite th
 
 CovsirPhy Development Team (2020-2022), CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models, [https://github.com/lisphilar/covid19-sir](https://github.com/lisphilar/covid19-sir)
 
-If you want to use SIR-F model, S-R trend analysis, phase-dependent approach to SIR-derived models, and other scientific method performed with CovsirPhy, please cite the next Kaggle notebook.
+If you want to use SIR-F model, S-R change point analysis, phase-dependent approach to SIR-derived models, and other scientific method performed with CovsirPhy, please cite the next Kaggle notebook.
 
 Hirokazu Takaya (2020-2022), Kaggle Notebook, COVID-19 data with SIR model, [https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 
