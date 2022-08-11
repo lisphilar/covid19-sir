@@ -26,7 +26,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Data engineering" href="02_data_engineering.html" />
-    <link rel="prev" title="Usage: data loading" href="markdown/LOADING.html" /> 
+    <link rel="prev" title="Installation" href="markdown/INSTALLATION.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown/WORKFLOW.html">Workflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown/LOADING.html">Usage: data loading</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data preparation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#1.-Downloading-datasets-from-recommended-data">1. Downloading datasets from recommended data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#1-1.-With-DataEngineer-class">1-1. With <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#1-2.-With-DataDownloader-class">1-2. With <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#2.-Reading-pandas.DataFrame">2. Reading <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#2.-Reading-pandas.DataFrame">2. Reading <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Data-loading-in-Kaggle-Notebook">Data loading in Kaggle Notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Acknowledgement">Acknowledgement</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#3.-Generator-of-sample-data-with-SIR-derived-ODE-model">3. Generator of sample data with SIR-derived ODE model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#3.1-Sample-data-of-one-phase-ODE-model">3.1 Sample data of one-phase ODE model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#3.2-Sample-data-of-multi-phase-ODE-model">3.2 Sample data of multi-phase ODE model</a></li>
@@ -538,46 +540,46 @@ Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 212082 entries, 0 to 212081
+RangeIndex: 212145 entries, 0 to 212144
 Data columns (total 36 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 212082 non-null  category
- 1   Province                             212082 non-null  category
- 2   City                                 212082 non-null  category
- 3   Date                                 212082 non-null  datetime64[ns]
- 4   Cancel_events                        168177 non-null  object
- 5   Confirmed                            192519 non-null  object
- 6   Contact_tracing                      168111 non-null  object
- 7   Country                              209855 non-null  string
- 8   Fatal                                176078 non-null  object
- 9   Gatherings_restrictions              168169 non-null  object
- 10  Information_campaigns                168153 non-null  object
- 11  Internal_movement_restrictions       168192 non-null  object
- 12  International_movement_restrictions  168161 non-null  object
+ 0   ISO3                                 212145 non-null  category
+ 1   Province                             212145 non-null  category
+ 2   City                                 212145 non-null  category
+ 3   Date                                 212145 non-null  datetime64[ns]
+ 4   Cancel_events                        168311 non-null  object
+ 5   Confirmed                            192593 non-null  object
+ 6   Contact_tracing                      168245 non-null  object
+ 7   Country                              209925 non-null  string
+ 8   Fatal                                176150 non-null  object
+ 9   Gatherings_restrictions              168303 non-null  object
+ 10  Information_campaigns                168287 non-null  object
+ 11  Internal_movement_restrictions       168326 non-null  object
+ 12  International_movement_restrictions  168295 non-null  object
  13  Mobility_grocery_and_pharmacy        112137 non-null  object
  14  Mobility_parks                       112044 non-null  object
  15  Mobility_residential                 111814 non-null  object
  16  Mobility_retail_and_recreation       112208 non-null  object
  17  Mobility_transit_stations            113103 non-null  object
  18  Mobility_workplaces                  113537 non-null  object
- 19  Population                           208924 non-null  object
+ 19  Population                           208994 non-null  object
  20  Product                              110023 non-null  string
- 21  Recovered                            71256 non-null   object
- 22  School_closing                       168256 non-null  object
- 23  Stay_home_restrictions               168157 non-null  object
- 24  Stringency_index                     168085 non-null  object
- 25  Testing_policy                       168137 non-null  object
- 26  Tests                                84875 non-null   object
- 27  Transport_closing                    168153 non-null  object
- 28  Vaccinated_1st                       908 non-null     object
- 29  Vaccinated_2nd                       908 non-null     object
- 30  Vaccinated_3rd                       908 non-null     object
- 31  Vaccinated_full                      45864 non-null   object
- 32  Vaccinated_once                      48370 non-null   object
- 33  Vaccinations                         50996 non-null   object
- 34  Vaccinations_boosters                24153 non-null   object
- 35  Workplace_closing                    168206 non-null  object
+ 21  Recovered                            71257 non-null   object
+ 22  School_closing                       168390 non-null  object
+ 23  Stay_home_restrictions               168291 non-null  object
+ 24  Stringency_index                     168219 non-null  object
+ 25  Testing_policy                       168271 non-null  object
+ 26  Tests                                84876 non-null   object
+ 27  Transport_closing                    168287 non-null  object
+ 28  Vaccinated_1st                       913 non-null     object
+ 29  Vaccinated_2nd                       913 non-null     object
+ 30  Vaccinated_3rd                       913 non-null     object
+ 31  Vaccinated_full                      45866 non-null   object
+ 32  Vaccinated_once                      48372 non-null   object
+ 33  Vaccinations                         50998 non-null   object
+ 34  Vaccinations_boosters                24155 non-null   object
+ 35  Workplace_closing                    168340 non-null  object
 dtypes: category(3), datetime64[ns](1), object(30), string(2)
 memory usage: 54.2+ MB
 </pre></div></div>
@@ -1015,46 +1017,46 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 212082 entries, 0 to 212081
+RangeIndex: 212145 entries, 0 to 212144
 Data columns (total 36 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 212082 non-null  string
- 1   Province                             212082 non-null  string
- 2   City                                 212082 non-null  string
- 3   Date                                 212082 non-null  datetime64[ns]
- 4   Cancel_events                        168177 non-null  Float64
- 5   Confirmed                            192519 non-null  Float64
- 6   Contact_tracing                      168111 non-null  Float64
- 7   Country                              209855 non-null  string
- 8   Fatal                                176078 non-null  Float64
- 9   Gatherings_restrictions              168169 non-null  Float64
- 10  Information_campaigns                168153 non-null  Float64
- 11  Internal_movement_restrictions       168192 non-null  Float64
- 12  International_movement_restrictions  168161 non-null  Float64
+ 0   ISO3                                 212145 non-null  string
+ 1   Province                             212145 non-null  string
+ 2   City                                 212145 non-null  string
+ 3   Date                                 212145 non-null  datetime64[ns]
+ 4   Cancel_events                        168311 non-null  Float64
+ 5   Confirmed                            192593 non-null  Float64
+ 6   Contact_tracing                      168245 non-null  Float64
+ 7   Country                              209925 non-null  string
+ 8   Fatal                                176150 non-null  Float64
+ 9   Gatherings_restrictions              168303 non-null  Float64
+ 10  Information_campaigns                168287 non-null  Float64
+ 11  Internal_movement_restrictions       168326 non-null  Float64
+ 12  International_movement_restrictions  168295 non-null  Float64
  13  Mobility_grocery_and_pharmacy        112137 non-null  Float64
  14  Mobility_parks                       112044 non-null  Float64
  15  Mobility_residential                 111814 non-null  Float64
  16  Mobility_retail_and_recreation       112208 non-null  Float64
  17  Mobility_transit_stations            113103 non-null  Float64
  18  Mobility_workplaces                  113537 non-null  Float64
- 19  Population                           208924 non-null  Float64
+ 19  Population                           208994 non-null  Float64
  20  Product                              110023 non-null  string
- 21  Recovered                            71256 non-null   Float64
- 22  School_closing                       168256 non-null  Float64
- 23  Stay_home_restrictions               168157 non-null  Float64
- 24  Stringency_index                     168085 non-null  Float64
- 25  Testing_policy                       168137 non-null  Float64
- 26  Tests                                84875 non-null   Float64
- 27  Transport_closing                    168153 non-null  Float64
- 28  Vaccinated_1st                       908 non-null     Float64
- 29  Vaccinated_2nd                       908 non-null     Float64
- 30  Vaccinated_3rd                       908 non-null     Float64
- 31  Vaccinated_full                      45864 non-null   Float64
- 32  Vaccinated_once                      48370 non-null   Float64
- 33  Vaccinations                         50996 non-null   Float64
- 34  Vaccinations_boosters                24153 non-null   Float64
- 35  Workplace_closing                    168206 non-null  Float64
+ 21  Recovered                            71257 non-null   Float64
+ 22  School_closing                       168390 non-null  Float64
+ 23  Stay_home_restrictions               168291 non-null  Float64
+ 24  Stringency_index                     168219 non-null  Float64
+ 25  Testing_policy                       168271 non-null  Float64
+ 26  Tests                                84876 non-null   Float64
+ 27  Transport_closing                    168287 non-null  Float64
+ 28  Vaccinated_1st                       913 non-null     Float64
+ 29  Vaccinated_2nd                       913 non-null     Float64
+ 30  Vaccinated_3rd                       913 non-null     Float64
+ 31  Vaccinated_full                      45866 non-null   Float64
+ 32  Vaccinated_once                      48372 non-null   Float64
+ 33  Vaccinations                         50998 non-null   Float64
+ 34  Vaccinations_boosters                24155 non-null   Float64
+ 35  Workplace_closing                    168340 non-null  Float64
 dtypes: Float64(30), datetime64[ns](1), string(5)
 memory usage: 64.3 MB
 </pre></div></div>
@@ -1846,6 +1848,29 @@ New country-level data
 New prefecture-level data
 </pre></div></div>
 </div>
+<section id="Data-loading-in-Kaggle-Notebook">
+<h3>Data loading in Kaggle Notebook<a class="headerlink" href="#Data-loading-in-Kaggle-Notebook" title="Permalink to this heading"></a></h3>
+<p>We can use the recommended datasets in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a> Notebook. The datasets are saved in “/kaggle/input/” directory. Additionally, we can use Kaggle Datasets (CSV files) with <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> in Kaggle Notebook.</p>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line">If you have Kaggle API, you can download Kaggle datasets to your local environment by updating and executing <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a> script. CSV files will be saved in “/kaggle/input/” directory.</div>
+</div>
+<div class="line-block">
+<div class="line">Kaggle API:</div>
+<div class="line">Move to account page of Kaggle and download “kaggle.json” by selecting “API &gt; Create New API Token” button. Copy the json file to the top directory of the local repository or “~/.kaggle”. Please refer to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a> and <a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API *within*
+python?</a></div>
+</div>
+</section>
+<section id="Acknowledgement">
+<h3>Acknowledgement<a class="headerlink" href="#Acknowledgement" title="Permalink to this heading"></a></h3>
+<p>In Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
+<ul class="simple">
+<li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
+<li><p>Population in each country: <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations population by Dmitry A. Grechka</a></p></li>
+<li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by Lisphilar</a></p></li>
+</ul>
+<p>Best Regards.</p>
+</section>
 </section>
 <section id="3.-Generator-of-sample-data-with-SIR-derived-ODE-model">
 <h2>3. Generator of sample data with SIR-derived ODE model<a class="headerlink" href="#3.-Generator-of-sample-data-with-SIR-derived-ODE-model" title="Permalink to this heading"></a></h2>
@@ -2037,7 +2062,7 @@ New prefecture-level data
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/01_data_preparation_41_0.png" src="_images/01_data_preparation_41_0.png" />
+<img alt="_images/01_data_preparation_42_0.png" src="_images/01_data_preparation_42_0.png" />
 </div>
 </div>
 </section>
@@ -2363,7 +2388,7 @@ New prefecture-level data
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/01_data_preparation_48_0.png" src="_images/01_data_preparation_48_0.png" />
+<img alt="_images/01_data_preparation_49_0.png" src="_images/01_data_preparation_49_0.png" />
 </div>
 </div>
 <p>When we need convert model-specific variables to model-free variables (Susceptible/Infected/Fatal/Recovered), we will set <code class="docutils literal notranslate"><span class="pre">model_specific=False</span></code> (default). Because R=”Fatal or Recovered” in SIR model, we assume that R=”Recovered” and F = 0.</p>
@@ -2380,7 +2405,7 @@ New prefecture-level data
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/01_data_preparation_50_0.png" src="_images/01_data_preparation_50_0.png" />
+<img alt="_images/01_data_preparation_51_0.png" src="_images/01_data_preparation_51_0.png" />
 </div>
 </div>
 <p>Actually, observable variables are Population/Confirmed/Infected/Recovered. We can calculate Population and Confirmed as follows.</p>
@@ -2404,7 +2429,7 @@ New prefecture-level data
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/01_data_preparation_52_0.png" src="_images/01_data_preparation_52_0.png" />
+<img alt="_images/01_data_preparation_53_0.png" src="_images/01_data_preparation_53_0.png" />
 </div>
 </div>
 <p>Thank you!</p>
@@ -2416,7 +2441,7 @@ New prefecture-level data
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="markdown/LOADING.html" class="btn btn-neutral float-left" title="Usage: data loading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="markdown/INSTALLATION.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="02_data_engineering.html" class="btn btn-neutral float-right" title="Data engineering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

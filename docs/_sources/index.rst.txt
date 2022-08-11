@@ -15,9 +15,6 @@
 
    README
    markdown/INSTALLATION
-   markdown/WORKFLOW
-   usage_quickest
-   markdown/LOADING
    01_data_preparation.ipynb
    02_data_engineering.ipynb
    03_ode.ipynb
