@@ -19,8 +19,8 @@ import covsirphy as cs
 # -- Project information -----------------------------------------------------
 
 project = 'CovsirPhy'
-copyright = '2020, CovsirPhy Development Team'
-author = 'Lisphilar and CovsirPhy Development Team'
+copyright = '2020-2022, Hirokazu Takaya and CovsirPhy Development Team'
+author = 'Hirokazu Takaya and CovsirPhy Development Team'
 version = cs.__version__
 
 # -- General configuration ---------------------------------------------------
