@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. image:: ./logo/covsirphy_headline.png
+..image:: ./logo/covsirphy_headline.png
    :width: 390px
    :alt: CovsirPhy: COVID-19 analysis with phase-dependent SIRs
 
