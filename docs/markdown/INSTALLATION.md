@@ -46,4 +46,4 @@ To exit this conda environment, please use `conda deactivate`.
 
 ## Start analysis
 
-What to do next? Please refer to [Workflow](https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html) to obtain a complete view of CovsirPhy project. The first step is data preparation.
+What to do next? Please refer to tutorials of this documentation. The first tutorial is [Data preparation](https://lisphilar.github.io/covid19-sir/01_data_preparation.html). If you have any questions and any advice, feel free to contact developers and users via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues).
