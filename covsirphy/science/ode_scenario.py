@@ -540,7 +540,7 @@ class ODEScenario(Term):
         ex_set = set() if excluded is None else set(Validator(excluded, "excluded").sequence())
         scenarios = list(all_set & (in_set) - ex_set)
         # Get simulation data of the variable of the target scenarios
-        sim_dict = {name: self.simulate(name=name)[variable] for name in scenarios}
+        sim_dict = {name: self.simulate(name=name, display=False)[variable] for name in scenarios}
         sim_df = pd.DataFrame(sim_dict)
         if sim_df.isna().to_numpy().sum():
             raise ValueError(
