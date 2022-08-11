@@ -387,7 +387,7 @@ class ODEScenario(Term):
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
             plot_kwargs.update(kwargs)
             line_plot(df=df, **plot_kwargs)
-        return df.astype("int64")
+        return df.convert_dtypes()
 
     def compare_param(self, param, date_range=None, ref=None, display=True, **kwargs):
         """Compare the number of cases of scenarios.
