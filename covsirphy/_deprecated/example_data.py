@@ -8,7 +8,7 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy._deprecated.jhu_data import JHUData
-from covsirphy.automl._mbase import ModelBase
+from covsirphy._deprecated._mbase import ModelBase
 from covsirphy._deprecated.ode_handler import ODEHandler
 
 

@@ -54,6 +54,8 @@ class TestODEScenario(object):
         snr.compare_param(param="rho")
         snr.compare_param(param="Rt")
         snr.compare_param(param="1/gamma [day]")
+        snr.rename(old="Medicine", new="Medical")
+        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline"])
 
     @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_summary_track_describe(self, snr):
@@ -61,8 +63,5 @@ class TestODEScenario(object):
         snr.track()
         snr.describe()
 
-    @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_predict(self, snr):
         snr.predict(days=30, name="Baseline")
-        snr.rename(old="Baseline_Univariate_Likely", new="Likely")
-        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline", "Likely"])
