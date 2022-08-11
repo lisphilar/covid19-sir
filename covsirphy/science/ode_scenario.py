@@ -294,7 +294,7 @@ class ODEScenario(Term):
             last_date_str = last_date.strftime(self.DATE_FORMAT)
             _dict[name] = {
                 f"max({self.CI})": sim_df[self.CI].max(),
-                f"argmax({self.CI})": sim_df[self.CI].idxmax().strftime(self.DATE_FORMAT),
+                f"argmax({self.CI})": sim_df[self.CI].idxmax(),
                 f"{self.C} on {last_date_str}": sim_df.loc[last_date, self.C],
                 f"{self.CI} on {last_date_str}": sim_df.loc[last_date, self.CI],
                 f"{self.F} on {last_date_str}": sim_df.loc[last_date, self.F],
