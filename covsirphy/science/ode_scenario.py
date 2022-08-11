@@ -274,12 +274,11 @@ class ODEScenario(Term):
                 Index
                     str: scenario name
                 Columns
-                    - max(Infected): max value of Infected
-                    - argmax(Infected): the date when Infected shows max value
-                    - Confirmed({date}): Confirmed on the last date
-                    - Infected({date}): Infected on the last date
-                    - Fatal({date}): Fatal on the last date
-                    - nth_Rt etc.: Rt value if the values are not the same values
+                    - max(Infected) (numpy.int64): max value of Infected
+                    - argmax(Infected) (pandas.Timestamp): the date when Infected shows max value
+                    - Confirmed({date}) (numpy.int64): Confirmed on the last date
+                    - Infected({date} (numpy.int64)): Infected on the last date
+                    - Fatal({date}) (numpy.int64): Fatal on the last date
         """
         _dict = {}
         for name in self._snr_alias.all().keys():
@@ -294,7 +293,7 @@ class ODEScenario(Term):
             last_date_str = last_date.strftime(self.DATE_FORMAT)
             _dict[name] = {
                 f"max({self.CI})": sim_df[self.CI].max(),
-                f"argmax({self.CI})": sim_df[self.CI].idxmax().strftime(self.DATE_FORMAT),
+                f"argmax({self.CI})": sim_df[self.CI].idxmax(),
                 f"{self.C} on {last_date_str}": sim_df.loc[last_date, self.C],
                 f"{self.CI} on {last_date_str}": sim_df.loc[last_date, self.CI],
                 f"{self.F} on {last_date_str}": sim_df.loc[last_date, self.F],
@@ -387,7 +386,7 @@ class ODEScenario(Term):
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel}
             plot_kwargs.update(kwargs)
             line_plot(df=df, **plot_kwargs)
-        return df.astype("int64")
+        return df.convert_dtypes()
 
     def compare_param(self, param, date_range=None, ref=None, display=True, **kwargs):
         """Compare the number of cases of scenarios.
@@ -541,7 +540,7 @@ class ODEScenario(Term):
         ex_set = set() if excluded is None else set(Validator(excluded, "excluded").sequence())
         scenarios = list(all_set & (in_set) - ex_set)
         # Get simulation data of the variable of the target scenarios
-        sim_dict = {name: self.simulate(name=name)[variable] for name in scenarios}
+        sim_dict = {name: self.simulate(name=name, display=False)[variable] for name in scenarios}
         sim_df = pd.DataFrame(sim_dict)
         if sim_df.isna().to_numpy().sum():
             raise ValueError(
