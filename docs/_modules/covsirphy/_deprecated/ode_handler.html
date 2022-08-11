@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy._deprecated.ode_handler &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.24.0-tau
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Usage: data loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>covsirphy._deprecated.ode_handler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for covsirphy._deprecated.ode_handler</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span><span class="p">,</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span> <span class="nn">covsirphy._deprecated._mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">covsirphy._deprecated.ode_solver_multi</span> <span class="kn">import</span> <span class="n">_MultiPhaseODESolver</span>
+<span class="kn">from</span> <span class="nn">covsirphy._deprecated.param_estimator</span> <span class="kn">import</span> <span class="n">_ParamEstimator</span>
+
+
+<div class="viewcode-block" id="ODEHandler"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler">[docs]</a><span class="k">class</span> <span class="nc">ODEHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform simulation and parameter estimation with a multi-phased ODE model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (covsirphy.ModelBase): ODE model</span>
+<span class="sd">        first_date (str or pandas.Timestamp): the first date of simulation, like 14Apr2021</span>
+<span class="sd">        tau (int or None): tau value [min] or None (to be estimated)</span>
+<span class="sd">        metric (str): metric name for estimation</span>
+<span class="sd">        n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="n">old</span><span class="o">=</span><span class="s2">&quot;ODEHandler&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Dynamics&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.24.0-xi&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">subclass</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">([</span><span class="n">metric</span><span class="p">],</span> <span class="s2">&quot;metric&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">candidates</span><span class="o">=</span><span class="n">Evaluator</span><span class="o">.</span><span class="n">metrics</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span> <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">,</span> <span class="s2">&quot;n_jobs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+        <span class="c1"># Tau value [min] or None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># {&quot;0th&quot;: output of self.add()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="ODEHandler.add"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new phase.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            end_date (str or pandas.Timestamp): end date of the phase</span>
+<span class="sd">            param_dict (dict[str, float] or None): parameter values or None (not set)</span>
+<span class="sd">            y0_dict (dict[str, int] or None): initial values or None (not set)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict(str, object): setting of the phase (key: phase name)</span>
+<span class="sd">                - Start (pandas.Timestamp): start date</span>
+<span class="sd">                - End (pandas.Timestamp): end date</span>
+<span class="sd">                - y0 (dict[str, int]): initial values of model-specialized variables or empty dict</span>
+<span class="sd">                - param (dict[str, float]): parameter values or empty dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span> <span class="ow">and</span> <span class="n">y0_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;@y0_dict must be specified for the 0th phase, but None was applied.&quot;</span><span class="p">)</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">:</span> <span class="n">end</span><span class="p">,</span> <span class="s2">&quot;y0&quot;</span><span class="p">:</span> <span class="n">y0_dict</span> <span class="ow">or</span> <span class="p">{},</span> <span class="s2">&quot;param&quot;</span><span class="p">:</span> <span class="n">param_dict</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ODEHandler.simulate"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform simulation with the multi-phased ODE model.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            covsirphy.UnExecutedError: either tau value or phase information was not set</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="s2">&quot;ODEHandler.estimate_tau()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Or specify tau when creating an instance of ODEHandler&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;ODEHandler.add()&quot;</span><span class="p">)</span>
+        <span class="n">combs</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">phase_dict</span><span class="p">))</span> <span class="ow">in</span> <span class="n">combs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">phase_dict</span><span class="p">[</span><span class="s2">&quot;param&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2"> is not registered for the </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase.&quot;</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">_MultiPhaseODESolver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">solver</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+    <span class="k">def</span> <span class="nf">_score_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate score for the tau value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            quantile (float): quantile to guess ODE parameter values for the candidates of tau</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">phase_dict</span><span class="p">)</span> <span class="ow">in</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">phase_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="n">phase_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s2">&quot;param&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">quantile</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">_MultiPhaseODESolver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="o">*</span><span class="n">info_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">),</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ODEHandler.estimate_tau"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler.estimate_tau">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">guess_quantile</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select tau value [min] which minimize the score of the metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            guess_quantile (float): quantile to guess ODE parameter values for the candidates of tau</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: estimated tau value [min]</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            covsirphy.UnExecutedError: phase information was not set</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            ODE parameter for each tau value will be guessed by .guess() classmethod of the model.</span>
+<span class="sd">            Tau value will be selected from the divisors of 1440 [min] and set to self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;ODEHandler.add()&quot;</span><span class="p">)</span>
+        <span class="c1"># Calculate scores of tau candidates</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">guess_quantile</span><span class="p">,</span> <span class="s2">&quot;quantile&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">calc_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_score_tau</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">quantile</span><span class="o">=</span><span class="n">guess_quantile</span><span class="p">)</span>
+        <span class="n">divisors</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1441</span><span class="p">)</span> <span class="k">if</span> <span class="mi">1440</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">calc_f</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">divisors</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">scores</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">calc_f</span><span class="p">,</span> <span class="n">divisors</span><span class="p">)</span>
+        <span class="n">score_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">divisors</span><span class="p">,</span> <span class="n">scores</span><span class="p">))</span>
+        <span class="c1"># Return the best tau value</span>
+        <span class="n">comp_f</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">max</span><span class="p">}[</span><span class="n">Evaluator</span><span class="o">.</span><span class="n">smaller_is_better</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">comp_f</span><span class="p">(</span><span class="n">score_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span></div>
+
+    <span class="k">def</span> <span class="nf">_estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">check_dict</span><span class="p">,</span> <span class="n">study_dict</span><span class="p">,</span> <span class="n">show_phase</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform parameter estimation for one phase.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phase (str): phase name</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval</span>
+<span class="sd">            check_dict (dict[str, object]): setting of validation</span>
+<span class="sd">            study_dict (dict[str, object]): setting of optimization study</span>
+<span class="sd">            show_phase (bool): whether show phase name or not (stdout)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict(str, object):</span>
+<span class="sd">                - Rt (float): phase-dependent reproduction number</span>
+<span class="sd">                - (str, float): estimated parameter values, including rho</span>
+<span class="sd">                - (int or float): day parameters, including 1/beta [days]</span>
+<span class="sd">                - {metric}: score with the estimated parameter values</span>
+<span class="sd">                - Trials (int): the number of trials</span>
+<span class="sd">                - Runtime (str): runtime of optimization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">phase_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">phase_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="n">phase_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="n">_ParamEstimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">)</span>
+        <span class="n">est_dict</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">check_dict</span><span class="p">,</span> <span class="n">study_dict</span><span class="p">)</span>
+        <span class="n">n_trials</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">],</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">]</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_phase</span><span class="p">:</span>
+            <span class="n">ph_statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> phase (</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ph_statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">ph_statement</span><span class="si">}</span><span class="s2">: finished </span><span class="si">{</span><span class="n">n_trials</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">est_dict</span>
+
+<div class="viewcode-block" id="ODEHandler.estimate_params"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="n">check_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate ODE parameter values of the all phases to minimize the score of the metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pandas.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval</span>
+<span class="sd">            check_dict (dict[str, object] or None): setting of validation</span>
+<span class="sd">                - None means {&quot;timeout&quot;: 180, &quot;timeout_interaction&quot;: 1, &quot;tail_n&quot;: 4, &quot;allowance&quot;: (0.99, 1.01)}</span>
+<span class="sd">                - timeout (int): timeout of optimization</span>
+<span class="sd">                - timeout_iteration (int): timeout of one iteration</span>
+<span class="sd">                - tail_n (int): the number of iterations to decide whether score did not change for the last iterations</span>
+<span class="sd">                - allowance (tuple(float, float)): the allowance of the max predicted values</span>
+<span class="sd">            study_dict (dict[str, object] or None): setting of optimization study</span>
+<span class="sd">                - None means {&quot;pruner&quot;: &quot;threshold&quot;, &quot;upper&quot;: 0.5, &quot;percentile&quot;: 50, &quot;seed&quot;: 0, &quot;constant_liar&quot;: False}</span>
+<span class="sd">                - pruner (str): kind of pruner (hyperband, median, threshold or percentile)</span>
+<span class="sd">                - upper (float): works for &quot;threshold&quot; pruner, intermediate score is larger than this value, it prunes</span>
+<span class="sd">                - percentile (float): works for &quot;Percentile&quot; pruner, the best intermediate value is in the bottom percentile among trials, it prunes</span>
+<span class="sd">                - constant_liar (bool): whether use constant liar to reduce search effort or not</span>
+<span class="sd">            kwargs: we can set arguments directly. E.g. timeout=180 for check_dict={&quot;timeout&quot;: 180,...}</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            covsirphy.UnExecutedError: either tau value or phase information was not set</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict(str, object): setting of the phase (key: phase name)</span>
+<span class="sd">                - Start (pandas.Timestamp): start date</span>
+<span class="sd">                - End (pandas.Timestamp): end date</span>
+<span class="sd">                - Rt (float): phase-dependent reproduction number</span>
+<span class="sd">                - (str, float): estimated parameter values, including rho</span>
+<span class="sd">                - (int or float): day parameters, including 1/beta [days]</span>
+<span class="sd">                - {metric}: score with the estimated parameter values</span>
+<span class="sd">                - Trials (int): the number of trials</span>
+<span class="sd">                - Runtime (str): runtime of optimization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model: parameter estimation&gt;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running optimization with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span><span class="si">}</span><span class="s2"> CPUs...&quot;</span><span class="p">)</span>
+        <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
+        <span class="c1"># Arguments</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;ODEHandler.add()&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="s2">&quot;ODEHandler.estimate_tau()&quot;</span><span class="p">,</span>
+                <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Or specify tau when creating an instance of ODEHandler&quot;</span><span class="p">)</span>
+        <span class="c1"># Arguments of _ParamEstimator</span>
+        <span class="n">check_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span> <span class="s2">&quot;timeout_iteration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;tail_n&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;allowance&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">)}</span>
+        <span class="n">check_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">check_dict</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">check_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">study_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pruner&quot;</span><span class="p">:</span> <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;percentile&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;constant_liar&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+        <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">study_dict</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># ODE parameter estimation</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">est_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_params</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="n">quantiles</span><span class="p">,</span>
+            <span class="n">check_dict</span><span class="o">=</span><span class="n">check_kwargs</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="n">study_kwargs</span><span class="p">,</span> <span class="n">show_phase</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">est_dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">est_f</span><span class="p">(</span><span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">est_dict_list</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">est_f</span><span class="p">,</span> <span class="n">phases</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">est_dict</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">est_dict_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s2">&quot;param&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">param</span><span class="p">:</span> <span class="n">est_dict</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed optimization. Total: </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">stop_show</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">],</span> <span class="o">**</span><span class="n">v</span><span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">est_dict_list</span><span class="p">)}</span></div>
+
+<div class="viewcode-block" id="ODEHandler.estimate"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ODEHandler.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate tau value [min] and ODE parameter values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pandas.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            kwargs: keyword arguments of  ODEHandler.estimate_tau() and ODEHandler.estimate_param()</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            covsirphy.UnExecutedError: phase information was not set</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple(int, dict(str, dict[str, object]))</span>
+<span class="sd">                - int: tau value [min]</span>
+<span class="sd">                - dict(str, object): setting of the phase (key: phase name)</span>
+<span class="sd">                    - Start (pandas.Timestamp): start date</span>
+<span class="sd">                    - End (pandas.Timestamp): end date</span>
+<span class="sd">                    - Rt (float): phase-dependent reproduction number</span>
+<span class="sd">                    - (str, float): estimated parameter values, including rho</span>
+<span class="sd">                    - (int or float): day parameters, including 1/beta [days]</span>
+<span class="sd">                    - {metric}: score with the estimated parameter values</span>
+<span class="sd">                    - Trials (int): the number of trials</span>
+<span class="sd">                    - Runtime (str): runtime of optimization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_tau</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate_tau</span><span class="p">))</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_params</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">info_dict</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

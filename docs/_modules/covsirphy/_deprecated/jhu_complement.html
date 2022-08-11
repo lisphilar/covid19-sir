@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy._deprecated.jhu_complement &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.24.0-tau
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Usage: data loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>covsirphy._deprecated.jhu_complement</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for covsirphy._deprecated.jhu_complement</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+
+
+<div class="viewcode-block" id="JHUDataComplementHandler"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.JHUDataComplementHandler">[docs]</a><span class="k">class</span> <span class="nc">JHUDataComplementHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Complement JHU dataset, if necessary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        recovery_period (int): expected value of recovery period [days]</span>
+<span class="sd">        interval (int): expected update interval of the number of recovered cases [days]</span>
+<span class="sd">        max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
+<span class="sd">        max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]</span>
+<span class="sd">        upper_limit_days (int): maximum number of valid partial recovery periods [days]</span>
+<span class="sd">        lower_limit_days (int): minimum number of valid partial recovery periods [days]</span>
+<span class="sd">        upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days</span>
+<span class="sd">        lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().</span>
+<span class="sd">        Status names with high scores will be prioritized when status code will be determined.</span>
+<span class="sd">        Status code: &#39;fully complemented recovered data&#39; and so on as noted in self.run() docstring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Column names</span>
+    <span class="n">RAW_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Term</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+    <span class="n">MONOTONIC_CONFIRMED</span> <span class="o">=</span> <span class="s2">&quot;Monotonic_confirmed&quot;</span>
+    <span class="n">MONOTONIC_FATAL</span> <span class="o">=</span> <span class="s2">&quot;Monotonic_fatal&quot;</span>
+    <span class="n">MONOTONIC_RECOVERED</span> <span class="o">=</span> <span class="s2">&quot;Monotonic_recovered&quot;</span>
+    <span class="n">FULL_RECOVERED</span> <span class="o">=</span> <span class="s2">&quot;Full_recovered&quot;</span>
+    <span class="n">PARTIAL_RECOVERED</span> <span class="o">=</span> <span class="s2">&quot;Partial_recovered&quot;</span>
+    <span class="n">RECOVERED_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">MONOTONIC_RECOVERED</span><span class="p">,</span> <span class="n">FULL_RECOVERED</span><span class="p">,</span> <span class="n">PARTIAL_RECOVERED</span><span class="p">]</span>
+    <span class="n">SHOW_COMPLEMENT_FULL_COLS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">MONOTONIC_CONFIRMED</span><span class="p">,</span> <span class="n">MONOTONIC_FATAL</span><span class="p">,</span> <span class="o">*</span><span class="n">RECOVERED_COLS</span><span class="p">]</span>
+    <span class="c1"># Kind of complement: {score: name}</span>
+    <span class="n">STATUS_NAME_DICT</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;sorting&quot;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;monotonic increasing&quot;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;partially&quot;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;fully&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="n">old</span><span class="o">=</span><span class="s2">&quot;JHUDataComplementHandler&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;DataEngineer&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.24.0-xi&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recovery_period</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">max_ending_unupdated</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">upper_limit_days</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+                 <span class="n">lower_limit_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">upper_percentage</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lower_percentage</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="c1"># Arguments for complement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">recovery_period</span><span class="p">,</span> <span class="s2">&quot;recovery_period&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="s2">&quot;interval&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">max_ignored</span><span class="p">,</span> <span class="s2">&quot;max_ignored&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_ending_unupdated</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">max_ending_unupdated</span><span class="p">,</span> <span class="s2">&quot;max_ending_unupdated&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper_limit_days</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">upper_limit_days</span><span class="p">,</span> <span class="s2">&quot;upper_limit_days&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower_limit_days</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">lower_limit_days</span><span class="p">,</span> <span class="s2">&quot;lower_limit_days&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper_percentage</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">upper_percentage</span><span class="p">,</span> <span class="s2">&quot;upper_percentage&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower_percentage</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">lower_percentage</span><span class="p">,</span> <span class="s2">&quot;lower_percentage&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the list of complement solutions and scores.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str/None, function, int]: nested list of variables to be updated, methods and scores</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_processing</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_full</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_partial</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_partial_ending</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="JHUDataComplementHandler.run"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.JHUDataComplementHandler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform complement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
+
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">                    - The other columns will be ignored</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple(pandas.DataFrame, str, dict):</span>
+<span class="sd">                pandas.DataFrame</span>
+
+<span class="sd">                    Index</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns</span>
+<span class="sd">                        - Date(pd.Timestamp): Observation date</span>
+<span class="sd">                        - Confirmed(int): the number of confirmed cases</span>
+<span class="sd">                        - Infected(int): the number of currently infected cases</span>
+<span class="sd">                        - Fatal(int): the number of fatal cases</span>
+<span class="sd">                        - Recovered (int): the number of recovered cases</span>
+
+<span class="sd">                str: status code</span>
+<span class="sd">                dict: status for each complement type</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Status code will be selected from:</span>
+<span class="sd">            - &#39;&#39; (not complemented)</span>
+<span class="sd">            - &#39;monotonic increasing complemented confirmed data&#39;</span>
+<span class="sd">            - &#39;monotonic increasing complemented fatal data&#39;</span>
+<span class="sd">            - &#39;monotonic increasing complemented recovered data&#39;</span>
+<span class="sd">            - &#39;fully complemented recovered data&#39;</span>
+<span class="sd">            - &#39;partially complemented recovered data&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="s2">&quot;subset_df&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">])</span>
+        <span class="c1"># Initialize</span>
+        <span class="n">after_df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">status_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SHOW_COMPLEMENT_FULL_COLS</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Perform complement one by one</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span><span class="p">():</span>
+            <span class="n">before_df</span><span class="p">,</span> <span class="n">after_df</span> <span class="o">=</span> <span class="n">after_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">func</span><span class="p">(</span><span class="n">after_df</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">after_df</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">before_df</span><span class="p">)</span> <span class="ow">or</span> <span class="n">variable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">status_dict</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">status_dict</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">score</span><span class="p">)</span>
+        <span class="c1"># Create status code</span>
+        <span class="n">status_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">STATUS_NAME_DICT</span><span class="p">[</span><span class="n">score</span><span class="p">]</span><span class="si">}</span><span class="s2"> complemented </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2"> data&quot;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="n">status_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">score</span><span class="p">]</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; and </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">status_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">after_df</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_pre_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select Confirmed/Fatal/Recovered class from the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date, Confirmed, Fatal, Recovered (the others will be ignored)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sel_invalid_R</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> \
+            <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_invalid_R</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_invalid_R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> \
+            <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select Confirmed/Fatal/Recovered class from the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_monotonic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Force the variable show monotonic increasing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+<span class="sd">            variable (str): variable name to show monotonic increasing</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="c1"># Whether complement is necessary or not</span>
+        <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Complement</span>
+        <span class="n">decreased_dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">decreased_dates</span><span class="p">:</span>
+            <span class="c1"># Raw value on the decreased date</span>
+            <span class="n">raw_last</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">variable</span><span class="p">]</span>
+            <span class="c1"># Extrapolated value on the date</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">variable</span><span class="p">]</span>
+            <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">series</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+            <span class="n">series</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># Reduce values to the previous date</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span> <span class="o">*</span> <span class="n">raw_last</span> <span class="o">/</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Monotonic_</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_validate_recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates and validates recovery period for specific country</span>
+<span class="sd">        as an additional condition in order to apply full complement or not</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country_df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset_index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date, Confirmed, Recovered, Fatal</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: true if recovery period is within valid range or false otherwise</span>
+
+<span class="sd">        Note: Passed argument df corresponds to specific country&#39;s df</span>
+<span class="sd">              upper_limit_days has default value of 3 months (90 days)</span>
+<span class="sd">              lower_limit_days has default value of 1 week (7 days)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">country_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Calculate &quot;Confirmed - Fatal&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span>
+        <span class="c1"># Calculate how many days passed to reach the number of cases</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Variable&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Number&quot;</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Days&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span>
+        <span class="c1"># Calculate partial recovery periods</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s2">&quot;Days&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;Number&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;Variable&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">limit_area</span><span class="o">=</span><span class="s2">&quot;inside&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Check partial recovery periods</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+        <span class="n">per_up</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_limit_days</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">per_lw</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_limit_days</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">per_up</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_percentage</span> <span class="ow">and</span> <span class="n">per_lw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_percentage</span>
+
+    <span class="k">def</span> <span class="nf">_recovered_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the number of recovered cases with the value of recovery period.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Whether complement is necessary or not</span>
+        <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span><span class="p">:</span>
+            <span class="c1"># Necessary if sum of recovered is more than 99%</span>
+            <span class="c1"># or less than 1% of sum of recovered minus infected when out-breaking</span>
+            <span class="n">sel_C1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+            <span class="n">sel_R1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+            <span class="n">sel_2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">cf_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">sel_3</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">cf_diff</span>
+            <span class="n">s_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_C1</span> <span class="o">&amp;</span> <span class="n">sel_R1</span> <span class="o">&amp;</span> <span class="n">sel_2</span> <span class="o">&amp;</span> <span class="n">sel_3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">s_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_recovery_period</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Estimate recovered records</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span>
+            <span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">FULL_RECOVERED</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_recovered_partial_ending</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If ending recovered values do not change for more than applied &#39;self.max_ending_unupdated&#39; days</span>
+<span class="sd">        after reached &#39;self.max_ignored&#39; cases, apply either previous diff() (with some variance)</span>
+<span class="sd">        or full complement only to these ending unupdated values and keep the previous valid ones.</span>
+<span class="sd">        _recovered_partial() does not handle well such values, because</span>
+<span class="sd">        they are not in-between values and interpolation generates only similar values,</span>
+<span class="sd">        but small compared to confirmed cases.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Note: _recovered_partial_ending() must always be called</span>
+<span class="sd">              after _recovered_partial()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Whether complement is necessary or not</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">sel_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">==</span> <span class="n">r_max</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ending_unupdated</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_max</span> <span class="ow">and</span> <span class="n">sel_0</span><span class="p">):</span>
+            <span class="c1"># full complement will be handled in _recovered_full()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Complement any ending unupdated values that are not updated</span>
+        <span class="c1"># for more than max_ending_unupdated days,</span>
+        <span class="c1"># by keeping and propagating forward previous valid diff()</span>
+        <span class="c1"># min_index: index for first ending max R reoccurrence</span>
+        <span class="n">min_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">first_value</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="n">df_ending</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df_ending</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_ending</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">diff_series</span> <span class="o">=</span> <span class="n">df_ending</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">diff_series</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">diff_series</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">diff_series</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_value</span> <span class="o">+</span> \
+            <span class="n">diff_series</span><span class="p">[</span><span class="n">min_index</span><span class="p">:]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+        <span class="c1"># Check if the ending complement is valid (too large recovered ending values)</span>
+        <span class="c1"># If the validity check fails, then fully complement these ending values</span>
+        <span class="n">sel_C1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+        <span class="n">sel_R1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+        <span class="c1"># check all values one-by-one, no rolling window</span>
+        <span class="n">cf_diff</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">sel_limit</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">*</span> <span class="n">cf_diff</span>
+        <span class="n">s_df_1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_C1</span> <span class="o">&amp;</span> <span class="n">sel_R1</span> <span class="o">&amp;</span> <span class="n">sel_limit</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">s_df_1</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span>
+                <span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PARTIAL_RECOVERED</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_recovered_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If recovered values do not change for more than applied &#39;self.interval&#39; days</span>
+<span class="sd">        after reached &#39;self.max_ignored&#39; cases, interpolate the recovered values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Whether complement is necessary or not</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="n">max_frequency</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_frequency</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Complement in-between recovered values when confirmed &gt; max_ignored</span>
+        <span class="n">sel_C</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+        <span class="n">sel_duplicate</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_C</span> <span class="o">&amp;</span> <span class="n">sel_duplicate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PARTIAL_RECOVERED</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_recovered_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort the absolute values of recovered data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            _recovered_sort() must always be called after _recovered_partial_ending()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

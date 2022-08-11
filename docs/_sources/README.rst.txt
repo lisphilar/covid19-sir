@@ -16,7 +16,7 @@ reference <https://lisphilar.github.io/covid19-sir/covsirphy.html>`__ \|
 
 CovsirPhy is a Python library for COVID-19 (Coronavirus disease 2019)
 data analysis with phase-dependent SIR-derived ODE models. We can
-download datasets and analyse them easily. Scenario analysis with
+download datasets and analyze them easily. Scenario analysis with
 CovsirPhy enables us to make data-informed decisions.
 
 Functionalities
@@ -58,7 +58,7 @@ Installation
 
 The latest stable version of CovsirPhy is available at `PyPI (The Python
 Package Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and
-supports Python 3.7 or newer versions. Details are explained in
+supports Python 3.7.12 or newer versions. Details are explained in
 `Documentation:
 Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 

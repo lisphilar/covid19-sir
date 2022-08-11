@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy.science package &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="covsirphy.util package" href="covsirphy.util.html" />
+    <link rel="prev" title="covsirphy.dynamics package" href="covsirphy.dynamics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.24.0-tau
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/LOADING.html">Usage: data loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.cleaning.html">covsirphy.cleaning package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.science package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="covsirphy.html">covsirphy package</a> &raquo;</li>
+      <li>covsirphy.science package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/covsirphy.science.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-covsirphy.science">
+<span id="covsirphy-science-package"></span><h1>covsirphy.science package<a class="headerlink" href="#module-covsirphy.science" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-covsirphy.science.ode_scenario">
+<span id="covsirphy-science-ode-scenario-module"></span><h2>covsirphy.science.ode_scenario module<a class="headerlink" href="#module-covsirphy.science.ode_scenario" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ODEScenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">Term</span></code></a></p>
+<p>Perform scenario analysis, changing ODE parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>actual data of the number of cases
+Index</p>
+<blockquote>
+<div><p>Date (pandas.Timestamp): observation dates</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><p>Population (int): total population
+Confirmed (int): the number of confirmed cases
+Recovered (int): the number of recovered cases, must be over 0
+Fatal (int): the number of fatal cases
+Susceptible (int): the number of susceptible cases, will be ignored because overwritten
+Infected (int): the number of currently infected cases, will be ignored because overwritten
+the other columns will be ignored</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>location_name</strong> (<em>str</em>) – name to identify the location to show in figure titles</p></li>
+<li><p><strong>complement</strong> (<em>bool</em>) – perform data complement with covsirphy.DataEngineer().subset(complement=True) or not</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Data cleaning will be performed with covsirphy.DataEngineer().clean() automatically.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.append" title="Permalink to this definition"></a></dt>
+<dd><p>Append a new phase, specifying ODE parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>] </em><em>None</em>) – scenario name(s) or None (all scenarios)</p></li>
+<li><p><strong>end</strong> (<em>pandas.Timestamp</em><em> or </em><em>int</em><em> or </em><em>None</em>) – end date or the number days of new phase or None (the max date of all scenarios and actual data)</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of ODE parameter values (default: values of the last phase)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – scenario with the name is un-registered</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.auto_build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auto_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.auto_build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.auto_build" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare cleaned and subset data from recommended dataset, create instance, build baseline scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – country, province, city</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel"><em>covsirphy.ODEModel</em></a>) – definition of ODE model</p></li>
+<li><p><strong>complement</strong> (<em>bool</em>) – whether perform complement or not</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – actual data of the location was not included in the recommended dataset</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>created instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>geo=None</cite> means total values of all countries.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>geo=”Japan”</cite> and <cite>geo=(“Japan”,)</cite> means country level data of Japan, as an example.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>geo=(“Japan”, “Tokyo”)</cite> means prefecture (province) level data of Tokyo/Japan, as an example.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>geo=(“USA”, “Alabama”, “Baldwin”)</cite> means country level data of Baldwin/Alabama/USA, as an example.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Complemented (if &#64;complement is True) data with Recovered &gt; 0 will be analyzed.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.build_with_dynamics">
+<span class="sig-name descname"><span class="pre">build_with_dynamics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.build_with_dynamics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.build_with_dynamics" title="Permalink to this definition"></a></dt>
+<dd><p>Build a scenario with covsirphy.Dynamics() instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>dynamics</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.Dynamics" title="covsirphy.Dynamics"><em>covsirphy.Dynamics</em></a>) – covsirphy.Dynamics() instance which has ODE model, tau value and ODE parameter values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.build_with_model">
+<span class="sig-name descname"><span class="pre">build_with_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.build_with_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.build_with_model" title="Permalink to this definition"></a></dt>
+<dd><p>Build a scenario with covsirphy.Dynamics() instance created with the actual data automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel"><em>covsirphy.ODEModel</em></a>) – definition of ODE model</p></li>
+<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>) or </em><em>None</em>) – start date and end date of dynamics to analyze</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.build_with_template">
+<span class="sig-name descname"><span class="pre">build_with_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.build_with_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.build_with_template" title="Permalink to this definition"></a></dt>
+<dd><p>Build a scenario with a template scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – new scenario name</p></li>
+<li><p><strong>template</strong> (<em>str</em>) – template name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – scenario with the name is un-registered</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.compare_cases">
+<span class="sig-name descname"><span class="pre">compare_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.compare_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.compare_cases" title="Permalink to this definition"></a></dt>
+<dd><p>Compare the number of cases of scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<em>str</em>) – variable name or alias</p></li>
+<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – start date and end date to analyze</p></li>
+<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
+<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>Date (pandas.Timestamp): dates</p>
+</dd>
+<dt>Columns</dt><dd><p>Actual (numpy.int64): actual records
+{scenario name} (numpy.int64): values of the scenario</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.compare_param">
+<span class="sig-name descname"><span class="pre">compare_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.compare_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.compare_param" title="Permalink to this definition"></a></dt>
+<dd><p>Compare the number of cases of scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<em>str</em>) – one of ODE parameters, “Rt”, dimensional parameters</p></li>
+<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – start date and end date to analyze</p></li>
+<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
+<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>Date (pandas.Timestamp)</p>
+</dd>
+<dt>Columns</dt><dd><p>{scenario name} (str): values of the scenario</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Delete scenario(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> (<em>str</em>) – scenario name or pattern to search</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – if False, use regular expressions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.describe" title="Permalink to this definition"></a></dt>
+<dd><p>Describe representative values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>str: scenario name</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>max(Infected) (numpy.int64): max value of Infected</p></li>
+<li><p>argmax(Infected) (pandas.Timestamp): the date when Infected shows max value</p></li>
+<li><p>Confirmed({date}) (numpy.int64): Confirmed on the last date</p></li>
+<li><p>Infected({date} (numpy.int64)): Infected on the last date</p></li>
+<li><p>Fatal({date}) (numpy.int64): Fatal on the last date</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<em>int</em>) – days to predict</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of autots.AutoTS() except for forecast_length (always the same as &#64;days)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEScenario" title="covsirphy.ODEScenario">covsirphy.ODEScenario</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>AutoTS package is developed at <a class="reference external" href="https://github.com/winedarksea/AutoTS">https://github.com/winedarksea/AutoTS</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Phases are determined with rounded reproduction number (one decimal place).</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.rename" title="Permalink to this definition"></a></dt>
+<dd><p>Rename the given scenario names with a new one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>old</strong> (<em>str</em>) – old name</p></li>
+<li><p><strong>new</strong> (<em>str</em>) – new name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.represent">
+<span class="sig-name descname"><span class="pre">represent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">included</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.represent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.represent" title="Permalink to this definition"></a></dt>
+<dd><p>Return the names of representative scenarios using quantiles of the variable on on the date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>float</em>) – quantiles</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – reference variable, Confirmed, Infected, Fatal or Recovered</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – reference date or None (the last end date in the all scenarios)</p></li>
+<li><p><strong>included</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – included scenarios or None (all included)</p></li>
+<li><p><strong>excluded</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – excluded scenarios or None (no scenarios not excluded)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – the end dates of the last phase is not aligned</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the nearest scenarios which has the values at the given quantiles</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[float] or float</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dimension of returned object corresponds to the type of &#64;q.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.simulate" title="Permalink to this definition"></a></dt>
+<dd><p>Perform simulation with phase-dependent ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – scenario name registered or None (actual data)</p></li>
+<li><p><strong>variables</strong> (<em>list of</em><em> [</em><em>str</em><em>] or </em><em>None</em>) – variables/alias to return or None ([“Confirmed”, “Fatal”, “Recovered”])</p></li>
+<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>Date (pd.Timestamp): dates</p>
+</dd>
+<dt>Columns</dt><dd><p>Population (int): total population (if selected with &#64;variables)
+Confirmed (int): the number of confirmed cases (if selected with &#64;variables)
+Recovered (int): the number of recovered cases (if selected with &#64;variables)
+Fatal (int): the number of fatal cases (if selected with &#64;variables)
+Susceptible (int): the number of susceptible cases (if selected with &#64;variables)
+Infected (int): the number of currently infected cases (if selected with &#64;variables)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame or pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Summarize phase information of all scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>Scenario (str): scenario names
+Phase (str): phase names, 0th, 1st,…</p>
+</dd>
+<dt>Columns</dt><dd><p>Start (pandas.Timestamp): start date of the phase
+End (pandas.Timestamp): end date of the phase
+ODE (str): ODE model name
+Rt (float): phase-dependent reproduction number (if parameters are available)
+(float): parameter values, including rho (if available)
+tau (int): tau value [min]
+(int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.to_dynamics">
+<span class="sig-name descname"><span class="pre">to_dynamics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.to_dynamics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.to_dynamics" title="Permalink to this definition"></a></dt>
+<dd><p>Create covsirphy.Dynamics instance of the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – scenario name</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – scenario with the name is un-registered</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>instance which has ODE model, tau value and ODE parameter values</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.Dynamics" title="covsirphy.Dynamics">covsirphy.Dynamics</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.science.ode_scenario.ODEScenario.track">
+<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ode_scenario.html#ODEScenario.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.science.ode_scenario.ODEScenario.track" title="Permalink to this definition"></a></dt>
+<dd><p>Track reproduction number, parameter value and dimensional parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><p>Scenario (str): scenario names
+Phase (str): phase names
+Date (pandas.Timestamp): dates
+Rt (float): phase-dependent reproduction number (if parameters are available)
+(float): parameter values, including rho (if available)
+(int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="covsirphy.dynamics.html" class="btn btn-neutral float-left" title="covsirphy.dynamics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="covsirphy.util.html" class="btn btn-neutral float-right" title="covsirphy.util package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

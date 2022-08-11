@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
@@ -33,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.24.0
+                2.24.0-tau
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,12 +49,12 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/WORKFLOW.html">Workflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/LOADING.html">Usage: data loading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: exploratory data analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: S-R trend analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage: scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -124,7 +125,7 @@
 }
 </style>
 <section id="guideline-of-contribution">
-<h1>Guideline of contribution<a class="headerlink" href="#guideline-of-contribution" title="Permalink to this headline"></a></h1>
+<h1>Guideline of contribution<a class="headerlink" href="#guideline-of-contribution" title="Permalink to this heading"></a></h1>
 <p>Thank you always for using CovsirPhy and continuous supports!<br />We hope this project contribute to COVID-19 outbreak research and we will overcome the outbreak in the near future.</p>
 <p>When you contribute to <a class="reference external" href="https://github.com/lisphilar/covid19-sir">covid-sir repository</a> including CovsirPhy package, please kindly follow <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html">Code of conduct</a> and the steps explained in this document. If you have any questions or any request to change about this guideline, please inform the author via issue page.</p>
 <p>Terms:</p>
@@ -134,10 +135,10 @@
 <li><p>‘Users’ uses this package for analysing the datasets, publish the outputs, create issues, join discussions.</p></li>
 </ul>
 <section id="clone-covsirphy-repository-and-install-dependencies">
-<h2>Clone CovsirPhy repository and install dependencies<a class="headerlink" href="#clone-covsirphy-repository-and-install-dependencies" title="Permalink to this headline"></a></h2>
+<h2>Clone CovsirPhy repository and install dependencies<a class="headerlink" href="#clone-covsirphy-repository-and-install-dependencies" title="Permalink to this heading"></a></h2>
 <p>Developers will clone CovsirPhy repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command and install dependencies with Poetry.</p>
 <section id="clone-fork-the-repository">
-<h3>Clone/Fork the repository<a class="headerlink" href="#clone-fork-the-repository" title="Permalink to this headline"></a></h3>
+<h3>Clone/Fork the repository<a class="headerlink" href="#clone-fork-the-repository" title="Permalink to this heading"></a></h3>
 <p>Please start by cloning the GitHub repository with git command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
 <span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
@@ -157,11 +158,11 @@
 </div>
 </section>
 <section id="setup-python">
-<h3>Setup Python<a class="headerlink" href="#setup-python" title="Permalink to this headline"></a></h3>
+<h3>Setup Python<a class="headerlink" href="#setup-python" title="Permalink to this heading"></a></h3>
 <p>Setup base Python with https://www.python.org/downloads/ (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).</p>
 </section>
 <section id="install-poetry-windows">
-<h3>Install Poetry (Windows)<a class="headerlink" href="#install-poetry-windows" title="Permalink to this headline"></a></h3>
+<h3>Install Poetry (Windows)<a class="headerlink" href="#install-poetry-windows" title="Permalink to this heading"></a></h3>
 <p>Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Invoke</span><span class="o">-</span><span class="n">WebRequest</span> <span class="o">-</span><span class="n">Uri</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">python</span><span class="o">-</span><span class="n">poetry</span><span class="o">/</span><span class="n">poetry</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">get</span><span class="o">-</span><span class="n">poetry</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">UseBasicParsing</span><span class="p">)</span><span class="o">.</span><span class="n">Content</span> <span class="o">|</span> <span class="n">python</span> <span class="o">-</span>
 <span class="n">poetry</span> <span class="o">--</span><span class="n">version</span>
@@ -172,14 +173,14 @@
 <p>If you have <code class="docutils literal notranslate"><span class="pre">make</span></code> commands, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">poetry-windows</span></code>. This is defined in “Makefile” of the top directory.</p>
 </section>
 <section id="install-poetry-linux-wsl-macos">
-<h3>Install Poetry (Linux, WSL, macOS)<a class="headerlink" href="#install-poetry-linux-wsl-macos" title="Permalink to this headline"></a></h3>
+<h3>Install Poetry (Linux, WSL, macOS)<a class="headerlink" href="#install-poetry-linux-wsl-macos" title="Permalink to this heading"></a></h3>
 <p>Please use <code class="docutils literal notranslate"><span class="pre">make</span></code> command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">poetry</span><span class="o">-</span><span class="n">linux</span>
 </pre></div>
 </div>
 </section>
 <section id="install-dependencies">
-<h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline"></a></h3>
+<h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this heading"></a></h3>
 <p>To install dependencies with Poetry, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> or the following commands before editing codes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> 
 <span class="n">poetry</span> <span class="bp">self</span> <span class="n">update</span>
@@ -195,7 +196,7 @@
 </section>
 </section>
 <section id="issues">
-<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline"></a></h2>
+<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this heading"></a></h2>
 <p>Kindly <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">create an issue</a> when you want to</p>
 <ul class="simple">
 <li><p>ask a question</p></li>
@@ -215,7 +216,7 @@
 <p>When requesting a new data loader, please confirm that the dataset follows ALCOA (Attributable, Legible, Contemporaneous, Original, Accurate) and we can retrieve the data with permitted APIs. If the data loaders included in this repository use un-permitted APIs, please inform maintainers. We will fix it as soon as possible.</p>
 </section>
 <section id="pull-request">
-<h2>Pull request<a class="headerlink" href="#pull-request" title="Permalink to this headline"></a></h2>
+<h2>Pull request<a class="headerlink" href="#pull-request" title="Permalink to this heading"></a></h2>
 <p>If you have any ideas, please <a class="reference external" href="https://github.com/lisphilar/covid19-sir/pulls">create a pull request</a> after explaining your idea in an issue.
 Please ensure that</p>
 <ul class="simple">
@@ -231,7 +232,7 @@ Please ensure that</p>
 <p>Update of version number and sphinx documents is not necessary for developers. After reviewing by assigned reviewers, maintainers will update them by editing “covsirphy/__version__.py” and “pyproject.toml” when merge the pull request.</p>
 </section>
 <section id="run-tests">
-<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline"></a></h2>
+<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this heading"></a></h2>
 <p>Before creating a pull request, please run tests with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">pytest</span></code> or the following commands.</p>
 <p>All tests:</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
@@ -249,7 +250,7 @@ Please ensure that</p>
 <p>When you create a pull request to upstream repository, CI tools will test the codes with Python 3.7 and 3.8. When development version number is updated (i.e. a pull request merged), CI tools will test the codes with the all supported Python versions.</p>
 </section>
 <section id="versioning">
-<h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline"></a></h2>
+<h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h2>
 <p>CovsirPhy follows <a class="reference external" href="https://semver.org/">Semantic Versioning 2.0.0</a>:</p>
 <ul class="simple">
 <li><p>Milestones of minor update (from X.0.Z to X.1.Z) are documented in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/milestones">milestones of issues</a>.</p></li>

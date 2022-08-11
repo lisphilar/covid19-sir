@@ -1,6 +1,6 @@
 # Installation
 
-`covsirphy` library supports Python 3.7 and newer versions.
+`covsirphy` library supports Python 3.7.12 and newer versions.
 
 **Please use `covsirphy` with a virtual environment** (venv/poetry/conda etc.) because it has many dependencies as listed in "tool.poetry.dependencies" of [pyproject.toml](https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml).
 
@@ -46,4 +46,4 @@ To exit this conda environment, please use `conda deactivate`.
 
 ## Start analysis
 
-What to do next? Please refer to [Workflow](https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html) to obtain a comeplete view of CovsirPhy project. The fisrt step is data preparation.
+What to do next? Please refer to [Workflow](https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html) to obtain a complete view of CovsirPhy project. The first step is data preparation.

@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -34,7 +35,7 @@
             <a href="../index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.24.0
+                2.24.0-tau
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -55,12 +56,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="WORKFLOW.html">Workflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LOADING.html">Usage: data loading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_dataset.html">Usage: exploratory data analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_phases.html">Usage: S-R trend analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage_quick.html">Usage: scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_scenario_analysis.html">Scenario analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -117,12 +118,12 @@
 }
 </style>
 <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> library supports Python 3.7 and newer versions.</p>
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> library supports Python 3.7.12 and newer versions.</p>
 <p><strong>Please use <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> with a virtual environment</strong> (venv/poetry/conda etc.) because it has many dependencies as listed in “tool.poetry.dependencies” of <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml">pyproject.toml</a>.</p>
 <p>If you have any concerns, kindly create issues in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">CovsirPhy: GitHub Issues page</a>. All discussions are recorded there.</p>
 <section id="stable-version">
-<h2>Stable version<a class="headerlink" href="#stable-version" title="Permalink to this headline"></a></h2>
+<h2>Stable version<a class="headerlink" href="#stable-version" title="Permalink to this heading"></a></h2>
 <p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index): covsirphy</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade covsirphy
 </pre></div>
@@ -134,7 +135,7 @@
 </div>
 </section>
 <section id="development-version">
-<h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline"></a></h2>
+<h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this heading"></a></h2>
 <p>You can find the latest development in <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository: CovsirPhy</a> and install it with <code class="docutils literal notranslate"><span class="pre">pip</span></code> command.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
 </pre></div>
@@ -142,7 +143,7 @@
 <p>If you have a time to contribute CovsirPhy project, please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a>. Always welcome!</p>
 </section>
 <section id="installation-with-anaconda">
-<h2>Installation with Anaconda<a class="headerlink" href="#installation-with-anaconda" title="Permalink to this headline"></a></h2>
+<h2>Installation with Anaconda<a class="headerlink" href="#installation-with-anaconda" title="Permalink to this heading"></a></h2>
 <p>Anaconda users can install <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> in a conda environment (named “covid” for example). To avoid version conflicts of dependencies, <code class="docutils literal notranslate"><span class="pre">fiona</span></code>, <code class="docutils literal notranslate"><span class="pre">ruptures</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code> should be installed with conda command in advance.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n covid <span class="nv">python</span><span class="o">=</span><span class="m">3</span> pip
 conda activate covid
@@ -153,8 +154,8 @@ pip install --upgrade covsirphy
 <p>To exit this conda environment, please use <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">deactivate</span></code>.</p>
 </section>
 <section id="start-analysis">
-<h2>Start analysis<a class="headerlink" href="#start-analysis" title="Permalink to this headline"></a></h2>
-<p>What to do next? Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html">Workflow</a> to obtain a comeplete view of CovsirPhy project. The fisrt step is data preparation.</p>
+<h2>Start analysis<a class="headerlink" href="#start-analysis" title="Permalink to this heading"></a></h2>
+<p>What to do next? Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/WORKFLOW.html">Workflow</a> to obtain a complete view of CovsirPhy project. The first step is data preparation.</p>
 </section>
 </section>
 

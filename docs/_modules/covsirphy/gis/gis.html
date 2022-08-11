@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy.gis.gis &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.24.0-tau
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/LOADING.html">Usage: data loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>covsirphy.gis.gis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for covsirphy.gis.gis</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span> <span class="nn">covsirphy.gis.subset</span> <span class="kn">import</span> <span class="n">_SubsetManager</span>
+<span class="kn">from</span> <span class="nn">covsirphy.gis.layer</span> <span class="kn">import</span> <span class="n">_LayerAdjuster</span>
+<span class="kn">from</span> <span class="nn">covsirphy.gis.geometry</span> <span class="kn">import</span> <span class="n">_Geometry</span>
+<span class="kn">from</span> <span class="nn">covsirphy.gis.choropleth</span> <span class="kn">import</span> <span class="n">_ChoroplethMap</span>
+
+
+<div class="viewcode-block" id="GIS"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS">[docs]</a><span class="k">class</span> <span class="nc">GIS</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class of geographic information system to handle geo-spatial time-series data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        layers (list[str] or None): list of layers of geographic information or None ([&quot;ISO3&quot;, &quot;Province&quot;, &quot;City&quot;])</span>
+<span class="sd">        country (str or None): layer name of countries or None (countries are not included in the layers)</span>
+<span class="sd">        date (str): column name of observation dates</span>
+<span class="sd">        verbose (int): level of verbosity of stdout</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: @layers has duplicates</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Country level data specified with @country will be stored with ISO3 codes.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        If @verbose is 0, no descriptions will be shown.</span>
+<span class="sd">        If @verbose is 1 or larger, details of layer adjustment will be shown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># Countries will be specified with ISO3 codes and this requires conversion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="c1"># Location data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">layers</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITY</span><span class="p">],</span> <span class="s2">&quot;layers&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">()</span>
+        <span class="c1"># Date column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+        <span class="c1"># Verbosity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="c1"># Layer adjuster</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span> <span class="o">=</span> <span class="n">_LayerAdjuster</span><span class="p">(</span>
+            <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="GIS.all"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all available data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variables (list[str] or None): list of variables to collect or None (all available variables)</span>
+<span class="sd">            errors (str): &#39;raise&#39; or &#39;coerce&#39;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotRegisteredError: No records have been registered yet</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - (pandas.Category): columns defined by covsirphy.GIS(layers)</span>
+<span class="sd">                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</span>
+<span class="sd">                    - columns defined by @variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;No records have been registered yet.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GIS.citations"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return citation list of the secondary data sources.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variables (list[str] or None): list of variables to collect or None (all available variables)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: citation list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">citations</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GIS.register"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register new data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame): new data</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - columns defined by @layers</span>
+<span class="sd">                    - column defined by @date</span>
+<span class="sd">                    - columns defined by @variables</span>
+<span class="sd">            layers (list[str] or None): layers of the data or None (as the same as covsirphy.GIS(layer))</span>
+<span class="sd">            date (str): column name of observation dates of the data</span>
+<span class="sd">            variables (list[str] or None): list of variables to add or None (all available columns)</span>
+<span class="sd">            citations (list[str] or str or None): citations of the dataset or None ([&quot;my own dataset&quot;])</span>
+<span class="sd">            convert_iso3 (bool): whether convert country names to ISO3 codes or not</span>
+<span class="sd">            **kwargs: keyword arguments of pandas.to_datetime() including &quot;dayfirst (bool): whether date format is DD/MM or not&quot;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: @data_layers has duplicates</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.GIS: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="n">citations</span><span class="p">,</span>
+            <span class="n">convert_iso3</span><span class="o">=</span><span class="n">convert_iso3</span><span class="p">,</span> <span class="o">**</span><span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="GIS.layer"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the data at the selected layer in the date range.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+<span class="sd">            variables (list[str] or None): list of variables to add or None (all available columns)</span>
+<span class="sd">            errors (str): whether raise errors or not, &#39;raise&#39; or &#39;coerce&#39;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: @geo has un-expected types</span>
+<span class="sd">            ValueError: the length of @geo is larger than the length of layers</span>
+<span class="sd">            NotRegisteredError: No records have been registered at the layer yet</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - (str): columns defined by covsirphy.GIS(layers)</span>
+<span class="sd">                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</span>
+<span class="sd">                    - columns defined by @variables</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">           Note that records with NAs as country names will be always removed.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=None` or `geo=(None,)`, returns country-level data, assuming we have country/province/city as layers here.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;,)` or `geo=&quot;Japan&quot;`, returns province-level data in Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=([&quot;Japan&quot;, &quot;UK&quot;],)`, returns province-level data in Japan and UK.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;, &quot;Kanagawa&quot;)`, returns city-level data in Kanagawa/Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;, [&quot;Tokyo&quot;, &quot;Kanagawa&quot;])`, returns city-level data in Tokyo/Japan and Kanagawa/Japan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get all data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered yet.&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+        <span class="c1"># Filter with geo</span>
+        <span class="n">geo_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_geo</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">manager</span> <span class="o">=</span> <span class="n">_SubsetManager</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="n">geo_converted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered at the layer yet.&quot;</span><span class="p">)</span>
+        <span class="c1"># Filter with date</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span>
+                <span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No records have been registered at the layer yet from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="c1"># Get representative records for dates</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GIS.to_geopandas"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.to_geopandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_geopandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add geometry information with GeoJSON file of &quot;Natural Earth&quot; GitHub repository to data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)</span>
+<span class="sd">            on (str or None): the date, like 22Jan2020, or None (the last date of each location)</span>
+<span class="sd">            variables (list[str] or None): list of variables to add or None (all available columns)</span>
+<span class="sd">            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None ([&quot;input&quot;, &quot;natural_earth&quot;])</span>
+<span class="sd">            natural_earth (str or None): title of GeoJSON file (without extension) of &quot;Natural Earth&quot; GitHub repository or None (automatically determined)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: country layer is not included in the dataset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geopandas.GeoDataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    - reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - (str): layer focused on with @gis and GIS.layer()</span>
+<span class="sd">                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</span>
+<span class="sd">                    - geometry: geometric information</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Regarding @geo argument, please refer to covsirphy.GIS.layer().</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson</span>
+<span class="sd">            https://www.naturalearthdata.com/</span>
+<span class="sd">            https://github.com/nvkelso/natural-earth-vector</span>
+<span class="sd">            Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This cannot be done because country layer is not included in the dataset.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">==</span> <span class="n">Validator</span><span class="p">(</span><span class="n">on</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()]</span>
+        <span class="n">focused_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">_Geometry</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">focused_layer</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;natural_earth&quot;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+        <span class="n">iso3</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">focused_layer</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">to_geopandas</span><span class="p">(</span><span class="n">iso3</span><span class="o">=</span><span class="n">iso3</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="n">natural_earth</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">focused_layer</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GIS.choropleth"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.choropleth">[docs]</a>    <span class="k">def</span> <span class="nf">choropleth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map&quot;</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create choropleth map.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variable (str): variable name to show</span>
+<span class="sd">            filename (str or None): filename to save the figure or None (display)</span>
+<span class="sd">            title (str): title of the map</span>
+<span class="sd">            logscale (bool): whether convert the value to log10 scale values or not</span>
+<span class="sd">            kwargs: keyword arguments of the following classes and methods.</span>
+<span class="sd">                - covsirphy.GIS.to_geopandas() except for @variables,</span>
+<span class="sd">                - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and</span>
+<span class="sd">                - pandas.DataFrame.plot()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_geopandas</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="o">**</span><span class="n">v</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="n">GIS</span><span class="o">.</span><span class="n">to_geopandas</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+        <span class="n">focused_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="k">if</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">focused_layer</span><span class="p">:</span> <span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="n">variable</span><span class="p">:</span> <span class="s2">&quot;Variable&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">_ChoroplethMap</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">v</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+            <span class="n">cm</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">cm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gdf</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="n">logscale</span><span class="p">,</span> <span class="o">**</span><span class="n">v</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GIS.subset"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return subset of the location and date range.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+<span class="sd">            variables (list[str] or None): list of variables to add or None (all available columns)</span>
+<span class="sd">            errors (str): whether raise errors or not, &#39;raise&#39; or &#39;coerce&#39;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: @geo has un-expected types</span>
+<span class="sd">            ValueError: the length of @geo is larger than the length of layers</span>
+<span class="sd">            NotRegisteredError: No records have been registered yet</span>
+<span class="sd">            SubsetNotFoundError: no records were found for the country and @errors is &#39;raise&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - (pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</span>
+<span class="sd">                    - columns defined by @variables</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">           Note that records with NAs as country names will be always removed.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/province/city as layers here.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;,)` or `geo=&quot;Japan&quot;`, returns country-level data in Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=([&quot;Japan&quot;, &quot;UK&quot;],)`, returns country-level data of Japan and UK.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;, &quot;Tokyo&quot;)`, returns province-level data of Tokyo/Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;, [&quot;Tokyo&quot;, &quot;Kanagawa&quot;])`, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=(&quot;Japan&quot;, &quot;Kanagawa&quot;, &quot;Yokohama&quot;)`, returns city-level data of Yokohama/Kanagawa/Japan.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When `geo=((&quot;Japan&quot;, &quot;Kanagawa&quot;, [&quot;Yokohama&quot;, &quot;Kawasaki&quot;])`, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get all data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered yet.&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+        <span class="c1"># Filter with geo</span>
+        <span class="n">geo_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_geo</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">manager</span> <span class="o">=</span> <span class="n">_SubsetManager</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="n">geo_converted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">)</span>
+        <span class="c1"># Filter with date</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="c1"># Get representative records for dates</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GIS.area_name"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.area_name">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">area_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return area name of the geographic information, like &#39;Japan&#39;, &#39;Tokyo/Japan&#39;, &#39;Japan_UK&#39;, &#39;the world&#39;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: area name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">geo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">geo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;the world&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">info</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">info</span><span class="p">))</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="p">([</span><span class="n">geo</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">geo</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SEP</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_geo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse geographic specifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - (str): column defined by @country (of covsirphy.GIS) if @country is not None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): parsed location names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">geo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">geo</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_to_iso3</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">geo</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">geo</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_info_to_iso3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo_info</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a element of geographic specifier to ISO3 code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            geo_info (list[str] or tuple(str) or str or None): element of geographic specifier</span>
+<span class="sd">            layer (str): layer of geographic information</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - (str): column defined by @country if @country is not None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">layer</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="ow">or</span> <span class="n">geo_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">geo_info</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="n">geo_info</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="n">geo_info</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

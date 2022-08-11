@@ -18,10 +18,11 @@
    markdown/WORKFLOW
    usage_quickest
    markdown/LOADING
-   usage_dataset
-   usage_theoretical
-   usage_phases
-   usage_quick
+   01_data_preparation.ipynb
+   02_data_engineering.ipynb
+   03_ode.ipynb
+   04_phase_dependent.ipynb
+   05_scenario_analysis.ipynb
    covsirphy
    markdown/TERM
    CODE_OF_CONDUCT

@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIR-derived ODE models &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Phase-dependent SIR models" href="04_phase_dependent.html" />
+    <link rel="prev" title="Data engineering" href="02_data_engineering.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.24.0-tau
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/WORKFLOW.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/LOADING.html">Usage: data loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SIR-derived ODE models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#1.-SIR-model">1. SIR model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#1-1.-Definition">1-1. Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#1-2.-Non-dimensional-SIR-model">1-2. Non-dimensional SIR model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#1-3.-Create-sample-data">1-3. Create sample data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#1-4.-Solve-ODEs">1-4. Solve ODEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#1-5.-Reproduction-number">1-5. Reproduction number</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#2.-SIR-D-model">2. SIR-D model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#2-1.-Definition">2-1. Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2-2.-Non-dimensional-SIR-D-model">2-2. Non-dimensional SIR-D model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2-3.-Create-sample-data">2-3. Create sample data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2-4.-Solve-ODEs">2-4. Solve ODEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2-5.-Reproduction-number">2-5. Reproduction number</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#3.-SIR-F-model">3. SIR-F model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#3-1.-Definition">3-1. Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3-2.-Non-dimensional-SIR-F-model">3-2. Non-dimensional SIR-F model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3-3.-Create-sample-data">3-3. Create sample data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3-4.-Solve-ODEs">3-4. Solve ODEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3-5.-Reproduction-number">3-5. Reproduction number</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#4.-SIR-F-with-exposed/waiting-cases">4. SIR-F with exposed/waiting cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#4-1.-Definition">4-1. Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#4-2.-Non-dimensional-SEWIR-F-model">4-2. Non-dimensional SEWIR-F model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#4-3.-Create-sample-data">4-3. Create sample data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">3-4. Solve ODEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#4-5.-Reproduction-number">4-5. Reproduction number</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#5.-SIR-F-with-vaccination">5. SIR-F with vaccination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#6.-SIR-F-with-re-infection">6. SIR-F with re-infection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>SIR-derived ODE models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/03_ode.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<p><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></p>
+<section id="SIR-derived-ODE-models">
+<h1>SIR-derived ODE models<a class="headerlink" href="#SIR-derived-ODE-models" title="Permalink to this heading"></a></h1>
+<p>SIR-derived ODE (ordinary differential equation) models are used in epidemiology. They are also named as compartment models and useful to understand the dynamics of outbreak of infectious diseases, including COVID-19.</p>
+<p>Mathematical model enables us to describe complicated systems with some parameters simply. So, we can study how to predict and end the outbreak in epidemiology.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="o">!</span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span> -qqq
+    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<style type='text/css'>
+.datatable table.frame { margin-bottom: 0; }
+.datatable table.frame thead { border-bottom: none; }
+.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
+.datatable .bool    { background: #DDDD99; }
+.datatable .object  { background: #565656; }
+.datatable .int     { background: #5D9E5D; }
+.datatable .float   { background: #4040CC; }
+.datatable .str     { background: #CC4040; }
+.datatable .time    { background: #40CC40; }
+.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
+.datatable .frame tbody td { text-align: left; }
+.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
+.datatable th:nth-child(2) { padding-left: 12px; }
+.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
+.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
+.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
+.datatable .sp {  opacity: 0.25;}
+.datatable .footer { font-size: 9px; }
+.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
+</style></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/.pyenv/3.9/lib/python3.9/site-packages/tqdm/auto.py:22: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.24.0-tau&#39;
+</pre></div></div>
+</div>
+<section id="1.-SIR-model">
+<h2>1. SIR model<a class="headerlink" href="#1.-SIR-model" title="Permalink to this heading"></a></h2>
+<p>SIR model is the simplest mathematical model with ODEs. Population is assigned to compartments named as follows.</p>
+<p>Let’s start with the simplest SIR model proposed by <a class="reference external" href="https://royalsocietypublishing.org/doi/10.1098/rspa.1927.0118">Kermack, W. O., &amp; McKendrick, A. G. (1927)</a>. Population is assigned to some compartments. “Susceptible people” may meet “Infected” patients and may be confirmed as “Infected”. “Infected” patients will move to “Removed (Recovered or Fatal)” compartment later.</p>
+<section id="1-1.-Definition">
+<h3>1-1. Definition<a class="headerlink" href="#1-1.-Definition" title="Permalink to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\begin{align*}
+\mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
+\end{align*}</div><p>Variables:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Recovered or Fatal (= Recovered + Fatal)</p></li>
+</ul>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery (+ Mortality) rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+</ul>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line">Though <span class="math notranslate nohighlight">\(R\)</span> in SIR model is “Recovered and have immunity”, we defines <span class="math notranslate nohighlight">\(R\)</span> as “Recovered or fatal”. This is because mortality rate cannot be ignored in our COVID-19 outbreak.</div>
+</div>
+</section>
+<section id="1-2.-Non-dimensional-SIR-model">
+<h3>1-2. Non-dimensional SIR model<a class="headerlink" href="#1-2.-Non-dimensional-SIR-model" title="Permalink to this heading"></a></h3>
+<p>To simplify the model, we will remove the units of the variables from the ODE model.</p>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R) = N \times (x, y, z)\)</span> and <span class="math notranslate nohighlight">\((T, \beta, \gamma) = (\tau t, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.</p>
+<p>This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - \sigma y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+\end{align*}</div><p>Where <span class="math notranslate nohighlight">\(N\)</span> is the total population and <span class="math notranslate nohighlight">\(\tau\)</span> is a coefficient ([min], is an integer to simplify).</p>
+<div class="line-block">
+<div class="line">Note regarding the roles of ODE parameter values:</div>
+<div class="line">When <span class="math notranslate nohighlight">\(\rho\)</span> is large, <span class="math notranslate nohighlight">\(\beta\)</span> is large. When <span class="math notranslate nohighlight">\(\beta\)</span> (effective contact rate [1/min]) is large, S -&gt; I is faster because dI/dT = <span class="math notranslate nohighlight">\(\beta\)</span> * [S] [I].</div>
+</div>
+</section>
+<section id="1-3.-Create-sample-data">
+<h3>1-3. Create sample data<a class="headerlink" href="#1-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">SIRModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default) and this method creates an instance with preset parameter values and initial values of variables.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">sir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRModel(date_range=(&#39;11Aug2022&#39;, &#39;07Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
+</div>
+<p>We can specify the start/end date of dynamics and tau value as follows. Note that tau value [min] should be a divisor of 1440 to simplify operations.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;31Dec2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})
+</pre></div></div>
+</div>
+<p>When we need to change the values of arguments, create an instance directly with the class.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">(</span>
+    <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;01Jan2022&#39;</span><span class="p">,</span> <span class="s1">&#39;31Dec2022&#39;</span><span class="p">),</span>
+    <span class="n">tau</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span>
+    <span class="n">initial_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Susceptible&#39;</span><span class="p">:</span> <span class="mi">995_000</span><span class="p">,</span> <span class="s1">&#39;Infected&#39;</span><span class="p">:</span> <span class="mi">4_000</span><span class="p">,</span> <span class="s1">&#39;Fatal or Recovered&#39;</span><span class="p">:</span> <span class="mi">1_000</span><span class="p">},</span>
+    <span class="n">param_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;rho&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">:</span> <span class="mf">0.075</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial_dict={&#39;Susceptible&#39;: 995000, &#39;Infected&#39;: 4000, &#39;Fatal or Recovered&#39;: 1000}, param_dict={&#39;rho&#39;: 0.4, &#39;sigma&#39;: 0.075})
+</pre></div></div>
+</div>
+<p>We can also confirm the settings and definitions of the instance with instance method <code class="docutils literal notranslate"><span class="pre">ODEModel().settings()</span></code> and class method <code class="docutils literal notranslate"><span class="pre">ODEModel.definition()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">sir</span><span class="o">.</span><span class="n">settings</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;date_range&#39;: (&#39;11Aug2022&#39;, &#39;07Feb2023&#39;),
+ &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
+                  &#39;Infected&#39;: 1000,
+                  &#39;Susceptible&#39;: 999000},
+ &#39;param_dict&#39;: {&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075},
+ &#39;tau&#39;: 1440}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pprint(cs.SIRModel.definitions())</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">sir</span><span class="o">.</span><span class="n">definitions</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;dimensional_parameters&#39;: [&#39;1/beta [day]&#39;, &#39;1/gamma [day]&#39;],
+ &#39;name&#39;: &#39;SIR Model&#39;,
+ &#39;parameters&#39;: [&#39;rho&#39;, &#39;sigma&#39;],
+ &#39;variables&#39;: [&#39;Susceptible&#39;, &#39;Infected&#39;, &#39;Fatal or Recovered&#39;]}
+</pre></div></div>
+</div>
+<p>We can calculate dimensional parameter values with <code class="docutils literal notranslate"><span class="pre">ODEModel().dimensional_parameters()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">dimensional_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;1/beta [day]&#39;: 5, &#39;1/gamma [day]&#39;: 13}
+</pre></div></div>
+</div>
+</section>
+<section id="1-4.-Solve-ODEs">
+<h3>1-4. Solve ODEs<a class="headerlink" href="#1-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
+<p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir_df</span> <span class="o">=</span> <span class="n">sir</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">sir_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Fatal or Recovered</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2023-02-03</th>
+      <td>88354</td>
+      <td>750</td>
+      <td>910895</td>
+    </tr>
+    <tr>
+      <th>2023-02-04</th>
+      <td>88342</td>
+      <td>708</td>
+      <td>910950</td>
+    </tr>
+    <tr>
+      <th>2023-02-05</th>
+      <td>88329</td>
+      <td>669</td>
+      <td>911002</td>
+    </tr>
+    <tr>
+      <th>2023-02-06</th>
+      <td>88318</td>
+      <td>632</td>
+      <td>911050</td>
+    </tr>
+    <tr>
+      <th>2023-02-07</th>
+      <td>88307</td>
+      <td>596</td>
+      <td>911096</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sir_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_22_0.png" src="_images/03_ode_22_0.png" />
+</div>
+</div>
+</section>
+<section id="1-5.-Reproduction-number">
+<h3>1-5. Reproduction number<a class="headerlink" href="#1-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
+<p>Reproduction number of SIR model is defined as follows.</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
+\end{align*}</div><p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">external link: Infection Modeling — Part 1</a>).</p>
+<p>We can calculate reproduction number using <code class="docutils literal notranslate"><span class="pre">ODEModel().r0()</span></code> method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.67
+</pre></div></div>
+</div>
+<div class="line-block">
+<div class="line">When <span class="math notranslate nohighlight">\(x=\frac{1}{R_0}\)</span>, <span class="math notranslate nohighlight">\(\frac{\mathrm{d}y}{\mathrm{d}t}=0\)</span> (the number of infected cases does not change)</div>
+<div class="line">because <span class="math notranslate nohighlight">\(\frac{\mathrm{d}y}{\mathrm{d}t}=\rho x y - \sigma y=\rho \times (\rho \sigma^{-1})^{-1} \times y - \sigma y=0\)</span>.</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">sir</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">sir_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># Calculate R0</span>
+<span class="n">r0</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+<span class="c1"># Prepare non-dimensional values</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">settings</span><span class="p">()[</span><span class="s2">&quot;tau&quot;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">1440</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;t&quot;</span>
+<span class="n">population</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">settings</span><span class="p">()[</span><span class="s2">&quot;initial_dict&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">population</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Infected&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">population</span>
+<span class="c1"># t for x = 1/R0</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">r0</span><span class="p">))</span>
+<span class="c1"># y when x = 1/R0</span>
+<span class="n">y0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">]</span>
+<span class="c1"># Show x, y for t</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">]],</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> with R0 = </span><span class="si">{</span><span class="n">r0</span><span class="si">}</span><span class="s2">: x, y for t (vertical line: t when x = 1/R0)&quot;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">h</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="n">r0</span><span class="p">,</span> <span class="n">y0</span><span class="p">],</span> <span class="n">v</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span>
+    <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_26_0.png" src="_images/03_ode_26_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="2.-SIR-D-model">
+<h2>2. SIR-D model<a class="headerlink" href="#2.-SIR-D-model" title="Permalink to this heading"></a></h2>
+<p>Because we are measuring the number of fatal cases and recovered cases separately, we can use two variables (“Recovered” and “Deaths”) instead of “Recovered + Deaths” in the mathematical model. We call this model as SIR-D model.</p>
+<section id="2-1.-Definition">
+<h3>2-1. Definition<a class="headerlink" href="#2-1.-Definition" title="Permalink to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\begin{align*}
+\mathrm{S} \overset{\beta  I}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
+&amp; \mathrm{I} \overset{\alpha}{\longrightarrow} \mathrm{D}  \\
+\end{align*}</div><p>Variables:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Recovered</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{D}\)</span>: Fatal</p></li>
+</ul>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Mortality rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+</ul>
+</section>
+<section id="2-2.-Non-dimensional-SIR-D-model">
+<h3>2-2. Non-dimensional SIR-D model<a class="headerlink" href="#2-2.-Non-dimensional-SIR-D-model" title="Permalink to this heading"></a></h3>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R, D) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha, \beta, \gamma) = (\tau t, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \kappa y  \\
+\end{align*}</div></section>
+<section id="2-3.-Create-sample-data">
+<h3>2-3. Create sample data<a class="headerlink" href="#2-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">SIRDModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRDModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">sird</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRDModel(date_range=(&#39;11Aug2022&#39;, &#39;07Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
+</div>
+</section>
+<section id="2-4.-Solve-ODEs">
+<h3>2-4. Solve ODEs<a class="headerlink" href="#2-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
+<p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird_df</span> <span class="o">=</span> <span class="n">sird</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sird_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sird</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_35_0.png" src="_images/03_ode_35_0.png" />
+</div>
+</div>
+</section>
+<section id="2-5.-Reproduction-number">
+<h3>2-5. Reproduction number<a class="headerlink" href="#2-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
+<p>Reproduction number of SIR-D model is defined as follows.</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
+\end{align*}</div><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.5
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="3.-SIR-F-model">
+<h2>3. SIR-F model<a class="headerlink" href="#3.-SIR-F-model" title="Permalink to this heading"></a></h2>
+<p>In the initial phase of COVID-19 outbreak, many cases were confirmed after they died. To consider this issue, “S + I <span class="math notranslate nohighlight">\(\to\)</span> Fatal + I” should be added. We call the next model as SIR-F model. This is an original model of CovsirPhy. When <span class="math notranslate nohighlight">\(\alpha_{1}=0\)</span>, no difference with the SIR-D model.</p>
+<p>SIR-F model was developed with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#SIR-to-SIR-F">Kaggle: COVID-19 data with SIR model</a>.</p>
+<section id="3-1.-Definition">
+<h3>3-1. Definition<a class="headerlink" href="#3-1.-Definition" title="Permalink to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\begin{align*}
+\mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
+\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
+&amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
+\end{align*}</div><p>Variables:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span>: Confirmed and un-categorized</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Confirmed and categorized as Infected</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Confirmed and categorized as Recovered</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{F}\)</span>: Confirmed and categorized as Fatal</p></li>
+</ul>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha_1\)</span>: Direct fatality probability of <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> (non-dimensional)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_2\)</span>: Mortality rate of Infected cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+</ul>
+<div class="line-block">
+<div class="line">Notes on <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> variable:</div>
+<div class="line"><span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> describes the cases who are actually carriers of the disease without anyone (including themselves) knowing about it, who either die and they are confirmed positive after death, while some others are moved to infected after being confirmed.</div>
+</div>
+<p>In JHU-style dataset, we know the number of cases who were confirmed with COVID-19, but we do not know the number of died cases who died without COVID-19. Essentially <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> serves as an auxiliary compartment in SIR-F model to separate the two death situations and insert a probability factor of {<span class="math notranslate nohighlight">\(\alpha_1\)</span>, <span class="math notranslate nohighlight">\(1 - \alpha_1\)</span>}.</p>
+<div class="line-block">
+<div class="line">Note regarding the roles of ODE parameter values:</div>
+<div class="line">When <span class="math notranslate nohighlight">\(\rho\)</span> is large, <span class="math notranslate nohighlight">\(\beta\)</span> is large. When <span class="math notranslate nohighlight">\(\beta\)</span> (effective contact rate [1/min]) is large, S -&gt; S* -&gt; I is faster because dS<a href="#id6"><span class="problematic" id="id7">*</span></a>/dT = <span class="math notranslate nohighlight">\(\beta\)</span> * [S] [I].</div>
+<div class="line">When <span class="math notranslate nohighlight">\(\theta\)</span> is large, <span class="math notranslate nohighlight">\(\alpha_1\)</span> is large. When <span class="math notranslate nohighlight">\(\alpha_1\)</span> (direct fatality probability) is large, S -&gt; S* -&gt; F is faster because dF/dT = <span class="math notranslate nohighlight">\(\alpha_1\)</span> * [S*] + <span class="math notranslate nohighlight">\(\alpha_2\)</span> * [I].</div>
+</div>
+<div class="line-block">
+<div class="line">Notes on the difference of SIR-D and SIR-F model:</div>
+<div class="line"><span class="math notranslate nohighlight">\(\alpha_1\)</span> is small at this time because performance of PCR tests was improved, but we can use SIR-F model rather than SIR-D model as an enhanced model even now because <span class="math notranslate nohighlight">\(\alpha_1\)</span> can be 0 in the ODE model.</div>
+</div>
+</section>
+<section id="3-2.-Non-dimensional-SIR-F-model">
+<h3>3-2. Non-dimensional SIR-F model<a class="headerlink" href="#3-2.-Non-dimensional-SIR-F-model" title="Permalink to this heading"></a></h3>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R, F) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha_1, \alpha_2, \beta, \gamma) = (\tau t, \theta, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho (1-\theta) x y - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \rho \theta x y + \kappa y  \\
+\end{align*}</div></section>
+<section id="3-3.-Create-sample-data">
+<h3>3-3. Create sample data<a class="headerlink" href="#3-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">SIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">sirf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRFModel(date_range=(&#39;11Aug2022&#39;, &#39;07Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
+</div>
+</section>
+<section id="3-4.-Solve-ODEs">
+<h3>3-4. Solve ODEs<a class="headerlink" href="#3-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
+<p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf_df</span> <span class="o">=</span> <span class="n">sirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sirf_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sirf</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_49_0.png" src="_images/03_ode_49_0.png" />
+</div>
+</div>
+</section>
+<section id="3-5.-Reproduction-number">
+<h3>3-5. Reproduction number<a class="headerlink" href="#3-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
+<p>Reproduction number of SIR-F model is defined as follows.</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + \alpha_2)^{-1}
+\end{align*}</div><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.5
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="4.-SIR-F-with-exposed/waiting-cases">
+<h2>4. SIR-F with exposed/waiting cases<a class="headerlink" href="#4.-SIR-F-with-exposed/waiting-cases" title="Permalink to this heading"></a></h2>
+<div class="line-block">
+<div class="line">The next model is SEWIR-F model.</div>
+<div class="line">The number of exposed cases in latent period (E) and waiting cases for confirmation (W) are un-measurable variables, but key variables as well as S, I, R, F. If E and W are large, outbreak will occur in the near future. Let’s replace S<span class="math notranslate nohighlight">\(\overset{\beta I}{\longrightarrow}\)</span>S<span class="math notranslate nohighlight">\(^\ast\)</span> as follows because W also has infectivity.</div>
+</div>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line"><strong>We cannot use SEWIR-F model for parameter estimation because we do not have records of Exposed and Waiting. Please use SIR-F model.</strong></div>
+</div>
+<section id="4-1.-Definition">
+<h3>4-1. Definition<a class="headerlink" href="#4-1.-Definition" title="Permalink to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\begin{align*}
+\mathrm{S} \overset{\beta_1 (W+I)}{\longrightarrow} \mathrm{E} \overset{\beta_2}{\longrightarrow} \mathrm{W} \overset{\beta_3}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
+\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
+&amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
+\end{align*}</div><p>Variables:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{E}\)</span>: Exposed and in latent period (without infectivity)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{W}\)</span>: Waiting for confirmation diagnosis (with infectivity)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span>: Confirmed and un-categorized</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Confirmed and categorized as Infected</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Confirmed and categorized as Recovered</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{F}\)</span>: Confirmed and categorized as Fatal</p></li>
+</ul>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha_1\)</span>: Direct fatality probability of <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> (non-dimensional)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_2\)</span>: Mortality rate of Infected cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_1\)</span>: Exposure rate (the number of encounter with the virus in a minute) <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_2\)</span>: Inverse of latent period <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_3\)</span>: Inverse of waiting time for confirmation <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
+</ul>
+</section>
+<section id="4-2.-Non-dimensional-SEWIR-F-model">
+<h3>4-2. Non-dimensional SEWIR-F model<a class="headerlink" href="#4-2.-Non-dimensional-SEWIR-F-model" title="Permalink to this heading"></a></h3>
+<p>Set <span class="math notranslate nohighlight">\((S, E, W, I, R, F) = N \times (x_1, x_2, x_3, y, z, w)\)</span>, <span class="math notranslate nohighlight">\((T, \alpha_1) = (\tau t, \theta)\)</span> and <span class="math notranslate nohighlight">\((\alpha_2, \beta_i, \gamma) = \tau^{-1} \times (\kappa, \rho_i, \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x_1}{\mathrm{d}t}= - \rho_1 x_1 (x_3 + y)  \\
+&amp; \frac{\mathrm{d}x_2}{\mathrm{d}t}= \rho_1 x_1 (x_3 + y) - \rho_2 x_2  \\
+&amp; \frac{\mathrm{d}x_3}{\mathrm{d}t}= \rho_2 x_2 - \rho_3 x_3  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= (1-\theta) \rho_3 x_3 - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \theta \rho_3 x_3 + \kappa y  \\
+\end{align*}</div></section>
+<section id="4-3.-Create-sample-data">
+<h3>4-3. Create sample data<a class="headerlink" href="#4-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">SEWIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SEWIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">sewirf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SEWIRFModel(date_range=(&#39;11Aug2022&#39;, &#39;07Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
+</div>
+</section>
+<section id="id13">
+<h3>3-4. Solve ODEs<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf_df</span> <span class="o">=</span> <span class="n">sewirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sewirf_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sewirf</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_61_0.png" src="_images/03_ode_61_0.png" />
+</div>
+</div>
+</section>
+<section id="4-5.-Reproduction-number">
+<h3>4-5. Reproduction number<a class="headerlink" href="#4-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
+<p>Reproduction number of SEWIR-F model is defined as follows.</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+R_0 = \rho_1 /\rho_2 * \rho_3 (1-\theta) (\sigma + \kappa)^{-1}
+\end{align*}</div><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.49
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="5.-SIR-F-with-vaccination">
+<h2>5. SIR-F with vaccination<a class="headerlink" href="#5.-SIR-F-with-vaccination" title="Permalink to this heading"></a></h2>
+<p>Vaccination is a key factor to prevent outbreak as you know.</p>
+<p>In the previous version, we defined SIR-FV model with <span class="math notranslate nohighlight">\(\omega\)</span> (vaccination rate) and</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{\mathrm{d}S}{\mathrm{d}T}= - \beta S I - \omega N  \\\end{split}\]</div>
+<p>However, <strong>SIR-FV model was removed because vaccinated persons may move to the other compartments, including “Susceptible”. Please use SIR-F model for simulation and parameter estimation with adjusted parameter values, considering the impact of vaccinations on infectivity, its effectivity and safety.</strong></p>
+</section>
+<section id="6.-SIR-F-with-re-infection">
+<h2>6. SIR-F with re-infection<a class="headerlink" href="#6.-SIR-F-with-re-infection" title="Permalink to this heading"></a></h2>
+<p>Re-infection (Recovered -&gt; Susceptible) is sometimes reported and we can consider SIR-S (SIR-FS) model. However, this is not implemented at this time because we do not have data regarding re-infection. SIR-F model could be the final model in our data-driven approach at this time.</p>
+<p>Re-infection changes the parameter values of SIR-F model. There are two patterns.</p>
+<ol class="arabic simple">
+<li><p>If re-infected case are counted as new confirmed cases and removed from “Recovered” compartment, <span class="math notranslate nohighlight">\(\sigma\)</span> will be decreased.</p></li>
+<li><p>If re-infected cases are counted as new confirmed cases and <strong>NOT</strong> removed from “Recovered” compartment, <span class="math notranslate nohighlight">\(\rho\)</span> will be increased because “Susceptible” will be decreased.</p></li>
+</ol>
+<p>Thank you!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02_data_engineering.html" class="btn btn-neutral float-left" title="Data engineering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04_phase_dependent.html" class="btn btn-neutral float-right" title="Phase-dependent SIR models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
