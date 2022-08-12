@@ -38,7 +38,7 @@
 * Find the relationship of reproductive number and measures taken by each country
 
 <strong>If you have ideas or need new functionalities, please join this project.
-Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Questions are also great. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) and [Twitter: @lisphilar](https://twitter.com/lisphilar) are always welcomed. Questions are also great. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
 
 ## Installation
 
@@ -96,7 +96,7 @@ Please support this project as a developer (or a backer).
 
 CovsirPhy library is developed by a community of volunteers. Please see the full list [here](https://github.com/lisphilar/covid19-sir/graphs/contributors).
 
-This project started in Kaggle platform. Lisphilar published [Kaggle Notebook: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) on 12Feb2020 and developed it, discussing with Kaggle community. On 07May2020, "covid19-sir" repository was created. On 10May2020, `covsirphy` version 1.0.0 was published in GitHub. First release in PyPI (version 2.3.0) was on 28Jun2020.
+This project started in Kaggle platform. Hirokazu Takaya ([@lisphilar](<https://www.kaggle.com/lisphilar>)) published [Kaggle Notebook: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) on 12Feb2020 and developed it, discussing with Kaggle community. On 07May2020, "covid19-sir" repository was created. On 10May2020, `covsirphy` version 1.0.0 was published in GitHub. First release in PyPI (version 2.3.0) was on 28Jun2020.
 
 ## License: Apache License 2.0
 
