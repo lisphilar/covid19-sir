@@ -63,15 +63,13 @@ remove-dev:
 .PHONY: test
 test:
 	@# All tests: make test
-	@# Selected tests: make test target=/test_scenario.py::TestScenario cov=/analysis
-	@# Without '--failed-first': make test add=
-	@poetry run flake8 covsirphy --ignore=E501
-	@poetry run pytest tests${target} -v --durations=1 ${add:---failed-first} --maxfail=1 \
-	 --cov=covsirphy${cov} --cov-report=term-missing -vv --no-cov-on-fail --disable-warnings  -p no:cacheprovider
+	@# Selected tests: make test target=/test_scenario.py::TestScenario
+	@poetry run pflake8 covsirphy
+	@poetry run pytest tests${target}
 
 .PHONY: flake8
 flake8:
-	@poetry run flake8 covsirphy --ignore=E501
+	@poetry run pflake8 covsirphy
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: docs
