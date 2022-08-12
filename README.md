@@ -14,7 +14,7 @@
 
 [<strong>Documentation</strong>](https://lisphilar.github.io/covid19-sir/index.html)
 | [<strong>Installation</strong>](https://lisphilar.github.io/covid19-sir/INSTALLATION.html)
-| [<strong>Quickest usage</strong>](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
+| [<strong>The 1st tutorial</strong>](<https://lisphilar.github.io/covid19-sir/01_data_preparation.html>)
 | [<strong>API reference</strong>](https://lisphilar.github.io/covid19-sir/covsirphy.html)
 | [<strong>GitHub</strong>](https://github.com/lisphilar/covid19-sir)
 | [<strong>Qiita (Japanese)</strong>](https://qiita.com/tags/covsirphy)
