@@ -11,8 +11,8 @@ CovsirPhy introduction
 `Documentation <https://lisphilar.github.io/covid19-sir/index.html>`__
 \|
 `Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__
-\| `Quickest
-usage <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
+\|
+`Tutorial <https://lisphilar.github.io/covid19-sir/01_data_preparation.html>`__
 \| `API
 reference <https://lisphilar.github.io/covid19-sir/covsirphy.html>`__ \|
 `GitHub <https://github.com/lisphilar/covid19-sir>`__ \| `Qiita
@@ -53,7 +53,8 @@ Inspiration
 If you have ideas or need new functionalities, please join this project.
 Any suggestions with `Github
 Issues <https://github.com/lisphilar/covid19-sir/issues/new/choose>`__
-are always welcomed. Questions are also great. Please read `Guideline of
+and `Twitter: @lisphilar <https://twitter.com/lisphilar>`__ are always
+welcomed. Questions are also great. Please read `Guideline of
 contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__
 in advance.
 
@@ -132,7 +133,8 @@ CovsirPhy library is developed by a community of volunteers. Please see
 the full list
 `here <https://github.com/lisphilar/covid19-sir/graphs/contributors>`__.
 
-This project started in Kaggle platform. Lisphilar published `Kaggle
+This project started in Kaggle platform. Hirokazu Takaya
+(`@lisphilar <https://www.kaggle.com/lisphilar>`__) published `Kaggle
 Notebook: COVID-19 data with SIR
 model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
 on 12Feb2020 and developed it, discussing with Kaggle community. On
