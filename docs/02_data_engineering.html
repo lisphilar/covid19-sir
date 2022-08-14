@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data engineering &mdash; CovsirPhy  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -385,7 +384,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <p><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></p>
-<section id="Data-engineering">
+<div class="section" id="Data-engineering">
 <h1>Data engineering<a class="headerlink" href="#Data-engineering" title="Permalink to this heading"></a></h1>
 <p>With <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/example/01_data_preparation.ipynb">Data preparation tutorial</a>, we prepared datasets (geospatial time-series data) to analyze. As the next step of data engineering, we will perform the followings here.</p>
 <ol class="arabic simple">
@@ -464,38 +463,38 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 212540 entries, 0 to 212539
+RangeIndex: 212650 entries, 0 to 212649
 Data columns (total 36 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 212540 non-null  category
- 1   Province                             212540 non-null  category
- 2   City                                 212540 non-null  category
- 3   Date                                 212540 non-null  datetime64[ns]
- 4   Cancel_events                        168617 non-null  object
- 5   Confirmed                            192942 non-null  object
- 6   Contact_tracing                      168538 non-null  object
- 7   Country                              210288 non-null  string
- 8   Fatal                                176495 non-null  object
- 9   Gatherings_restrictions              168613 non-null  object
- 10  Information_campaigns                168580 non-null  object
- 11  Internal_movement_restrictions       168637 non-null  object
- 12  International_movement_restrictions  168610 non-null  object
- 13  Mobility_grocery_and_pharmacy        112383 non-null  object
- 14  Mobility_parks                       112286 non-null  object
- 15  Mobility_residential                 112060 non-null  object
- 16  Mobility_retail_and_recreation       112454 non-null  object
- 17  Mobility_transit_stations            113351 non-null  object
- 18  Mobility_workplaces                  113785 non-null  object
- 19  Population                           209354 non-null  object
+ 0   ISO3                                 212650 non-null  category
+ 1   Province                             212650 non-null  category
+ 2   City                                 212650 non-null  category
+ 3   Date                                 212650 non-null  datetime64[ns]
+ 4   Cancel_events                        168722 non-null  object
+ 5   Confirmed                            193068 non-null  object
+ 6   Contact_tracing                      168605 non-null  object
+ 7   Country                              210417 non-null  string
+ 8   Fatal                                176617 non-null  object
+ 9   Gatherings_restrictions              168718 non-null  object
+ 10  Information_campaigns                168656 non-null  object
+ 11  Internal_movement_restrictions       168712 non-null  object
+ 12  International_movement_restrictions  168716 non-null  object
+ 13  Mobility_grocery_and_pharmacy        112506 non-null  object
+ 14  Mobility_parks                       112407 non-null  object
+ 15  Mobility_residential                 112183 non-null  object
+ 16  Mobility_retail_and_recreation       112577 non-null  object
+ 17  Mobility_transit_stations            113475 non-null  object
+ 18  Mobility_workplaces                  113909 non-null  object
+ 19  Population                           209483 non-null  object
  20  Product                              110325 non-null  string
- 21  Recovered                            71278 non-null   object
- 22  School_closing                       168684 non-null  object
- 23  Stay_home_restrictions               168619 non-null  object
- 24  Stringency_index                     168514 non-null  object
- 25  Testing_policy                       168564 non-null  object
- 26  Tests                                84910 non-null   object
- 27  Transport_closing                    168597 non-null  object
+ 21  Recovered                            71284 non-null   object
+ 22  School_closing                       168789 non-null  object
+ 23  Stay_home_restrictions               168724 non-null  object
+ 24  Stringency_index                     168597 non-null  object
+ 25  Testing_policy                       168631 non-null  object
+ 26  Tests                                84917 non-null   object
+ 27  Transport_closing                    168671 non-null  object
  28  Vaccinated_1st                       915 non-null     object
  29  Vaccinated_2nd                       915 non-null     object
  30  Vaccinated_3rd                       915 non-null     object
@@ -503,18 +502,18 @@ Data columns (total 36 columns):
  32  Vaccinated_once                      48477 non-null   object
  33  Vaccinations                         51105 non-null   object
  34  Vaccinations_boosters                24248 non-null   object
- 35  Workplace_closing                    168634 non-null  object
+ 35  Workplace_closing                    168739 non-null  object
 dtypes: category(3), datetime64[ns](1), object(30), string(2)
-memory usage: 54.3+ MB
+memory usage: 54.4+ MB
 </pre></div></div>
 </div>
-<section id="1.-Data-cleaning">
+<div class="section" id="1.-Data-cleaning">
 <h2>1. Data cleaning<a class="headerlink" href="#1.-Data-cleaning" title="Permalink to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer().clean()</span></code> performs the following data cleaning functionalities. By applying a list of strings to <code class="docutils literal notranslate"><span class="pre">kinds</span></code> argument (eg. <code class="docutils literal notranslate"><span class="pre">kinds=[&quot;resample&quot;]</span></code>), we can specify the cleaning method(s).</p>
 <ul class="simple">
 <li><p>“convert_date”: Convert dtype of date column to pandas.Timestamp.</p></li>
 <li><p>“resample”: Resample records with dates.</p></li>
-<li><p>“fillna”: Fill NA values with ‘-’ (layers) and the previous values and 0.</p></li>
+<li><p>“fillna”: Fill NA values with ‘-‘ (layers) and the previous values and 0.</p></li>
 </ul>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -531,52 +530,52 @@ memory usage: 54.3+ MB
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 212605 entries, 0 to 212604
+RangeIndex: 212715 entries, 0 to 212714
 Data columns (total 36 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 212605 non-null  category
- 1   Province                             212605 non-null  category
- 2   City                                 212605 non-null  category
- 3   Date                                 212605 non-null  datetime64[ns]
- 4   Cancel_events                        212605 non-null  Int64
- 5   Confirmed                            212605 non-null  Int64
- 6   Contact_tracing                      212605 non-null  Int64
- 7   Country                              212605 non-null  object
- 8   Fatal                                212605 non-null  Int64
- 9   Gatherings_restrictions              212605 non-null  Int64
- 10  Information_campaigns                212605 non-null  Int64
- 11  Internal_movement_restrictions       212605 non-null  Int64
- 12  International_movement_restrictions  212605 non-null  Int64
- 13  Mobility_grocery_and_pharmacy        212605 non-null  Int64
- 14  Mobility_parks                       212605 non-null  Int64
- 15  Mobility_residential                 212605 non-null  Int64
- 16  Mobility_retail_and_recreation       212605 non-null  Int64
- 17  Mobility_transit_stations            212605 non-null  Int64
- 18  Mobility_workplaces                  212605 non-null  Int64
- 19  Population                           212605 non-null  Int64
- 20  Product                              212605 non-null  object
- 21  Recovered                            212605 non-null  Int64
- 22  School_closing                       212605 non-null  Int64
- 23  Stay_home_restrictions               212605 non-null  Int64
- 24  Stringency_index                     212605 non-null  Float64
- 25  Testing_policy                       212605 non-null  Int64
- 26  Tests                                212605 non-null  Int64
- 27  Transport_closing                    212605 non-null  Int64
- 28  Vaccinated_1st                       212605 non-null  Int64
- 29  Vaccinated_2nd                       212605 non-null  Int64
- 30  Vaccinated_3rd                       212605 non-null  Int64
- 31  Vaccinated_full                      212605 non-null  Int64
- 32  Vaccinated_once                      212605 non-null  Int64
- 33  Vaccinations                         212605 non-null  Int64
- 34  Vaccinations_boosters                212605 non-null  Int64
- 35  Workplace_closing                    212605 non-null  Int64
+ 0   ISO3                                 212715 non-null  category
+ 1   Province                             212715 non-null  category
+ 2   City                                 212715 non-null  category
+ 3   Date                                 212715 non-null  datetime64[ns]
+ 4   Cancel_events                        212715 non-null  Int64
+ 5   Confirmed                            212715 non-null  Int64
+ 6   Contact_tracing                      212715 non-null  Int64
+ 7   Country                              212715 non-null  object
+ 8   Fatal                                212715 non-null  Int64
+ 9   Gatherings_restrictions              212715 non-null  Int64
+ 10  Information_campaigns                212715 non-null  Int64
+ 11  Internal_movement_restrictions       212715 non-null  Int64
+ 12  International_movement_restrictions  212715 non-null  Int64
+ 13  Mobility_grocery_and_pharmacy        212715 non-null  Int64
+ 14  Mobility_parks                       212715 non-null  Int64
+ 15  Mobility_residential                 212715 non-null  Int64
+ 16  Mobility_retail_and_recreation       212715 non-null  Int64
+ 17  Mobility_transit_stations            212715 non-null  Int64
+ 18  Mobility_workplaces                  212715 non-null  Int64
+ 19  Population                           212715 non-null  Int64
+ 20  Product                              212715 non-null  object
+ 21  Recovered                            212715 non-null  Int64
+ 22  School_closing                       212715 non-null  Int64
+ 23  Stay_home_restrictions               212715 non-null  Int64
+ 24  Stringency_index                     212715 non-null  Float64
+ 25  Testing_policy                       212715 non-null  Int64
+ 26  Tests                                212715 non-null  Int64
+ 27  Transport_closing                    212715 non-null  Int64
+ 28  Vaccinated_1st                       212715 non-null  Int64
+ 29  Vaccinated_2nd                       212715 non-null  Int64
+ 30  Vaccinated_3rd                       212715 non-null  Int64
+ 31  Vaccinated_full                      212715 non-null  Int64
+ 32  Vaccinated_once                      212715 non-null  Int64
+ 33  Vaccinations                         212715 non-null  Int64
+ 34  Vaccinations_boosters                212715 non-null  Int64
+ 35  Workplace_closing                    212715 non-null  Int64
 dtypes: Float64(1), Int64(29), category(3), datetime64[ns](1), object(2)
-memory usage: 60.4+ MB
+memory usage: 60.5+ MB
 </pre></div></div>
 </div>
-</section>
-<section id="2.-Data-transformation">
+</div>
+<div class="section" id="2.-Data-transformation">
 <h2>2. Data transformation<a class="headerlink" href="#2.-Data-transformation" title="Permalink to this heading"></a></h2>
 <p>Transform all registered data, calculating the number of susceptible and infected cases. This is required to analyze real data with SIR-derived models.</p>
 <ul class="simple">
@@ -637,7 +636,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -650,7 +649,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -663,7 +662,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -676,7 +675,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -689,7 +688,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -752,7 +751,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -765,7 +764,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -778,7 +777,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -791,7 +790,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -804,7 +803,7 @@ memory usage: 60.4+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -820,8 +819,8 @@ memory usage: 60.4+ MB
 </table>
 </div></div>
 </div>
-</section>
-<section id="3.-Arithmetic-operations">
+</div>
+<div class="section" id="3.-Arithmetic-operations">
 <h2>3. Arithmetic operations<a class="headerlink" href="#3.-Arithmetic-operations" title="Permalink to this heading"></a></h2>
 <p>We can perform arithmetic operations to add new columns.</p>
 <ul class="simple">
@@ -875,7 +874,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -884,7 +883,7 @@ memory usage: 60.4+ MB
       <td>40</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -893,7 +892,7 @@ memory usage: 60.4+ MB
       <td>3</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -902,7 +901,7 @@ memory usage: 60.4+ MB
       <td>2</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -911,7 +910,7 @@ memory usage: 60.4+ MB
       <td>21</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -967,7 +966,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -977,7 +976,7 @@ memory usage: 60.4+ MB
       <td>88578</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -987,7 +986,7 @@ memory usage: 60.4+ MB
       <td>88580</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -997,7 +996,7 @@ memory usage: 60.4+ MB
       <td>88581</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1007,7 +1006,7 @@ memory usage: 60.4+ MB
       <td>88581</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1064,7 +1063,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1074,7 +1073,7 @@ memory usage: 60.4+ MB
       <td>21286882078</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1084,7 +1083,7 @@ memory usage: 60.4+ MB
       <td>21287131060</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1094,7 +1093,7 @@ memory usage: 60.4+ MB
       <td>21287297048</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1104,7 +1103,7 @@ memory usage: 60.4+ MB
       <td>21289039922</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1163,7 +1162,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1173,7 +1172,7 @@ memory usage: 60.4+ MB
       <td>10.777186</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1183,7 +1182,7 @@ memory usage: 60.4+ MB
       <td>10.777312</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1193,7 +1192,7 @@ memory usage: 60.4+ MB
       <td>10.777396</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1203,7 +1202,7 @@ memory usage: 60.4+ MB
       <td>10.778278</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1216,8 +1215,8 @@ memory usage: 60.4+ MB
 </table>
 </div></div>
 </div>
-</section>
-<section id="4.-EDA-at-a-geospatial-layer">
+</div>
+<div class="section" id="4.-EDA-at-a-geospatial-layer">
 <h2>4. EDA at a geospatial layer<a class="headerlink" href="#4.-EDA-at-a-geospatial-layer" title="Permalink to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer().layer()</span></code> returns the data at the selected layer in the date range.</p>
 <p>Arguments:</p>
@@ -1283,7 +1282,7 @@ memory usage: 60.4+ MB
   </thead>
   <tbody>
     <tr>
-      <th>212600</th>
+      <th>212710</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1307,7 +1306,7 @@ memory usage: 60.4+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>212601</th>
+      <th>212711</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1331,7 +1330,7 @@ memory usage: 60.4+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>212602</th>
+      <th>212712</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1355,7 +1354,7 @@ memory usage: 60.4+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>212603</th>
+      <th>212713</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1379,7 +1378,7 @@ memory usage: 60.4+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>212604</th>
+      <th>212714</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1456,11 +1455,11 @@ Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
 <img alt="_images/02_data_engineering_21_1.png" src="_images/02_data_engineering_21_1.png" />
 </div>
 </div>
-</section>
-<section id="5.-Data-subsetting-for-a-location-and-data-complement">
+</div>
+<div class="section" id="5.-Data-subsetting-for-a-location-and-data-complement">
 <h2>5. Data subsetting for a location and data complement<a class="headerlink" href="#5.-Data-subsetting-for-a-location-and-data-complement" title="Permalink to this heading"></a></h2>
 <p>The dataset is a geospatial time-series data. By selecting a location, the dataset will be converted to a time-series data, which is easier to analyze.</p>
-<section id="5.1-Subsetting">
+<div class="section" id="5.1-Subsetting">
 <h3>5.1 Subsetting<a class="headerlink" href="#5.1-Subsetting" title="Permalink to this heading"></a></h3>
 <p>We will create a subset for selected location (eg. country, province/prefecture/state, city). Because the loaded dataset has country-level data, total values in United Kingdom (UK) on dates will be created here as an example.</p>
 <p>Arguments of <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset()</span></code>: * geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level) * start_date (str or None): start date, like 22Jan2020 * end_date (str or None): end date, like 01Feb2020 * variables (list[str] or None): list of variables to add or None (all available columns) * complement (bool): whether perform data complement or not, True as default * **Kwargs: keyword arguments for complement and
@@ -1535,8 +1534,8 @@ partially complemented recovered data
 <img alt="_images/02_data_engineering_26_1.png" src="_images/02_data_engineering_26_1.png" />
 </div>
 </div>
-</section>
-<section id="5.2-Details-of-data-complement">
+</div>
+<div class="section" id="5.2-Details-of-data-complement">
 <h3>5.2 Details of data complement<a class="headerlink" href="#5.2-Details-of-data-complement" title="Permalink to this heading"></a></h3>
 <p>When <code class="docutils literal notranslate"><span class="pre">complement=True</span></code> (default), data complement will be performed for confirmed/fatal/recovered data. This may be required for analysis because reported cumulative values sometimes show decreasing by changing accidentally for an example. Additionally, some countries, including UK, do not report the number of recovered cases.</p>
 <p>The possible kinds of complement for each country are the following:</p>
@@ -1545,8 +1544,8 @@ partially complemented recovered data
 <li><p>“Full_recovered” (full complement of recovered data) Estimate the number of recovered cases using the value of estimated average recovery period.</p></li>
 <li><p>“Partial_recovered” (partial complement of recovered data) When recovered values are not updated for some days, extrapolate the values.</p></li>
 </ul>
-</section>
-<section id="5.3-Recovery-period">
+</div>
+<div class="section" id="5.3-Recovery-period">
 <h3>5.3 Recovery period<a class="headerlink" href="#5.3-Recovery-period" title="Permalink to this heading"></a></h3>
 <div class="line-block">
 <div class="line">What is “recovery period”?</div>
@@ -1597,8 +1596,8 @@ Mode value of recovery period in Japan: 10 [days]
 <img alt="_images/02_data_engineering_31_0.png" src="_images/02_data_engineering_31_0.png" />
 </div>
 </div>
-</section>
-<section id="5.4-Alias-of-subsets">
+</div>
+<div class="section" id="5.4-Alias-of-subsets">
 <h3>5.4 Alias of subsets<a class="headerlink" href="#5.4-Alias-of-subsets" title="Permalink to this heading"></a></h3>
 <p>We can register alias names of subsets with <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset_alias()</span></code>.</p>
 <div class="line-block">
@@ -1627,12 +1626,12 @@ Mode value of recovery period in Japan: 10 [days]
 True
 </pre></div></div>
 </div>
-</section>
-</section>
-<section id="7.-EDA-of-subset">
+</div>
+</div>
+<div class="section" id="7.-EDA-of-subset">
 <h2>7. EDA of subset<a class="headerlink" href="#7.-EDA-of-subset" title="Permalink to this heading"></a></h2>
 <p>With explanatory data analysis, we will get the figure of datasets.</p>
-<section id="7.1-Alias-of-variables">
+<div class="section" id="7.1-Alias-of-variables">
 <h3>7.1 Alias of variables<a class="headerlink" href="#7.1-Alias-of-variables" title="Permalink to this heading"></a></h3>
 <p>We can specify variables with alias. For example, “CIFR” is equivalent to list <code class="docutils literal notranslate"><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal']</span></code>.</p>
 <div class="nbinput docutils container">
@@ -1830,8 +1829,8 @@ True
 </table>
 </div></div>
 </div>
-</section>
-<section id="7.2-Line-plot">
+</div>
+<div class="section" id="7.2-Line-plot">
 <h3>7.2 Line plot<a class="headerlink" href="#7.2-Line-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with line plot. We can select function <code class="docutils literal notranslate"><span class="pre">line_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">LinePlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
@@ -1886,8 +1885,8 @@ True
 <img alt="_images/02_data_engineering_46_0.png" src="_images/02_data_engineering_46_0.png" />
 </div>
 </div>
-</section>
-<section id="7.3-Scatter-plot">
+</div>
+<div class="section" id="7.3-Scatter-plot">
 <h3>7.3 Scatter plot<a class="headerlink" href="#7.3-Scatter-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with scatter plot. We can select function <code class="docutils literal notranslate"><span class="pre">scatter_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
@@ -1941,9 +1940,9 @@ True
 </div>
 </div>
 <p>Thank you!</p>
-</section>
-</section>
-</section>
+</div>
+</div>
+</div>
 
 
            </div>
