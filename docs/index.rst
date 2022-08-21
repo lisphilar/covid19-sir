@@ -9,17 +9,32 @@
 .. include:: README.rst
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 5
+   :caption: Introduction
 
    README
    markdown/INSTALLATION
+
+.. toctree::
+   :maxdepth: 5
+   :caption: Tutorial
+
    01_data_preparation.ipynb
    02_data_engineering.ipynb
    03_ode.ipynb
    04_phase_dependent.ipynb
    05_scenario_analysis.ipynb
+
+.. toctree::
+   :maxdepth: 5
+   :caption: API references
+
    covsirphy
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Tutorial
+
    markdown/TERM
    CODE_OF_CONDUCT
    SECURITY
