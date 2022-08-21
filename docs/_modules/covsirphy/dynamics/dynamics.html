@@ -19,6 +19,7 @@
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -32,7 +33,7 @@
             <a href="../../../index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.25.0
+                2.26.0-alpha
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -42,16 +43,25 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../01_data_preparation.html">Data preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../02_data_engineering.html">Data engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../03_ode.html">SIR-derived ODE models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../04_phase_dependent.html">Phase-dependent SIR models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../05_scenario_analysis.html">Scenario analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API references</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
@@ -91,6 +101,7 @@
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">Pool</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">p_tqdm</span> <span class="kn">import</span> <span class="n">p_umap</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">EmptyError</span><span class="p">,</span> <span class="n">NotEnoughDataError</span><span class="p">,</span> <span class="n">UnExpectedNoneError</span><span class="p">,</span> <span class="n">UnExpectedValueRangeError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
@@ -561,8 +572,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_NAME</span><span class="si">}</span><span class="s2">: parameter estimation&gt;&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running optimization with </span><span class="si">{</span><span class="n">n_jobs_validated</span><span class="si">}</span><span class="s2"> CPUs...&quot;</span><span class="p">)</span>
         <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
-        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_jobs_validated</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">est_f</span><span class="p">,</span> <span class="n">phase_dataframes</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">p_umap</span><span class="p">(</span><span class="n">est_f</span><span class="p">,</span> <span class="n">phase_dataframes</span><span class="p">,</span> <span class="n">num_cpus</span><span class="o">=</span><span class="n">n_jobs_validated</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed optimization. Total: </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">stop_show</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">est_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">est_df</span> <span class="o">=</span> <span class="n">est_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">]]</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
@@ -603,9 +613,6 @@
         <span class="n">est_dict</span> <span class="o">=</span> <span class="n">model_instance</span><span class="o">.</span><span class="n">settings</span><span class="p">(</span><span class="n">with_estimation</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s2">&quot;estimation_dict&quot;</span><span class="p">]</span>
         <span class="n">est_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">est_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">{</span><span class="n">metric</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">}}</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">est_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">est_dict</span><span class="p">)</span>
-        <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span>
-        <span class="n">n_trials</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">],</span> <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">_format</span><span class="p">)</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">_format</span><span class="p">)</span><span class="si">}</span><span class="s2">: finished </span><span class="si">{</span><span class="n">n_trials</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
 <div class="viewcode-block" id="Dynamics.parse_phases"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.parse_phases">[docs]</a>    <span class="k">def</span> <span class="nf">parse_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

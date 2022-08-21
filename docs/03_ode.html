@@ -19,6 +19,7 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -36,7 +37,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.25.0
+                2.26.0-alpha
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,10 +47,13 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">SIR-derived ODE models</a><ul>
@@ -91,7 +95,13 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API references</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
@@ -453,7 +463,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.25.0&#39;
+&#39;2.26.0-alpha&#39;
 </pre></div></div>
 </div>
 <div class="section" id="1.-SIR-model">
@@ -515,7 +525,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRModel(date_range=(&#39;20Aug2022&#39;, &#39;16Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRModel(date_range=(&#39;21Aug2022&#39;, &#39;17Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 <p>We can specify the start/end date of dynamics and tau value as follows. Note that tau value [min] should be a divisor of 1440 to simplify operations.</p>
@@ -573,7 +583,7 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;date_range&#39;: (&#39;20Aug2022&#39;, &#39;16Feb2023&#39;),
+{&#39;date_range&#39;: (&#39;21Aug2022&#39;, &#39;17Feb2023&#39;),
  &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
                   &#39;Infected&#39;: 1000,
                   &#39;Susceptible&#39;: 999000},
@@ -668,31 +678,31 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
   </thead>
   <tbody>
     <tr>
-      <th>2023-02-12</th>
+      <th>2023-02-13</th>
       <td>88354</td>
       <td>750</td>
       <td>910895</td>
     </tr>
     <tr>
-      <th>2023-02-13</th>
+      <th>2023-02-14</th>
       <td>88342</td>
       <td>708</td>
       <td>910950</td>
     </tr>
     <tr>
-      <th>2023-02-14</th>
+      <th>2023-02-15</th>
       <td>88329</td>
       <td>669</td>
       <td>911002</td>
     </tr>
     <tr>
-      <th>2023-02-15</th>
+      <th>2023-02-16</th>
       <td>88318</td>
       <td>632</td>
       <td>911050</td>
     </tr>
     <tr>
-      <th>2023-02-16</th>
+      <th>2023-02-17</th>
       <td>88307</td>
       <td>596</td>
       <td>911096</td>
@@ -836,7 +846,7 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRDModel(date_range=(&#39;20Aug2022&#39;, &#39;16Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRDModel(date_range=(&#39;21Aug2022&#39;, &#39;17Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -955,7 +965,7 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRFModel(date_range=(&#39;20Aug2022&#39;, &#39;16Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRFModel(date_range=(&#39;21Aug2022&#39;, &#39;17Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -1072,7 +1082,7 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SEWIRFModel(date_range=(&#39;20Aug2022&#39;, &#39;16Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
+&#34;SEWIRFModel(date_range=(&#39;21Aug2022&#39;, &#39;17Feb2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
