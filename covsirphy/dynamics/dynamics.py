@@ -6,6 +6,7 @@ from functools import partial
 from multiprocessing import cpu_count, Pool
 import numpy as np
 import pandas as pd
+from p_tqdm import p_umap
 from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError, UnExpectedValueRangeError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
@@ -476,8 +477,7 @@ class Dynamics(Term):
         print(f"\n<{self._model._NAME}: parameter estimation>")
         print(f"Running optimization with {n_jobs_validated} CPUs...")
         stopwatch = StopWatch()
-        with Pool(n_jobs_validated) as p:
-            results = p.map(est_f, phase_dataframes)
+        results = p_umap(est_f, phase_dataframes, num_cpus=n_jobs_validated)
         print(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
@@ -518,9 +518,6 @@ class Dynamics(Term):
         est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
         est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
-        _format = "%Y-%m-%d"
-        n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
-        print(f"\t{df.index.min().strftime(_format)} - {df.index.max().strftime(_format)}: finished {n_trials:>4} trials in {runtime}")
         return df
 
     def parse_phases(self, phases=None):
