@@ -33,7 +33,7 @@
 
 .. toctree::
    :maxdepth: 3
-   :caption: Tutorial
+   :caption: General
 
    markdown/TERM
    CODE_OF_CONDUCT
