@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.26.0-alpha
+                2.26.0-beta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -147,14 +147,14 @@
 <div class="section" id="clone-fork-the-repository">
 <h3>Clone/Fork the repository<a class="headerlink" href="#clone-fork-the-repository" title="Permalink to this heading"></a></h3>
 <p>Please start by cloning the GitHub repository with git command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
-<span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/lisphilar/covid19-sir.git
+<span class="nb">cd</span> covid19-sir
 </pre></div>
 </div>
 <p>Or, fork the repository and run the following commands with your account name <code class="docutils literal notranslate"><span class="pre">&lt;your</span> <span class="pre">account&gt;</span></code>. “remotes/upstream/master” will be shown by <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">branch</span> <span class="pre">-a</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/&lt;</span><span class="n">your</span> <span class="n">account</span><span class="o">&gt;/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
-<span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">upstream</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
-<span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">a</span>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/&lt;your account&gt;/covid19-sir.git
+git remote add upstream https://github.com/lisphilar/covid19-sir.git
+git branch -a
 </pre></div>
 </div>
 <p>Before editing the codes, please fetch and merge the upstream.</p>
@@ -166,15 +166,15 @@
 </div>
 <div class="section" id="setup-python">
 <h3>Setup Python<a class="headerlink" href="#setup-python" title="Permalink to this heading"></a></h3>
-<p>Setup base Python with https://www.python.org/downloads/ (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).</p>
+<p>Setup base Python with <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a> (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).</p>
 </div>
 <div class="section" id="install-poetry-windows">
 <h3>Install Poetry (Windows)<a class="headerlink" href="#install-poetry-windows" title="Permalink to this heading"></a></h3>
 <p>Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Invoke</span><span class="o">-</span><span class="n">WebRequest</span> <span class="o">-</span><span class="n">Uri</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">python</span><span class="o">-</span><span class="n">poetry</span><span class="o">/</span><span class="n">poetry</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">get</span><span class="o">-</span><span class="n">poetry</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">UseBasicParsing</span><span class="p">)</span><span class="o">.</span><span class="n">Content</span> <span class="o">|</span> <span class="n">python</span> <span class="o">-</span>
-<span class="n">poetry</span> <span class="o">--</span><span class="n">version</span>
-<span class="n">poetry</span> <span class="n">config</span> <span class="n">virtualenvs</span><span class="o">.</span><span class="ow">in</span><span class="o">-</span><span class="n">project</span> <span class="n">true</span>
-<span class="n">poetry</span> <span class="n">config</span> <span class="o">--</span><span class="nb">list</span>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing<span class="o">)</span>.Content <span class="p">|</span> python -
+poetry --version
+poetry config virtualenvs.in-project <span class="nb">true</span>
+poetry config --list
 </pre></div>
 </div>
 <p>If you have <code class="docutils literal notranslate"><span class="pre">make</span></code> commands, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">poetry-windows</span></code>. This is defined in “Makefile” of the top directory.</p>
@@ -182,7 +182,7 @@
 <div class="section" id="install-poetry-linux-wsl-macos">
 <h3>Install Poetry (Linux, WSL, macOS)<a class="headerlink" href="#install-poetry-linux-wsl-macos" title="Permalink to this heading"></a></h3>
 <p>Please use <code class="docutils literal notranslate"><span class="pre">make</span></code> command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">poetry</span><span class="o">-</span><span class="n">linux</span>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>make poetry-linux
 </pre></div>
 </div>
 </div>
@@ -258,10 +258,9 @@ Please ensure that</p>
 </div>
 <div class="section" id="versioning">
 <h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h2>
-<p>CovsirPhy follows <a class="reference external" href="https://semver.org/">Semantic Versioning 2.0.0</a>:</p>
+<p>CovsirPhy follows <a class="reference external" href="https://semver.org/">Semantic Versioning 2.0.0</a>. However, the followings may be CovsirPhy-specic rules.</p>
 <ul class="simple">
-<li><p>Milestones of minor update (from X.0.Z to X.1.Z) are documented in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/milestones">milestones of issues</a>.</p></li>
-<li><p>Development version number will be updated, e.g. “version 1.0.0-alpha” to “version 1.0.0-beta” (for closing an issue), “version 1.0.0-better-fu1” (for follow-up).</p></li>
+<li><p>Development version number will be updated, e.g. “1.0.0-alpha” to “1.0.0-beta”, “1.0.0-gamma” (for closing an issue), “1.0.0-gamma-fu1” (for follow-up of pull requests to fix minor errors).</p></li>
 <li><p>When the revisions do not change the codes of CovsirPhy, version number will not be updated.</p></li>
 </ul>
 <p>Maintainers will</p>
@@ -273,6 +272,7 @@ Please ensure that</p>
 <li><p>upload to <a class="reference external" href="https://pypi.org/">PyPI: The Python Package Index</a>, and</p></li>
 <li><p>create <a class="reference external" href="https://github.com/lisphilar/covid19-sir/releases">a release note</a> for major/minor/batch update.</p></li>
 </ul>
+<p>Milestones of minor update (from X.0.Z to X.1.Z) are documented in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/milestones">milestones of issues</a>.</p>
 </div>
 </div>
 
