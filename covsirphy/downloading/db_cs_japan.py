@@ -30,6 +30,10 @@ class _CSJapan(_DataBase):
     # Citation
     CITATION = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
         "https://github.com/lisphilar/covid19-sir/data/japan"
+    # All columns
+    _all_columns = [
+        Term.DATE, Term.ISO3, Term.PROVINCE, Term.CITY,
+        Term.C, Term.F, Term.R, Term.TESTS, Term.VAC, Term.VAC_BOOSTERS, Term.V_ONCE, Term.V_FULL]
 
     def _country(self):
         """Returns country-level data.
@@ -63,7 +67,7 @@ class _CSJapan(_DataBase):
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
         df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
         df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
-        return df
+        return df.loc[:, self._all_columns]
 
     def _province(self, country):
         """Returns province-level data.
@@ -98,7 +102,7 @@ class _CSJapan(_DataBase):
         df[self.V_FULL] = pd.NA
         df[self.VAC_BOOSTERS] = pd.NA
         df[self.VAC] = pd.NA
-        return df
+        return df.loc[:, self._all_columns]
 
     def _city(self, country, province):
         """Returns city-level data.
@@ -125,6 +129,4 @@ class _CSJapan(_DataBase):
                     - Vaccinated_once (numpy.float64): cumulative number of people who received at least one vaccine dose
                     - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescrived by the protocol
         """
-        return pd.DataFrame(columns=[
-            self.DATE, self.ISO3, self.PROVINCE, self.CITY,
-            self.C, self.F, self.R, self.TESTS, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
+        return pd.DataFrame(columns=self._all_columns)
