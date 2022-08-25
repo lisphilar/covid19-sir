@@ -97,6 +97,7 @@ from covsirphy._deprecated.model_validator import ModelValidator
 # worldwide
 from covsirphy._deprecated.policy import PolicyMeasures
 # science
+from covsirphy.science.ml import MLEngineer
 from covsirphy.science.ode_scenario import ODEScenario
 
 
@@ -146,7 +147,7 @@ __all__ = [
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # science
-    "ODEScenario",
+    "MLEngineer", "ODEScenario",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
     "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
