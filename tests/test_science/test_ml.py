@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy import MLEngineer, DataEngineer
+from covsirphy import MLEngineer, DataEngineer, Term
 
 
 class TestMLEngineer(object):
@@ -11,7 +11,7 @@ class TestMLEngineer(object):
         data_eng.clean()
         data_eng.transform()
         subset_df, *_ = data_eng.subset(geo="Japan")
-        subset_df = subset_df.drop([self.N, self.S, self.C, self.CI, self.F, self.R], axis=1)
+        subset_df = subset_df.drop([Term.N, Term.S, Term.C, Term.CI, Term.F, Term.R], axis=1)
         # PCA
         eng = MLEngineer()
         pca_dict = eng.pca(X=subset_df, n_components=0.95)
