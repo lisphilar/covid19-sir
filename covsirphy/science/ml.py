@@ -42,7 +42,7 @@ class MLEngineer(Term):
                 {"variance_ratio": array-like};: variance ratio
                 {"model": object}: model to be used for further usage of the model
                 {"scaler": object}: scaler model
-                {"pcp": int}: pcp        
+                {"pcp": int}: pcp
                 {"topfeat": pandas.DataFrame}: top features
                     Index
                         reset index
