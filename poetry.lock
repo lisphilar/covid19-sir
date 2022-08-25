@@ -351,6 +351,18 @@ colorama = {version = "*", markers = "sys_platform == \"win32\""}
 development = ["black", "flake8", "mypy", "pytest", "types-colorama"]
 
 [[package]]
+name = "colourmap"
+version = "1.1.4"
+description = "Python package colourmap generates an N unique colors from the specified input colormap."
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[package.dependencies]
+matplotlib = "*"
+numpy = "*"
+
+[[package]]
 name = "commonmark"
 version = "0.9.1"
 description = "Python parser for the CommonMark Markdown spec"
@@ -1378,6 +1390,25 @@ optional = false
 python-versions = ">=2.6"
 
 [[package]]
+name = "pca"
+version = "1.8.2"
+description = "pca is a python package that performs the principal component analysis and makes insightful plots."
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[package.dependencies]
+colourmap = "*"
+matplotlib = "*"
+numpy = "*"
+pandas = "*"
+scatterd = "*"
+scipy = "*"
+sklearn = "*"
+tqdm = "*"
+wget = "*"
+
+[[package]]
 name = "pexpect"
 version = "4.8.0"
 description = "Pexpect allows easy control of interactive console applications."
@@ -1819,6 +1850,20 @@ docs = ["jupyter", "librosa", "matplotlib", "mkdocs", "mkdocs-macros-plugin", "m
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "scatterd"
+version = "1.1.3"
+description = "scatterd is an easy and fast way of creating scatter plots."
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[package.dependencies]
+colourmap = "*"
+matplotlib = "*"
+numpy = "*"
+seaborn = "*"
+
+[[package]]
 name = "scikit-learn"
 version = "1.0.2"
 description = "A set of python modules for machine learning and data mining"
@@ -1926,6 +1971,17 @@ description = "Python 2 and 3 compatibility utilities"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "sklearn"
+version = "0.0"
+description = "A set of python modules for machine learning and data mining"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+scikit-learn = "*"
 
 [[package]]
 name = "snowballstemmer"
@@ -2346,6 +2402,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "wget"
+version = "3.2"
+description = "pure python download utility"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "widgetsnbextension"
 version = "4.0.2"
 description = "Jupyter interactive widgets for Jupyter Notebook"
@@ -2368,7 +2432,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.12"
-content-hash = "74a66558f260229f797b4734ab211a3c9a25dd77626b7e3c128f0ff29ca16e81"
+content-hash = "312115809f23413f4948fe204cf2e60a29116a30adbdb8dba5eef9fa66399d3f"
 
 [metadata.files]
 alabaster = [
@@ -2563,6 +2627,10 @@ colorama = [
 colorlog = [
     {file = "colorlog-6.6.0-py2.py3-none-any.whl", hash = "sha256:351c51e866c86c3217f08e4b067a7974a678be78f07f85fc2d55b8babde6d94e"},
     {file = "colorlog-6.6.0.tar.gz", hash = "sha256:344f73204009e4c83c5b6beb00b3c45dc70fcdae3c80db919e0a4171d006fde8"},
+]
+colourmap = [
+    {file = "colourmap-1.1.4-py3-none-any.whl", hash = "sha256:e01f61fd84326bf5e21c363573894771cdfe3c8bb5a89552f1ee25571e70994b"},
+    {file = "colourmap-1.1.4.tar.gz", hash = "sha256:c66c8bc95a911636d80e0b71456d19dfe2234190b03e939bbc073177b442b5c2"},
 ]
 commonmark = [
     {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
@@ -3304,6 +3372,10 @@ pbr = [
     {file = "pbr-5.10.0-py2.py3-none-any.whl", hash = "sha256:da3e18aac0a3c003e9eea1a81bd23e5a3a75d745670dcf736317b7d966887fdf"},
     {file = "pbr-5.10.0.tar.gz", hash = "sha256:cfcc4ff8e698256fc17ea3ff796478b050852585aa5bae79ecd05b2ab7b39b9a"},
 ]
+pca = [
+    {file = "pca-1.8.2-py3-none-any.whl", hash = "sha256:3bd282d97e2c9660b37cfdfd4d33a437597a41920cce8310ce1868e5d9d8fb09"},
+    {file = "pca-1.8.2.tar.gz", hash = "sha256:fd1deb31546e2cb771cc1f6d5e82399b4d2a66e423922de2c4422c2a71770fe8"},
+]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
@@ -3721,6 +3793,10 @@ ruptures = [
     {file = "ruptures-1.1.7-cp39-cp39-win_amd64.whl", hash = "sha256:82557cc173c38b35fc02f458431f67befec53cb298994c238d98a1e477c224b1"},
     {file = "ruptures-1.1.7.tar.gz", hash = "sha256:a114a17bcc3e5a3ab609c9e5e2a8d23f407f8031604330867d0ca47ad53fff97"},
 ]
+scatterd = [
+    {file = "scatterd-1.1.3-py3-none-any.whl", hash = "sha256:59c1ac73be194ebb42ce727fc80dc5fba0ff12ea4b725959f459cdc602233e95"},
+    {file = "scatterd-1.1.3.tar.gz", hash = "sha256:09d4835883fb688e9afee321c7c4e9cfc815779c7763ee5df3d06d41dd0619f7"},
+]
 scikit-learn = [
     {file = "scikit-learn-1.0.2.tar.gz", hash = "sha256:b5870959a5484b614f26d31ca4c17524b1b0317522199dc985c3b4256e030767"},
     {file = "scikit_learn-1.0.2-cp310-cp310-macosx_10_13_x86_64.whl", hash = "sha256:da3c84694ff693b5b3194d8752ccf935a665b8b5edc33a283122f4273ca3e687"},
@@ -3828,6 +3904,9 @@ shapely = [
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+sklearn = [
+    {file = "sklearn-0.0.tar.gz", hash = "sha256:e23001573aa194b834122d2b9562459bf5ae494a2d59ca6b8aa22c85a44c0e31"},
 ]
 snowballstemmer = [
     {file = "snowballstemmer-2.2.0-py2.py3-none-any.whl", hash = "sha256:c8e1716e83cc398ae16824e5572ae04e0d9fc2c6b985fb0f900f5f0c96ecba1a"},
@@ -4025,6 +4104,9 @@ webcolors = [
 webencodings = [
     {file = "webencodings-0.5.1-py2.py3-none-any.whl", hash = "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"},
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
+]
+wget = [
+    {file = "wget-3.2.zip", hash = "sha256:35e630eca2aa50ce998b9b1a127bb26b30dfee573702782aa982f875e3f16061"},
 ]
 widgetsnbextension = [
     {file = "widgetsnbextension-4.0.2-py3-none-any.whl", hash = "sha256:966bd61443926b6adcc0abef9f499c48bdeda181c333b0f49842d7385d440579"},
