@@ -16,4 +16,4 @@ class TestMLEngineer(object):
         eng = MLEngineer()
         pca_dict = eng.pca(X=subset_df, n_components=0.95)
         assert isinstance(pca_dict, dict)
-        assert {"loadings", "PC", "explained_var", "topfeet"}.issubset(pca_dict)
+        assert {"loadings", "PC", "explained_var", "topfeat"}.issubset(pca_dict)
