@@ -35,7 +35,7 @@
             <a href="index.html" class="icon icon-home"> CovsirPhy
           </a>
               <div class="version">
-                2.26.0-beta
+                2.26.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -5004,6 +5004,95 @@ When &#64;country is a country name, province level data in the selected country
 <dt class="sig sig-object py" id="covsirphy.LinelistData.total">
 <span class="sig-name descname"><span class="pre">total</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/_deprecated/linelist.html#LinelistData.total"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.LinelistData.total" title="Permalink to this definition"></a></dt>
 <dd><p>This is not defined for this child class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.MLEngineer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MLEngineer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ml.html#MLEngineer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MLEngineer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">Term</span></code></a></p>
+<p>Class for machine learning and preprocessing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – verbosity, 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace for PCA.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.MLEngineer.pca">
+<span class="sig-name descname"><span class="pre">pca</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/science/ml.html#MLEngineer.pca"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.MLEngineer.pca" title="Permalink to this definition"></a></dt>
+<dd><p>Perform PCA (principal component analysis) after standadization (Z-score normalization) with pca package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>pandas.Timestamp: Observation date</p>
+</dd>
+<dt>Columns</dt><dd><p>(int or float): observed values of the training vectors</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>n_components</strong> (<em>float</em><em> or </em><em>int</em>) – _the number of principal components or percentage of variance to cover at least</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>object}: as the same as pca.pca().fit_transform()</dt><dd><p>{“loadings”: pamdas.DataFrame}: structured dataframe containing loadings for PCs
+{“PC”: pandas.Datarame}: reduced dimentionsality space, the Principal Components (PCs)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index</dt><dd><p>pandas.Timestamp</p>
+</dd>
+<dt>COlumns</dt><dd><p>PC1, PC2,…</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>{“explained_var”: array-like}: explained variance for each fo the PCs (same ordering as the PCs)
+{“variance_ratio”: array-like};: variance ratio
+{“model”: object}: model to be used for further usage of the model
+{“scaler”: object}: scaler model
+{“pcp”: int}: pcp
+{“topfeat”: pandas.DataFrame}: top features</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><p>PC (str): PC1, PC2,…
+feature (str): feature name of X
+loading (float): loading values
+type (str): “best” or “weak</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>{“outliers”: pandas.DataFrame}: outliers</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>pandas.Timestamp</p>
+</dd>
+<dt>Columns</dt><dd><p>y_proba (float)
+y_score (float)
+y_bool (bool)
+y_bool_spe (bool)
+y_score_spe (float)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>{“outlier_params”: object}: parameter values of the model of finding outliers</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict of {str</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding pca package, please refer to <a class="reference external" href="https://github.com/erdogant/pca">https://github.com/erdogant/pca</a></p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -13076,6 +13165,7 @@ y (int or float): y values</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.science.html">covsirphy.science package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ml">covsirphy.science.ml module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a></li>
 </ul>
 </li>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy.science.ml &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CovsirPhy
+          </a>
+              <div class="version">
+                2.26.0-gamma
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../05_scenario_analysis.html">Scenario analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API references</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>covsirphy.science.ml</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for covsirphy.science.ml</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">pca</span> <span class="kn">import</span> <span class="n">pca</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+
+
+<div class="viewcode-block" id="MLEngineer"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.MLEngineer">[docs]</a><span class="k">class</span> <span class="nc">MLEngineer</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for machine learning and preprocessing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed (int or None): random seed</span>
+<span class="sd">        verbose (int): verbosity, 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace for PCA.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;seed&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;verbose&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MLEngineer.pca"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.MLEngineer.pca">[docs]</a>    <span class="k">def</span> <span class="nf">pca</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mf">0.95</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform PCA (principal component analysis) after standadization (Z-score normalization) with pca package.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (pandas.DataFrame or None):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    pandas.Timestamp: Observation date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    (int or float): observed values of the training vectors</span>
+<span class="sd">            n_components (float or int): _the number of principal components or percentage of variance to cover at least</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of {str: object}: as the same as pca.pca().fit_transform()</span>
+<span class="sd">                {&quot;loadings&quot;: pamdas.DataFrame}: structured dataframe containing loadings for PCs</span>
+<span class="sd">                {&quot;PC&quot;: pandas.Datarame}: reduced dimentionsality space, the Principal Components (PCs)</span>
+<span class="sd">                    Index</span>
+<span class="sd">                        pandas.Timestamp</span>
+<span class="sd">                    COlumns</span>
+<span class="sd">                        PC1, PC2,...</span>
+<span class="sd">                {&quot;explained_var&quot;: array-like}: explained variance for each fo the PCs (same ordering as the PCs)</span>
+<span class="sd">                {&quot;variance_ratio&quot;: array-like};: variance ratio</span>
+<span class="sd">                {&quot;model&quot;: object}: model to be used for further usage of the model</span>
+<span class="sd">                {&quot;scaler&quot;: object}: scaler model</span>
+<span class="sd">                {&quot;pcp&quot;: int}: pcp</span>
+<span class="sd">                {&quot;topfeat&quot;: pandas.DataFrame}: top features</span>
+<span class="sd">                    Index</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns</span>
+<span class="sd">                        PC (str): PC1, PC2,...</span>
+<span class="sd">                        feature (str): feature name of X</span>
+<span class="sd">                        loading (float): loading values</span>
+<span class="sd">                        type (str): &quot;best&quot; or &quot;weak</span>
+<span class="sd">                {&quot;outliers&quot;: pandas.DataFrame}: outliers</span>
+<span class="sd">                    Index</span>
+<span class="sd">                        pandas.Timestamp</span>
+<span class="sd">                    Columns</span>
+<span class="sd">                        y_proba (float)</span>
+<span class="sd">                        y_score (float)</span>
+<span class="sd">                        y_bool (bool)</span>
+<span class="sd">                        y_bool_spe (bool)</span>
+<span class="sd">                        y_score_spe (float)</span>
+<span class="sd">                {&quot;outlier_params&quot;: object}: parameter values of the model of finding outliers</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Regarding pca package, please refer to https://github.com/erdogant/pca</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020-2022, Hirokazu Takaya and CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
