@@ -6,7 +6,7 @@ poetry-linux:
 	@# sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 	@# If no command pip,
 	@# sudo apt install python3-pip; python -m pip install -U pip
-	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+	@curl -sSL https://install.python-poetry.org | python3 -
 	@export PATH=$PATH:$HOME/.poetry/bin
 	@source ~/.poetry/env
 	@poetry --version
@@ -18,7 +18,7 @@ poetry-linux:
 poetry-windows:
 	@# Install poetry (Windows)
 	@# system Python should be installed in advance
-	@(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
+	@(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 	@poetry --version
 	@poetry config virtualenvs.in-project true
 	@poetry config repositories.testpypi https://test.pypi.org/legacy/
