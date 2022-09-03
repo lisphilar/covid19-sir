@@ -66,25 +66,9 @@ exclude_patterns = [
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-html_logo = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_logo.png"
+html_logo = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_headline.png"
+html_favicon = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png"
 html_show_sourcelink = False
-
-html_theme_options = {
-    "favicons": [
-        {
-            "rel": "icon",
-            "sizes": "32x32",
-            "href": "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png",
-        }
-    ],
-    "icon_links": [
-        {
-            "name": "GitHub covid19-sir repository",
-            "url": "https://github.com/lisphilar/covid19-sir",
-            "icon": "fab fa-github-square",
-        },
-    ],
-}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
