@@ -72,7 +72,7 @@ html_theme_options = {
         "rel": "icon",
         "sizes": "32x32",
         "href": "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png",
-    }
+    },
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
