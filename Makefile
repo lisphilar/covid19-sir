@@ -46,7 +46,7 @@ add:
 add-dev:
 	@python -m pip install --upgrade pip
 	@poetry self update
-	@poetry add ${target} --dev
+	@poetry add ${target} --group dev
 
 .PHONY: remove
 remove:
@@ -58,7 +58,7 @@ remove:
 remove-dev:
 	@python -m pip install --upgrade pip
 	@poetry self update
-	@poetry remove ${target} --dev
+	@poetry remove ${target} --group dev
 
 .PHONY: test
 test:
