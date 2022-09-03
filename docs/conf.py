@@ -67,6 +67,7 @@ exclude_patterns = [
 #
 html_theme = "sphinx_rtd_theme"
 html_logo = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_logo.png"
+html_show_sourcelink = False
 
 html_theme_options = {
     "favicons": [
