@@ -66,7 +66,7 @@ exclude_patterns = [
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-html_logo = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_600.png"
+html_logo = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_300.png"
 html_favicon = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"
 html_show_sourcelink = False
 
