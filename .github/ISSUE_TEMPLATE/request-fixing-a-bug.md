@@ -9,22 +9,11 @@ assignees: ''
 
 ## Summary
 
-
 ## Codes
 
 ```Python
 import covsirphy as cs
-# Dataset preparation
-loader = cs.DataLoader("input")
-jhu_data = loader.jhu()
-oxcgrt_data = loader.oxcgrt()
-# Scenario analysis
-snl = cs.Scenario(country="Country name")
-snl.register(jhu_data, extras=[oxcgrt_data])
-snl.trend()
-snl.estimate(cs.SIRF)
-snl.fit()
-snl.predict()
+
 ```
 
 ## Outputs
@@ -32,7 +21,7 @@ snl.predict()
 
 ## Environment
 
-- CovsirPhy version: 
-- Python version: 
+- CovsirPhy version: 2.x.x
+- Python version: 3.x.x
 - Installation: poetry/pipenv/conda/pip
 - System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory

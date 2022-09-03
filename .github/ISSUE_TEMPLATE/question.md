@@ -9,17 +9,17 @@ assignees: ''
 
 ## Summary of question
 
-
 ## (Optional) What tried
 
 ```Python
 import covsirphy as cs
+print(cs.__version__)
 
 ```
 
 ## (Optional) Environment
 
-- CovsirPhy version: 
-- Python version: 3.8.5
+- CovsirPhy version: 2.x.x
+- Python version: 3.x.x
 - Installation: poetry/pipenv/conda/pip
 - System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory

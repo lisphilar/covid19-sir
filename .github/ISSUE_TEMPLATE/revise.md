@@ -8,10 +8,8 @@ assignees: ''
 ---
 ## Summary of request
 
-
 ## Why required / what will be improved
-
 
 ## The current Version
 
-CovsirPhy version: 
+CovsirPhy version I used:

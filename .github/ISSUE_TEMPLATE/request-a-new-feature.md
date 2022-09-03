@@ -9,11 +9,12 @@ assignees: ''
 
 ## Summary of this new feature
 
-
 ## (Optional) Solution with the current version
 
 ```Python
+import covsirphy as cs
+print(cs.__version__)
 
 ```
 
-CovsirPhy version: 
+CovsirPhy version I used: 2.x.x
