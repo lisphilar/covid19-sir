@@ -20,7 +20,7 @@ class MLEngineer(Term):
         self._verbose = Validator(verbose, name="verbose").int()
 
     def pca(self, X, n_components=0.95):
-        """Perform PCA (principal component analysis) after standadization (Z-score normalization) with pca package.
+        """Perform PCA (principal component analysis) after standardization (Z-score normalization) with pca package.
 
         Args:
             X (pandas.DataFrame or None):
@@ -32,8 +32,8 @@ class MLEngineer(Term):
 
         Returns:
             dict of {str: object}: as the same as pca.pca().fit_transform()
-                {"loadings": pamdas.DataFrame}: structured dataframe containing loadings for PCs
-                {"PC": pandas.Datarame}: reduced dimentionsality space, the Principal Components (PCs)
+                {"loadings": pandas.DataFrame}: structured dataframe containing loadings for PCs
+                {"PC": pandas.DataFrame}: reduced dimensionality space, the Principal Components (PCs)
                     Index
                         pandas.Timestamp
                     COlumns
