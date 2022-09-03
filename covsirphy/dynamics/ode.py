@@ -545,9 +545,9 @@ class ODEModel(Term):
         param_dict = {}
         for (k, v) in value_range_dict.items():
             try:
-                param_dict[k] = trial.suggest_uniform(k, *v)
+                param_dict[k] = trial.suggest_float(k, *v)
             except OverflowError:
-                param_dict[k] = trial.suggest_uniform(k, 0, 1)
+                param_dict[k] = trial.suggest_float(k, 0, 1)
         return cls._optuna_score(param_dict, data, tau, metric)
 
     @classmethod
