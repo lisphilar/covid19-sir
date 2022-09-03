@@ -75,7 +75,7 @@ html_static_path = ['_static']
 
 
 # -- Extension configuration -------------------------------------------------
-favicon = {
+favicons = {
     "rel": "favicon",
     "size": "32x32",
     "href": "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png",
