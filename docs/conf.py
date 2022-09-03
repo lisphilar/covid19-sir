@@ -40,6 +40,7 @@ extensions = [
     'sphinx_copybutton',
     'recommonmark',
     'sphinx_markdown_tables',
+    'sphinx-favicon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -74,6 +75,11 @@ html_static_path = ['_static']
 
 
 # -- Extension configuration -------------------------------------------------
+favicon = {
+    "rel": "favicon",
+    "size": "32x32",
+    "href": "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png",
+}
 
 # -- Options for todo extension ----------------------------------------------
 
