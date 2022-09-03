@@ -67,7 +67,7 @@ exclude_patterns = [
 #
 html_theme = "sphinx_rtd_theme"
 html_logo = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_headline.png"
-html_favicon = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png"
+html_favicon = "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.ico"
 html_show_sourcelink = False
 
 # Add any paths that contain custom static files (such as style sheets) here,
