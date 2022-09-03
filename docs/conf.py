@@ -76,6 +76,13 @@ html_theme_options = {
             "href": "https://github.com/lisphilar/covid19-sir/blob/master/docs/logo/covsirphy_favicon.png",
         }
     ],
+    "icon_links": [
+        {
+            "name": "GitHub covid19-sir repository",
+            "url": "https://github.com/lisphilar/covid19-sir",
+            "icon": "fab fa-github-square",
+        },
+    ],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
