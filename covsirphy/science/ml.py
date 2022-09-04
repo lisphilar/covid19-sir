@@ -41,7 +41,7 @@ class MLEngineer(Term):
                         PC1, PC2,...
                 {"explained_var": array-like}: explained variance for each fo the PCs (same ordering as the PCs)
                 {"variance_ratio": array-like};: variance ratio
-                {"model": object}: model to be used for further usage of the model
+                {"model": object}: fitted model to be used for further usage of the model
                 {"scaler": object}: scaler model
                 {"pcp": int}: pcp
                 {"topfeat": pandas.DataFrame}: top features
@@ -68,7 +68,7 @@ class MLEngineer(Term):
         """
         Validator(X, name="X", accept_none=False).dataframe(time_index=True, empty_ok=False)
         model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=self._verbose)
-        return model.fit_transform(X)
+        return {**model.fit_transform(X), "model": model}
 
     def forecast(self, Y, days, X=None, **kwargs):
         """Forecast Y for given days with/without indicators (X).
@@ -97,5 +97,5 @@ class MLEngineer(Term):
         Note:
             AutoTS package is developed at https://github.com/winedarksea/AutoTS
         """
-        model = _AutoTSHandler(Y=Y, days=days, verbose=self._verbose, **kwargs)
+        model = _AutoTSHandler(Y=Y, days=days, seed=self._seed, verbose=self._verbose, **kwargs)
         return model.fit(X=X).predict()
