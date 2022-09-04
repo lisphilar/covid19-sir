@@ -21,34 +21,24 @@
 
 <strong>CovsirPhy is a Python library for COVID-19 (Coronavirus disease 2019) data analysis with phase-dependent SIR-derived ODE models. We can download datasets and analyze them easily. Scenario analysis with CovsirPhy enables us to make data-informed decisions. </strong>
 
-<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/gif/covsirphy_demo.gif" width="600">
-
-## Functionalities
-
-* [Data preparation](https://lisphilar.github.io/covid19-sir/01_data_preparation.html)
-* [Data Engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)
-* [SIR-derived ODE models](https://lisphilar.github.io/covid19-sir/03_ode.html)
-* [Phase-dependent SIR models](https://lisphilar.github.io/covid19-sir/04_phase_dependent.html)
-* [Scenario analysis and prediction](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html)
-
 ## Inspiration
 
-* Monitor the spread of COVID-19
-* Keep track parameter values/reproduction number in each country/province
+* Monitor the spread of COVID-19 with SIR-derived ODE models
+* Keep track / predict parameter values/reproduction number in each country/province
 * Find the relationship of reproductive number and measures taken by each country
 
 <strong>If you have ideas or need new functionalities, please join this project.
-Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) and [Twitter: @lisphilar](https://twitter.com/lisphilar) are always welcomed. Questions are also great. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) and [Twitter: @lisphilar](https://twitter.com/lisphilar) are always welcomed. Questions are also great. Please refer to [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html).</strong>
 
 ## Installation
 
 The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7.12 or newer versions. Details are explained in [Documentation: Installation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html).
 
-```bash
+```Bash
 pip install --upgrade covsirphy
 ```
 
-## Usage
+## Demo
 
 Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan.
 
@@ -79,7 +69,17 @@ snr.compare_cases("Confirmed");
 snr.describe()
 ```
 
-Further information: [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html)
+<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
+
+## Functionalities
+
+Tutorials of functionalities are included in the [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html).
+
+* [Data preparation](https://lisphilar.github.io/covid19-sir/01_data_preparation.html)
+* [Data Engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)
+* [SIR-derived ODE models](https://lisphilar.github.io/covid19-sir/03_ode.html)
+* [Phase-dependent SIR models](https://lisphilar.github.io/covid19-sir/04_phase_dependent.html)
+* [Scenario analysis and prediction](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html)
 
 ## Release notes
 
@@ -87,16 +87,16 @@ Release notes are [here](https://github.com/lisphilar/covid19-sir/releases). Tit
 
 We can see the release plan for the next stable version in [milestone page of the GitHub repository](https://github.com/lisphilar/covid19-sir/milestones). If you find a highly urgent matter, please let us know via [issue page](https://github.com/lisphilar/covid19-sir/issues).
 
-## Support
-
-Please support this project as a developer (or a backer).
-[![Become a backer](https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600)](https://opencollective.com/covsirphy)
-
 ## Developers
 
 CovsirPhy library is developed by a community of volunteers. Please see the full list [here](https://github.com/lisphilar/covid19-sir/graphs/contributors).
 
 This project started in Kaggle platform. Hirokazu Takaya ([@lisphilar](<https://www.kaggle.com/lisphilar>)) published [Kaggle Notebook: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) on 12Feb2020 and developed it, discussing with Kaggle community. On 07May2020, "covid19-sir" repository was created. On 10May2020, `covsirphy` version 1.0.0 was published in GitHub. First release in PyPI (version 2.3.0) was on 28Jun2020.
+
+## Support
+
+Please support this project as a developer (or a backer).
+[![Become a backer](https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600)](https://opencollective.com/covsirphy)
 
 ## License: Apache License 2.0
 
