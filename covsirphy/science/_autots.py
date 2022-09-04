@@ -41,8 +41,8 @@ class _AutoTSHandler(Term):
             "random_seed": 0,
             "n_jobs": "auto",
             "verbose": self._verbose,
-        }
-        autots_kwargs.update(kwargs)
+        } | kwargs
+
         self._autots = AutoTS(**autots_kwargs)
         self._regressor_forecast = None
 
