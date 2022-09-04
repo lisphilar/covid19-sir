@@ -24,7 +24,7 @@
 ## Inspiration
 
 * Monitor the spread of COVID-19 with SIR-derived ODE models
-* Keep track / predict parameter values/reproduction number in each country/province
+* Predict the number of cases in each country/province
 * Find the relationship of reproductive number and measures taken by each country
 
 <strong>If you have ideas or need new functionalities, please join this project.
@@ -69,7 +69,7 @@ snr.compare_cases("Confirmed");
 snr.describe()
 ```
 
-Output of `snr.simulate(name="Predicted");`:
+Output of `snr.simulate(name="Predicted");`
 
 <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
 
@@ -81,7 +81,8 @@ Tutorials of functionalities are included in the [CovsirPhy documentation](https
 * [Data Engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)
 * [SIR-derived ODE models](https://lisphilar.github.io/covid19-sir/03_ode.html)
 * [Phase-dependent SIR models](https://lisphilar.github.io/covid19-sir/04_phase_dependent.html)
-* [Scenario analysis and prediction](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html)
+* [Scenario analysis](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html)
+* [ODE parameter prediction](https://lisphilar.github.io/covid19-sir/06_prediction.html)
 
 ## Release notes
 
