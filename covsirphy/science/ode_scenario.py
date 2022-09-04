@@ -478,7 +478,7 @@ class ODEScenario(Term):
                 self._append(name=_name, end=end or last_end, **kwargs)
         return self
 
-    def predict(self, days, name, verbose=1, X=None, **kwargs):
+    def predict(self, days, name, seed=0, verbose=1, X=None, **kwargs):
         """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
@@ -489,6 +489,7 @@ class ODEScenario(Term):
                     pandas.Timestamp: Observation date
                 Columns
                     observed and the target variables (int or float)
+            seed (int or None): random seed
             verbose (int): verbosity
             **kwargs: keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as @days)
 
@@ -504,7 +505,7 @@ class ODEScenario(Term):
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
-        eng = MLEngineer(verbose=verbose)
+        eng = MLEngineer(seed=seed, verbose=verbose)
         param_df = eng.forecast(Y=Y, days=days, X=X, **kwargs).reset_index()
         # Create phases with Rt values
         param_df[self.RT] = param_df[model._PARAMETERS].apply(

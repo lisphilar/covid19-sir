@@ -17,6 +17,7 @@ class _AutoTSHandler(Term):
             Columns
                 observed and the target variables (int or float)
         days (int): days to predict
+        seed (int or None): random seed
         verbose (int): verbosity
         **kwargs: keyword arguments of autots.AutoTS() except for forecast_length (always the same as @days)
 
@@ -24,10 +25,9 @@ class _AutoTSHandler(Term):
         AutoTS package is developed at https://github.com/winedarksea/AutoTS
     """
 
-    def __init__(self, Y, days, verbose, **kwargs):
+    def __init__(self, Y, days, seed, verbose, **kwargs):
         self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False)
         self._days = Validator(days, name="days").int(value_range=(1, None))
-        self._verbose = Validator(verbose, name="verbose").int()
         autots_kwargs = {
             "forecast_length": self._days,
             "frequency": "D",
@@ -38,9 +38,9 @@ class _AutoTSHandler(Term):
             "max_generations": 1,
             "num_validations": 2,
             "validation_method": "backwards",
-            "random_seed": 0,
+            "random_seed": Validator(seed, name="seed").int(),
             "n_jobs": "auto",
-            "verbose": self._verbose,
+            "verbose": Validator(verbose, name="verbose").int(),
         }
         autots_kwargs.update(kwargs)
         self._autots = AutoTS(**autots_kwargs)
