@@ -69,9 +69,11 @@ snr.compare_cases("Confirmed");
 snr.describe()
 ```
 
+Output of `snr.simulate(name="Predicted");`:
+
 <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
 
-## Functionalities
+## Tutorial
 
 Tutorials of functionalities are included in the [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html).
 
