@@ -64,4 +64,4 @@ class TestODEScenario(object):
         snr.describe()
 
     def test_predict(self, snr):
-        snr.predict(days=30, name="Baseline")
+        snr.predict(days=30, name="Baseline", X=None)
