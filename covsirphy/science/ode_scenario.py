@@ -15,7 +15,7 @@ from covsirphy.visualization.line_plot import line_plot
 from covsirphy.engineering.engineer import DataEngineer
 from covsirphy.dynamics.ode import ODEModel
 from covsirphy.dynamics.dynamics import Dynamics
-from covsirphy.science._autots import _AutoTSHandler
+from covsirphy.science.ml import MLEngineer
 
 
 class ODEScenario(Term):
@@ -478,13 +478,19 @@ class ODEScenario(Term):
                 self._append(name=_name, end=end or last_end, **kwargs)
         return self
 
-    def predict(self, days, name, **kwargs):
+    def predict(self, days, name, verbose=1, X=None, **kwargs):
         """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
             days (int): days to predict
             name (str): scenario name
-            **kwargs: keyword arguments of autots.AutoTS() except for forecast_length (always the same as @days)
+            X (pandas.DataFrame or None): information for regression or None (no information)
+                Index
+                    pandas.Timestamp: Observation date
+                Columns
+                    observed and the target variables (int or float)
+            verbose (int): verbosity
+            **kwargs: keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as @days)
 
         Return:
             covsirphy.ODEScenario: self
@@ -498,8 +504,8 @@ class ODEScenario(Term):
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
-        handler = _AutoTSHandler(Y=Y, days=days, **kwargs)
-        param_df = handler.predict().reset_index()
+        eng = MLEngineer(verbose=verbose)
+        param_df = eng.forecast(Y=Y, days=days, X=X, **kwargs).reset_index()
         # Create phases with Rt values
         param_df[self.RT] = param_df[model._PARAMETERS].apply(
             lambda x: model.from_data(data=self._actual_df.reset_index(), param_dict=x.to_dict(), tau=1440).r0(), axis=1)
