@@ -34,7 +34,7 @@ git branch -a
 
 Before editing the codes, please fetch and merge the upstream.
 
-```
+```Bash
 git fetch upstream
 git checkout master
 git merge upstream/master
@@ -49,7 +49,7 @@ Setup base Python with <https://www.python.org/downloads/> (Windows) or some com
 Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.
 
 ```Bash
-(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 poetry --version
 poetry config virtualenvs.in-project true
 poetry config --list
@@ -69,7 +69,7 @@ make poetry-linux
 
 To install dependencies with Poetry, run `make install` or the following commands before editing codes.
 
-```
+```Bash
 pip install --upgrade 
 poetry self update
 poetry install
@@ -145,7 +145,7 @@ When you create a pull request to upstream repository, CI tools will test the co
 
 ## Versioning
 
-CovsirPhy follows [Semantic Versioning 2.0.0](https://semver.org/). However, the followings may be CovsirPhy-specic rules.
+CovsirPhy follows [Semantic Versioning 2.0.0](https://semver.org/). However, the followings may be CovsirPhy-specific rules.
 
 - Development version number will be updated, e.g. "1.0.0-alpha" to "1.0.0-beta", "1.0.0-gamma" (for closing an issue), "1.0.0-gamma-fu1" (for follow-up of pull requests to fix minor errors).
 - When the revisions do not change the codes of CovsirPhy, version number will not be updated.

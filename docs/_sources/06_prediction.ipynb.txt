@@ -1,0 +1,432 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "collapsed_sections": [],
+      "authorship_tag": "ABX9TyPGKoo6veK7wNOtZMk0S8ja",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/lisphilar/covid19-sir/blob/master/example/06_prediction.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# ODE parameter prediction\n",
+        "We will perform ODE parameter prediction for forecasting of the number of cases. We have two ways for prediction.\n",
+        "\n",
+        "1. Time-series prediction withOUT indicators\n",
+        "2. Time-series prediction with inidcators\n",
+        "\n",
+        "The second one uses indicators, including OxCGRT indicators, the number of vaccinations.\n",
+        "\n",
+        "Note:  \n",
+        "The target (Y) of prediction is ODE parameter values, not the number of cases. ODE parameter values are more useful because ODE parameter values have physical meanings, including (non-dimensional) effective contact rate, and they are always in the range of (0, 1). "
+      ],
+      "metadata": {
+        "id": "fh0nhFTy1LRR"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "vqvId6Nx023N"
+      },
+      "outputs": [],
+      "source": [
+        "from datetime import timedelta\n",
+        "from matplotlib import pyplot as plt\n",
+        "import numpy as np\n",
+        "try:\n",
+        "    import covsirphy as cs\n",
+        "except ImportError:\n",
+        "    !pip install --upgrade \"git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy\" -qq\n",
+        "    import covsirphy as cs\n",
+        "cs.__version__"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "The target of prediction is estimated ODE parameter values. At we will prepare them as explained with tutorials. For example, we can use class method `ODEScenario.auto_build()`, specifying location name. \"Baseline\" scenario will be created automatically with downloaded datasets."
+      ],
+      "metadata": {
+        "id": "rWFQtwVy4i19"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "snr = cs.ODEScenario.auto_build(geo=\"Japan\", model=cs.SIRFModel)\n",
+        "# Show summary\n",
+        "snr.summary()"
+      ],
+      "metadata": {
+        "id": "xZxNdM8F5HIk"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "For demonstration, we will get the start date of future phases."
+      ],
+      "metadata": {
+        "id": "vFO3BIAg8rFW"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "future_start_date = snr.simulate(display=False).index.max() + timedelta(days=1)\n",
+        "future_start_date"
+      ],
+      "metadata": {
+        "id": "6E2l8Ho98pCB"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## 1. Time-series prediction withOUT indicators\n",
+        "This scenario \"Predicted\" does not use indicators, using [AutoTS package: a time series package for Python designed for rapidly deploying high-accuracy forecasts at scale](https://github.com/winedarksea/AutoTS)."
+      ],
+      "metadata": {
+        "id": "x7Ql4dQe4Wla"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "At first, create \"Predicted\" scenario, copying estimated ODE parameter values of \"Baseline\" scenario."
+      ],
+      "metadata": {
+        "id": "1OuO8thF7CkM"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "snr.build_with_template(name=\"Predicted\", template=\"Baseline\");"
+      ],
+      "metadata": {
+        "id": "Sy9e4XA54VxX"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Then, run `ODEScenario().predict(days, name, verbose=1, **kwargs)`. We can apply keyword arguments of `autots.AutoTS()` except for `forecast_length` (always the same as `days`)."
+      ],
+      "metadata": {
+        "id": "wSBPHUsk7npk"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "snr.predict(days=30, name=\"Predicted\", verbose=0);"
+      ],
+      "metadata": {
+        "id": "WGT4dlk-8Hly"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Check the predicted ODE parameter values."
+      ],
+      "metadata": {
+        "id": "-o5ugQKD8f6N"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = snr.append().summary()\n",
+        "df.loc[df[\"Start\"] >= future_start_date]"
+      ],
+      "metadata": {
+        "id": "KfRN8VRK8kmz"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Check the dynamics."
+      ],
+      "metadata": {
+        "id": "KXMY66Gj8_vv"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "snr.simulate(name=\"Predicted\");"
+      ],
+      "metadata": {
+        "id": "bGCU_ses9nBc"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## 2. Time-series prediction with inidcators\n",
+        "using [`future_regressor` functionality of AutoTS](https://winedarksea.github.io/AutoTS/build/html/source/tutorial.html#adding-regressors-and-other-information), we will predict ODE parameter values with indicators. We can download/create time-series data of indicators using `DataEngineer` class as explained in [Tutorial: Data preparation](https://lisphilar.github.io/covid19-sir/01_data_preparation.html) and [Tutorial: Data engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)."
+      ],
+      "metadata": {
+        "id": "L9mbJptd4a3A"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data_eng = cs.DataEngineer()\n",
+        "data_eng.download().clean().transform()\n",
+        "subset_df, *_ = data_eng.subset(geo=\"Japan\")\n",
+        "indicator_df = subset_df.drop([\"Population\", \"Susceptible\", \"Confirmed\", \"Infected\", \"Fatal\", \"Recovered\"], axis=1)\n",
+        "indicator_df"
+      ],
+      "metadata": {
+        "id": "QyVKvks65KUv"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### 2.1 Principal Component Analysis\n",
+        "To remove multicollinearity of indicators, we use [pca package: a python package to perform Principal Component Analysis and to create insightful plots](https://github.com/erdogant/pca) via our `MLEngineer(seed=0, verbose=1).pca(X, n_components)`.  Standardization (Z-score normalization) and Principal Component Analysis (PCA) will be performed."
+      ],
+      "metadata": {
+        "id": "FIjHoevR-77k"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "ml = cs.MLEngineer(verbose=0)\n",
+        "pca_dict = ml.pca(X=indicator_df, n_components=0.95)\n",
+        "pca_df = pca_dict[\"PC\"].copy()\n",
+        "pca_df.tail()"
+      ],
+      "metadata": {
+        "id": "46hZuKJuABJs"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "The output of `MLEngineer().pca()` is the model of [pca package](https://github.com/erdogant/pca), we can show some figures easily as follows."
+      ],
+      "metadata": {
+        "id": "wHw6G4c0AVpL"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Explained variance:"
+      ],
+      "metadata": {
+        "id": "VVDbw1UUA4hf"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pca_dict[\"model\"].plot()\n",
+        "plt.close()"
+      ],
+      "metadata": {
+        "id": "4sjmmNcBA6p5"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Top features:"
+      ],
+      "metadata": {
+        "id": "WhEKeavPE54q"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = pca_dict[\"topfeat\"].copy()\n",
+        "df[\"PC\"] = df[\"PC\"].str.extract(r\"(\\d+)\").astype(np.int64)\n",
+        "df = df.sort_values([\"PC\", \"type\"]).reset_index(drop=True)\n",
+        "\n",
+        "def highlight(d):\n",
+        "    styles = d.copy()\n",
+        "    styles.loc[:, :] = \"\"\n",
+        "    styles.loc[d[\"type\"] == \"best\", :] = \"background-color: yellow\"\n",
+        "    return styles\n",
+        "\n",
+        "df.style.apply(highlight, axis=None)"
+      ],
+      "metadata": {
+        "id": "WW5TcvfEAn2F"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### 2-2. Future values of ondicators\n",
+        "Before prediction of ODE parameter values, we need to prepare future values of (PCA-performed) indicators. We can add future values to the `pandas.DataFrame` manually or forecast them with `MLEngineer(seed=0, varbose=0).predict(Y, days=<int>, X=None)` as follows."
+      ],
+      "metadata": {
+        "id": "IlhjiuL-FDOk"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "future_df = ml.forecast(Y=pca_df, days=30, X=None)\n",
+        "future_df.tail()"
+      ],
+      "metadata": {
+        "id": "kC5QQQ3JGB2D"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### 2-3. Prediction of ODE parameter values\n",
+        "Now we have Y (estimated ODE parameter values) and X (estimated/forecasted inidcator values without multicollinearity), we can predict ODE parameter values of future phases using `ODEScenario().predict(days=<int>, name=<str>, seed=0, verbose=1, X=<pandas.DataFrame>)`. The new scenario is named \"Predicted_with_X\" here."
+      ],
+      "metadata": {
+        "id": "2WW9PCr8GTe-"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "snr.build_with_template(name=\"Predicted_with_X\", template=\"Baseline\")\n",
+        "snr.predict(days=30, name=\"Predicted_with_X\", seed=0, verbose=0, X=future_df);"
+      ],
+      "metadata": {
+        "id": "LuNi3IfCHIwH"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## 3. Compare scenarios\n",
+        "As explained with [Tutorial: Scenario analysis](https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html), we can compare scenarios."
+      ],
+      "metadata": {
+        "id": "8peCsH6E5ZE5"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Adjust the last date, appending a phase\n",
+        "snr.append();"
+      ],
+      "metadata": {
+        "id": "clemcl3z5p8k"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Compare reproduction number\n",
+        "ymin = snr.compare_param(\"Rt\", date_range=(future_start_date, None), display=False).min().min()\n",
+        "snr.compare_param(\"Rt\", date_range=(future_start_date, None), ylim=(ymin, None));"
+      ],
+      "metadata": {
+        "id": "q9HFKziK58G6"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Note that minimum value of y in the figure was changed to focus on the differences of the scenarios."
+      ],
+      "metadata": {
+        "id": "J9tKyjAum0rs"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "ymin_value = snr.compare_cases(\"Confirmed\", date_range=(future_start_date, None), display=False).Predicted.min()\n",
+        "snr.compare_cases(\"Confirmed\", date_range=(future_start_date, None), ylim=(ymin_value, None));"
+      ],
+      "metadata": {
+        "id": "Kt4SJzw59OF2"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Show representative values\n",
+        "snr.describe()"
+      ],
+      "metadata": {
+        "id": "E8PsIcCD52Ni"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Thank you!"
+      ],
+      "metadata": {
+        "id": "-CUpFEhd5KcW"
+      }
+    }
+  ]
+}

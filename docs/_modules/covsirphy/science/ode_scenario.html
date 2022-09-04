@@ -32,10 +32,10 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
             <a href="../../../index.html">
-            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_300.png" class="logo" alt="Logo"/>
+            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.0-epsilon
+                2.26.0-eta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -112,7 +112,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.engineering.engineer</span> <span class="kn">import</span> <span class="n">DataEngineer</span>
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.ode</span> <span class="kn">import</span> <span class="n">ODEModel</span>
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.dynamics</span> <span class="kn">import</span> <span class="n">Dynamics</span>
-<span class="kn">from</span> <span class="nn">covsirphy.science._autots</span> <span class="kn">import</span> <span class="n">_AutoTSHandler</span>
+<span class="kn">from</span> <span class="nn">covsirphy.science.ml</span> <span class="kn">import</span> <span class="n">MLEngineer</span>
 
 
 <div class="viewcode-block" id="ODEScenario"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario">[docs]</a><span class="k">class</span> <span class="nc">ODEScenario</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -575,13 +575,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_name</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span> <span class="ow">or</span> <span class="n">last_end</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="ODEScenario.predict"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEScenario.predict"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            days (int): days to predict</span>
 <span class="sd">            name (str): scenario name</span>
-<span class="sd">            **kwargs: keyword arguments of autots.AutoTS() except for forecast_length (always the same as @days)</span>
+<span class="sd">            X (pandas.DataFrame or None): information for regression or None (no information)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    pandas.Timestamp: Observation date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    observed and the target variables (int or float)</span>
+<span class="sd">            seed (int or None): random seed</span>
+<span class="sd">            verbose (int): verbosity</span>
+<span class="sd">            **kwargs: keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as @days)</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            covsirphy.ODEScenario: self</span>
@@ -595,8 +602,8 @@
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snr_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span>
         <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dynamics</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">track</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">model</span><span class="o">.</span><span class="n">_PARAMETERS</span><span class="p">]</span>
         <span class="c1"># Parameter prediction</span>
-        <span class="n">handler</span> <span class="o">=</span> <span class="n">_AutoTSHandler</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">param_df</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">eng</span> <span class="o">=</span> <span class="n">MLEngineer</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">param_df</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="c1"># Create phases with Rt values</span>
         <span class="n">param_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_df</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">_PARAMETERS</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span><span class="o">.</span><span class="n">r0</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

@@ -32,10 +32,10 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
             <a href="../../../index.html">
-            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_300.png" class="logo" alt="Logo"/>
+            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.0-epsilon
+                2.26.0-eta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -101,6 +101,7 @@
 <span class="kn">from</span> <span class="nn">pca</span> <span class="kn">import</span> <span class="n">pca</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span> <span class="nn">covsirphy.science._autots</span> <span class="kn">import</span> <span class="n">_AutoTSHandler</span>
 
 
 <div class="viewcode-block" id="MLEngineer"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.MLEngineer">[docs]</a><span class="k">class</span> <span class="nc">MLEngineer</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -137,7 +138,7 @@
 <span class="sd">                        PC1, PC2,...</span>
 <span class="sd">                {&quot;explained_var&quot;: array-like}: explained variance for each fo the PCs (same ordering as the PCs)</span>
 <span class="sd">                {&quot;variance_ratio&quot;: array-like};: variance ratio</span>
-<span class="sd">                {&quot;model&quot;: object}: model to be used for further usage of the model</span>
+<span class="sd">                {&quot;model&quot;: object}: fitted model to be used for further usage of the model</span>
 <span class="sd">                {&quot;scaler&quot;: object}: scaler model</span>
 <span class="sd">                {&quot;pcp&quot;: int}: pcp</span>
 <span class="sd">                {&quot;topfeat&quot;: pandas.DataFrame}: top features</span>
@@ -164,7 +165,37 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="MLEngineer.forecast"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.MLEngineer.forecast">[docs]</a>    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forecast Y for given days with/without indicators (X).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Y (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    pandas.Timestamp: Observation date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    observed and the target variables (int or float)</span>
+<span class="sd">            X (pandas.DataFrame or None): indicators for regression or None (no indicators)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    pandas.Timestamp: Observation date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    observed and the target variables (int or float)</span>
+<span class="sd">            days (int): days to predict</span>
+<span class="sd">            **kwargs: keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as @days)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">           pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    pandas.Timestamp: Observation date, from the next date of Y.index to the ast predicted date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    observed and the target variables (int or float)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            AutoTS package is developed at https://github.com/winedarksea/AutoTS</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_AutoTSHandler</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

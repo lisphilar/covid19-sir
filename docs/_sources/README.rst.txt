@@ -23,30 +23,11 @@ data analysis with phase-dependent SIR-derived ODE models. We can
 download datasets and analyze them easily. Scenario analysis with
 CovsirPhy enables us to make data-informed decisions.
 
-.. raw:: html
-
-   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/gif/covsirphy_demo.gif" width="600">
-
-Functionalities
----------------
-
--  `Data
-   preparation <https://lisphilar.github.io/covid19-sir/01_data_preparation.html>`__
--  `Data
-   Engineering <https://lisphilar.github.io/covid19-sir/02_data_engineering.html>`__
--  `SIR-derived ODE
-   models <https://lisphilar.github.io/covid19-sir/03_ode.html>`__
--  `Phase-dependent SIR
-   models <https://lisphilar.github.io/covid19-sir/04_phase_dependent.html>`__
--  `Scenario analysis and
-   prediction <https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html>`__
-
 Inspiration
 -----------
 
--  Monitor the spread of COVID-19
--  Keep track parameter values/reproduction number in each
-   country/province
+-  Monitor the spread of COVID-19 with SIR-derived ODE models
+-  Predict the number of cases in each country/province
 -  Find the relationship of reproductive number and measures taken by
    each country
 
@@ -54,9 +35,8 @@ If you have ideas or need new functionalities, please join this project.
 Any suggestions with `Github
 Issues <https://github.com/lisphilar/covid19-sir/issues/new/choose>`__
 and `Twitter: @lisphilar <https://twitter.com/lisphilar>`__ are always
-welcomed. Questions are also great. Please read `Guideline of
-contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__
-in advance.
+welcomed. Questions are also great. Please refer to `Guideline of
+contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__.
 
 Installation
 ------------
@@ -67,12 +47,12 @@ supports Python 3.7.12 or newer versions. Details are explained in
 `Documentation:
 Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 
-.. code:: bash
+.. code:: Bash
 
     pip install --upgrade covsirphy
 
-Usage
------
+Demo
+----
 
 Quickest tour of CovsirPhy is here. The following codes analyze the
 records in Japan.
@@ -104,8 +84,30 @@ records in Japan.
     # Describe representative values
     snr.describe()
 
-Further information: `CovsirPhy
-documentation <https://lisphilar.github.io/covid19-sir/index.html>`__
+Output of ``snr.simulate(name="Predicted");``
+
+.. raw:: html
+
+   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
+
+Tutorial
+--------
+
+Tutorials of functionalities are included in the `CovsirPhy
+documentation <https://lisphilar.github.io/covid19-sir/index.html>`__.
+
+-  `Data
+   preparation <https://lisphilar.github.io/covid19-sir/01_data_preparation.html>`__
+-  `Data
+   Engineering <https://lisphilar.github.io/covid19-sir/02_data_engineering.html>`__
+-  `SIR-derived ODE
+   models <https://lisphilar.github.io/covid19-sir/03_ode.html>`__
+-  `Phase-dependent SIR
+   models <https://lisphilar.github.io/covid19-sir/04_phase_dependent.html>`__
+-  `Scenario
+   analysis <https://lisphilar.github.io/covid19-sir/05_scenario_analysis.html>`__
+-  `ODE parameter
+   prediction <https://lisphilar.github.io/covid19-sir/06_prediction.html>`__
 
 Release notes
 -------------
@@ -119,12 +121,6 @@ page of the GitHub
 repository <https://github.com/lisphilar/covid19-sir/milestones>`__. If
 you find a highly urgent matter, please let us know via `issue
 page <https://github.com/lisphilar/covid19-sir/issues>`__.
-
-Support
--------
-
-Please support this project as a developer (or a backer). |Become a
-backer|
 
 Developers
 ----------
@@ -141,6 +137,12 @@ on 12Feb2020 and developed it, discussing with Kaggle community. On
 07May2020, "covid19-sir" repository was created. On 10May2020,
 ``covsirphy`` version 1.0.0 was published in GitHub. First release in
 PyPI (version 2.3.0) was on 28Jun2020.
+
+Support
+-------
+
+Please support this project as a developer (or a backer). |Become a
+backer|
 
 License: Apache License 2.0
 ---------------------------
