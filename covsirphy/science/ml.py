@@ -97,5 +97,5 @@ class MLEngineer(Term):
         Note:
             AutoTS package is developed at https://github.com/winedarksea/AutoTS
         """
-        model = _AutoTSHandler(Y=Y, days=days, verbose=self._verbose, **kwargs)
+        model = _AutoTSHandler(Y=Y, days=days, seed=self._seed, verbose=self._verbose, **kwargs)
         return model.fit(X=X).predict()
