@@ -51,6 +51,14 @@ Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 
     pip install --upgrade covsirphy
 
+Python 3.10 users may need to install ``datatable`` with the following
+before ``covsirphy`` installation per `Issue
+#1159 <https://github.com/lisphilar/covid19-sir/issues/1159>`__.
+
+.. code:: Bash
+
+    pip install git+https://github.com/h2oai/datatable.git
+
 Demo
 ----
 

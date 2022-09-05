@@ -24,6 +24,7 @@
    03_ode.ipynb
    04_phase_dependent.ipynb
    05_scenario_analysis.ipynb
+   06_prediction.ipynb
 
 .. toctree::
    :maxdepth: 5
