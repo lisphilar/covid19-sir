@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import contextlib
 from copy import deepcopy
 from datetime import timedelta
 import re
 import pandas as pd
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
+from covsirphy.util.error import UnExpectedValueError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
 from covsirphy.util.term import Term
@@ -433,23 +433,38 @@ class ODEScenario(Term):
 
         Raises:
             SubsetNotFoundError: scenario with the name is un-registered
+            UnExpectedValueRangeError: end_date - (the last date of the registered phases) < 3 and parameters were changed
         """
-        snl_dict = self._snr_alias.find(name=name)
-        if snl_dict is None:
-            raise ScenarioNotFoundError(name=name)
-        param_df = snl_dict[self._PARAM].copy()
+        try:
+            snr_dict = self._snr_alias.find(name=name).copy()
+        except AttributeError:
+            raise ScenarioNotFoundError(name=name) from None
+        param_df = snr_dict[self._PARAM].copy()
         last_param_dict = param_df.iloc[-1].to_dict()
         start_date = param_df.index[-1] + timedelta(days=1)
         try:
             delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
             end_date = param_df.index[-1] + delta
         except UnExpectedTypeError:
-            end_date = Validator(end, "end", accept_none=False).date(value_range=(start_date, None))
+            end_date = Validator(end, "end", accept_none=False).date(value_range=(param_df.index[-1], None))
         new_param_dict = Validator(kwargs, "keyword arguments").dict(
             default=last_param_dict, required_keys=list(last_param_dict.keys()))
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
-        snl_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
-        self._snr_alias.update(name=name, target=snl_dict.copy())
+        snr_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
+        try:
+            Dynamics.from_data(
+                model=snr_dict[self.ODE],
+                data=self._actual_df.join(snr_dict[self._PARAM], how="right"),
+                tau=snr_dict[self.TAU])
+        except UnExpectedValueError:
+            if isinstance(end, int):
+                target, _min = end, 3
+            else:
+                target = end.strftime(self.DATE_FORMAT)
+                _min = (param_df.index[-1] + timedelta(days=3)).strftime(self.DATE_FORMAT)
+            raise UnExpectedValueRangeError(
+                name="end", target=target, value_range=(_min, None)) from None
+        self._snr_alias.update(name=name, target=snr_dict.copy())
         self._last = max((self._last, end_date))
 
     def append(self, name=None, end=None, **kwargs):
@@ -462,6 +477,7 @@ class ODEScenario(Term):
 
         Raises:
             SubsetNotFoundError: scenario with the name is un-registered
+            UnExpectedValueRangeError: end_date - (the last date of the registered phases) < 3 and parameters were changed
 
         Return:
             covsirphy.ODEScenario: self
@@ -474,8 +490,10 @@ class ODEScenario(Term):
         names = [name] if isinstance(name, str) else Validator(name, "name").sequence(
             default=list(self._snr_alias.all().keys()))
         for _name in names:
-            with contextlib.suppress(UnExpectedValueRangeError):
+            try:
                 self._append(name=_name, end=end or last_end, **kwargs)
+            except UnExpectedValueRangeError as e:
+                raise e from None
         return self
 
     def predict(self, days, name, seed=0, verbose=1, X=None, **kwargs):
