@@ -435,9 +435,10 @@ class ODEScenario(Term):
             SubsetNotFoundError: scenario with the name is un-registered
             UnExpectedValueRangeError: end_date - (the last date of the registered phases) < 3 and parameters were changed
         """
-        snr_dict = self._snr_alias.find(name=name).copy()
-        if snr_dict is None:
-            raise ScenarioNotFoundError(name=name)
+        try:
+            snr_dict = self._snr_alias.find(name=name).copy()
+        except AttributeError:
+            raise ScenarioNotFoundError(name=name) from None
         param_df = snr_dict[self._PARAM].copy()
         last_param_dict = param_df.iloc[-1].to_dict()
         start_date = param_df.index[-1] + timedelta(days=1)
