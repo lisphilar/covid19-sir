@@ -9,7 +9,7 @@ from covsirphy import Term, JapanData
 
 @pytest.fixture(scope="module")
 def japan_data():
-    return JapanData(filename="japan.csv")
+    return JapanData(filename="input/japan.csv")
 
 
 class TestJapanData(object):
