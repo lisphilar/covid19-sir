@@ -56,7 +56,7 @@ pytest = "^7.1.3"
 pytest-profiling = "^1.7.0"
 pytest-cov = "^2.12.1"
 pyproject-flake8 = "^0.0.1-alpha.5"
-deptry = "^0.2.3"
+deptry = "^0.2.5"
 
 [tool.poetry.group.docs]
 # poetry install --with docs
@@ -91,6 +91,9 @@ testpaths = ["tests"]
 addopts = "--cov=covsirphy --cov-report=term-missing -vv --no-cov-on-fail --disable-warnings -p no:cacheprovider --durations=1 --maxfail=1"
 
 [tool.deptry]
-ignore_dependencies = [
-'tabulate', 'scikit-learn'
+ignore_obsolete = [
+'tabulate'
+]
+ignore_directories = [
+    'input.py', 'tests', '.venv'
 ]
