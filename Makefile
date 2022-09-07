@@ -64,7 +64,7 @@ remove-dev:
 test:
 	@# All tests: make test
 	@# Selected tests: make test target=/test_scenario.py::TestScenario
-	@deptry .
+	@poetry run deptry .
 	@poetry run pflake8 covsirphy
 	@poetry run pytest tests${target}
 
