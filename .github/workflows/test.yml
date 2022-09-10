@@ -55,14 +55,15 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with test
 
-      - name: quality check with "make test" command, upload test coverage to CodeClimate
+      - name: run quality check with "make test" command
+        run: make test
+
+      - name: upload test coverage to CodeClimate
         uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: |
-            make test
-            poetry run coverage xml
+          coverageCommand: coverage report
 
   pip-test:
     name: test with pip
