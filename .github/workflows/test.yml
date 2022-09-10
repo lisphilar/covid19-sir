@@ -1,0 +1,133 @@
+name: covsirphy test
+description: Test workflow when covsirphy updated
+
+on:
+  push:
+    paths:
+      - ".github/workflows"
+      - "./covsirphy/__version__.py"
+      - "./pyproject.toml"
+    pull_request:
+      types: [edited, synchronize, opened, reopened]
+
+jobs:
+  poetry-test:
+    name: quality check and pytest with Poetry and Python 3.9
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.9"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: check out repository
+        uses: actions: actions/checkout@v2
+
+      - name: set up Python
+        id: setup-python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: load cached venv if available
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies and test tools if cache does not exist
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root --with test
+
+      - name: check obsolete or missing dependencies with deptry
+        run: deptry .
+
+      - name: quality check with pflake8
+        run: pflake8 covsirphy
+
+      - name: run pytest
+        run: |
+          source .venv/bin/activate
+          pytest tests
+
+      - name: upload test coverage to CodeClimate
+        uses: marsam/codeclimate-action@master
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+  pip-test:
+    name: test with pip with all acceptable Python versions except for 3.10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7.12", "3.8", "3.9"]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: pip install and test
+      run: |
+        pip install pip --upgrade
+        pip install .
+        pip install pytest pytest-cov
+        pytest -v --maxfail=1 tests
+
+  pip-test-v3-10:
+    name: test with Python 3.9, separated because development version if datatable is required
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: pip install and test
+      run: |
+        pip install pip --upgrade
+        pip install git+https://github.com/h2oai/datatable.git
+        pip install .
+        pip install pytest pytest-cov
+        pytest -v --maxfail=1 tests
+
+  anaconda_pip:
+    name: test with Anaconda environment
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: ["3.9"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: ${{ matrix.python-version }}
+          conda-channels: anaconda, conda-forge
+
+      - name: installation of CovsirPhy
+        run: |
+          conda install -c conda-forge pip fiona ruptures
+          pip install .
