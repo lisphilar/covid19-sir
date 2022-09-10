@@ -56,7 +56,9 @@ jobs:
         run: poetry install --no-interaction --no-root --with test
 
       - name: run quality check with "make test" command
-        run: make test
+        run: |
+          make test
+          coverage xml -o coverage.xml
 
       - name: upload test coverage to CodeClimate
         uses: paambaati/codeclimate-action@v3.0.0
