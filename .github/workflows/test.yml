@@ -131,3 +131,24 @@ jobs:
         run: |
           conda install -c conda-forge pip fiona ruptures
           pip install .
+
+  code1l:
+    name: with CodeQL, discover vulnerabilities of our project and parents with depth = 2
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: python
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v1
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
