@@ -21,7 +21,7 @@ jobs:
           access_token: ${{ github.token }}
 
   poetry-test:
-    name: quality check and pytest with Poetry and Python 3.9
+    name: quality check and pytest with Poetry
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,17 +55,12 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with test
 
-      - name: activation of poetry environment
-        run: source .venv/bin/activate
-
-      - name: check obsolete or missing dependencies with deptry
-        run: deptry .
-
-      - name: quality check with pflake8
-        run: pflake8 covsirphy
-
-      - name: run pytest
-        run: pytest tests
+      - name: quality check with deptry, pflake8, pytest
+        run: |
+          source .venv/bin/activate
+          deptry .
+          pflake8 covsirphy
+          pytest tests
 
       - name: upload test coverage to CodeClimate
         uses: paambaati/codeclimate-action@v3.0.0
