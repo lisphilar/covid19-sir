@@ -58,12 +58,8 @@ jobs:
       - name: run quality check with "make test" command
         run: make test
 
-      - name: upload test coverage to CodeClimate
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: coverage report
+      - name: upload test coverage to Codecov
+        uses: codecov/codecov-action@v3
 
   pip-test:
     name: test with pip
