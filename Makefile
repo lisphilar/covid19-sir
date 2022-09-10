@@ -28,7 +28,7 @@ poetry-windows:
 install:
 	@python -m pip install --upgrade pip
 	@poetry self update
-	@poetry install
+	@poetry install --with test,docs
 
 .PHONY: update
 update:
@@ -68,11 +68,6 @@ test:
 	@poetry run pflake8 covsirphy
 	@poetry run pytest tests${target}
 
-.PHONY: flake8
-flake8:
-	@poetry run pflake8 covsirphy
-
-# https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: docs
 docs:
 	# docs/index.rst must be updated to include the notebooks
@@ -108,14 +103,9 @@ clean:
 	@rm -rf prof
 	@rm -rf .pytest_cache
 	@find -name __pycache__ | xargs --no-run-if-empty rm -r
-	@rm -rf example/output
 	@rm -rf dist covsirphy.egg-info
-	@rm -f README.rst
 	@rm -f .coverage*
 	@poetry cache clear . --all
-	@pip install --upgrade pip
-	@poetry self update
-	@poetry update
 
 .PHONY: setup-anyenv
 setup-anyenv:
