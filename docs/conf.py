@@ -13,7 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-import covsirphy as cs
+import covsirphy as cs  # noqa: E402
 
 
 # -- Project information -----------------------------------------------------
