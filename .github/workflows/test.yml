@@ -10,6 +10,16 @@ on:
     types: [edited, synchronize, opened, reopened]
 
 jobs:
+  cancel:
+    name: cancel previous runs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflows_filter: "covsirphy test"
+
   poetry-test:
     name: quality check and pytest with Poetry and Python 3.9
     runs-on: ubuntu-latest
