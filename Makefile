@@ -72,6 +72,7 @@ test:
 docs:
 	# docs/index.rst must be updated to include the notebooks
 	@cp --force example/*.ipynb docs/
+	@sudo apt install pandoc -y
 	# Save markdown files in docs directory
 	# docs/markdown/*md will be automatically included
 	@cp --force .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
