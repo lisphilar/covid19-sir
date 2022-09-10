@@ -82,8 +82,6 @@ docs:
 	@cp --force .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
 	@cp --force .github/CONTRIBUTING.md docs/CONTRIBUTING.md
 	@cp --force SECURITY.md docs/SECURITY.md
-	@sudo apt install pandoc -y
-	@pandoc --from markdown --to rst README.md -o docs/README.rst
 	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT
 	# Execute sphinx
