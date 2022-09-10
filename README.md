@@ -6,8 +6,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)
 [![Quality Check](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml/badge.svg)](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
-[![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage)](https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage)
+[![Test Coverage](https://codecov.io/gh/lisphilar/covid19-sir/branch/master/graph/badge.svg?token=9Z8Z1UHY3I)](https://codecov.io/gh/lisphilar/covid19-sir)
 [![Open Source Helpers](https://www.codetriage.com/lisphilar/covid19-sir/badges/users.svg)](https://www.codetriage.com/lisphilar/covid19-sir)
 
 # CovsirPhy introduction
