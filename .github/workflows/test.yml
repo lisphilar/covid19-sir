@@ -55,9 +55,9 @@ jobs:
       - name: install dependencies and test tools if cache does not exist
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with test
-      
+
       - name: activation of poetry environment
-        run: source .venv/bin/activate
+        run: source $VENV
 
       - name: check obsolete or missing dependencies with deptry
         run: deptry .
