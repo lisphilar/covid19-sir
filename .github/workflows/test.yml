@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ["ubuntu-latest"]
         python-version: ["3.9"]
 
     steps:
@@ -57,7 +56,7 @@ jobs:
         run: poetry install --no-interaction --no-root --with test
 
       - name: activation of poetry environment
-        run: source $VENV
+        run: source .venv/bin/activate
 
       - name: check obsolete or missing dependencies with deptry
         run: deptry .
