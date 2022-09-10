@@ -68,7 +68,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 
   pip-test:
-    name: test with pip with all acceptable Python versions except for 3.10
+    name: test with pip
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -91,7 +91,7 @@ jobs:
         pytest -v --maxfail=1 tests
 
   pip-test-v3-10:
-    name: test with Python 3.9, separated because development version if datatable is required
+    name: test with pip and dev version of datatable
     runs-on: ubuntu-latest
     strategy:
       matrix:
