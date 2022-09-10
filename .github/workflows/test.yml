@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: styfle/cancel-workflow-action@0.10.0
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflows_filter: "covsirphy test"
+          all_but_latest: true
+          access_token: ${{ github.token }}
 
   poetry-test:
     name: quality check and pytest with Poetry and Python 3.9
