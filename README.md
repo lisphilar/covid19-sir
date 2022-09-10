@@ -7,7 +7,6 @@
 [![Quality Check](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml/badge.svg)](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
 [![Test Coverage](https://codecov.io/gh/lisphilar/covid19-sir/branch/master/graph/badge.svg?token=9Z8Z1UHY3I)](https://codecov.io/gh/lisphilar/covid19-sir)
-[![Open Source Helpers](https://www.codetriage.com/lisphilar/covid19-sir/badges/users.svg)](https://www.codetriage.com/lisphilar/covid19-sir)
 
 # CovsirPhy introduction
 
