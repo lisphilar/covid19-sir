@@ -2,8 +2,8 @@
 
    <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
 
-|PyPI version| |Downloads| |PyPI - Python Version| |Build Status|
-|GitHub license| |Maintainability| |Test Coverage| |Open Source Helpers|
+|PyPI version| |Downloads| |PyPI - Python Version| |Quality Check|
+|GitHub license| |Test Coverage|
 
 CovsirPhy introduction
 ======================
@@ -49,7 +49,7 @@ Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 
 .. code:: Bash
 
-    pip install --upgrade covsirphy
+   pip install --upgrade covsirphy
 
 Python 3.10 users may need to install ``datatable`` with the following
 before ``covsirphy`` installation per `Issue
@@ -57,7 +57,7 @@ before ``covsirphy`` installation per `Issue
 
 .. code:: Bash
 
-    pip install git+https://github.com/h2oai/datatable.git
+   pip install git+https://github.com/h2oai/datatable.git
 
 Demo
 ----
@@ -67,30 +67,30 @@ records in Japan.
 
 .. code:: Python
 
-    import covsirphy as cs
-    # Data preparation,time-series segmentation, parameter estimation with SIR-F model
-    snr = cs.ODEScenario.auto_build(geo="Japan", model=cs.SIRFModel)
-    # Check actual records
-    snr.simulate(name=None);
-    # Show the result of time-series segmentation
-    snr.to_dynamics(name="Baseline").detect();
-    # Perform simulation with estimated ODE parameter values
-    snr.simulate(name="Baseline");
-    # Predict ODE parameter values (30 days from the last date of actual records)
-    snr.build_with_template(name="Predicted", template="Baseline");
-    snr.predict(days=30, name="Predicted");
-    # Perform simulation with estimated and predicted ODE parameter values
-    snr.simulate(name="Predicted");
-    # Add a future phase to the baseline (ODE parameters will not be changed)
-    snr.append();
-    # Show created phases and ODE parameter values
-    snr.summary()
-    # Compare reproduction number of scenarios (predicted/baseline)
-    snr.compare_param("Rt");
-    # Compare simulated number of cases
-    snr.compare_cases("Confirmed");
-    # Describe representative values
-    snr.describe()
+   import covsirphy as cs
+   # Data preparation,time-series segmentation, parameter estimation with SIR-F model
+   snr = cs.ODEScenario.auto_build(geo="Japan", model=cs.SIRFModel)
+   # Check actual records
+   snr.simulate(name=None);
+   # Show the result of time-series segmentation
+   snr.to_dynamics(name="Baseline").detect();
+   # Perform simulation with estimated ODE parameter values
+   snr.simulate(name="Baseline");
+   # Predict ODE parameter values (30 days from the last date of actual records)
+   snr.build_with_template(name="Predicted", template="Baseline");
+   snr.predict(days=30, name="Predicted");
+   # Perform simulation with estimated and predicted ODE parameter values
+   snr.simulate(name="Predicted");
+   # Add a future phase to the baseline (ODE parameters will not be changed)
+   snr.append();
+   # Show created phases and ODE parameter values
+   snr.summary()
+   # Compare reproduction number of scenarios (predicted/baseline)
+   snr.compare_param("Rt");
+   # Compare simulated number of cases
+   snr.compare_cases("Confirmed");
+   # Describe representative values
+   snr.describe()
 
 Output of ``snr.simulate(name="Predicted");``
 
@@ -167,15 +167,15 @@ Please cite this library as follows with version number
 
 **Hirokazu Takaya and CovsirPhy Development Team (2020-2022), CovsirPhy
 version [version number]: Python library for COVID-19 analysis with
-phase-dependent SIR-derived ODE models,
-https://github.com/lisphilar/covid19-sir**
+phase-dependent SIR-derived ODE
+models,**\ https://github.com/lisphilar/covid19-sir
 
 This is the output of ``covsirphy.__citation__``.
 
 .. code:: Python
 
-    import covsirphy as cs
-    cs.__citation__
+   import covsirphy as cs
+   cs.__citation__
 
 **We have no original papers the author and contributors wrote, but note
 that some scientific approaches, including SIR-F model, S-R change point
@@ -188,15 +188,11 @@ in this project.**
    :target: https://pepy.tech/project/covsirphy
 .. |PyPI - Python Version| image:: https://img.shields.io/pypi/pyversions/covsirphy
    :target: https://badge.fury.io/py/covsirphy
-.. |Build Status| image:: https://semaphoreci.com/api/v1/lisphilar/covid19-sir/branches/master/shields_badge.svg
-   :target: https://semaphoreci.com/lisphilar/covid19-sir
+.. |Quality Check| image:: https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml/badge.svg
+   :target: https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml
 .. |GitHub license| image:: https://img.shields.io/github/license/lisphilar/covid19-sir
    :target: https://github.com/lisphilar/covid19-sir/blob/master/LICENSE
-.. |Maintainability| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability
-   :target: https://codeclimate.com/github/lisphilar/covid19-sir/maintainability
-.. |Test Coverage| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage
-   :target: https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage
-.. |Open Source Helpers| image:: https://www.codetriage.com/lisphilar/covid19-sir/badges/users.svg
-   :target: https://www.codetriage.com/lisphilar/covid19-sir
+.. |Test Coverage| image:: https://codecov.io/gh/lisphilar/covid19-sir/branch/master/graph/badge.svg?token=9Z8Z1UHY3I
+   :target: https://codecov.io/gh/lisphilar/covid19-sir
 .. |Become a backer| image:: https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600
    :target: https://opencollective.com/covsirphy
