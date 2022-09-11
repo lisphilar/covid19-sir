@@ -31,7 +31,7 @@ class Filer(object):
     """
 
     def __init__(self, directory, prefix=None, suffix=None, numbering=None):
-        directories = [directory] if isinstance(directory, str) else directory
+        directories = [directory] if isinstance(directory, (str, Path)) else directory
         self._dir_path = Path(*directories).resolve()
         self._pre = "" if prefix is None else f"{prefix}_"
         self._suf = "" if suffix is None else f"_{suffix}"

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -184,7 +185,7 @@ class GIS(Term):
             geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)
             on (str or None): the date, like 22Jan2020, or None (the last date of each location)
             variables (list[str] or None): list of variables to add or None (all available columns)
-            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None (["input", "natural_earth"])
+            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None (directory of this this script)
             natural_earth (str or None): title of GeoJSON file (without extension) of "Natural Earth" GitHub repository or None (automatically determined)
 
         Raises:
@@ -217,7 +218,7 @@ class GIS(Term):
             df = df.loc[df[self._date] == Validator(on).date()]
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
         geometry = _Geometry(
-            data=df, layer=focused_layer, directory=directory or ["input", "natural_earth"], verbose=self._verbose)
+            data=df, layer=focused_layer, directory=directory or Path(__file__).with_name("Natural_Earth"), verbose=self._verbose)
         iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
         return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
 
