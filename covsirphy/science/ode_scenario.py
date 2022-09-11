@@ -380,7 +380,7 @@ class ODEScenario(Term):
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=df.index.max())
         df = df.loc[start: end]
         if display:
-            ylabel = f"the number of {v_converted[0]} cases"
+            ylabel = f"the number of {v_converted.lower()} cases"
             title = f"{self._location_name}: {ylabel} overt time"
             v = self.to_dynamics(name=ref or list(self._snr_alias.all().keys())[0]).start_dates()[1:]
             plot_kwargs = {"title": title, "y_integer": True, "v": v, "ylabel": ylabel, **kwargs}
