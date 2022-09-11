@@ -39,7 +39,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.2-beta
+                2.26.2-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -51,7 +51,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
@@ -87,7 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#4-1.-Definition">4-1. Definition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#4-2.-Non-dimensional-SEWIR-F-model">4-2. Non-dimensional SEWIR-F model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#4-3.-Create-sample-data">4-3. Create sample data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id13">3-4. Solve ODEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">3-4. Solve ODEs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#4-5.-Reproduction-number">4-5. Reproduction number</a></li>
 </ul>
 </li>
@@ -465,7 +464,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.26.2-beta&#39;
+&#39;2.26.2-gamma&#39;
 </pre></div></div>
 </div>
 <div class="section" id="1.-SIR-model">
@@ -474,10 +473,10 @@ div.rendered_html tbody tr:hover {
 <p>Let’s start with the simplest SIR model proposed by <a class="reference external" href="https://royalsocietypublishing.org/doi/10.1098/rspa.1927.0118">Kermack, W. O., &amp; McKendrick, A. G. (1927)</a>. Population is assigned to some compartments. “Susceptible people” may meet “Infected” patients and may be confirmed as “Infected”. “Infected” patients will move to “Removed (Recovered or Fatal)” compartment later.</p>
 <div class="section" id="1-1.-Definition">
 <h3>1-1. Definition<a class="headerlink" href="#1-1.-Definition" title="Permalink to this heading"></a></h3>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p><span class="math">\begin{align*}
 \mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
-\end{align*}</div><p>Variables:</p>
+\end{align*}</span></p>
+<p>Variables:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal)</p></li>
@@ -497,13 +496,15 @@ div.rendered_html tbody tr:hover {
 <h3>1-2. Non-dimensional SIR model<a class="headerlink" href="#1-2.-Non-dimensional-SIR-model" title="Permalink to this heading"></a></h3>
 <p>To simplify the model, we will remove the units of the variables from the ODE model.</p>
 <p>Set <span class="math notranslate nohighlight">\((S, I, R) = N \times (x, y, z)\)</span> and <span class="math notranslate nohighlight">\((T, \beta, \gamma) = (\tau t, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.</p>
-<p>This results in the ODE</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
-&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - \sigma y  \\
-&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
-\end{align*}</div><p>Where <span class="math notranslate nohighlight">\(N\)</span> is the total population and <span class="math notranslate nohighlight">\(\tau\)</span> is a coefficient ([min], is an integer to simplify).</p>
+<div class="line-block">
+<div class="line">This results in the ODE</div>
+<div class="line"><span class="math">\begin{align*}
+& \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+& \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - \sigma y  \\
+& \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+\end{align*}</span></div>
+</div>
+<p>Where <span class="math notranslate nohighlight">\(N\)</span> is the total population and <span class="math notranslate nohighlight">\(\tau\)</span> is a coefficient ([min], is an integer to simplify).</p>
 <div class="line-block">
 <div class="line">Note regarding the roles of ODE parameter values:</div>
 <div class="line">When <span class="math notranslate nohighlight">\(\rho\)</span> is large, <span class="math notranslate nohighlight">\(\beta\)</span> is large. When <span class="math notranslate nohighlight">\(\beta\)</span> (effective contact rate [1/min]) is large, S -&gt; I is faster because dI/dT = <span class="math notranslate nohighlight">\(\beta\)</span> * [S] [I].</div>
@@ -527,7 +528,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRModel(date_range=(&#39;07Sep2022&#39;, &#39;06Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRModel(date_range=(&#39;11Sep2022&#39;, &#39;10Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 <p>We can specify the start/end date of dynamics and tau value as follows. Note that tau value [min] should be a divisor of 1440 to simplify operations.</p>
@@ -585,7 +586,7 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;date_range&#39;: (&#39;07Sep2022&#39;, &#39;06Mar2023&#39;),
+{&#39;date_range&#39;: (&#39;11Sep2022&#39;, &#39;10Mar2023&#39;),
  &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
                   &#39;Infected&#39;: 1000,
                   &#39;Susceptible&#39;: 999000},
@@ -680,31 +681,31 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
   </thead>
   <tbody>
     <tr>
-      <th>2023-03-02</th>
+      <th>2023-03-06</th>
       <td>88354</td>
       <td>750</td>
       <td>910895</td>
     </tr>
     <tr>
-      <th>2023-03-03</th>
+      <th>2023-03-07</th>
       <td>88342</td>
       <td>708</td>
       <td>910950</td>
     </tr>
     <tr>
-      <th>2023-03-04</th>
+      <th>2023-03-08</th>
       <td>88329</td>
       <td>669</td>
       <td>911002</td>
     </tr>
     <tr>
-      <th>2023-03-05</th>
+      <th>2023-03-09</th>
       <td>88318</td>
       <td>632</td>
       <td>911050</td>
     </tr>
     <tr>
-      <th>2023-03-06</th>
+      <th>2023-03-10</th>
       <td>88307</td>
       <td>596</td>
       <td>911096</td>
@@ -732,10 +733,10 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
 <div class="section" id="1-5.-Reproduction-number">
 <h3>1-5. Reproduction number<a class="headerlink" href="#1-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
 <p>Reproduction number of SIR model is defined as follows.</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p><span class="math">\begin{align*}
 R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
-\end{align*}</div><p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">external link: Infection Modeling — Part 1</a>).</p>
+\end{align*}</span></p>
+<p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">external link: Infection Modeling — Part 1</a>).</p>
 <p>We can calculate reproduction number using <code class="docutils literal notranslate"><span class="pre">ODEModel().r0()</span></code> method.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -801,11 +802,11 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 <p>Because we are measuring the number of fatal cases and recovered cases separately, we can use two variables (“Recovered” and “Deaths”) instead of “Recovered + Deaths” in the mathematical model. We call this model as SIR-D model.</p>
 <div class="section" id="2-1.-Definition">
 <h3>2-1. Definition<a class="headerlink" href="#2-1.-Definition" title="Permalink to this heading"></a></h3>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\mathrm{S} \overset{\beta  I}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
-&amp; \mathrm{I} \overset{\alpha}{\longrightarrow} \mathrm{D}  \\
-\end{align*}</div><p>Variables:</p>
+<p><span class="math">\begin{align*}
+\mathrm{S} \overset{\beta  I}{\longrightarrow}\ & \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
+& \mathrm{I} \overset{\alpha}{\longrightarrow} \mathrm{D}  \\
+\end{align*}</span></p>
+<p>Variables:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal)</p></li>
@@ -821,15 +822,17 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 </div>
 <div class="section" id="2-2.-Non-dimensional-SIR-D-model">
 <h3>2-2. Non-dimensional SIR-D model<a class="headerlink" href="#2-2.-Non-dimensional-SIR-D-model" title="Permalink to this heading"></a></h3>
-<p>Set <span class="math notranslate nohighlight">\((S, I, R, D) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha, \beta, \gamma) = (\tau t, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
-This results in the ODE</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
-&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - (\sigma + \kappa) y  \\
-&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
-&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \kappa y  \\
-\end{align*}</div></div>
+<div class="line-block">
+<div class="line">Set <span class="math notranslate nohighlight">\((S, I, R, D) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha, \beta, \gamma) = (\tau t, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.</div>
+<div class="line">This results in the ODE</div>
+<div class="line"><span class="math">\begin{align*}
+& \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+& \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - (\sigma + \kappa) y  \\
+& \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+& \frac{\mathrm{d}w}{\mathrm{d}t}= \kappa y  \\
+\end{align*}</span></div>
+</div>
+</div>
 <div class="section" id="2-3.-Create-sample-data">
 <h3>2-3. Create sample data<a class="headerlink" href="#2-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SIRDModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
@@ -848,7 +851,7 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRDModel(date_range=(&#39;07Sep2022&#39;, &#39;06Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRDModel(date_range=(&#39;11Sep2022&#39;, &#39;10Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -875,10 +878,10 @@ This results in the ODE</p>
 <div class="section" id="2-5.-Reproduction-number">
 <h3>2-5. Reproduction number<a class="headerlink" href="#2-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
 <p>Reproduction number of SIR-D model is defined as follows.</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p><span class="math">\begin{align*}
 R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</span></p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
@@ -903,12 +906,12 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 <p>SIR-F model was developed with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#SIR-to-SIR-F">Kaggle: COVID-19 data with SIR model</a>.</p>
 <div class="section" id="3-1.-Definition">
 <h3>3-1. Definition<a class="headerlink" href="#3-1.-Definition" title="Permalink to this heading"></a></h3>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
-\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
-&amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
-\end{align*}</div><p>Variables:</p>
+<p><span class="math">\begin{align*}
+\mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ & \mathrm{F}    \\
+\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ & \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
+& \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
+\end{align*}</span></p>
+<p>Variables:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed)</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span>: Confirmed and un-categorized</p></li>
@@ -930,7 +933,7 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 <p>In JHU-style dataset, we know the number of cases who were confirmed with COVID-19, but we do not know the number of died cases who died without COVID-19. Essentially <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> serves as an auxiliary compartment in SIR-F model to separate the two death situations and insert a probability factor of {<span class="math notranslate nohighlight">\(\alpha_1\)</span>, <span class="math notranslate nohighlight">\(1 - \alpha_1\)</span>}.</p>
 <div class="line-block">
 <div class="line">Note regarding the roles of ODE parameter values:</div>
-<div class="line">When <span class="math notranslate nohighlight">\(\rho\)</span> is large, <span class="math notranslate nohighlight">\(\beta\)</span> is large. When <span class="math notranslate nohighlight">\(\beta\)</span> (effective contact rate [1/min]) is large, S -&gt; S* -&gt; I is faster because dS<a href="#id6"><span class="problematic" id="id7">*</span></a>/dT = <span class="math notranslate nohighlight">\(\beta\)</span> * [S] [I].</div>
+<div class="line">When <span class="math notranslate nohighlight">\(\rho\)</span> is large, <span class="math notranslate nohighlight">\(\beta\)</span> is large. When <span class="math notranslate nohighlight">\(\beta\)</span> (effective contact rate [1/min]) is large, S -&gt; S* -&gt; I is faster because dS<em>/dT = :math:`beta`</em> [S] [I].</div>
 <div class="line">When <span class="math notranslate nohighlight">\(\theta\)</span> is large, <span class="math notranslate nohighlight">\(\alpha_1\)</span> is large. When <span class="math notranslate nohighlight">\(\alpha_1\)</span> (direct fatality probability) is large, S -&gt; S* -&gt; F is faster because dF/dT = <span class="math notranslate nohighlight">\(\alpha_1\)</span> * [S*] + <span class="math notranslate nohighlight">\(\alpha_2\)</span> * [I].</div>
 </div>
 <div class="line-block">
@@ -940,15 +943,17 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 </div>
 <div class="section" id="3-2.-Non-dimensional-SIR-F-model">
 <h3>3-2. Non-dimensional SIR-F model<a class="headerlink" href="#3-2.-Non-dimensional-SIR-F-model" title="Permalink to this heading"></a></h3>
-<p>Set <span class="math notranslate nohighlight">\((S, I, R, F) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha_1, \alpha_2, \beta, \gamma) = (\tau t, \theta, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
-This results in the ODE</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
-&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho (1-\theta) x y - (\sigma + \kappa) y  \\
-&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
-&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \rho \theta x y + \kappa y  \\
-\end{align*}</div></div>
+<div class="line-block">
+<div class="line">Set <span class="math notranslate nohighlight">\((S, I, R, F) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha_1, \alpha_2, \beta, \gamma) = (\tau t, \theta, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.</div>
+<div class="line">This results in the ODE</div>
+<div class="line"><span class="math">\begin{align*}
+& \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+& \frac{\mathrm{d}y}{\mathrm{d}t}= \rho (1-\theta) x y - (\sigma + \kappa) y  \\
+& \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+& \frac{\mathrm{d}w}{\mathrm{d}t}= \rho \theta x y + \kappa y  \\
+\end{align*}</span></div>
+</div>
+</div>
 <div class="section" id="3-3.-Create-sample-data">
 <h3>3-3. Create sample data<a class="headerlink" href="#3-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
@@ -967,7 +972,7 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRFModel(date_range=(&#39;07Sep2022&#39;, &#39;06Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRFModel(date_range=(&#39;11Sep2022&#39;, &#39;10Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -994,10 +999,10 @@ This results in the ODE</p>
 <div class="section" id="3-5.-Reproduction-number">
 <h3>3-5. Reproduction number<a class="headerlink" href="#3-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
 <p>Reproduction number of SIR-F model is defined as follows.</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p><span class="math">\begin{align*}
 R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + \alpha_2)^{-1}
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</span></p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
@@ -1028,12 +1033,12 @@ R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + 
 </div>
 <div class="section" id="4-1.-Definition">
 <h3>4-1. Definition<a class="headerlink" href="#4-1.-Definition" title="Permalink to this heading"></a></h3>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\mathrm{S} \overset{\beta_1 (W+I)}{\longrightarrow} \mathrm{E} \overset{\beta_2}{\longrightarrow} \mathrm{W} \overset{\beta_3}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
-\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
-&amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
-\end{align*}</div><p>Variables:</p>
+<p><span class="math">\begin{align*}
+\mathrm{S} \overset{\beta_1 (W+I)}{\longrightarrow} \mathrm{E} \overset{\beta_2}{\longrightarrow} \mathrm{W} \overset{\beta_3}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ & \mathrm{F}    \\
+\mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ & \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
+& \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
+\end{align*}</span></p>
+<p>Variables:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathrm{E}\)</span>: Exposed and in latent period (without infectivity)</p></li>
@@ -1055,17 +1060,19 @@ R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + 
 </div>
 <div class="section" id="4-2.-Non-dimensional-SEWIR-F-model">
 <h3>4-2. Non-dimensional SEWIR-F model<a class="headerlink" href="#4-2.-Non-dimensional-SEWIR-F-model" title="Permalink to this heading"></a></h3>
-<p>Set <span class="math notranslate nohighlight">\((S, E, W, I, R, F) = N \times (x_1, x_2, x_3, y, z, w)\)</span>, <span class="math notranslate nohighlight">\((T, \alpha_1) = (\tau t, \theta)\)</span> and <span class="math notranslate nohighlight">\((\alpha_2, \beta_i, \gamma) = \tau^{-1} \times (\kappa, \rho_i, \sigma)\)</span>.
-This results in the ODE</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-&amp; \frac{\mathrm{d}x_1}{\mathrm{d}t}= - \rho_1 x_1 (x_3 + y)  \\
-&amp; \frac{\mathrm{d}x_2}{\mathrm{d}t}= \rho_1 x_1 (x_3 + y) - \rho_2 x_2  \\
-&amp; \frac{\mathrm{d}x_3}{\mathrm{d}t}= \rho_2 x_2 - \rho_3 x_3  \\
-&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= (1-\theta) \rho_3 x_3 - (\sigma + \kappa) y  \\
-&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
-&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \theta \rho_3 x_3 + \kappa y  \\
-\end{align*}</div></div>
+<div class="line-block">
+<div class="line">Set <span class="math notranslate nohighlight">\((S, E, W, I, R, F) = N \times (x_1, x_2, x_3, y, z, w)\)</span>, <span class="math notranslate nohighlight">\((T, \alpha_1) = (\tau t, \theta)\)</span> and <span class="math notranslate nohighlight">\((\alpha_2, \beta_i, \gamma) = \tau^{-1} \times (\kappa, \rho_i, \sigma)\)</span>.</div>
+<div class="line">This results in the ODE</div>
+<div class="line"><span class="math">\begin{align*}
+& \frac{\mathrm{d}x_1}{\mathrm{d}t}= - \rho_1 x_1 (x_3 + y)  \\
+& \frac{\mathrm{d}x_2}{\mathrm{d}t}= \rho_1 x_1 (x_3 + y) - \rho_2 x_2  \\
+& \frac{\mathrm{d}x_3}{\mathrm{d}t}= \rho_2 x_2 - \rho_3 x_3  \\
+& \frac{\mathrm{d}y}{\mathrm{d}t}= (1-\theta) \rho_3 x_3 - (\sigma + \kappa) y  \\
+& \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+& \frac{\mathrm{d}w}{\mathrm{d}t}= \theta \rho_3 x_3 + \kappa y  \\
+\end{align*}</span></div>
+</div>
+</div>
 <div class="section" id="4-3.-Create-sample-data">
 <h3>4-3. Create sample data<a class="headerlink" href="#4-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SEWIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
@@ -1084,12 +1091,12 @@ This results in the ODE</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SEWIRFModel(date_range=(&#39;07Sep2022&#39;, &#39;06Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
+&#34;SEWIRFModel(date_range=(&#39;11Sep2022&#39;, &#39;10Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="id13">
-<h3>3-4. Solve ODEs<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<div class="section" id="id11">
+<h3>3-4. Solve ODEs<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
@@ -1111,10 +1118,10 @@ This results in the ODE</p>
 <div class="section" id="4-5.-Reproduction-number">
 <h3>4-5. Reproduction number<a class="headerlink" href="#4-5.-Reproduction-number" title="Permalink to this heading"></a></h3>
 <p>Reproduction number of SEWIR-F model is defined as follows.</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p><span class="math">\begin{align*}
 R_0 = \rho_1 /\rho_2 * \rho_3 (1-\theta) (\sigma + \kappa)^{-1}
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</span></p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>

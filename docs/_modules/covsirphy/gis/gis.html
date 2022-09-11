@@ -35,7 +35,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.2-beta
+                2.26.2-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -47,7 +47,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
@@ -99,6 +98,7 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -282,7 +282,7 @@
 <span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)</span>
 <span class="sd">            on (str or None): the date, like 22Jan2020, or None (the last date of each location)</span>
 <span class="sd">            variables (list[str] or None): list of variables to add or None (all available columns)</span>
-<span class="sd">            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None ([&quot;input&quot;, &quot;natural_earth&quot;])</span>
+<span class="sd">            directory (list[str] or tuple(str) or str): top directory name(s) to save GeoJSON files or None (directory of this this script)</span>
 <span class="sd">            natural_earth (str or None): title of GeoJSON file (without extension) of &quot;Natural Earth&quot; GitHub repository or None (automatically determined)</span>
 
 <span class="sd">        Raises:</span>
@@ -315,7 +315,7 @@
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">==</span> <span class="n">Validator</span><span class="p">(</span><span class="n">on</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()]</span>
         <span class="n">focused_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">geometry</span> <span class="o">=</span> <span class="n">_Geometry</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">focused_layer</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;natural_earth&quot;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">focused_layer</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span> <span class="ow">or</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;Natural_Earth&quot;</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
         <span class="n">iso3</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">focused_layer</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">to_geopandas</span><span class="p">(</span><span class="n">iso3</span><span class="o">=</span><span class="n">iso3</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="n">natural_earth</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">focused_layer</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
