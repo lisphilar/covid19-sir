@@ -27,7 +27,7 @@ class TestODEScenario(object):
         snr.simulate(filename=imgfile)
         snr.simulate(name="Baseline", display=False)
 
-    def test_build_delete(self, snr):
+    def test_build_delete(self, snr):  # sourcery skip: class-extract-method
         snr.build_with_template(name="Lockdown", template="Baseline")
         with pytest.raises(ScenarioNotFoundError):
             snr.append(name="Un-registered")
@@ -46,16 +46,15 @@ class TestODEScenario(object):
         assert len(df[Term.END].unique()) == 1
 
     @pytest.mark.skipif(True, reason="Skip for speed-up")
-    def test_compare(self, snr):
+    def test_compare(self, snr, imgfile):
         snr.build_with_template(name="Lockdown", template="Baseline")
         snr.append(end=30, name="Medicine", sigma=0.5)
         snr.append()
-        snr.compare_cases(variable=Term.C)
-        snr.compare_param(param="rho")
-        snr.compare_param(param="Rt")
-        snr.compare_param(param="1/gamma [day]")
+        snr.compare_cases(variable=Term.C, filename=imgfile)
+        snr.compare_param(param="rho", filename=imgfile)
+        snr.compare_param(param="Rt", filename=imgfile)
+        snr.compare_param(param="1/gamma [day]", filename=imgfile)
         snr.rename(old="Medicine", new="Medical")
-        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline"])
 
     @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_summary_track_describe(self, snr):
@@ -64,4 +63,6 @@ class TestODEScenario(object):
         snr.describe()
 
     def test_predict(self, snr):
-        snr.predict(days=30, name="Baseline", X=None)
+        snr.build_with_template(name="Predicted", template="Baseline")
+        snr.predict(days=30, name="Predicted", X=None)
+        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline"])
