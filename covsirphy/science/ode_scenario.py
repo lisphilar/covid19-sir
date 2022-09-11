@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from copy import deepcopy
 from datetime import timedelta
 import re
@@ -533,7 +534,9 @@ class ODEScenario(Term):
         phase_df = phase_df.loc[
             (phase_df.index[-1]) | (phase_df["end"] < phase_df["end"].shift(periods=-1) - timedelta(days=3))]
         for phase_dict in phase_df.to_dict(orient="records"):
-            self._append(name=name, **phase_dict)
+            with contextlib.suppress(UnExpectedValueRangeError):
+                # Skip when the first new phase is smaller than 3 days
+                self._append(name=name, **phase_dict)
         return self
 
     def represent(self, q, variable, date=None, included=None, excluded=None):
