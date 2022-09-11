@@ -55,6 +55,7 @@ class TestODEScenario(object):
         snr.compare_param(param="Rt", filename=imgfile)
         snr.compare_param(param="1/gamma [day]", filename=imgfile)
         snr.rename(old="Medicine", new="Medical")
+        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline"])
 
     @pytest.mark.skipif(True, reason="Skip for speed-up")
     def test_summary_track_describe(self, snr):
@@ -65,4 +66,3 @@ class TestODEScenario(object):
     def test_predict(self, snr):
         snr.build_with_template(name="Predicted", template="Baseline")
         snr.predict(days=30, name="Predicted", X=None)
-        snr.represent(q=(0.1, 0.9), variable="Confirmed", excluded=["Baseline"])
