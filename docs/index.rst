@@ -6,7 +6,8 @@
    :width: 390px
    :alt: CovsirPhy: COVID-19 analysis with phase-dependent SIRs
 
-.. include:: ../README
+.. include:: ../README.md
+   :parser: markdown
 
 .. toctree::
    :maxdepth: 5
