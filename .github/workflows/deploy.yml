@@ -41,16 +41,9 @@ jobs:
           virtualenvs-in-project: true
           installer-parallel: true
 
-      - name: load cached venv if available
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
-      - name: install dependencies and test tools if cache does not exist
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --with docs
+      - name: install dependencies
+        run: poetry install --no-interaction --with docs
 
       - name: create html files with "make docs" command
         run: make docs
@@ -62,4 +55,3 @@ jobs:
           default_author: github_actor
           message: "update documentation with Sphinx"
           push: true
-          github_token: ${{ secrets.REPO_TOKEN }}
