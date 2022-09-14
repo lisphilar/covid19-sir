@@ -111,7 +111,7 @@ class _DataProvider(Term):
             if date is not None:
                 df[date] = pd.to_datetime(df[date], format=date_format)
             return df.loc[:, columns or df.columns]
-        except urllib.error.HTTPError:
+        except (urllib.error.HTTPError, TypeError):
             warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
             kwargs = {
                 "header": 0, "usecols": columns, "encoding": "utf-8",
