@@ -13,12 +13,7 @@ def imgfile():
     dirpath.mkdir(exist_ok=True)
     filepath = dirpath.joinpath("test.jpg")
     yield str(filepath)
-    try:
-        filepath.unlink(missing_ok=True)
-    except TypeError:
-        # Python 3.7
-        if filepath.exists():
-            filepath.unlink()
+    filepath.unlink(missing_ok=True)
 
 
 @pytest.fixture(scope="session")
