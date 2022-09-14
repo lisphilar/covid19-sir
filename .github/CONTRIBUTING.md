@@ -1,4 +1,4 @@
-# Guideline of contribution
+# Contribution guideline
 
 Thank you always for using CovsirPhy and continuous supports!  
 We hope this project contribute to COVID-19 outbreak research and we will overcome the outbreak in the near future.
