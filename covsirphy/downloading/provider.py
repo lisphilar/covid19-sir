@@ -3,14 +3,10 @@
 
 import contextlib
 from datetime import datetime, timezone, timedelta
-import os
 from pathlib import Path
-import urllib
+from urllib.parse import urlparse
 import warnings
-import datatable
-import numpy as np
 import pandas as pd
-from unidecode import unidecode
 from covsirphy.util.term import Term
 
 
@@ -101,20 +97,11 @@ class _DataProvider(Term):
         Returns:
             pandas.DataFrame: downloaded data
         """
-        try:
-            with contextlib.redirect_stdout(open(os.devnull, "w")):
-                df = datatable.fread(path, header=True, encoding="utf-8").to_pandas()
-            df = df.loc[:, columns or df.columns]
-            for col in df:
-                with contextlib.suppress(TypeError):
-                    df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
-            if date is not None:
-                df[date] = pd.to_datetime(df[date], format=date_format)
-            return df.loc[:, columns or df.columns]
-        except (urllib.error.HTTPError, TypeError):
-            warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
-            kwargs = {
-                "header": 0, "usecols": columns, "encoding": "utf-8",
-                "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
-            }
-            return pd.read_csv(path, storage_options={"User-Agent": "Mozilla/5.0"}, **kwargs)
+        warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
+        kwargs = {
+            "header": 0, "usecols": columns, "encoding": "utf-8", "engine": "pyarrow",
+            "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
+        }
+        if urlparse(path).scheme:
+            kwargs["storage_options"] = {"User-Agent": "Mozilla/5.0"}
+        return pd.read_csv(path, **kwargs)
