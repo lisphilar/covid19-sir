@@ -318,7 +318,7 @@ class SubsetNotFoundError(_BaseException):
                  start_date=None, end_date=None, date=None, details=None):
         self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
-        message = f"No records in {self.area}{self.date} were found."
+        message = f"No records in {self.area}{self.date} were found"
         super().__init__(message=message, details=details)
 
     @staticmethod
@@ -344,7 +344,7 @@ class SubsetNotFoundError(_BaseException):
         else:
             geo_converted = (country if country_alias is None else f"{country} ({country_alias})", province)
         names = [
-            info if isinstance(info, str) else "_".join(list(info))
+            info if isinstance(info, str) else "-" if info is None else "_".join(list(info))
             for info in ([geo_converted] if isinstance(geo_converted, str) else geo_converted)]
         return "/".join(names[::-1])
 
