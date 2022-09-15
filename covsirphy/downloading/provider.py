@@ -6,7 +6,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 import warnings
+import numpy as np
 import pandas as pd
+from unidecode import unidecode
 from covsirphy.util.term import Term
 
 
@@ -104,4 +106,8 @@ class _DataProvider(Term):
         }
         if urlparse(path).scheme:
             kwargs["storage_options"] = {"User-Agent": "Mozilla/5.0"}
-        return pd.read_csv(path, **kwargs)
+        df = pd.read_csv(path, **kwargs)
+        for col in df:
+            with contextlib.suppress(TypeError):
+                df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
+        return df
