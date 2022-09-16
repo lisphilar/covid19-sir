@@ -36,11 +36,7 @@
       "source": [
         "from pprint import pprint\n",
         "import pandas as pd\n",
-        "try:\n",
-        "    import covsirphy as cs\n",
-        "except ImportError:\n",
-        "    !pip install --upgrade \"git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy\" -qq\n",
-        "    import covsirphy as cs\n",
+        "import covsirphy as cs\n",
         "cs.__version__"
       ]
     },
@@ -53,25 +49,25 @@
         "## 1. Downloading datasets from recommended data \n",
         "We will download datasets from the following recommended data servers.\n",
         "\n",
-        "* **COVID-19 Data Hub, https://covid19datahub.io/**\n",
+        "* **[COVID-19 Data Hub](https://covid19datahub.io/)**\n",
         "    * Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.\n",
         "    * The number of cases (JHU style)\n",
         "    * Population values in each country/province\n",
         "    * [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)\n",
         "    * The number of tests\n",
-        "* **Our World In Data, https://github.com/owid/covid-19-data/tree/master/public/data**\n",
+        "* **[Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)**\n",
         "    * Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8\n",
         "    * The number of tests\n",
         "    * The number of vaccinations\n",
         "    * The number of people who received vaccinations\n",
-        "* **COVID-19 Open Data by Google Cloud Platform, https://github.com/GoogleCloudPlatform/covid-19-open-data**\n",
+        "* **[COVID-19 Open Data by Google Cloud Platform](https://github.com/GoogleCloudPlatform/covid-19-open-data)**\n",
         "    * O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, https://goo.gle/covid-19-open-data\n",
         "    * percentage to baseline in visits\n",
         "    * Note: Please refer to [Google Terms of Service](https://policies.google.com/terms) in advance.\n",
-        "* **World Bank Open Data, https://data.worldbank.org/**\n",
+        "* **[World Bank Open Data](https://data.worldbank.org/)**\n",
         "    * World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/\n",
         "    * Population pyramid\n",
-        "* **Datasets for CovsirPhy, https://github.com/lisphilar/covid19-sir/tree/master/data**\n",
+        "* **[Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)**\n",
         "    * Hirokazu Takaya (2020-2022), GitHub repository, COVID-19 dataset in Japan, https://github.com/lisphilar/covid19-sir/tree/master/data.\n",
         "    * The number of cases in Japan (total/prefectures)\n",
         "    * Metadata regarding Japan prefectures\n",
@@ -286,6 +282,21 @@
     },
     {
       "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Acknowledgement\n",
+        "\n",
+        "In Feb2020, CovsirPhy project started in [Kaggle platform](https://www.kaggle.com/) with [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook by Hirokazu Takaya helped by Kagglers using the following datasets.\n",
+        "\n",
+        "- The number of cases (JHU) and linelist: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)\n",
+        "- Population in each country:  [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)\n",
+        "- The number of cases in Japan: [COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)\n",
+        "\n",
+        "The current version of `covsirphy` does not have interfaces to use the datasets in Kaggle because they are not updated at this time. However, we could not have done CovsirPhy project without their supports. Thank you!!"
+      ]
+    },
+    {
+      "cell_type": "markdown",
       "metadata": {
         "id": "OT9RbzGV0ft7"
       },
@@ -488,31 +499,6 @@
         "display(eng_own.all().tail())\n",
         "# Show citations\n",
         "print(\"\\n\".join(eng_own.citations()))"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "### Data loading in Kaggle Notebook\n",
-        "\n",
-        "We can use the recommended datasets in [Kaggle](https://www.kaggle.com/) Notebook. The datasets are saved in \"/kaggle/input/\" directory. Additionally, we can use Kaggle Datasets (CSV files) with `covsirphy` in Kaggle Notebook.\n",
-        "\n",
-        "Note:  \n",
-        "If you have Kaggle API, you can download Kaggle datasets to your local environment by updating and executing [input.py](https://github.com/lisphilar/covid19-sir/blob/master/input.py) script. CSV files will be saved in \"/kaggle/input/\" directory.\n",
-        "\n",
-        "Kaggle API:  \n",
-        "Move to account page of Kaggle and download \"kaggle.json\" by selecting \"API > Create New API Token\" button. Copy the json file to the top directory of the local repository or \"~/.kaggle\". Please refer to [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and [stackoverflow: documentation for Kaggle API *within* python?](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded)\n",
-        "\n",
-        "### Acknowledgement\n",
-        "\n",
-        "In Feb2020, CovsirPhy project started in Kaggle platform with [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook using the following datasets.\n",
-        "\n",
-        "- The number of cases (JHU) and linelist: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)\n",
-        "- Population in each country:  [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)\n",
-        "- The number of cases in Japan: [COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)\n",
-        "\n",
-        "Best Regards.\n"
       ]
     },
     {

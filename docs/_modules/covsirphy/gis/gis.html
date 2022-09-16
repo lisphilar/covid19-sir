@@ -35,7 +35,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-alpha
+                2.27.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -256,14 +256,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get all data</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered yet.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered yet&quot;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
         <span class="c1"># Filter with geo</span>
         <span class="n">geo_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_geo</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="n">manager</span> <span class="o">=</span> <span class="n">_SubsetManager</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="n">geo_converted</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered at the layer yet.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span><span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;No records have been registered at the layer yet&quot;</span><span class="p">)</span>
         <span class="c1"># Filter with date</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
@@ -271,7 +271,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">errors</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotRegisteredError</span><span class="p">(</span>
-                <span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No records have been registered at the layer yet from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;GIS.register()&quot;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No records have been registered at the layer yet from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># Get representative records for dates</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
@@ -439,7 +439,7 @@
 <span class="sd">                    - (str): column defined by @country (of covsirphy.GIS) if @country is not None</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            geo (tuple(list[str] or tuple(str) or str) or str or None): parsed location names</span>
+<span class="sd">            geo (tuple(list[str] or tuple(str) or str or None) or str or None): parsed location names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">geo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">geo</span>

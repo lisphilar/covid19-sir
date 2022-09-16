@@ -39,7 +39,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-alpha
+                2.27.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -404,42 +404,12 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="o">!</span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span> -qq
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<style type='text/css'>
-.datatable table.frame { margin-bottom: 0; }
-.datatable table.frame thead { border-bottom: none; }
-.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
-.datatable .bool    { background: #DDDD99; }
-.datatable .object  { background: #565656; }
-.datatable .int     { background: #5D9E5D; }
-.datatable .float   { background: #4040CC; }
-.datatable .str     { background: #CC4040; }
-.datatable .time    { background: #40CC40; }
-.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
-.datatable .frame tbody td { text-align: left; }
-.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
-.datatable th:nth-child(2) { padding-left: 12px; }
-.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
-.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
-.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
-.datatable .sp {  opacity: 0.25;}
-.datatable .footer { font-size: 9px; }
-.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
-</style></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -447,7 +417,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.27.0-alpha&#39;
+&#39;2.27.0-gamma&#39;
 </pre></div></div>
 </div>
 <p>The target of prediction is estimated ODE parameter values. At we will prepare them as explained with tutorials. For example, we can use class method <code class="docutils literal notranslate"><span class="pre">ODEScenario.auto_build()</span></code>, specifying location name. “Baseline” scenario will be created automatically with downloaded datasets.</p>
@@ -466,7 +436,6 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 
 &lt;SIR-F Model: parameter estimation&gt;
 Running optimization with 2 CPUs...
@@ -476,14 +445,14 @@ Running optimization with 2 CPUs...
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "218126643e2443ff8ec3d12598e70973"}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b2a6e6981fa54ca9a21a8383eb1aabd3"}</script></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Completed optimization. Total: 2 min 34 sec
+Completed optimization. Total: 2 min 36 sec
 
 </pre></div></div>
 </div>
@@ -549,15 +518,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>0th</th>
       <td>2020-02-12</td>
       <td>2020-08-09</td>
-      <td>1.87</td>
-      <td>0.00875</td>
-      <td>0.000041</td>
-      <td>0.001202</td>
-      <td>0.000596</td>
-      <td>0.009</td>
-      <td>252</td>
-      <td>9</td>
-      <td>17</td>
+      <td>1.48</td>
+      <td>0.041439</td>
+      <td>0.000028</td>
+      <td>0.001391</td>
+      <td>0.000871</td>
+      <td>0.041</td>
+      <td>373</td>
+      <td>7</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -565,13 +534,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>1st</th>
       <td>2020-08-10</td>
       <td>2020-11-14</td>
-      <td>0.9</td>
-      <td>0.001487</td>
-      <td>0.000007</td>
-      <td>0.000719</td>
-      <td>0.000795</td>
-      <td>0.001</td>
-      <td>1460</td>
+      <td>0.89</td>
+      <td>0.005786</td>
+      <td>0.000005</td>
+      <td>0.000721</td>
+      <td>0.0008</td>
+      <td>0.006</td>
+      <td>2134</td>
       <td>14</td>
       <td>13</td>
       <td>SIR-F Model</td>
@@ -581,15 +550,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>2nd</th>
       <td>2020-11-15</td>
       <td>2020-12-23</td>
-      <td>1.35</td>
-      <td>0.002588</td>
-      <td>0.000009</td>
-      <td>0.001034</td>
-      <td>0.000754</td>
-      <td>0.003</td>
-      <td>1193</td>
-      <td>10</td>
-      <td>14</td>
+      <td>1.32</td>
+      <td>0.000234</td>
+      <td>0.000011</td>
+      <td>0.001104</td>
+      <td>0.000822</td>
+      <td>0.0</td>
+      <td>936</td>
+      <td>9</td>
+      <td>13</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -597,15 +566,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>3rd</th>
       <td>2020-12-24</td>
       <td>2021-01-16</td>
-      <td>1.8</td>
-      <td>0.001151</td>
-      <td>0.000013</td>
-      <td>0.000992</td>
-      <td>0.000537</td>
+      <td>1.66</td>
+      <td>0.000792</td>
+      <td>0.000011</td>
+      <td>0.000963</td>
+      <td>0.000569</td>
       <td>0.001</td>
-      <td>811</td>
-      <td>10</td>
-      <td>19</td>
+      <td>927</td>
+      <td>11</td>
+      <td>18</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -613,14 +582,14 @@ Completed optimization. Total: 2 min 34 sec
       <th>4th</th>
       <td>2021-01-17</td>
       <td>2021-02-10</td>
-      <td>0.72</td>
-      <td>0.002906</td>
-      <td>0.000013</td>
-      <td>0.000647</td>
-      <td>0.000886</td>
-      <td>0.003</td>
-      <td>819</td>
-      <td>16</td>
+      <td>0.7</td>
+      <td>0.001435</td>
+      <td>0.000012</td>
+      <td>0.000612</td>
+      <td>0.000856</td>
+      <td>0.001</td>
+      <td>841</td>
+      <td>17</td>
       <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
@@ -629,15 +598,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>5th</th>
       <td>2021-02-11</td>
       <td>2021-04-03</td>
-      <td>0.85</td>
-      <td>0.002197</td>
-      <td>0.000026</td>
-      <td>0.000736</td>
-      <td>0.000836</td>
-      <td>0.002</td>
-      <td>403</td>
-      <td>14</td>
-      <td>12</td>
+      <td>0.79</td>
+      <td>0.013848</td>
+      <td>0.000015</td>
+      <td>0.000538</td>
+      <td>0.000654</td>
+      <td>0.014</td>
+      <td>714</td>
+      <td>19</td>
+      <td>16</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -645,15 +614,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>6th</th>
       <td>2021-04-04</td>
       <td>2021-04-21</td>
-      <td>1.46</td>
-      <td>0.00341</td>
-      <td>0.000008</td>
-      <td>0.001044</td>
-      <td>0.000706</td>
-      <td>0.003</td>
-      <td>1234</td>
-      <td>10</td>
-      <td>15</td>
+      <td>1.56</td>
+      <td>0.000065</td>
+      <td>0.000006</td>
+      <td>0.0009</td>
+      <td>0.000571</td>
+      <td>0.0</td>
+      <td>1643</td>
+      <td>12</td>
+      <td>18</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -661,15 +630,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>7th</th>
       <td>2021-04-22</td>
       <td>2021-05-06</td>
-      <td>1.42</td>
-      <td>0.002259</td>
-      <td>0.000007</td>
-      <td>0.00091</td>
-      <td>0.000632</td>
-      <td>0.002</td>
-      <td>1418</td>
-      <td>11</td>
-      <td>16</td>
+      <td>1.45</td>
+      <td>0.001215</td>
+      <td>0.000008</td>
+      <td>0.000857</td>
+      <td>0.000584</td>
+      <td>0.001</td>
+      <td>1350</td>
+      <td>12</td>
+      <td>18</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -678,14 +647,14 @@ Completed optimization. Total: 2 min 34 sec
       <td>2021-05-07</td>
       <td>2021-05-24</td>
       <td>1.15</td>
-      <td>0.005005</td>
-      <td>0.000009</td>
-      <td>0.000798</td>
-      <td>0.00068</td>
-      <td>0.005</td>
-      <td>1205</td>
-      <td>13</td>
-      <td>15</td>
+      <td>0.000302</td>
+      <td>0.000012</td>
+      <td>0.000765</td>
+      <td>0.000653</td>
+      <td>0.0</td>
+      <td>848</td>
+      <td>14</td>
+      <td>16</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -693,15 +662,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>9th</th>
       <td>2021-05-25</td>
       <td>2021-07-01</td>
-      <td>0.58</td>
-      <td>0.021648</td>
-      <td>0.000013</td>
-      <td>0.000437</td>
-      <td>0.000728</td>
-      <td>0.022</td>
-      <td>772</td>
-      <td>24</td>
-      <td>14</td>
+      <td>0.56</td>
+      <td>0.009656</td>
+      <td>0.000018</td>
+      <td>0.000406</td>
+      <td>0.000698</td>
+      <td>0.01</td>
+      <td>580</td>
+      <td>26</td>
+      <td>15</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -709,15 +678,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>10th</th>
       <td>2021-07-02</td>
       <td>2021-07-27</td>
-      <td>1.33</td>
-      <td>0.00049</td>
-      <td>0.000003</td>
-      <td>0.00084</td>
-      <td>0.000626</td>
-      <td>0.0</td>
-      <td>3187</td>
+      <td>1.34</td>
+      <td>0.01191</td>
+      <td>0.000002</td>
+      <td>0.000875</td>
+      <td>0.000643</td>
+      <td>0.012</td>
+      <td>5302</td>
       <td>12</td>
-      <td>17</td>
+      <td>16</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -725,15 +694,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>11th</th>
       <td>2021-07-28</td>
       <td>2021-08-06</td>
-      <td>2.45</td>
-      <td>0.000756</td>
+      <td>2.48</td>
+      <td>0.000138</td>
       <td>0.000001</td>
-      <td>0.001499</td>
-      <td>0.000611</td>
-      <td>0.001</td>
-      <td>7806</td>
+      <td>0.001573</td>
+      <td>0.000632</td>
+      <td>0.0</td>
+      <td>9039</td>
       <td>7</td>
-      <td>17</td>
+      <td>16</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -742,12 +711,12 @@ Completed optimization. Total: 2 min 34 sec
       <td>2021-08-07</td>
       <td>2021-08-19</td>
       <td>1.47</td>
-      <td>0.001283</td>
-      <td>0.000002</td>
-      <td>0.001155</td>
-      <td>0.000782</td>
+      <td>0.000982</td>
+      <td>0.000001</td>
+      <td>0.001168</td>
+      <td>0.000791</td>
       <td>0.001</td>
-      <td>5427</td>
+      <td>13476</td>
       <td>9</td>
       <td>13</td>
       <td>SIR-F Model</td>
@@ -757,15 +726,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>13th</th>
       <td>2021-08-20</td>
       <td>2021-08-31</td>
-      <td>1.42</td>
-      <td>0.001328</td>
+      <td>1.3</td>
+      <td>0.000077</td>
       <td>0.000002</td>
-      <td>0.001018</td>
-      <td>0.000715</td>
-      <td>0.001</td>
-      <td>4526</td>
-      <td>10</td>
-      <td>15</td>
+      <td>0.001148</td>
+      <td>0.000883</td>
+      <td>0.0</td>
+      <td>5738</td>
+      <td>9</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -773,13 +742,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>14th</th>
       <td>2021-09-01</td>
       <td>2021-09-15</td>
-      <td>0.64</td>
-      <td>0.0002</td>
+      <td>0.66</td>
+      <td>0.000093</td>
       <td>0.000003</td>
-      <td>0.000677</td>
-      <td>0.001052</td>
+      <td>0.000711</td>
+      <td>0.001079</td>
       <td>0.0</td>
-      <td>3551</td>
+      <td>2985</td>
       <td>15</td>
       <td>10</td>
       <td>SIR-F Model</td>
@@ -789,15 +758,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>15th</th>
       <td>2021-09-16</td>
       <td>2022-01-10</td>
-      <td>0.56</td>
-      <td>0.007807</td>
-      <td>0.000006</td>
-      <td>0.000528</td>
-      <td>0.000931</td>
-      <td>0.008</td>
-      <td>1766</td>
-      <td>20</td>
-      <td>11</td>
+      <td>0.4</td>
+      <td>0.043372</td>
+      <td>0.000009</td>
+      <td>0.000295</td>
+      <td>0.000696</td>
+      <td>0.043</td>
+      <td>1147</td>
+      <td>35</td>
+      <td>15</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -805,15 +774,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>16th</th>
       <td>2022-01-11</td>
       <td>2022-01-17</td>
-      <td>6.69</td>
-      <td>0.001536</td>
-      <td>0.000001</td>
-      <td>0.002427</td>
-      <td>0.000361</td>
-      <td>0.002</td>
-      <td>10376</td>
+      <td>5.77</td>
+      <td>0.000752</td>
+      <td>0.0</td>
+      <td>0.002484</td>
+      <td>0.00043</td>
+      <td>0.001</td>
+      <td>36115</td>
       <td>4</td>
-      <td>29</td>
+      <td>24</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -821,15 +790,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>17th</th>
       <td>2022-01-18</td>
       <td>2022-01-26</td>
-      <td>3.32</td>
-      <td>0.000862</td>
+      <td>3.56</td>
+      <td>0.000343</td>
       <td>0.000001</td>
-      <td>0.002116</td>
-      <td>0.000636</td>
-      <td>0.001</td>
-      <td>19974</td>
+      <td>0.002062</td>
+      <td>0.000578</td>
+      <td>0.0</td>
+      <td>13335</td>
       <td>5</td>
-      <td>16</td>
+      <td>18</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -837,15 +806,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>18th</th>
       <td>2022-01-27</td>
       <td>2022-02-03</td>
-      <td>2.02</td>
-      <td>0.000651</td>
+      <td>1.84</td>
+      <td>0.000054</td>
       <td>0.000001</td>
-      <td>0.0017</td>
-      <td>0.000842</td>
-      <td>0.001</td>
-      <td>11051</td>
+      <td>0.001672</td>
+      <td>0.000906</td>
+      <td>0.0</td>
+      <td>9439</td>
       <td>6</td>
-      <td>12</td>
+      <td>11</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -853,13 +822,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>19th</th>
       <td>2022-02-04</td>
       <td>2022-02-11</td>
-      <td>1.31</td>
-      <td>0.000181</td>
+      <td>1.3</td>
+      <td>0.000065</td>
       <td>0.000001</td>
-      <td>0.001356</td>
-      <td>0.00103</td>
+      <td>0.001374</td>
+      <td>0.001054</td>
       <td>0.0</td>
-      <td>7462</td>
+      <td>7363</td>
       <td>8</td>
       <td>10</td>
       <td>SIR-F Model</td>
@@ -869,13 +838,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>20th</th>
       <td>2022-02-12</td>
       <td>2022-02-19</td>
-      <td>0.97</td>
-      <td>0.000221</td>
+      <td>0.96</td>
+      <td>0.000027</td>
       <td>0.000002</td>
-      <td>0.001151</td>
-      <td>0.001182</td>
+      <td>0.00117</td>
+      <td>0.001216</td>
       <td>0.0</td>
-      <td>4307</td>
+      <td>4575</td>
       <td>9</td>
       <td>9</td>
       <td>SIR-F Model</td>
@@ -885,15 +854,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>21st</th>
       <td>2022-02-20</td>
       <td>2022-03-02</td>
-      <td>0.88</td>
-      <td>0.000089</td>
+      <td>0.86</td>
+      <td>0.000434</td>
       <td>0.000003</td>
-      <td>0.001025</td>
-      <td>0.001167</td>
+      <td>0.000925</td>
+      <td>0.001067</td>
       <td>0.0</td>
-      <td>3762</td>
+      <td>3976</td>
+      <td>11</td>
       <td>10</td>
-      <td>9</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -901,14 +870,14 @@ Completed optimization. Total: 2 min 34 sec
       <th>22nd</th>
       <td>2022-03-03</td>
       <td>2022-03-14</td>
-      <td>0.89</td>
-      <td>0.001452</td>
-      <td>0.000002</td>
-      <td>0.001067</td>
-      <td>0.0012</td>
-      <td>0.001</td>
-      <td>4274</td>
-      <td>10</td>
+      <td>0.87</td>
+      <td>0.000347</td>
+      <td>0.000003</td>
+      <td>0.000969</td>
+      <td>0.001113</td>
+      <td>0.0</td>
+      <td>4093</td>
+      <td>11</td>
       <td>9</td>
       <td>SIR-F Model</td>
       <td>15</td>
@@ -917,13 +886,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>23rd</th>
       <td>2022-03-15</td>
       <td>2022-03-24</td>
-      <td>0.89</td>
-      <td>0.000018</td>
-      <td>0.000004</td>
-      <td>0.001363</td>
-      <td>0.001528</td>
-      <td>0.0</td>
-      <td>2963</td>
+      <td>0.88</td>
+      <td>0.001093</td>
+      <td>0.000001</td>
+      <td>0.001284</td>
+      <td>0.001463</td>
+      <td>0.001</td>
+      <td>6973</td>
       <td>8</td>
       <td>7</td>
       <td>SIR-F Model</td>
@@ -933,15 +902,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>24th</th>
       <td>2022-03-25</td>
       <td>2022-04-04</td>
-      <td>1.07</td>
-      <td>0.000324</td>
+      <td>1.06</td>
+      <td>0.000234</td>
       <td>0.000002</td>
-      <td>0.001195</td>
-      <td>0.001117</td>
+      <td>0.001385</td>
+      <td>0.0013</td>
       <td>0.0</td>
-      <td>4216</td>
-      <td>9</td>
-      <td>9</td>
+      <td>5807</td>
+      <td>8</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -950,12 +919,12 @@ Completed optimization. Total: 2 min 34 sec
       <td>2022-04-05</td>
       <td>2022-04-14</td>
       <td>1.18</td>
-      <td>0.000488</td>
+      <td>0.000111</td>
       <td>0.000001</td>
-      <td>0.001282</td>
-      <td>0.001086</td>
+      <td>0.001271</td>
+      <td>0.001075</td>
       <td>0.0</td>
-      <td>10061</td>
+      <td>8077</td>
       <td>8</td>
       <td>10</td>
       <td>SIR-F Model</td>
@@ -965,14 +934,14 @@ Completed optimization. Total: 2 min 34 sec
       <th>26th</th>
       <td>2022-04-15</td>
       <td>2022-04-22</td>
-      <td>0.73</td>
-      <td>0.000722</td>
+      <td>0.94</td>
+      <td>0.000002</td>
       <td>0.000001</td>
-      <td>0.000932</td>
-      <td>0.001278</td>
-      <td>0.001</td>
-      <td>11553</td>
-      <td>11</td>
+      <td>0.001201</td>
+      <td>0.001274</td>
+      <td>0.0</td>
+      <td>10169</td>
+      <td>9</td>
       <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
@@ -981,15 +950,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>27th</th>
       <td>2022-04-23</td>
       <td>2022-05-01</td>
-      <td>0.84</td>
-      <td>0.000135</td>
-      <td>0.000001</td>
-      <td>0.000965</td>
-      <td>0.001154</td>
+      <td>0.89</td>
+      <td>0.000066</td>
+      <td>0.000002</td>
+      <td>0.001097</td>
+      <td>0.001228</td>
       <td>0.0</td>
-      <td>12226</td>
-      <td>11</td>
+      <td>6393</td>
       <td>9</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -997,15 +966,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>28th</th>
       <td>2022-05-02</td>
       <td>2022-05-11</td>
-      <td>0.82</td>
-      <td>0.001107</td>
+      <td>0.8</td>
+      <td>0.000604</td>
       <td>0.000001</td>
-      <td>0.001172</td>
-      <td>0.001419</td>
+      <td>0.000995</td>
+      <td>0.001234</td>
       <td>0.001</td>
-      <td>7637</td>
-      <td>9</td>
-      <td>7</td>
+      <td>11287</td>
+      <td>10</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1013,15 +982,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>29th</th>
       <td>2022-05-12</td>
       <td>2022-05-20</td>
-      <td>1.25</td>
-      <td>0.000021</td>
+      <td>1.24</td>
+      <td>0.000441</td>
       <td>0.000001</td>
-      <td>0.001195</td>
-      <td>0.000952</td>
+      <td>0.001317</td>
+      <td>0.001064</td>
       <td>0.0</td>
-      <td>7399</td>
-      <td>9</td>
-      <td>11</td>
+      <td>7434</td>
+      <td>8</td>
+      <td>10</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1029,15 +998,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>30th</th>
       <td>2022-05-21</td>
       <td>2022-05-29</td>
-      <td>0.94</td>
-      <td>0.003457</td>
-      <td>0.000001</td>
-      <td>0.001127</td>
-      <td>0.001193</td>
-      <td>0.003</td>
-      <td>8462</td>
-      <td>9</td>
-      <td>9</td>
+      <td>0.93</td>
+      <td>0.0001</td>
+      <td>0.000002</td>
+      <td>0.001246</td>
+      <td>0.001342</td>
+      <td>0.0</td>
+      <td>6452</td>
+      <td>8</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1045,14 +1014,14 @@ Completed optimization. Total: 2 min 34 sec
       <th>31st</th>
       <td>2022-05-30</td>
       <td>2022-06-11</td>
-      <td>0.75</td>
-      <td>0.000427</td>
-      <td>0.000001</td>
-      <td>0.001093</td>
-      <td>0.001453</td>
+      <td>0.69</td>
+      <td>0.000361</td>
+      <td>0.000002</td>
+      <td>0.000982</td>
+      <td>0.001426</td>
       <td>0.0</td>
-      <td>8620</td>
-      <td>10</td>
+      <td>6822</td>
+      <td>11</td>
       <td>7</td>
       <td>SIR-F Model</td>
       <td>15</td>
@@ -1061,15 +1030,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>32nd</th>
       <td>2022-06-12</td>
       <td>2022-06-20</td>
-      <td>0.87</td>
-      <td>0.002059</td>
-      <td>0.000002</td>
-      <td>0.001218</td>
-      <td>0.00139</td>
-      <td>0.002</td>
-      <td>6428</td>
+      <td>0.88</td>
+      <td>0.001239</td>
+      <td>0.000001</td>
+      <td>0.001159</td>
+      <td>0.001313</td>
+      <td>0.001</td>
+      <td>11046</td>
       <td>9</td>
-      <td>7</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1077,15 +1046,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>33rd</th>
       <td>2022-06-21</td>
       <td>2022-06-27</td>
-      <td>1.15</td>
-      <td>0.000968</td>
+      <td>1.18</td>
+      <td>0.002064</td>
       <td>0.000001</td>
-      <td>0.001536</td>
-      <td>0.00133</td>
-      <td>0.001</td>
-      <td>11793</td>
+      <td>0.001394</td>
+      <td>0.001179</td>
+      <td>0.002</td>
+      <td>9770</td>
       <td>7</td>
-      <td>8</td>
+      <td>9</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1093,15 +1062,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>34th</th>
       <td>2022-06-28</td>
       <td>2022-07-07</td>
-      <td>1.59</td>
-      <td>0.000262</td>
-      <td>0.000001</td>
-      <td>0.00176</td>
-      <td>0.001107</td>
+      <td>1.67</td>
+      <td>0.000014</td>
+      <td>0.000002</td>
+      <td>0.001566</td>
+      <td>0.000933</td>
       <td>0.0</td>
-      <td>7781</td>
-      <td>6</td>
-      <td>9</td>
+      <td>5017</td>
+      <td>7</td>
+      <td>11</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1109,13 +1078,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>35th</th>
       <td>2022-07-08</td>
       <td>2022-07-16</td>
-      <td>2.57</td>
-      <td>0.000048</td>
+      <td>2.55</td>
+      <td>0.000127</td>
+      <td>0.000001</td>
+      <td>0.001916</td>
+      <td>0.000751</td>
       <td>0.0</td>
-      <td>0.001905</td>
-      <td>0.00074</td>
-      <td>0.0</td>
-      <td>21699</td>
+      <td>16801</td>
       <td>5</td>
       <td>14</td>
       <td>SIR-F Model</td>
@@ -1125,15 +1094,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>36th</th>
       <td>2022-07-17</td>
       <td>2022-07-23</td>
-      <td>2.02</td>
-      <td>0.00007</td>
+      <td>1.87</td>
+      <td>0.000344</td>
       <td>0.0</td>
-      <td>0.001728</td>
-      <td>0.000855</td>
+      <td>0.001917</td>
+      <td>0.001023</td>
       <td>0.0</td>
-      <td>22233</td>
-      <td>6</td>
-      <td>12</td>
+      <td>27943</td>
+      <td>5</td>
+      <td>10</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1142,13 +1111,13 @@ Completed optimization. Total: 2 min 34 sec
       <td>2022-07-24</td>
       <td>2022-08-04</td>
       <td>1.74</td>
-      <td>0.000066</td>
-      <td>0.000001</td>
-      <td>0.001597</td>
-      <td>0.000918</td>
+      <td>0.000027</td>
       <td>0.0</td>
-      <td>15857</td>
-      <td>7</td>
+      <td>0.001633</td>
+      <td>0.000936</td>
+      <td>0.0</td>
+      <td>21249</td>
+      <td>6</td>
       <td>11</td>
       <td>SIR-F Model</td>
       <td>15</td>
@@ -1157,13 +1126,13 @@ Completed optimization. Total: 2 min 34 sec
       <th>38th</th>
       <td>2022-08-05</td>
       <td>2022-08-11</td>
-      <td>1.26</td>
-      <td>0.000041</td>
+      <td>1.19</td>
+      <td>0.000064</td>
       <td>0.000001</td>
-      <td>0.001461</td>
-      <td>0.001162</td>
+      <td>0.001438</td>
+      <td>0.001207</td>
       <td>0.0</td>
-      <td>7438</td>
+      <td>10677</td>
       <td>7</td>
       <td>9</td>
       <td>SIR-F Model</td>
@@ -1173,15 +1142,15 @@ Completed optimization. Total: 2 min 34 sec
       <th>39th</th>
       <td>2022-08-12</td>
       <td>2022-08-18</td>
-      <td>0.98</td>
-      <td>0.000044</td>
+      <td>0.97</td>
+      <td>0.000012</td>
       <td>0.000001</td>
-      <td>0.001171</td>
-      <td>0.001197</td>
+      <td>0.001219</td>
+      <td>0.001249</td>
       <td>0.0</td>
-      <td>9095</td>
+      <td>8338</td>
       <td>9</td>
-      <td>9</td>
+      <td>8</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1189,31 +1158,31 @@ Completed optimization. Total: 2 min 34 sec
       <th>40th</th>
       <td>2022-08-19</td>
       <td>2022-08-27</td>
-      <td>1.23</td>
-      <td>0.000388</td>
-      <td>0.000002</td>
-      <td>0.001276</td>
-      <td>0.001039</td>
+      <td>1.24</td>
+      <td>0.000034</td>
+      <td>0.000001</td>
+      <td>0.001611</td>
+      <td>0.001293</td>
       <td>0.0</td>
-      <td>5764</td>
+      <td>7073</td>
+      <td>6</td>
       <td>8</td>
-      <td>10</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>41st</th>
       <td>2022-08-28</td>
-      <td>2022-09-11</td>
-      <td>0.74</td>
-      <td>0.001439</td>
-      <td>0.000001</td>
-      <td>0.000637</td>
-      <td>0.000857</td>
-      <td>0.001</td>
-      <td>13712</td>
+      <td>2022-09-14</td>
+      <td>0.62</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000418</td>
+      <td>0.000669</td>
+      <td>0.0</td>
+      <td>5538</td>
+      <td>25</td>
       <td>16</td>
-      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1237,7 +1206,7 @@ Completed optimization. Total: 2 min 34 sec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Timestamp(&#39;2022-09-12 00:00:00&#39;)
+Timestamp(&#39;2022-09-15 00:00:00&#39;)
 </pre></div></div>
 </div>
 <div class="section" id="1.-Time-series-prediction-withOUT-indicators">
@@ -1266,7 +1235,7 @@ Timestamp(&#39;2022-09-12 00:00:00&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on inverse&#39;) in model 57: LastValueNaive
+Template Eval Error: Exception(&#39;Transformer PowerTransformer failed on fit&#39;) in model 10: SeasonalNaive
 </pre></div></div>
 </div>
 <p>Check the predicted ODE parameter values.</p>
@@ -1337,115 +1306,163 @@ Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on inv
   </thead>
   <tbody>
     <tr>
-      <th rowspan="7" valign="top">Predicted</th>
+      <th rowspan="10" valign="top">Predicted</th>
       <th>42nd</th>
-      <td>2022-09-12</td>
-      <td>2022-09-18</td>
-      <td>0.57</td>
-      <td>0.000278</td>
-      <td>0.000001</td>
-      <td>0.000637</td>
-      <td>0.001111</td>
+      <td>2022-09-15</td>
+      <td>2022-09-17</td>
+      <td>0.46</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000401</td>
+      <td>0.00087</td>
       <td>0.0</td>
-      <td>13624</td>
-      <td>16</td>
-      <td>9</td>
+      <td>5533</td>
+      <td>26</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>43rd</th>
-      <td>2022-09-19</td>
-      <td>2022-09-22</td>
-      <td>0.58</td>
-      <td>0.000278</td>
-      <td>0.000001</td>
-      <td>0.000637</td>
-      <td>0.001095</td>
+      <td>2022-09-18</td>
+      <td>2022-09-20</td>
+      <td>0.44</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000384</td>
+      <td>0.00087</td>
       <td>0.0</td>
-      <td>13574</td>
-      <td>16</td>
-      <td>10</td>
+      <td>5528</td>
+      <td>27</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>44th</th>
+      <td>2022-09-21</td>
       <td>2022-09-23</td>
-      <td>2022-09-25</td>
-      <td>0.58</td>
-      <td>0.000278</td>
-      <td>0.000001</td>
-      <td>0.000637</td>
-      <td>0.001093</td>
+      <td>0.42</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000367</td>
+      <td>0.00087</td>
       <td>0.0</td>
-      <td>13537</td>
-      <td>16</td>
-      <td>10</td>
+      <td>5524</td>
+      <td>28</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>45th</th>
+      <td>2022-09-24</td>
       <td>2022-09-26</td>
-      <td>2022-09-28</td>
-      <td>0.59</td>
-      <td>0.000279</td>
-      <td>0.000001</td>
-      <td>0.000638</td>
-      <td>0.001076</td>
+      <td>0.4</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000349</td>
+      <td>0.000871</td>
       <td>0.0</td>
-      <td>13500</td>
-      <td>16</td>
-      <td>10</td>
+      <td>5519</td>
+      <td>30</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>46th</th>
+      <td>2022-09-27</td>
       <td>2022-09-29</td>
-      <td>2022-10-01</td>
-      <td>0.6</td>
-      <td>0.000279</td>
-      <td>0.000001</td>
-      <td>0.000638</td>
-      <td>0.001056</td>
+      <td>0.38</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000332</td>
+      <td>0.000871</td>
       <td>0.0</td>
-      <td>13463</td>
-      <td>16</td>
-      <td>10</td>
+      <td>5514</td>
+      <td>31</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>47th</th>
+      <td>2022-09-30</td>
       <td>2022-10-02</td>
-      <td>2022-10-05</td>
-      <td>0.64</td>
-      <td>0.000279</td>
-      <td>0.000001</td>
-      <td>0.000638</td>
-      <td>0.000989</td>
+      <td>0.36</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000315</td>
+      <td>0.000871</td>
       <td>0.0</td>
-      <td>13414</td>
-      <td>16</td>
-      <td>11</td>
+      <td>5509</td>
+      <td>33</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
     <tr>
       <th>48th</th>
-      <td>2022-10-06</td>
-      <td>2022-10-10</td>
-      <td>0.66</td>
-      <td>0.00028</td>
-      <td>0.000001</td>
-      <td>0.000638</td>
-      <td>0.000962</td>
+      <td>2022-10-03</td>
+      <td>2022-10-05</td>
+      <td>0.34</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000298</td>
+      <td>0.000871</td>
       <td>0.0</td>
-      <td>13353</td>
-      <td>16</td>
-      <td>11</td>
+      <td>5504</td>
+      <td>35</td>
+      <td>12</td>
+      <td>SIR-F Model</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>49th</th>
+      <td>2022-10-06</td>
+      <td>2022-10-08</td>
+      <td>0.32</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.00028</td>
+      <td>0.000871</td>
+      <td>0.0</td>
+      <td>5499</td>
+      <td>37</td>
+      <td>12</td>
+      <td>SIR-F Model</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>50th</th>
+      <td>2022-10-09</td>
+      <td>2022-10-11</td>
+      <td>0.3</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000263</td>
+      <td>0.000871</td>
+      <td>0.0</td>
+      <td>5494</td>
+      <td>40</td>
+      <td>12</td>
+      <td>SIR-F Model</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>51st</th>
+      <td>2022-10-12</td>
+      <td>2022-10-14</td>
+      <td>0.28</td>
+      <td>0.000136</td>
+      <td>0.000002</td>
+      <td>0.000246</td>
+      <td>0.000871</td>
+      <td>0.0</td>
+      <td>5489</td>
+      <td>42</td>
+      <td>12</td>
       <td>SIR-F Model</td>
       <td>15</td>
     </tr>
@@ -1485,14 +1502,6 @@ engineering</a>.</p>
 <span class="n">indicator_df</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -1710,78 +1719,6 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
       <td>...</td>
     </tr>
     <tr>
-      <th>2022-09-07</th>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>1</td>
-      <td>2</td>
-      <td>100</td>
-      <td>84</td>
-      <td>105</td>
-      <td>89</td>
-      <td>...</td>
-      <td>1</td>
-      <td>39.81</td>
-      <td>1</td>
-      <td>72977845</td>
-      <td>0</td>
-      <td>31085575</td>
-      <td>139750870</td>
-      <td>9308688813</td>
-      <td>9137852368</td>
-      <td>-1</td>
-    </tr>
-    <tr>
-      <th>2022-09-08</th>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>1</td>
-      <td>2</td>
-      <td>100</td>
-      <td>82</td>
-      <td>106</td>
-      <td>90</td>
-      <td>...</td>
-      <td>1</td>
-      <td>39.81</td>
-      <td>1</td>
-      <td>73252867</td>
-      <td>0</td>
-      <td>31085575</td>
-      <td>139752283</td>
-      <td>9390457600</td>
-      <td>9219619742</td>
-      <td>-1</td>
-    </tr>
-    <tr>
-      <th>2022-09-09</th>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>1</td>
-      <td>2</td>
-      <td>100</td>
-      <td>86</td>
-      <td>106</td>
-      <td>89</td>
-      <td>...</td>
-      <td>1</td>
-      <td>39.81</td>
-      <td>1</td>
-      <td>73440403</td>
-      <td>0</td>
-      <td>31085575</td>
-      <td>139752283</td>
-      <td>9472250571</td>
-      <td>9301412713</td>
-      <td>-1</td>
-    </tr>
-    <tr>
       <th>2022-09-10</th>
       <td>1</td>
       <td>1</td>
@@ -1799,10 +1736,10 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
       <td>1</td>
       <td>73440403</td>
       <td>0</td>
-      <td>102764631</td>
-      <td>104165147</td>
-      <td>319529631</td>
-      <td>112599853</td>
+      <td>102762067</td>
+      <td>104177652</td>
+      <td>320137749</td>
+      <td>113198030</td>
       <td>-1</td>
     </tr>
     <tr>
@@ -1823,15 +1760,87 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
       <td>1</td>
       <td>73440403</td>
       <td>0</td>
-      <td>102765927</td>
-      <td>104165569</td>
-      <td>319595787</td>
-      <td>112664291</td>
+      <td>102764053</td>
+      <td>104178379</td>
+      <td>320249667</td>
+      <td>113307235</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>2022-09-12</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>100</td>
+      <td>89</td>
+      <td>105</td>
+      <td>89</td>
+      <td>...</td>
+      <td>1</td>
+      <td>39.81</td>
+      <td>1</td>
+      <td>73440403</td>
+      <td>0</td>
+      <td>102766487</td>
+      <td>104179492</td>
+      <td>320441011</td>
+      <td>113495032</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>2022-09-13</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>100</td>
+      <td>89</td>
+      <td>105</td>
+      <td>89</td>
+      <td>...</td>
+      <td>1</td>
+      <td>39.81</td>
+      <td>1</td>
+      <td>73440403</td>
+      <td>0</td>
+      <td>102769012</td>
+      <td>104180642</td>
+      <td>320621674</td>
+      <td>113672020</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>2022-09-14</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>100</td>
+      <td>89</td>
+      <td>105</td>
+      <td>89</td>
+      <td>...</td>
+      <td>1</td>
+      <td>39.81</td>
+      <td>1</td>
+      <td>73440403</td>
+      <td>0</td>
+      <td>102770967</td>
+      <td>104181421</td>
+      <td>320752734</td>
+      <td>113800346</td>
       <td>-1</td>
     </tr>
   </tbody>
 </table>
-<p>964 rows × 23 columns</p>
+<p>967 rows × 23 columns</p>
 </div></div>
 </div>
 <div class="section" id="2.1-Principal-Component-Analysis">
@@ -1887,79 +1896,79 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
   </thead>
   <tbody>
     <tr>
-      <th>2022-09-07</th>
-      <td>-4.139460</td>
-      <td>4.235615</td>
-      <td>2.547287</td>
-      <td>1.206021</td>
-      <td>-2.230674</td>
-      <td>-0.891206</td>
-      <td>-0.174718</td>
-      <td>-0.122160</td>
-      <td>-0.639465</td>
-      <td>-0.254214</td>
-      <td>-0.238239</td>
-      <td>0.345469</td>
-    </tr>
-    <tr>
-      <th>2022-09-08</th>
-      <td>-4.173619</td>
-      <td>4.251975</td>
-      <td>2.562089</td>
-      <td>1.209866</td>
-      <td>-2.265579</td>
-      <td>-0.899160</td>
-      <td>-0.198167</td>
-      <td>-0.140464</td>
-      <td>-0.671400</td>
-      <td>-0.272793</td>
-      <td>-0.259748</td>
-      <td>0.363274</td>
-    </tr>
-    <tr>
-      <th>2022-09-09</th>
-      <td>-4.207248</td>
-      <td>4.238297</td>
-      <td>2.606205</td>
-      <td>1.244900</td>
-      <td>-2.267973</td>
-      <td>-0.923936</td>
-      <td>-0.179952</td>
-      <td>-0.062847</td>
-      <td>-0.646166</td>
-      <td>-0.238040</td>
-      <td>-0.251515</td>
-      <td>0.353003</td>
-    </tr>
-    <tr>
       <th>2022-09-10</th>
-      <td>-3.983504</td>
-      <td>2.633833</td>
-      <td>0.554870</td>
-      <td>-0.299422</td>
-      <td>0.966221</td>
-      <td>0.808727</td>
-      <td>-0.573389</td>
-      <td>-0.097644</td>
-      <td>1.567411</td>
-      <td>0.179183</td>
-      <td>0.774446</td>
-      <td>-0.272846</td>
+      <td>-3.811981</td>
+      <td>2.568487</td>
+      <td>0.575707</td>
+      <td>-0.255235</td>
+      <td>0.940836</td>
+      <td>0.811505</td>
+      <td>-0.551701</td>
+      <td>-0.167678</td>
+      <td>1.740649</td>
+      <td>0.177668</td>
+      <td>0.983459</td>
+      <td>-0.455446</td>
     </tr>
     <tr>
       <th>2022-09-11</th>
-      <td>-4.019822</td>
-      <td>2.594260</td>
-      <td>0.601752</td>
-      <td>-0.292990</td>
-      <td>0.976746</td>
-      <td>0.823606</td>
-      <td>-0.508408</td>
-      <td>-0.272754</td>
-      <td>1.615104</td>
-      <td>0.164968</td>
-      <td>0.769099</td>
-      <td>-0.328893</td>
+      <td>-3.849067</td>
+      <td>2.529727</td>
+      <td>0.622715</td>
+      <td>-0.248597</td>
+      <td>0.951500</td>
+      <td>0.827504</td>
+      <td>-0.489479</td>
+      <td>-0.344349</td>
+      <td>1.786054</td>
+      <td>0.163145</td>
+      <td>0.976621</td>
+      <td>-0.509906</td>
+    </tr>
+    <tr>
+      <th>2022-09-12</th>
+      <td>-3.586281</td>
+      <td>2.835875</td>
+      <td>0.415794</td>
+      <td>-0.301510</td>
+      <td>0.891759</td>
+      <td>0.839802</td>
+      <td>-0.604451</td>
+      <td>-0.539489</td>
+      <td>1.503172</td>
+      <td>0.005013</td>
+      <td>0.981896</td>
+      <td>-0.483531</td>
+    </tr>
+    <tr>
+      <th>2022-09-13</th>
+      <td>-3.586368</td>
+      <td>2.835964</td>
+      <td>0.415829</td>
+      <td>-0.301500</td>
+      <td>0.891737</td>
+      <td>0.839805</td>
+      <td>-0.604491</td>
+      <td>-0.539479</td>
+      <td>1.503174</td>
+      <td>0.005005</td>
+      <td>0.981906</td>
+      <td>-0.483520</td>
+    </tr>
+    <tr>
+      <th>2022-09-14</th>
+      <td>-3.586433</td>
+      <td>2.836029</td>
+      <td>0.415853</td>
+      <td>-0.301493</td>
+      <td>0.891722</td>
+      <td>0.839808</td>
+      <td>-0.604521</td>
+      <td>-0.539471</td>
+      <td>1.503176</td>
+      <td>0.005000</td>
+      <td>0.981914</td>
+      <td>-0.483512</td>
     </tr>
   </tbody>
 </table>
@@ -2008,188 +2017,188 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 </div>
 <div class="output_area rendered_html docutils container">
 <style type="text/css">
-#T_053c8_row0_col0, #T_053c8_row0_col1, #T_053c8_row0_col2, #T_053c8_row0_col3, #T_053c8_row4_col0, #T_053c8_row4_col1, #T_053c8_row4_col2, #T_053c8_row4_col3, #T_053c8_row6_col0, #T_053c8_row6_col1, #T_053c8_row6_col2, #T_053c8_row6_col3, #T_053c8_row8_col0, #T_053c8_row8_col1, #T_053c8_row8_col2, #T_053c8_row8_col3, #T_053c8_row9_col0, #T_053c8_row9_col1, #T_053c8_row9_col2, #T_053c8_row9_col3, #T_053c8_row12_col0, #T_053c8_row12_col1, #T_053c8_row12_col2, #T_053c8_row12_col3, #T_053c8_row13_col0, #T_053c8_row13_col1, #T_053c8_row13_col2, #T_053c8_row13_col3, #T_053c8_row14_col0, #T_053c8_row14_col1, #T_053c8_row14_col2, #T_053c8_row14_col3, #T_053c8_row17_col0, #T_053c8_row17_col1, #T_053c8_row17_col2, #T_053c8_row17_col3, #T_053c8_row19_col0, #T_053c8_row19_col1, #T_053c8_row19_col2, #T_053c8_row19_col3, #T_053c8_row20_col0, #T_053c8_row20_col1, #T_053c8_row20_col2, #T_053c8_row20_col3, #T_053c8_row23_col0, #T_053c8_row23_col1, #T_053c8_row23_col2, #T_053c8_row23_col3 {
+#T_f6c15_row0_col0, #T_f6c15_row0_col1, #T_f6c15_row0_col2, #T_f6c15_row0_col3, #T_f6c15_row4_col0, #T_f6c15_row4_col1, #T_f6c15_row4_col2, #T_f6c15_row4_col3, #T_f6c15_row6_col0, #T_f6c15_row6_col1, #T_f6c15_row6_col2, #T_f6c15_row6_col3, #T_f6c15_row8_col0, #T_f6c15_row8_col1, #T_f6c15_row8_col2, #T_f6c15_row8_col3, #T_f6c15_row9_col0, #T_f6c15_row9_col1, #T_f6c15_row9_col2, #T_f6c15_row9_col3, #T_f6c15_row12_col0, #T_f6c15_row12_col1, #T_f6c15_row12_col2, #T_f6c15_row12_col3, #T_f6c15_row13_col0, #T_f6c15_row13_col1, #T_f6c15_row13_col2, #T_f6c15_row13_col3, #T_f6c15_row14_col0, #T_f6c15_row14_col1, #T_f6c15_row14_col2, #T_f6c15_row14_col3, #T_f6c15_row17_col0, #T_f6c15_row17_col1, #T_f6c15_row17_col2, #T_f6c15_row17_col3, #T_f6c15_row19_col0, #T_f6c15_row19_col1, #T_f6c15_row19_col2, #T_f6c15_row19_col3, #T_f6c15_row20_col0, #T_f6c15_row20_col1, #T_f6c15_row20_col2, #T_f6c15_row20_col3, #T_f6c15_row23_col0, #T_f6c15_row23_col1, #T_f6c15_row23_col2, #T_f6c15_row23_col3 {
   background-color: yellow;
 }
 </style>
-<table id="T_053c8">
+<table id="T_f6c15">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_053c8_level0_col0" class="col_heading level0 col0" >PC</th>
-      <th id="T_053c8_level0_col1" class="col_heading level0 col1" >feature</th>
-      <th id="T_053c8_level0_col2" class="col_heading level0 col2" >loading</th>
-      <th id="T_053c8_level0_col3" class="col_heading level0 col3" >type</th>
+      <th id="T_f6c15_level0_col0" class="col_heading level0 col0" >PC</th>
+      <th id="T_f6c15_level0_col1" class="col_heading level0 col1" >feature</th>
+      <th id="T_f6c15_level0_col2" class="col_heading level0 col2" >loading</th>
+      <th id="T_f6c15_level0_col3" class="col_heading level0 col3" >type</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_053c8_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_053c8_row0_col0" class="data row0 col0" >1</td>
-      <td id="T_053c8_row0_col1" class="data row0 col1" >Tests</td>
-      <td id="T_053c8_row0_col2" class="data row0 col2" >-0.304305</td>
-      <td id="T_053c8_row0_col3" class="data row0 col3" >best</td>
+      <th id="T_f6c15_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_f6c15_row0_col0" class="data row0 col0" >1</td>
+      <td id="T_f6c15_row0_col1" class="data row0 col1" >Tests</td>
+      <td id="T_f6c15_row0_col2" class="data row0 col2" >-0.302803</td>
+      <td id="T_f6c15_row0_col3" class="data row0 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_053c8_row1_col0" class="data row1 col0" >1</td>
-      <td id="T_053c8_row1_col1" class="data row1 col1" >Mobility_retail_and_recreation</td>
-      <td id="T_053c8_row1_col2" class="data row1 col2" >-0.263863</td>
-      <td id="T_053c8_row1_col3" class="data row1 col3" >weak</td>
+      <th id="T_f6c15_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_f6c15_row1_col0" class="data row1 col0" >1</td>
+      <td id="T_f6c15_row1_col1" class="data row1 col1" >Mobility_retail_and_recreation</td>
+      <td id="T_f6c15_row1_col2" class="data row1 col2" >-0.266861</td>
+      <td id="T_f6c15_row1_col3" class="data row1 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_053c8_row2_col0" class="data row2 col0" >1</td>
-      <td id="T_053c8_row2_col1" class="data row2 col1" >Vaccinated_full</td>
-      <td id="T_053c8_row2_col2" class="data row2 col2" >-0.290653</td>
-      <td id="T_053c8_row2_col3" class="data row2 col3" >weak</td>
+      <th id="T_f6c15_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_f6c15_row2_col0" class="data row2 col0" >1</td>
+      <td id="T_f6c15_row2_col1" class="data row2 col1" >Vaccinated_full</td>
+      <td id="T_f6c15_row2_col2" class="data row2 col2" >-0.280841</td>
+      <td id="T_f6c15_row2_col3" class="data row2 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_053c8_row3_col0" class="data row3 col0" >1</td>
-      <td id="T_053c8_row3_col1" class="data row3 col1" >Vaccinated_once</td>
-      <td id="T_053c8_row3_col2" class="data row3 col2" >-0.296222</td>
-      <td id="T_053c8_row3_col3" class="data row3 col3" >weak</td>
+      <th id="T_f6c15_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_f6c15_row3_col0" class="data row3 col0" >1</td>
+      <td id="T_f6c15_row3_col1" class="data row3 col1" >Vaccinated_once</td>
+      <td id="T_f6c15_row3_col2" class="data row3 col2" >-0.294441</td>
+      <td id="T_f6c15_row3_col3" class="data row3 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_053c8_row4_col0" class="data row4 col0" >2</td>
-      <td id="T_053c8_row4_col1" class="data row4 col1" >Mobility_residential</td>
-      <td id="T_053c8_row4_col2" class="data row4 col2" >-0.308863</td>
-      <td id="T_053c8_row4_col3" class="data row4 col3" >best</td>
+      <th id="T_f6c15_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_f6c15_row4_col0" class="data row4 col0" >2</td>
+      <td id="T_f6c15_row4_col1" class="data row4 col1" >Mobility_residential</td>
+      <td id="T_f6c15_row4_col2" class="data row4 col2" >-0.306567</td>
+      <td id="T_f6c15_row4_col3" class="data row4 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_053c8_row5_col0" class="data row5 col0" >2</td>
-      <td id="T_053c8_row5_col1" class="data row5 col1" >Mobility_grocery_and_pharmacy</td>
-      <td id="T_053c8_row5_col2" class="data row5 col2" >-0.301441</td>
-      <td id="T_053c8_row5_col3" class="data row5 col3" >weak</td>
+      <th id="T_f6c15_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_f6c15_row5_col0" class="data row5 col0" >2</td>
+      <td id="T_f6c15_row5_col1" class="data row5 col1" >Mobility_grocery_and_pharmacy</td>
+      <td id="T_f6c15_row5_col2" class="data row5 col2" >-0.298849</td>
+      <td id="T_f6c15_row5_col3" class="data row5 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_053c8_row6_col0" class="data row6 col0" >3</td>
-      <td id="T_053c8_row6_col1" class="data row6 col1" >International_movement_restrictions</td>
-      <td id="T_053c8_row6_col2" class="data row6 col2" >-0.439855</td>
-      <td id="T_053c8_row6_col3" class="data row6 col3" >best</td>
+      <th id="T_f6c15_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_f6c15_row6_col0" class="data row6 col0" >3</td>
+      <td id="T_f6c15_row6_col1" class="data row6 col1" >International_movement_restrictions</td>
+      <td id="T_f6c15_row6_col2" class="data row6 col2" >-0.437118</td>
+      <td id="T_f6c15_row6_col3" class="data row6 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_053c8_row7_col0" class="data row7 col0" >3</td>
-      <td id="T_053c8_row7_col1" class="data row7 col1" >Stringency_index</td>
-      <td id="T_053c8_row7_col2" class="data row7 col2" >-0.409314</td>
-      <td id="T_053c8_row7_col3" class="data row7 col3" >weak</td>
+      <th id="T_f6c15_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_f6c15_row7_col0" class="data row7 col0" >3</td>
+      <td id="T_f6c15_row7_col1" class="data row7 col1" >Stringency_index</td>
+      <td id="T_f6c15_row7_col2" class="data row7 col2" >-0.411098</td>
+      <td id="T_f6c15_row7_col3" class="data row7 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_053c8_row8_col0" class="data row8 col0" >4</td>
-      <td id="T_053c8_row8_col1" class="data row8 col1" >School_closing</td>
-      <td id="T_053c8_row8_col2" class="data row8 col2" >-0.545600</td>
-      <td id="T_053c8_row8_col3" class="data row8 col3" >best</td>
+      <th id="T_f6c15_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_f6c15_row8_col0" class="data row8 col0" >4</td>
+      <td id="T_f6c15_row8_col1" class="data row8 col1" >School_closing</td>
+      <td id="T_f6c15_row8_col2" class="data row8 col2" >-0.551369</td>
+      <td id="T_f6c15_row8_col3" class="data row8 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_053c8_row9_col0" class="data row9 col0" >5</td>
-      <td id="T_053c8_row9_col1" class="data row9 col1" >Workplace_closing</td>
-      <td id="T_053c8_row9_col2" class="data row9 col2" >0.626769</td>
-      <td id="T_053c8_row9_col3" class="data row9 col3" >best</td>
+      <th id="T_f6c15_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_f6c15_row9_col0" class="data row9 col0" >5</td>
+      <td id="T_f6c15_row9_col1" class="data row9 col1" >Workplace_closing</td>
+      <td id="T_f6c15_row9_col2" class="data row9 col2" >0.629292</td>
+      <td id="T_f6c15_row9_col3" class="data row9 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row10" class="row_heading level0 row10" >10</th>
-      <td id="T_053c8_row10_col0" class="data row10 col0" >5</td>
-      <td id="T_053c8_row10_col1" class="data row10 col1" >Vaccinations</td>
-      <td id="T_053c8_row10_col2" class="data row10 col2" >-0.281057</td>
-      <td id="T_053c8_row10_col3" class="data row10 col3" >weak</td>
+      <th id="T_f6c15_level0_row10" class="row_heading level0 row10" >10</th>
+      <td id="T_f6c15_row10_col0" class="data row10 col0" >5</td>
+      <td id="T_f6c15_row10_col1" class="data row10 col1" >Vaccinations</td>
+      <td id="T_f6c15_row10_col2" class="data row10 col2" >-0.286710</td>
+      <td id="T_f6c15_row10_col3" class="data row10 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row11" class="row_heading level0 row11" >11</th>
-      <td id="T_053c8_row11_col0" class="data row11 col0" >5</td>
-      <td id="T_053c8_row11_col1" class="data row11 col1" >Vaccinations_boosters</td>
-      <td id="T_053c8_row11_col2" class="data row11 col2" >-0.292041</td>
-      <td id="T_053c8_row11_col3" class="data row11 col3" >weak</td>
+      <th id="T_f6c15_level0_row11" class="row_heading level0 row11" >11</th>
+      <td id="T_f6c15_row11_col0" class="data row11 col0" >5</td>
+      <td id="T_f6c15_row11_col1" class="data row11 col1" >Vaccinations_boosters</td>
+      <td id="T_f6c15_row11_col2" class="data row11 col2" >-0.297900</td>
+      <td id="T_f6c15_row11_col3" class="data row11 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row12" class="row_heading level0 row12" >12</th>
-      <td id="T_053c8_row12_col0" class="data row12 col0" >6</td>
-      <td id="T_053c8_row12_col1" class="data row12 col1" >Cancel_events</td>
-      <td id="T_053c8_row12_col2" class="data row12 col2" >-0.556785</td>
-      <td id="T_053c8_row12_col3" class="data row12 col3" >best</td>
+      <th id="T_f6c15_level0_row12" class="row_heading level0 row12" >12</th>
+      <td id="T_f6c15_row12_col0" class="data row12 col0" >6</td>
+      <td id="T_f6c15_row12_col1" class="data row12 col1" >Cancel_events</td>
+      <td id="T_f6c15_row12_col2" class="data row12 col2" >-0.552464</td>
+      <td id="T_f6c15_row12_col3" class="data row12 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row13" class="row_heading level0 row13" >13</th>
-      <td id="T_053c8_row13_col0" class="data row13 col0" >7</td>
-      <td id="T_053c8_row13_col1" class="data row13 col1" >Transport_closing</td>
-      <td id="T_053c8_row13_col2" class="data row13 col2" >-0.466147</td>
-      <td id="T_053c8_row13_col3" class="data row13 col3" >best</td>
+      <th id="T_f6c15_level0_row13" class="row_heading level0 row13" >13</th>
+      <td id="T_f6c15_row13_col0" class="data row13 col0" >7</td>
+      <td id="T_f6c15_row13_col1" class="data row13 col1" >Transport_closing</td>
+      <td id="T_f6c15_row13_col2" class="data row13 col2" >-0.467026</td>
+      <td id="T_f6c15_row13_col3" class="data row13 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row14" class="row_heading level0 row14" >14</th>
-      <td id="T_053c8_row14_col0" class="data row14 col0" >8</td>
-      <td id="T_053c8_row14_col1" class="data row14 col1" >Mobility_workplaces</td>
-      <td id="T_053c8_row14_col2" class="data row14 col2" >-0.718949</td>
-      <td id="T_053c8_row14_col3" class="data row14 col3" >best</td>
+      <th id="T_f6c15_level0_row14" class="row_heading level0 row14" >14</th>
+      <td id="T_f6c15_row14_col0" class="data row14 col0" >8</td>
+      <td id="T_f6c15_row14_col1" class="data row14 col1" >Mobility_workplaces</td>
+      <td id="T_f6c15_row14_col2" class="data row14 col2" >-0.720375</td>
+      <td id="T_f6c15_row14_col3" class="data row14 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row15" class="row_heading level0 row15" >15</th>
-      <td id="T_053c8_row15_col0" class="data row15 col0" >8</td>
-      <td id="T_053c8_row15_col1" class="data row15 col1" >Mobility_parks</td>
-      <td id="T_053c8_row15_col2" class="data row15 col2" >0.452371</td>
-      <td id="T_053c8_row15_col3" class="data row15 col3" >weak</td>
+      <th id="T_f6c15_level0_row15" class="row_heading level0 row15" >15</th>
+      <td id="T_f6c15_row15_col0" class="data row15 col0" >8</td>
+      <td id="T_f6c15_row15_col1" class="data row15 col1" >Mobility_parks</td>
+      <td id="T_f6c15_row15_col2" class="data row15 col2" >0.447015</td>
+      <td id="T_f6c15_row15_col3" class="data row15 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row16" class="row_heading level0 row16" >16</th>
-      <td id="T_053c8_row16_col0" class="data row16 col0" >8</td>
-      <td id="T_053c8_row16_col1" class="data row16 col1" >Mobility_transit_stations</td>
-      <td id="T_053c8_row16_col2" class="data row16 col2" >-0.303105</td>
-      <td id="T_053c8_row16_col3" class="data row16 col3" >weak</td>
+      <th id="T_f6c15_level0_row16" class="row_heading level0 row16" >16</th>
+      <td id="T_f6c15_row16_col0" class="data row16 col0" >8</td>
+      <td id="T_f6c15_row16_col1" class="data row16 col1" >Mobility_transit_stations</td>
+      <td id="T_f6c15_row16_col2" class="data row16 col2" >-0.306519</td>
+      <td id="T_f6c15_row16_col3" class="data row16 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row17" class="row_heading level0 row17" >17</th>
-      <td id="T_053c8_row17_col0" class="data row17 col0" >9</td>
-      <td id="T_053c8_row17_col1" class="data row17 col1" >Information_campaigns</td>
-      <td id="T_053c8_row17_col2" class="data row17 col2" >-0.616709</td>
-      <td id="T_053c8_row17_col3" class="data row17 col3" >best</td>
+      <th id="T_f6c15_level0_row17" class="row_heading level0 row17" >17</th>
+      <td id="T_f6c15_row17_col0" class="data row17 col0" >9</td>
+      <td id="T_f6c15_row17_col1" class="data row17 col1" >Information_campaigns</td>
+      <td id="T_f6c15_row17_col2" class="data row17 col2" >-0.606282</td>
+      <td id="T_f6c15_row17_col3" class="data row17 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row18" class="row_heading level0 row18" >18</th>
-      <td id="T_053c8_row18_col0" class="data row18 col0" >9</td>
-      <td id="T_053c8_row18_col1" class="data row18 col1" >Gatherings_restrictions</td>
-      <td id="T_053c8_row18_col2" class="data row18 col2" >-0.451815</td>
-      <td id="T_053c8_row18_col3" class="data row18 col3" >weak</td>
+      <th id="T_f6c15_level0_row18" class="row_heading level0 row18" >18</th>
+      <td id="T_f6c15_row18_col0" class="data row18 col0" >9</td>
+      <td id="T_f6c15_row18_col1" class="data row18 col1" >Gatherings_restrictions</td>
+      <td id="T_f6c15_row18_col2" class="data row18 col2" >-0.445982</td>
+      <td id="T_f6c15_row18_col3" class="data row18 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row19" class="row_heading level0 row19" >19</th>
-      <td id="T_053c8_row19_col0" class="data row19 col0" >10</td>
-      <td id="T_053c8_row19_col1" class="data row19 col1" >Testing_policy</td>
-      <td id="T_053c8_row19_col2" class="data row19 col2" >-0.574066</td>
-      <td id="T_053c8_row19_col3" class="data row19 col3" >best</td>
+      <th id="T_f6c15_level0_row19" class="row_heading level0 row19" >19</th>
+      <td id="T_f6c15_row19_col0" class="data row19 col0" >10</td>
+      <td id="T_f6c15_row19_col1" class="data row19 col1" >Testing_policy</td>
+      <td id="T_f6c15_row19_col2" class="data row19 col2" >-0.574973</td>
+      <td id="T_f6c15_row19_col3" class="data row19 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row20" class="row_heading level0 row20" >20</th>
-      <td id="T_053c8_row20_col0" class="data row20 col0" >11</td>
-      <td id="T_053c8_row20_col1" class="data row20 col1" >Information_campaigns</td>
-      <td id="T_053c8_row20_col2" class="data row20 col2" >0.536578</td>
-      <td id="T_053c8_row20_col3" class="data row20 col3" >best</td>
+      <th id="T_f6c15_level0_row20" class="row_heading level0 row20" >20</th>
+      <td id="T_f6c15_row20_col0" class="data row20 col0" >11</td>
+      <td id="T_f6c15_row20_col1" class="data row20 col1" >Information_campaigns</td>
+      <td id="T_f6c15_row20_col2" class="data row20 col2" >0.549572</td>
+      <td id="T_f6c15_row20_col3" class="data row20 col3" >best</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row21" class="row_heading level0 row21" >21</th>
-      <td id="T_053c8_row21_col0" class="data row21 col0" >11</td>
-      <td id="T_053c8_row21_col1" class="data row21 col1" >Contact_tracing</td>
-      <td id="T_053c8_row21_col2" class="data row21 col2" >-0.341293</td>
-      <td id="T_053c8_row21_col3" class="data row21 col3" >weak</td>
+      <th id="T_f6c15_level0_row21" class="row_heading level0 row21" >21</th>
+      <td id="T_f6c15_row21_col0" class="data row21 col0" >11</td>
+      <td id="T_f6c15_row21_col1" class="data row21 col1" >Contact_tracing</td>
+      <td id="T_f6c15_row21_col2" class="data row21 col2" >-0.329093</td>
+      <td id="T_f6c15_row21_col3" class="data row21 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row22" class="row_heading level0 row22" >22</th>
-      <td id="T_053c8_row22_col0" class="data row22 col0" >11</td>
-      <td id="T_053c8_row22_col1" class="data row22 col1" >Internal_movement_restrictions</td>
-      <td id="T_053c8_row22_col2" class="data row22 col2" >-0.509579</td>
-      <td id="T_053c8_row22_col3" class="data row22 col3" >weak</td>
+      <th id="T_f6c15_level0_row22" class="row_heading level0 row22" >22</th>
+      <td id="T_f6c15_row22_col0" class="data row22 col0" >11</td>
+      <td id="T_f6c15_row22_col1" class="data row22 col1" >Internal_movement_restrictions</td>
+      <td id="T_f6c15_row22_col2" class="data row22 col2" >-0.507492</td>
+      <td id="T_f6c15_row22_col3" class="data row22 col3" >weak</td>
     </tr>
     <tr>
-      <th id="T_053c8_level0_row23" class="row_heading level0 row23" >23</th>
-      <td id="T_053c8_row23_col0" class="data row23 col0" >12</td>
-      <td id="T_053c8_row23_col1" class="data row23 col1" >Stay_home_restrictions</td>
-      <td id="T_053c8_row23_col2" class="data row23 col2" >0.602957</td>
-      <td id="T_053c8_row23_col3" class="data row23 col3" >best</td>
+      <th id="T_f6c15_level0_row23" class="row_heading level0 row23" >23</th>
+      <td id="T_f6c15_row23_col0" class="data row23 col0" >12</td>
+      <td id="T_f6c15_row23_col1" class="data row23 col1" >Stay_home_restrictions</td>
+      <td id="T_f6c15_row23_col2" class="data row23 col2" >0.599586</td>
+      <td id="T_f6c15_row23_col3" class="data row23 col3" >best</td>
     </tr>
   </tbody>
 </table></div>
@@ -2206,14 +2215,6 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 <span class="n">future_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on inverse&#39;) in model 46: GLS
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -2269,79 +2270,79 @@ Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on inv
   </thead>
   <tbody>
     <tr>
-      <th>2022-10-07</th>
-      <td>0.0</td>
-      <td>4.812685</td>
-      <td>0.902918</td>
-      <td>1.133456</td>
-      <td>0.0</td>
-      <td>0.552582</td>
-      <td>0.172939</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.049702</td>
-    </tr>
-    <tr>
-      <th>2022-10-08</th>
-      <td>0.0</td>
-      <td>3.230836</td>
-      <td>0.885936</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.549591</td>
-      <td>0.211945</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.038067</td>
-    </tr>
-    <tr>
-      <th>2022-10-09</th>
-      <td>0.0</td>
-      <td>3.213916</td>
-      <td>1.027173</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.540093</td>
-      <td>0.209932</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.026708</td>
-    </tr>
-    <tr>
       <th>2022-10-10</th>
       <td>0.0</td>
-      <td>4.843901</td>
-      <td>1.049635</td>
-      <td>1.047243</td>
-      <td>0.0</td>
-      <td>0.558389</td>
-      <td>0.193489</td>
-      <td>0.097514</td>
+      <td>2.835980</td>
+      <td>1.33</td>
+      <td>1.224554</td>
+      <td>0.914388</td>
       <td>0.0</td>
       <td>0.0</td>
+      <td>0.094563</td>
+      <td>1.503174</td>
       <td>0.0</td>
-      <td>0.021608</td>
+      <td>0.981905</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>2022-10-11</th>
       <td>0.0</td>
-      <td>5.024396</td>
-      <td>1.013487</td>
-      <td>1.041214</td>
-      <td>0.0</td>
-      <td>0.562620</td>
-      <td>0.229402</td>
-      <td>0.108667</td>
+      <td>2.835981</td>
+      <td>1.34</td>
+      <td>1.227099</td>
+      <td>0.953576</td>
       <td>0.0</td>
       <td>0.0</td>
+      <td>0.104819</td>
+      <td>1.503174</td>
       <td>0.0</td>
-      <td>0.015851</td>
+      <td>0.981905</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2022-10-12</th>
+      <td>0.0</td>
+      <td>2.835981</td>
+      <td>1.35</td>
+      <td>1.229644</td>
+      <td>0.921904</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.045684</td>
+      <td>1.503174</td>
+      <td>0.0</td>
+      <td>0.981905</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2022-10-13</th>
+      <td>0.0</td>
+      <td>2.835982</td>
+      <td>1.36</td>
+      <td>1.232189</td>
+      <td>0.934139</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.038209</td>
+      <td>1.503174</td>
+      <td>0.0</td>
+      <td>0.981905</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2022-10-14</th>
+      <td>0.0</td>
+      <td>2.835983</td>
+      <td>1.37</td>
+      <td>1.234734</td>
+      <td>0.949913</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+      <td>1.503174</td>
+      <td>0.0</td>
+      <td>0.981905</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -2365,8 +2366,7 @@ Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on inv
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Template Eval Error: Exception(&#39;Transformer PowerTransformer failed on fit&#39;) in model 10: SeasonalNaive
-No anomalies detected.
+Template Eval Error: Exception(&#39;Transformer HolidayTransformer failed on fit&#39;) in model 47: AverageValueNaive
 </pre></div></div>
 </div>
 </div>
@@ -2451,35 +2451,35 @@ No anomalies detected.
       <th></th>
       <th>max(Infected)</th>
       <th>argmax(Infected)</th>
-      <th>Confirmed on 09Nov2022</th>
-      <th>Infected on 09Nov2022</th>
-      <th>Fatal on 09Nov2022</th>
+      <th>Confirmed on 13Nov2022</th>
+      <th>Infected on 13Nov2022</th>
+      <th>Fatal on 13Nov2022</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>Baseline</th>
-      <td>2160633</td>
+      <td>2198245</td>
       <td>2022-08-05</td>
-      <td>21415656</td>
-      <td>211508</td>
-      <td>47514</td>
+      <td>20424832</td>
+      <td>196127</td>
+      <td>50058</td>
     </tr>
     <tr>
       <th>Predicted</th>
-      <td>2160633</td>
+      <td>2198245</td>
       <td>2022-08-05</td>
-      <td>20883829</td>
-      <td>92211</td>
-      <td>44561</td>
+      <td>19875107</td>
+      <td>33173</td>
+      <td>47806</td>
     </tr>
     <tr>
       <th>Predicted_with_X</th>
-      <td>2160633</td>
+      <td>2198245</td>
       <td>2022-08-05</td>
-      <td>21415978</td>
-      <td>211386</td>
-      <td>47518</td>
+      <td>20422567</td>
+      <td>191330</td>
+      <td>50042</td>
     </tr>
   </tbody>
 </table>
@@ -2487,7 +2487,7 @@ No anomalies detected.
 </div>
 <p>Thank you!</p>
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"c6ba4b1a5e364dc2a0b469b25a01998f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "1b66c7af5ec44573903c4aeab628f2e6": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "48f269b9fc4e476788e7f252e031adc2": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_c6ba4b1a5e364dc2a0b469b25a01998f", "max": 42.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_1b66c7af5ec44573903c4aeab628f2e6", "tabbable": null, "tooltip": null, "value": 42.0}}, "eae31fd700524403b5ba188a24960fb8": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "fd696bdf818b4df39e78d1f6b021c814": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "cb2b9dcfc5484aab8c290f4edeea2320": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_eae31fd700524403b5ba188a24960fb8", "placeholder": "\u200b", "style": "IPY_MODEL_fd696bdf818b4df39e78d1f6b021c814", "tabbable": null, "tooltip": null, "value": "100%"}}, "c249d172c8fc409e8fa740dc6c46e0ac": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c45c8cd62f804a2580f1799ddf9e4e62": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "6886cb867c0046c9aa1233e391896da6": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_c249d172c8fc409e8fa740dc6c46e0ac", "placeholder": "\u200b", "style": "IPY_MODEL_c45c8cd62f804a2580f1799ddf9e4e62", "tabbable": null, "tooltip": null, "value": " 42/42 [02:34&lt;00:00,  4.86s/it]"}}, "644e8e5ed87a4bf4b537466d7940f493": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "218126643e2443ff8ec3d12598e70973": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_cb2b9dcfc5484aab8c290f4edeea2320", "IPY_MODEL_48f269b9fc4e476788e7f252e031adc2", "IPY_MODEL_6886cb867c0046c9aa1233e391896da6"], "layout": "IPY_MODEL_644e8e5ed87a4bf4b537466d7940f493", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
+{"state": {"2432b3f3bef04ba3937223c0a0e4e0b1": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e408ade7b83944a8ba3cd47fc321a413": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "20c9834c4c78409a8ad4e135b0146d96": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2432b3f3bef04ba3937223c0a0e4e0b1", "max": 42.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_e408ade7b83944a8ba3cd47fc321a413", "tabbable": null, "tooltip": null, "value": 42.0}}, "48173921f5554fbcbb62dddfd1e50c7c": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7106093f8979404ab6ba2409c2a8ccde": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "f7974e2bd37f429f841af6a2f1e3c7c7": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_48173921f5554fbcbb62dddfd1e50c7c", "placeholder": "\u200b", "style": "IPY_MODEL_7106093f8979404ab6ba2409c2a8ccde", "tabbable": null, "tooltip": null, "value": "100%"}}, "c87a0b54cd8948fc8cc81707c134235f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "343b8459757541cfae9836e4aae39663": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "3941e432686746dc88529f91c3bdffe5": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_c87a0b54cd8948fc8cc81707c134235f", "placeholder": "\u200b", "style": "IPY_MODEL_343b8459757541cfae9836e4aae39663", "tabbable": null, "tooltip": null, "value": " 42/42 [02:36&lt;00:00,  5.02s/it]"}}, "3ad2326962424badb9a8209728d9c1c6": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b2a6e6981fa54ca9a21a8383eb1aabd3": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_f7974e2bd37f429f841af6a2f1e3c7c7", "IPY_MODEL_20c9834c4c78409a8ad4e135b0146d96", "IPY_MODEL_3941e432686746dc88529f91c3bdffe5"], "layout": "IPY_MODEL_3ad2326962424badb9a8209728d9c1c6", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
 </script></div>
 </div>
 

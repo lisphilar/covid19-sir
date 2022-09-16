@@ -39,7 +39,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-alpha
+                2.27.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -423,41 +423,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="o">!</span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span> -qqq
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<style type='text/css'>
-.datatable table.frame { margin-bottom: 0; }
-.datatable table.frame thead { border-bottom: none; }
-.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
-.datatable .bool    { background: #DDDD99; }
-.datatable .object  { background: #565656; }
-.datatable .int     { background: #5D9E5D; }
-.datatable .float   { background: #4040CC; }
-.datatable .str     { background: #CC4040; }
-.datatable .time    { background: #40CC40; }
-.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
-.datatable .frame tbody td { text-align: left; }
-.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
-.datatable th:nth-child(2) { padding-left: 12px; }
-.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
-.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
-.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
-.datatable .sp {  opacity: 0.25;}
-.datatable .footer { font-size: 9px; }
-.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
-</style></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -465,7 +435,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.27.0-alpha&#39;
+&#39;2.27.0-gamma&#39;
 </pre></div></div>
 </div>
 <div class="section" id="1.-SIR-model">
@@ -529,7 +499,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRModel(date_range=(&#39;14Sep2022&#39;, &#39;13Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRModel(date_range=(&#39;16Sep2022&#39;, &#39;15Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 <p>We can specify the start/end date of dynamics and tau value as follows. Note that tau value [min] should be a divisor of 1440 to simplify operations.</p>
@@ -587,7 +557,7 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;date_range&#39;: (&#39;14Sep2022&#39;, &#39;13Mar2023&#39;),
+{&#39;date_range&#39;: (&#39;16Sep2022&#39;, &#39;15Mar2023&#39;),
  &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
                   &#39;Infected&#39;: 1000,
                   &#39;Susceptible&#39;: 999000},
@@ -682,31 +652,31 @@ SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial
   </thead>
   <tbody>
     <tr>
-      <th>2023-03-09</th>
+      <th>2023-03-11</th>
       <td>88354</td>
       <td>750</td>
       <td>910895</td>
     </tr>
     <tr>
-      <th>2023-03-10</th>
+      <th>2023-03-12</th>
       <td>88342</td>
       <td>708</td>
       <td>910950</td>
     </tr>
     <tr>
-      <th>2023-03-11</th>
+      <th>2023-03-13</th>
       <td>88329</td>
       <td>669</td>
       <td>911002</td>
     </tr>
     <tr>
-      <th>2023-03-12</th>
+      <th>2023-03-14</th>
       <td>88318</td>
       <td>632</td>
       <td>911050</td>
     </tr>
     <tr>
-      <th>2023-03-13</th>
+      <th>2023-03-15</th>
       <td>88307</td>
       <td>596</td>
       <td>911096</td>
@@ -852,7 +822,7 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRDModel(date_range=(&#39;14Sep2022&#39;, &#39;13Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRDModel(date_range=(&#39;16Sep2022&#39;, &#39;15Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -973,7 +943,7 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SIRFModel(date_range=(&#39;14Sep2022&#39;, &#39;13Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+&#34;SIRFModel(date_range=(&#39;16Sep2022&#39;, &#39;15Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>
@@ -1092,7 +1062,7 @@ R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + 
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#34;SEWIRFModel(date_range=(&#39;14Sep2022&#39;, &#39;13Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
+&#34;SEWIRFModel(date_range=(&#39;16Sep2022&#39;, &#39;15Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
 </pre></div></div>
 </div>
 </div>

@@ -39,7 +39,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-alpha
+                2.27.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -60,13 +60,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#1.-Downloading-datasets-from-recommended-data">1. Downloading datasets from recommended data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#1-1.-With-DataEngineer-class">1-1. With <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#1-2.-With-DataDownloader-class">1-2. With <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#2.-Reading-pandas.DataFrame">2. Reading <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Data-loading-in-Kaggle-Notebook">Data loading in Kaggle Notebook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Acknowledgement">Acknowledgement</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#2.-Reading-pandas.DataFrame">2. Reading <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#3.-Generator-of-sample-data-with-SIR-derived-ODE-model">3. Generator of sample data with SIR-derived ODE model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#3.1-Sample-data-of-one-phase-ODE-model">3.1 Sample data of one-phase ODE model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#3.2-Sample-data-of-multi-phase-ODE-model">3.2 Sample data of multi-phase ODE model</a></li>
@@ -408,40 +405,10 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="o">!</span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span> -qq
-    <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<style type='text/css'>
-.datatable table.frame { margin-bottom: 0; }
-.datatable table.frame thead { border-bottom: none; }
-.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
-.datatable .bool    { background: #DDDD99; }
-.datatable .object  { background: #565656; }
-.datatable .int     { background: #5D9E5D; }
-.datatable .float   { background: #4040CC; }
-.datatable .str     { background: #CC4040; }
-.datatable .time    { background: #40CC40; }
-.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
-.datatable .frame tbody td { text-align: left; }
-.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
-.datatable th:nth-child(2) { padding-left: 12px; }
-.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
-.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
-.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
-.datatable .sp {  opacity: 0.25;}
-.datatable .footer { font-size: 9px; }
-.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
-</style></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -449,14 +416,14 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.27.0-alpha&#39;
+&#39;2.27.0-gamma&#39;
 </pre></div></div>
 </div>
 <div class="section" id="1.-Downloading-datasets-from-recommended-data">
 <h2>1. Downloading datasets from recommended data<a class="headerlink" href="#1.-Downloading-datasets-from-recommended-data" title="Permalink to this heading"></a></h2>
 <p>We will download datasets from the following recommended data servers.</p>
 <ul class="simple">
-<li><p><strong>COVID-19 Data Hub, https://covid19datahub.io/</strong></p>
+<li><p><a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a></p>
 <ul>
 <li><p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.</p></li>
 <li><p>The number of cases (JHU style)</p></li>
@@ -465,7 +432,7 @@ div.rendered_html tbody tr:hover {
 <li><p>The number of tests</p></li>
 </ul>
 </li>
-<li><p><strong>Our World In Data, https://github.com/owid/covid-19-data/tree/master/public/data</strong></p>
+<li><p><a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World In Data</a></p>
 <ul>
 <li><p>Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p></li>
 <li><p>The number of tests</p></li>
@@ -473,7 +440,7 @@ div.rendered_html tbody tr:hover {
 <li><p>The number of people who received vaccinations</p></li>
 </ul>
 </li>
-<li><p><strong>COVID-19 Open Data by Google Cloud Platform, https://github.com/GoogleCloudPlatform/covid-19-open-data</strong></p>
+<li><p><a class="reference external" href="https://github.com/GoogleCloudPlatform/covid-19-open-data">COVID-19 Open Data by Google Cloud Platform</a></p>
 <ul>
 <li><ol class="upperalpha simple" start="15">
 <li><p>Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, <a class="reference external" href="https://goo.gle/covid-19-open-data">https://goo.gle/covid-19-open-data</a></p></li>
@@ -483,13 +450,13 @@ div.rendered_html tbody tr:hover {
 <li><p>Note: Please refer to <a class="reference external" href="https://policies.google.com/terms">Google Terms of Service</a> in advance.</p></li>
 </ul>
 </li>
-<li><p><strong>World Bank Open Data, https://data.worldbank.org/</strong></p>
+<li><p><a class="reference external" href="https://data.worldbank.org/">World Bank Open Data</a></p>
 <ul>
 <li><p>World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p></li>
 <li><p>Population pyramid</p></li>
 </ul>
 </li>
-<li><p><strong>Datasets for CovsirPhy, https://github.com/lisphilar/covid19-sir/tree/master/data</strong></p>
+<li><p><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a></p>
 <ul>
 <li><p>Hirokazu Takaya (2020-2022), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p></li>
 <li><p>The number of cases in Japan (total/prefectures)</p></li>
@@ -542,45 +509,45 @@ Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 221368 entries, 0 to 221367
+RangeIndex: 221802 entries, 0 to 221801
 Data columns (total 33 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 221368 non-null  category
- 1   Province                             221368 non-null  category
- 2   City                                 221368 non-null  category
- 3   Date                                 221368 non-null  datetime64[ns]
- 4   Cancel_events                        173335 non-null  object
- 5   Confirmed                            200035 non-null  object
- 6   Contact_tracing                      173277 non-null  object
- 7   Country                              218636 non-null  string
- 8   Fatal                                183287 non-null  object
- 9   Gatherings_restrictions              173333 non-null  object
- 10  Information_campaigns                173280 non-null  object
- 11  Internal_movement_restrictions       173354 non-null  object
- 12  International_movement_restrictions  173381 non-null  object
- 13  Mobility_grocery_and_pharmacy        116442 non-null  object
- 14  Mobility_parks                       116289 non-null  object
- 15  Mobility_residential                 116119 non-null  object
- 16  Mobility_retail_and_recreation       116513 non-null  object
- 17  Mobility_transit_stations            117455 non-null  object
- 18  Mobility_workplaces                  117867 non-null  object
- 19  Population                           217670 non-null  object
- 20  Product                              116405 non-null  string
- 21  Recovered                            71572 non-null   object
- 22  School_closing                       173396 non-null  object
- 23  Stay_home_restrictions               173334 non-null  object
- 24  Stringency_index                     173291 non-null  object
- 25  Testing_policy                       173308 non-null  object
- 26  Tests                                85501 non-null   object
- 27  Transport_closing                    173326 non-null  object
- 28  Vaccinated_full                      47790 non-null   object
- 29  Vaccinated_once                      50345 non-null   object
- 30  Vaccinations                         53009 non-null   object
- 31  Vaccinations_boosters                26005 non-null   object
- 32  Workplace_closing                    173344 non-null  object
+ 0   ISO3                                 221802 non-null  category
+ 1   Province                             221802 non-null  category
+ 2   City                                 221802 non-null  category
+ 3   Date                                 221802 non-null  datetime64[ns]
+ 4   Cancel_events                        173676 non-null  object
+ 5   Confirmed                            200441 non-null  object
+ 6   Contact_tracing                      173567 non-null  object
+ 7   Country                              219205 non-null  string
+ 8   Fatal                                183683 non-null  object
+ 9   Gatherings_restrictions              173674 non-null  object
+ 10  Information_campaigns                173601 non-null  object
+ 11  Internal_movement_restrictions       173716 non-null  object
+ 12  International_movement_restrictions  173711 non-null  object
+ 13  Mobility_grocery_and_pharmacy        117506 non-null  object
+ 14  Mobility_parks                       117326 non-null  object
+ 15  Mobility_residential                 117183 non-null  object
+ 16  Mobility_retail_and_recreation       117577 non-null  object
+ 17  Mobility_transit_stations            118495 non-null  object
+ 18  Mobility_workplaces                  118932 non-null  object
+ 19  Population                           218237 non-null  object
+ 20  Product                              116838 non-null  string
+ 21  Recovered                            71587 non-null   object
+ 22  School_closing                       173747 non-null  object
+ 23  Stay_home_restrictions               173675 non-null  object
+ 24  Stringency_index                     173601 non-null  object
+ 25  Testing_policy                       173598 non-null  object
+ 26  Tests                                85532 non-null   object
+ 27  Transport_closing                    173693 non-null  object
+ 28  Vaccinated_full                      47888 non-null   object
+ 29  Vaccinated_once                      50445 non-null   object
+ 30  Vaccinations                         53116 non-null   object
+ 31  Vaccinations_boosters                26110 non-null   object
+ 32  Workplace_closing                    173696 non-null  object
 dtypes: category(3), datetime64[ns](1), object(27), string(2)
-memory usage: 51.5+ MB
+memory usage: 51.6+ MB
 </pre></div></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer.citations()</span></code> shows citations of the datasets.</p>
@@ -679,10 +646,10 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
       <td>-</td>
       <td>2020-01-15</td>
       <td>0.0</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Japan</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
@@ -703,10 +670,10 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
       <td>-</td>
       <td>2020-01-16</td>
       <td>0.0</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Japan</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
@@ -727,10 +694,10 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
       <td>-</td>
       <td>2020-01-17</td>
       <td>0.0</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
@@ -751,10 +718,10 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
       <td>-</td>
       <td>2020-01-18</td>
       <td>0.0</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
@@ -775,10 +742,10 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
       <td>-</td>
       <td>2020-01-19</td>
       <td>0.0</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
@@ -794,7 +761,7 @@ Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://git
     </tr>
   </tbody>
 </table>
-<p>5 rows × 26 columns</p>
+<p>5 rows × 32 columns</p>
 </div></div>
 </div>
 <p>For some countries (eg. USA), city-level data is available and we can download it as follows.</p>
@@ -992,7 +959,7 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 <div class="section" id="1-2.-With-DataDownloader-class">
 <h3>1-2. With <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class<a class="headerlink" href="#1-2.-With-DataDownloader-class" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> class is suggested because it has data cleaning methods and so on, but we can use <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class for data downloading.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
@@ -1000,14 +967,6 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 <span class="n">dl_df</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
-</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -1024,45 +983,45 @@ Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 221368 entries, 0 to 221367
+RangeIndex: 221802 entries, 0 to 221801
 Data columns (total 33 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 221368 non-null  string
- 1   Province                             221368 non-null  string
- 2   City                                 221368 non-null  string
- 3   Date                                 221368 non-null  datetime64[ns]
- 4   Cancel_events                        173335 non-null  Float64
- 5   Confirmed                            200035 non-null  Float64
- 6   Contact_tracing                      173277 non-null  Float64
- 7   Country                              218636 non-null  string
- 8   Fatal                                183287 non-null  Float64
- 9   Gatherings_restrictions              173333 non-null  Float64
- 10  Information_campaigns                173280 non-null  Float64
- 11  Internal_movement_restrictions       173354 non-null  Float64
- 12  International_movement_restrictions  173381 non-null  Float64
- 13  Mobility_grocery_and_pharmacy        116442 non-null  Float64
- 14  Mobility_parks                       116289 non-null  Float64
- 15  Mobility_residential                 116119 non-null  Float64
- 16  Mobility_retail_and_recreation       116513 non-null  Float64
- 17  Mobility_transit_stations            117455 non-null  Float64
- 18  Mobility_workplaces                  117867 non-null  Float64
- 19  Population                           217670 non-null  Float64
- 20  Product                              116405 non-null  string
- 21  Recovered                            71572 non-null   Float64
- 22  School_closing                       173396 non-null  Float64
- 23  Stay_home_restrictions               173334 non-null  Float64
- 24  Stringency_index                     173291 non-null  Float64
- 25  Testing_policy                       173308 non-null  Float64
- 26  Tests                                85501 non-null   Float64
- 27  Transport_closing                    173326 non-null  Float64
- 28  Vaccinated_full                      47790 non-null   Float64
- 29  Vaccinated_once                      50345 non-null   Float64
- 30  Vaccinations                         53009 non-null   Float64
- 31  Vaccinations_boosters                26005 non-null   Float64
- 32  Workplace_closing                    173344 non-null  Float64
+ 0   ISO3                                 221802 non-null  string
+ 1   Province                             221802 non-null  string
+ 2   City                                 221802 non-null  string
+ 3   Date                                 221802 non-null  datetime64[ns]
+ 4   Cancel_events                        173676 non-null  Float64
+ 5   Confirmed                            200441 non-null  Float64
+ 6   Contact_tracing                      173567 non-null  Float64
+ 7   Country                              219205 non-null  string
+ 8   Fatal                                183683 non-null  Float64
+ 9   Gatherings_restrictions              173674 non-null  Float64
+ 10  Information_campaigns                173601 non-null  Float64
+ 11  Internal_movement_restrictions       173716 non-null  Float64
+ 12  International_movement_restrictions  173711 non-null  Float64
+ 13  Mobility_grocery_and_pharmacy        117506 non-null  Float64
+ 14  Mobility_parks                       117326 non-null  Float64
+ 15  Mobility_residential                 117183 non-null  Float64
+ 16  Mobility_retail_and_recreation       117577 non-null  Float64
+ 17  Mobility_transit_stations            118495 non-null  Float64
+ 18  Mobility_workplaces                  118932 non-null  Float64
+ 19  Population                           218237 non-null  Float64
+ 20  Product                              116838 non-null  string
+ 21  Recovered                            71587 non-null   Float64
+ 22  School_closing                       173747 non-null  Float64
+ 23  Stay_home_restrictions               173675 non-null  Float64
+ 24  Stringency_index                     173601 non-null  Float64
+ 25  Testing_policy                       173598 non-null  Float64
+ 26  Tests                                85532 non-null   Float64
+ 27  Transport_closing                    173693 non-null  Float64
+ 28  Vaccinated_full                      47888 non-null   Float64
+ 29  Vaccinated_once                      50445 non-null   Float64
+ 30  Vaccinations                         53116 non-null   Float64
+ 31  Vaccinations_boosters                26110 non-null   Float64
+ 32  Workplace_closing                    173696 non-null  Float64
 dtypes: Float64(27), datetime64[ns](1), string(5)
-memory usage: 61.4 MB
+memory usage: 61.6 MB
 </pre></div></div>
 </div>
 <p>Note that ISO3/Province/City columns have string data instead of categorical data.</p>
@@ -1086,6 +1045,16 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="Acknowledgement">
+<h3>Acknowledgement<a class="headerlink" href="#Acknowledgement" title="Permalink to this heading"></a></h3>
+<p>In Feb2020, CovsirPhy project started in <a class="reference external" href="https://www.kaggle.com/">Kaggle platform</a> with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook by Hirokazu Takaya helped by Kagglers using the following datasets.</p>
+<ul class="simple">
+<li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
+<li><p>Population in each country: <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations population by Dmitry A. Grechka</a></p></li>
+<li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by Lisphilar</a></p></li>
+</ul>
+<p>The current version of <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> does not have interfaces to use the datasets in Kaggle because they are not updated at this time. However, we could not have done CovsirPhy project without their supports. Thank you!!</p>
 </div>
 </div>
 <div class="section" id="2.-Reading-pandas.DataFrame">
@@ -1851,29 +1820,6 @@ Index([&#39;Date&#39;, &#39;Prefecture&#39;, &#39;Positive&#39;, &#39;Tested&#39
 New country-level data
 New prefecture-level data
 </pre></div></div>
-</div>
-<div class="section" id="Data-loading-in-Kaggle-Notebook">
-<h3>Data loading in Kaggle Notebook<a class="headerlink" href="#Data-loading-in-Kaggle-Notebook" title="Permalink to this heading"></a></h3>
-<p>We can use the recommended datasets in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a> Notebook. The datasets are saved in “/kaggle/input/” directory. Additionally, we can use Kaggle Datasets (CSV files) with <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> in Kaggle Notebook.</p>
-<div class="line-block">
-<div class="line">Note:</div>
-<div class="line">If you have Kaggle API, you can download Kaggle datasets to your local environment by updating and executing <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a> script. CSV files will be saved in “/kaggle/input/” directory.</div>
-</div>
-<div class="line-block">
-<div class="line">Kaggle API:</div>
-<div class="line">Move to account page of Kaggle and download “kaggle.json” by selecting “API &gt; Create New API Token” button. Copy the json file to the top directory of the local repository or “~/.kaggle”. Please refer to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a> and <a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API within
-python?</a></div>
-</div>
-</div>
-<div class="section" id="Acknowledgement">
-<h3>Acknowledgement<a class="headerlink" href="#Acknowledgement" title="Permalink to this heading"></a></h3>
-<p>In Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
-<ul class="simple">
-<li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
-<li><p>Population in each country: <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations population by Dmitry A. Grechka</a></p></li>
-<li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by Lisphilar</a></p></li>
-</ul>
-<p>Best Regards.</p>
 </div>
 </div>
 <div class="section" id="3.-Generator-of-sample-data-with-SIR-derived-ODE-model">
