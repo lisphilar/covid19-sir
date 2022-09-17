@@ -54,6 +54,7 @@ pytest-profiling = "^1.7.0"
 pytest-cov = "^3.0.0"
 pyproject-flake8 = "^5.0.4.post1"
 deptry = "^0.4.6"
+pytest-xdist = "^2.5.0"
 
 [tool.poetry.group.docs]
 # poetry install --with docs
@@ -84,7 +85,7 @@ omit = ["covsirphy/_deprecated/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=covsirphy --cov-report=xml --cov-report=term-missing -vv --no-cov-on-fail --disable-warnings -p no:cacheprovider --durations=1 --maxfail=1"
+addopts = "--cov=covsirphy --cov-report=xml --cov-report=term-missing -vv --no-cov-on-fail --disable-warnings -p no:cacheprovider --durations=1 --maxfail=1 -n auto"
 
 [tool.deptry]
 ignore_obsolete = [
