@@ -67,8 +67,8 @@ add:
 
 .PHONY: add-dev
 add-dev:
-	@# for test dependencies: make add pytest --group=test
-	@# for docs dependencies: make add Sphinx --group=docs
+	@# for test dependencies: make add target=pytest group=test
+	@# for docs dependencies: make add target=Sphinx group=docs
 	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry add ${target}@latest --group ${group}
@@ -84,8 +84,8 @@ remove:
 
 .PHONY: remove-dev
 remove-dev:
-	@# for test dependencies: make remove pytest --group=test
-	@# for docs dependencies: make remove Sphinx --group=docs
+	@# for test dependencies: make remove target=pytest group=test
+	@# for docs dependencies: make remove target=Sphinx group=docs
 	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry remove ${target} --group ${group}
