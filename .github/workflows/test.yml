@@ -81,8 +81,8 @@ jobs:
       run: |
         pip install pip --upgrade
         pip install .
-        pip install pytest pytest-cov
-        pytest -v --maxfail=1 tests
+        pip install pytest pytest-cov pytest-parallel
+        pytest -v --maxfail=1 tests --tests-per-worker auto
 
   pip-test-v3-10:
     name: test with pip and dev version of datatable
@@ -105,8 +105,8 @@ jobs:
         pip install pip --upgrade
         pip install git+https://github.com/h2oai/datatable.git
         pip install .
-        pip install pytest pytest-cov
-        pytest -v --maxfail=1 tests
+        pip install pytest pytest-cov pytest-parallel
+        pytest -v --maxfail=1 tests --tests-per-worker auto
 
   anaconda_pip:
     name: test with Anaconda environment
