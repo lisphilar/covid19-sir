@@ -72,20 +72,20 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: pip install and test
-      run: |
-        pip install pip --upgrade
-        pip install .
-        pip install pytest pytest-cov pytest-xdist
-        pytest -v --maxfail=1 tests -n auto
+      - name: pip install and test
+        run: |
+          pip install pip --upgrade
+          pip install .
+          pip install pytest pytest-cov pytest-xdist
+          pytest -v --maxfail=1 tests -n auto
 
   anaconda_pip:
     name: test with Anaconda environment
@@ -114,18 +114,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: python
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
