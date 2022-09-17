@@ -96,7 +96,6 @@ check:
 	@# Check codes with deptry and pflake8
 	@poetry run deptry .
 	@poetry run pflake8 covsirphy
-	@poetry run pytest tests${target}
 
 .PHONY: test
 test:
