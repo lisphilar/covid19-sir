@@ -1,0 +1,60 @@
+name: Check if we can install CovsirPhy with the latest Python development version
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+      - "./pyproject.toml"
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  cancel:
+    name: cancel previous runs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: styfle/cancel-workflow-action@0.10.0
+        with:
+          all_but_latest: true
+          access_token: ${{ github.token }}
+
+  pip-test:
+    name: test with pip
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11-dev"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: get dependencies
+        run: poetry export -f requirements.txt > requirements.txt
+
+      - name: pip install
+        run: |
+          pip install pip --upgrade
+          pip download -r  requirements.txt
+      
+      - name: test
+        run: |
+          pip install .
+          pip install pytest pytest-cov pytest-xdist
+          pytest -v --maxfail=1 tests -n auto
