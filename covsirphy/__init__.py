@@ -47,7 +47,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
 from covsirphy._deprecated.country_data import CountryData
-from covsirphy.cleaning.japan_data import JapanData
+from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.population import PopulationData, Population
 from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy._deprecated.oxcgrt import OxCGRTData
@@ -143,7 +143,7 @@ __all__ = [
     # engineer
     "DataEngineer",
     # cleaning
-    "CleaningBase", "JapanData", "PopulationPyramidData",
+    "CleaningBase", "PopulationPyramidData",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # science
@@ -158,7 +158,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     "RegressionHandler",
     "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
-    "DataLoader", "AutoMLHandler",
+    "DataLoader", "AutoMLHandler", "JapanData",
 ]
 
 # Show exceptions in better format if used from command line
