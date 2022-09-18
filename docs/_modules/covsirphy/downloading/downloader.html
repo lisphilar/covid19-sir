@@ -1,3 +1,5 @@
+<!-- Refer to https://stackoverflow.com/a/50495306 -->
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
@@ -20,10 +22,17 @@
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+    window.onload = function () {
+        string = document.body.innerHTML;
+        string = string.replace(/ package/g, '').replace(/ module/g, '');
+        document.body.innerHTML = string;
+    }
+</script>
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -103,10 +112,10 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.gis.gis</span> <span class="kn">import</span> <span class="n">GIS</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading.db_cs_japan</span> <span class="kn">import</span> <span class="n">_CSJapan</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading.db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading.db_google</span> <span class="kn">import</span> <span class="n">_GoogleOpenData</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading.db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
+<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_cs_japan</span> <span class="kn">import</span> <span class="n">_CSJapan</span>
+<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
+<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_google</span> <span class="kn">import</span> <span class="n">_GoogleOpenData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
 
 
 <div class="viewcode-block" id="DataDownloader"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.DataDownloader">[docs]</a><span class="k">class</span> <span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
