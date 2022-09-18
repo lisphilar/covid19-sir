@@ -1,3 +1,5 @@
+<!-- Refer to https://stackoverflow.com/a/50495306 -->
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
@@ -20,14 +22,21 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="SIR-derived ODE models" href="03_ode.html" />
-    <link rel="prev" title="Data preparation" href="01_data_preparation.html" /> 
+    <link rel="prev" title="Data preparation" href="01_data_preparation.html" />
+<script type="text/javascript">
+    window.onload = function () {
+        string = document.body.innerHTML;
+        string = string.replace(/ package/g, '').replace(/ module/g, '');
+        document.body.innerHTML = string;
+    }
+</script>
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -408,83 +417,27 @@ div.rendered_html tbody tr:hover {
 <li><p>EDA of subset</p></li>
 </ol>
 <p>Note that EDA = explanatory data analysis</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&#39;2.27.0-gamma&#39;
-</pre></div></div>
-</div>
 <p>We will use the recommended datasets at country-level data as an example.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222070 entries, 0 to 222069
-Data columns (total 33 columns):
- #   Column                               Non-Null Count   Dtype
----  ------                               --------------   -----
- 0   ISO3                                 222070 non-null  category
- 1   Province                             222070 non-null  category
- 2   City                                 222070 non-null  category
- 3   Date                                 222070 non-null  datetime64[ns]
- 4   Cancel_events                        173893 non-null  object
- 5   Confirmed                            200691 non-null  object
- 6   Contact_tracing                      173829 non-null  object
- 7   Country                              219452 non-null  string
- 8   Fatal                                184285 non-null  object
- 9   Gatherings_restrictions              173937 non-null  object
- 10  Information_campaigns                173902 non-null  object
- 11  Internal_movement_restrictions       173958 non-null  object
- 12  International_movement_restrictions  173953 non-null  object
- 13  Mobility_grocery_and_pharmacy        117506 non-null  object
- 14  Mobility_parks                       117326 non-null  object
- 15  Mobility_residential                 117183 non-null  object
- 16  Mobility_retail_and_recreation       117577 non-null  object
- 17  Mobility_transit_stations            118495 non-null  object
- 18  Mobility_workplaces                  118932 non-null  object
- 19  Population                           218483 non-null  object
- 20  Product                              116920 non-null  string
- 21  Recovered                            71604 non-null   object
- 22  School_closing                       173962 non-null  object
- 23  Stay_home_restrictions               173917 non-null  object
- 24  Stringency_index                     173860 non-null  object
- 25  Testing_policy                       173865 non-null  object
- 26  Tests                                85553 non-null   object
- 27  Transport_closing                    173935 non-null  object
- 28  Vaccinated_full                      47952 non-null   object
- 29  Vaccinated_once                      50509 non-null   object
- 30  Vaccinations                         53183 non-null   object
- 31  Vaccinations_boosters                26167 non-null   object
- 32  Workplace_closing                    173939 non-null  object
-dtypes: category(3), datetime64[ns](1), object(27), string(2)
-memory usage: 51.7+ MB
-</pre></div></div>
 </div>
 <div class="section" id="1.-Data-cleaning">
 <h2>1. Data cleaning<a class="headerlink" href="#1.-Data-cleaning" title="Permalink to this heading"></a></h2>
@@ -494,61 +447,14 @@ memory usage: 51.7+ MB
 <li><p>“resample”: Resample records with dates.</p></li>
 <li><p>“fillna”: Fill NA values with ‘-’ (layers) and the previous values and 0.</p></li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222135 entries, 0 to 222134
-Data columns (total 33 columns):
- #   Column                               Non-Null Count   Dtype
----  ------                               --------------   -----
- 0   ISO3                                 222135 non-null  category
- 1   Province                             222135 non-null  category
- 2   City                                 222135 non-null  category
- 3   Date                                 222135 non-null  datetime64[ns]
- 4   Cancel_events                        222135 non-null  Int64
- 5   Confirmed                            222135 non-null  Int64
- 6   Contact_tracing                      222135 non-null  Int64
- 7   Country                              222135 non-null  object
- 8   Fatal                                222135 non-null  Int64
- 9   Gatherings_restrictions              222135 non-null  Int64
- 10  Information_campaigns                222135 non-null  Int64
- 11  Internal_movement_restrictions       222135 non-null  Int64
- 12  International_movement_restrictions  222135 non-null  Int64
- 13  Mobility_grocery_and_pharmacy        222135 non-null  Int64
- 14  Mobility_parks                       222135 non-null  Int64
- 15  Mobility_residential                 222135 non-null  Int64
- 16  Mobility_retail_and_recreation       222135 non-null  Int64
- 17  Mobility_transit_stations            222135 non-null  Int64
- 18  Mobility_workplaces                  222135 non-null  Int64
- 19  Population                           222135 non-null  Int64
- 20  Product                              222135 non-null  object
- 21  Recovered                            222135 non-null  Int64
- 22  School_closing                       222135 non-null  Int64
- 23  Stay_home_restrictions               222135 non-null  Int64
- 24  Stringency_index                     222135 non-null  Float64
- 25  Testing_policy                       222135 non-null  Int64
- 26  Tests                                222135 non-null  Int64
- 27  Transport_closing                    222135 non-null  Int64
- 28  Vaccinated_full                      222135 non-null  Int64
- 29  Vaccinated_once                      222135 non-null  Int64
- 30  Vaccinations                         222135 non-null  Int64
- 31  Vaccinations_boosters                222135 non-null  Int64
- 32  Workplace_closing                    222135 non-null  Int64
-dtypes: Float64(1), Int64(26), category(3), datetime64[ns](1), object(2)
-memory usage: 57.4+ MB
-</pre></div></div>
 </div>
 </div>
 <div class="section" id="2.-Data-transformation">
@@ -559,241 +465,31 @@ memory usage: 57.4+ MB
 <li><p>Infected = Confirmed - Fatal - Recovered</p></li>
 </ul>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">main_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">main_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">main_variables</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Population</th>
-      <th>Susceptible</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>14439018</td>
-      <td>14182130</td>
-      <td>256888</td>
-      <td>168298</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>14439018</td>
-      <td>14182114</td>
-      <td>256904</td>
-      <td>168314</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
 </div>
 <p>Recalculation of “Population” and “Confirmed” can be performed with <code class="docutils literal notranslate"><span class="pre">DataEngineer().inverse_transform()</span></code>, if necessary. (No impact with this example data.)</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">main_variables</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Population</th>
-      <th>Susceptible</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>14439018</td>
-      <td>14182130</td>
-      <td>256888</td>
-      <td>168298</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>14439018</td>
-      <td>14182114</td>
-      <td>256904</td>
-      <td>168314</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
 </div>
 </div>
 <div class="section" id="3.-Arithmetic-operations">
@@ -807,389 +503,47 @@ memory usage: 57.4+ MB
 <li><p><code class="docutils literal notranslate"><span class="pre">.div(columns,</span> <span class="pre">new=None,</span> <span class="pre">fill_value=0)</span></code>: Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.assign(**kwargs))</span></code>: Assign a new column with pandas.DataFrame.assign().</p></li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Diff</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Diff</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;_diff&quot;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed_diff&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Confirmed_diff</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>256888</td>
-      <td>18</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>256904</td>
-      <td>16</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>256939</td>
-      <td>35</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>256939</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>256939</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Addition</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Addition</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">])</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal+Recovered&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-      <th>Fatal+Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multiplication</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multiplication</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">])</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed*Recovered&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Recovered</th>
-      <th>Confirmed*Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>256888</td>
-      <td>82994</td>
-      <td>21320162672</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>256904</td>
-      <td>82994</td>
-      <td>21321490576</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Division</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Division</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">numerator</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">denominator</span><span class="o">=</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Positive_rate&quot;</span><span class="p">)</span>
 <span class="c1"># Assignment of new a new column</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;Positive_rate&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">})</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Tests</th>
-      <th>Confirmed</th>
-      <th>Positive_rate_%</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>2379907</td>
-      <td>256888</td>
-      <td>10.794035</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>2379907</td>
-      <td>256904</td>
-      <td>10.794708</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
 </div>
 </div>
 <div class="section" id="4.-EDA-at-a-geospatial-layer">
@@ -1202,185 +556,13 @@ memory usage: 57.4+ MB
 <li><p>end_date (str or None): end date, like 01Feb2020</p></li>
 <li><p>variables (list[str] or None): list of variables to add or None (all available columns)</p></li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ISO3</th>
-      <th>Province</th>
-      <th>City</th>
-      <th>Date</th>
-      <th>Cancel_events</th>
-      <th>Confirmed</th>
-      <th>Confirmed*Recovered</th>
-      <th>Confirmed_diff</th>
-      <th>Contact_tracing</th>
-      <th>Country</th>
-      <th>...</th>
-      <th>Stringency_index</th>
-      <th>Susceptible</th>
-      <th>Testing_policy</th>
-      <th>Tests</th>
-      <th>Transport_closing</th>
-      <th>Vaccinated_full</th>
-      <th>Vaccinated_once</th>
-      <th>Vaccinations</th>
-      <th>Vaccinations_boosters</th>
-      <th>Workplace_closing</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>222130</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-12</td>
-      <td>1</td>
-      <td>256888</td>
-      <td>21320162672</td>
-      <td>18</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182130</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>222131</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-13</td>
-      <td>1</td>
-      <td>256904</td>
-      <td>21321490576</td>
-      <td>16</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182114</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>222132</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-14</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
-      <td>35</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>222133</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-15</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
-      <td>0</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>222134</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-16</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
-      <td>0</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 40 columns</p>
-</div></div>
 </div>
 <p>This dataset has only country-level data and <code class="docutils literal notranslate"><span class="pre">geo</span></code> should be country name. We can select the followings as <code class="docutils literal notranslate"><span class="pre">geo</span></code> argument for EDA at a geospatial layer when we have adequate data.</p>
 <ul class="simple">
@@ -1408,27 +590,12 @@ memory usage: 57.4+ MB
 </ul>
 </li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">choropleth</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map: Confirmed on the last date of records&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">choropleth</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map: Confirmed on the last date of records&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_21_1.png" src="_images/02_data_engineering_21_1.png" />
 </div>
 </div>
 </div>
@@ -1446,11 +613,11 @@ number of valid partial recovery periods [days], 7 * upper_percentage (float): f
 <div class="line">We can select the followings as <code class="docutils literal notranslate"><span class="pre">geo</span></code> argument for subsetting when we have adequate data. * When <code class="docutils literal notranslate"><span class="pre">geo=None</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=(None,)</span></code>, returns total values of all country-level data, assuming we have country/province/city as layers here. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,)</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=&quot;Japan&quot;</span></code>, returns country-level data in Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=([&quot;Japan&quot;,</span> <span class="pre">&quot;UK&quot;],)</span></code>, returns country-level data of Japan and UK. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Tokyo&quot;)</span></code>, returns province-level data of Tokyo/Japan. * When
 <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">[&quot;Tokyo&quot;,</span> <span class="pre">&quot;Kanagawa&quot;])</span></code>, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">&quot;Yokohama&quot;)</span></code>, returns city-level data of Yokohama/Kanagawa/Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=((&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">[&quot;Yokohama&quot;,</span> <span class="pre">&quot;Kawasaki&quot;])</span></code>, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.</div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Without complement</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Without complement</span>
 <span class="n">without_df</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">status_dict</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;UK&quot;</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">status_dict</span><span class="p">)</span>
@@ -1458,56 +625,16 @@ number of valid partial recovery periods [days], 7 * upper_percentage (float): f
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-{}
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_25_1.png" src="_images/02_data_engineering_25_1.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># With complement (default)</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># With complement (default)</span>
 <span class="n">with_df</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">status_dict</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">status_dict</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">with_df</span><span class="p">[[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;UK: records WITH complement&quot;</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-monotonic increasing complemented confirmed data and
-monotonic increasing complemented fatal data and
-partially complemented recovered data
-
-{&#39;Full_recovered&#39;: False,
- &#39;Monotonic_confirmed&#39;: True,
- &#39;Monotonic_fatal&#39;: True,
- &#39;Monotonic_recovered&#39;: True,
- &#39;Partial_recovered&#39;: True}
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_26_1.png" src="_images/02_data_engineering_26_1.png" />
 </div>
 </div>
 </div>
@@ -1527,30 +654,22 @@ partially complemented recovered data
 <div class="line">What is “recovery period”?</div>
 <div class="line">We defined “recovery period” as the time period between case confirmation and recovery (as it is subjectively defined per country). We can estimate the mode value of recovery period with class method <code class="docutils literal notranslate"><span class="pre">DataEngineer.recovery_period(data)</span></code>.</div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jpn_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">],</span> <span class="n">complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jpn_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">],</span> <span class="n">complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">recovery_period</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">jpn_df</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode value of recovery period in Japan: </span><span class="si">{</span><span class="n">recovery_period</span><span class="si">}</span><span class="s2"> [days]&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Mode value of recovery period in Japan: 10 [days]
-</pre></div></div>
-</div>
 <p>Details of recovery period calculation:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">jpn_df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">jpn_df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Variable&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Number&quot;</span><span class="p">]</span>
@@ -1565,13 +684,6 @@ Mode value of recovery period in Japan: 10 [days]
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_31_0.png" src="_images/02_data_engineering_31_0.png" />
-</div>
-</div>
 </div>
 <div class="section" id="5.4-Alias-of-subsets">
 <h3>5.4 Alias of subsets<a class="headerlink" href="#5.4-Alias-of-subsets" title="Permalink to this heading"></a></h3>
@@ -1580,11 +692,11 @@ Mode value of recovery period in Japan: 10 [days]
 <div class="line">Arguments:</div>
 <div class="line">* alias (str or None): alias name or None (list-up alias names) * update (bool): force updating the alias when &#64;alias is not None * **kwargs: keyword arguments of covsirphy.DataEngineer().subset()</div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register</span>
 <span class="n">sub1</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;UK_with&quot;</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="s2">&quot;UK&quot;</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># Retrieve with alias</span>
 <span class="n">sub2</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;UK_with&quot;</span><span class="p">)</span>
@@ -1592,15 +704,6 @@ Mode value of recovery period in Japan: 10 [days]
 <span class="n">sub1</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">sub2</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-True
-</pre></div></div>
 </div>
 </div>
 </div>
@@ -1610,124 +713,29 @@ True
 <div class="section" id="7.1-Alias-of-variables">
 <h3>7.1 Alias of variables<a class="headerlink" href="#7.1-Alias-of-variables" title="Permalink to this heading"></a></h3>
 <p>We can specify variables with alias. For example, “CIFR” is equivalent to list <code class="docutils literal notranslate"><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal']</span></code>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;CIRF&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;CIRF&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Recovered</th>
-      <th>Fatal</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2022-09-13</th>
-      <td>20221686</td>
-      <td>1024930</td>
-      <td>19153962</td>
-      <td>42794</td>
-    </tr>
-    <tr>
-      <th>2022-09-14</th>
-      <td>20300387</td>
-      <td>992294</td>
-      <td>19265108</td>
-      <td>42985</td>
-    </tr>
-    <tr>
-      <th>2022-09-15</th>
-      <td>20399933</td>
-      <td>941199</td>
-      <td>19415557</td>
-      <td>43177</td>
-    </tr>
-    <tr>
-      <th>2022-09-16</th>
-      <td>20488312</td>
-      <td>926698</td>
-      <td>19518267</td>
-      <td>43347</td>
-    </tr>
-    <tr>
-      <th>2022-09-17</th>
-      <td>20566116</td>
-      <td>887237</td>
-      <td>19635346</td>
-      <td>43533</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
 </div>
 <p>All aliases can be checked with <code class="docutils literal notranslate"><span class="pre">DataEngineer().variables_alias()</span></code>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">variables_alias</span><span class="p">()</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">variables_alias</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;N&#39;: [&#39;Population&#39;],
- &#39;S&#39;: [&#39;Susceptible&#39;],
- &#39;T&#39;: [&#39;Tests&#39;],
- &#39;C&#39;: [&#39;Confirmed&#39;],
- &#39;I&#39;: [&#39;Infected&#39;],
- &#39;F&#39;: [&#39;Fatal&#39;],
- &#39;R&#39;: [&#39;Recovered&#39;],
- &#39;CFR&#39;: [&#39;Confirmed&#39;, &#39;Fatal&#39;, &#39;Recovered&#39;],
- &#39;CIRF&#39;: [&#39;Confirmed&#39;, &#39;Infected&#39;, &#39;Recovered&#39;, &#39;Fatal&#39;],
- &#39;SIRF&#39;: [&#39;Susceptible&#39;, &#39;Infected&#39;, &#39;Recovered&#39;, &#39;Fatal&#39;],
- &#39;CR&#39;: [&#39;Confirmed&#39;, &#39;Recovered&#39;]}
-</pre></div></div>
 </div>
 <p>We can register new alias “p” with <code class="docutils literal notranslate"><span class="pre">[&quot;Tests&quot;,</span> <span class="pre">&quot;Confirmed&quot;,</span> <span class="pre">&quot;Positive_rate_%&quot;]</span></code> as an example.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register new alias</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register new alias</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">variables_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">])</span>
 <span class="c1"># Check the contents of an alias</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">variables_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
@@ -1736,93 +744,24 @@ True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Tests</th>
-      <th>Confirmed</th>
-      <th>Positive_rate_%</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2022-09-13</th>
-      <td>74136488</td>
-      <td>20221686</td>
-      <td>27.276293</td>
-    </tr>
-    <tr>
-      <th>2022-09-14</th>
-      <td>74386604</td>
-      <td>20300387</td>
-      <td>27.29038</td>
-    </tr>
-    <tr>
-      <th>2022-09-15</th>
-      <td>74581763</td>
-      <td>20399933</td>
-      <td>27.352441</td>
-    </tr>
-    <tr>
-      <th>2022-09-16</th>
-      <td>74773033</td>
-      <td>20488312</td>
-      <td>27.40067</td>
-    </tr>
-    <tr>
-      <th>2022-09-17</th>
-      <td>74962090</td>
-      <td>20566116</td>
-      <td>27.435356</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
 </div>
 <div class="section" id="7.2-Line-plot">
 <h3>7.2 Line plot<a class="headerlink" href="#7.2-Line-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with line plot. We can select function <code class="docutils literal notranslate"><span class="pre">line_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">LinePlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">line_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">line_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>With function:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">line_df</span><span class="p">[</span><span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">],</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Positive rate </span><span class="si">% i</span><span class="s2">n Japan&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Positive rate %&quot;</span><span class="p">,</span>
@@ -1833,19 +772,12 @@ True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_44_0.png" src="_images/02_data_engineering_44_0.png" />
-</div>
-</div>
 <p>With class:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">LinePlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">lp</span><span class="p">:</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">LinePlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">lp</span><span class="p">:</span>
     <span class="n">lp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">line_df</span><span class="p">[</span><span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">])</span>
     <span class="n">lp</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Positive rate </span><span class="si">% i</span><span class="s2">n Japan&quot;</span>
     <span class="n">lp</span><span class="o">.</span><span class="n">x_axis</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1854,31 +786,24 @@ True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_46_0.png" src="_images/02_data_engineering_46_0.png" />
-</div>
-</div>
 </div>
 <div class="section" id="7.3-Scatter-plot">
 <h3>7.3 Scatter plot<a class="headerlink" href="#7.3-Scatter-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with scatter plot. We can select function <code class="docutils literal notranslate"><span class="pre">scatter_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sc_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
 <span class="n">sc_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Tests&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">scatter_plot</span><span class="p">(</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">scatter_plot</span><span class="p">(</span>
     <span class="n">sc_df</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Scatter plot&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
@@ -1888,31 +813,17 @@ True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_49_0.png" src="_images/02_data_engineering_49_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">ScatterPlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">sp</span><span class="p">:</span>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">ScatterPlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">sp</span><span class="p">:</span>
     <span class="n">sp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sc_df</span><span class="p">)</span>
     <span class="n">sp</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Scatter plot&quot;</span>
     <span class="n">sp</span><span class="o">.</span><span class="n">x_axis</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">sp</span><span class="o">.</span><span class="n">y_axis</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">)</span>
     <span class="n">sp</span><span class="o">.</span><span class="n">line_straight</span><span class="p">(</span><span class="n">p1</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">p2</span><span class="o">=</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">sc_df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">sc_df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])))</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/02_data_engineering_50_0.png" src="_images/02_data_engineering_50_0.png" />
 </div>
 </div>
 <p>Thank you!</p>
