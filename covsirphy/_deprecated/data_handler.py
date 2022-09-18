@@ -12,7 +12,7 @@ from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy._deprecated.country_data import CountryData
-from covsirphy.cleaning.japan_data import JapanData
+from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy._deprecated.oxcgrt import OxCGRTData
 from covsirphy._deprecated.pcr_data import PCRData

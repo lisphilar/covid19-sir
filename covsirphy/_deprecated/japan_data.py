@@ -9,8 +9,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 
 
 class JapanData(CleaningBase):
-    """
-    Japan-specific dataset.
+    """Deprecated. Japan-specific dataset.
 
     Args:
         filename (str or pathlib.path): CSV filename to save the raw dataset
@@ -65,6 +64,7 @@ class JapanData(CleaningBase):
     JAPAN_META_FLT = ["Location_Latitude", "Location_Longitude"]
     JAPAN_META_COLS = [*JAPAN_META_CAT, *JAPAN_META_INT, *JAPAN_META_FLT]
 
+    @deprecate("JapanData", version="2.26.2-epsilon")
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
