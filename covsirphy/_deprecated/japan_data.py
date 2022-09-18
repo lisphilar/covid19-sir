@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class JapanData(CleaningBase):

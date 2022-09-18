@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, SubsetNotFoundError
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class PopulationData(CleaningBase):
