@@ -101,7 +101,7 @@ check:
 test:
 	@# All tests: make test
 	@# Selected tests: make test target=/test_scenario.py::TestScenario
-	@make check
+	@make check --no-print-directory
 	@poetry run pytest tests${target}
 
 .PHONY: docs
