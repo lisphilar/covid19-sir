@@ -22,6 +22,7 @@
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -44,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-gamma
+                2.27.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -116,6 +117,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_google</span> <span class="kn">import</span> <span class="n">_GoogleOpenData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
+<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_wpp</span> <span class="kn">import</span> <span class="n">_WPP</span>
 
 
 <div class="viewcode-block" id="DataDownloader"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.DataDownloader">[docs]</a><span class="k">class</span> <span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -147,11 +149,12 @@
 <span class="sd">        Args:</span>
 <span class="sd">            country (str or None): country name or None</span>
 <span class="sd">            province (str or None): province/state/prefecture name or None</span>
-<span class="sd">            databases (list[str] or None): list of databases to use or None (all available databases).</span>
+<span class="sd">            databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).</span>
 <span class="sd">                &quot;japan&quot;: COVID-19 Dataset in Japan,</span>
 <span class="sd">                &quot;covid19dh&quot;: COVID-19 Data Hub,</span>
 <span class="sd">                &quot;google: COVID-19 Open Data by Google Cloud Platform,</span>
-<span class="sd">                &quot;owid&quot;: Our World In Data.</span>
+<span class="sd">                &quot;owid&quot;: Our World In Data,</span>
+<span class="sd">                &quot;wpp&quot;: World Population Prospects by United nations.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
@@ -208,9 +211,11 @@
             <span class="s2">&quot;covid19dh&quot;</span><span class="p">:</span> <span class="n">_COVID19dh</span><span class="p">,</span>
             <span class="s2">&quot;google&quot;</span><span class="p">:</span> <span class="n">_GoogleOpenData</span><span class="p">,</span>
             <span class="s2">&quot;owid&quot;</span><span class="p">:</span> <span class="n">_OWID</span><span class="p">,</span>
+            <span class="s2">&quot;wpp&quot;</span><span class="p">:</span> <span class="n">_WPP</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">all_databases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">db_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="n">selected</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">databases</span><span class="p">,</span> <span class="s2">&quot;databases&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">all_databases</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">all_databases</span><span class="p">)</span>
+        <span class="n">all_databases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">,</span> <span class="s2">&quot;covid19dh&quot;</span><span class="p">,</span> <span class="s2">&quot;google&quot;</span><span class="p">,</span> <span class="s2">&quot;owid&quot;</span><span class="p">]</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">databases</span><span class="p">,</span> <span class="s2">&quot;databases&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">all_databases</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">db_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAYERS</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
             <span class="n">db</span> <span class="o">=</span> <span class="n">db_dict</span><span class="p">[</span><span class="n">database</span><span class="p">](</span>
                 <span class="n">directory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_directory</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>

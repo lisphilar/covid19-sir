@@ -22,6 +22,7 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -48,7 +49,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-gamma
+                2.27.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -408,16 +409,25 @@ div.rendered_html tbody tr:hover {
 <li><p>Reading <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p></li>
 <li><p>Generator of sample data with SIR-derived ODE model</p></li>
 </ol>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.27.0-zeta&#39;
+</pre></div></div>
 </div>
 <div class="section" id="1.-Downloading-datasets-from-recommended-data">
 <h2>1. Downloading datasets from recommended data<a class="headerlink" href="#1.-Downloading-datasets-from-recommended-data" title="Permalink to this heading"></a></h2>
@@ -472,89 +482,578 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="1-1.-With-DataEngineer-class">
 <h3>1-1. With <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> class<a class="headerlink" href="#1-1.-With-DataEngineer-class" title="Permalink to this heading"></a></h3>
 <p>We can use <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code> for data downloading from recommended data servers as the quickest way.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">download</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
+Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data
+Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+</pre></div></div>
+</div>
 <p>We can get the all downloaded records as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with <code class="docutils literal notranslate"><span class="pre">DataEngineer().all()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_df</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_df</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 <span class="c1"># Overview of the records</span>
 <span class="n">all_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 222240 entries, 0 to 222239
+Data columns (total 33 columns):
+ #   Column                               Non-Null Count   Dtype
+---  ------                               --------------   -----
+ 0   ISO3                                 222240 non-null  category
+ 1   Province                             222240 non-null  category
+ 2   City                                 222240 non-null  category
+ 3   Date                                 222240 non-null  datetime64[ns]
+ 4   Cancel_events                        173960 non-null  object
+ 5   Confirmed                            200875 non-null  object
+ 6   Contact_tracing                      173927 non-null  object
+ 7   Country                              219635 non-null  string
+ 8   Fatal                                184465 non-null  object
+ 9   Gatherings_restrictions              173983 non-null  object
+ 10  Information_campaigns                173948 non-null  object
+ 11  Internal_movement_restrictions       174004 non-null  object
+ 12  International_movement_restrictions  174020 non-null  object
+ 13  Mobility_grocery_and_pharmacy        117506 non-null  object
+ 14  Mobility_parks                       117326 non-null  object
+ 15  Mobility_residential                 117183 non-null  object
+ 16  Mobility_retail_and_recreation       117577 non-null  object
+ 17  Mobility_transit_stations            118495 non-null  object
+ 18  Mobility_workplaces                  118932 non-null  object
+ 19  Population                           218665 non-null  object
+ 20  Product                              116920 non-null  string
+ 21  Recovered                            71607 non-null   object
+ 22  School_closing                       174008 non-null  object
+ 23  Stay_home_restrictions               173984 non-null  object
+ 24  Stringency_index                     173927 non-null  object
+ 25  Testing_policy                       173963 non-null  object
+ 26  Tests                                85554 non-null   object
+ 27  Transport_closing                    173981 non-null  object
+ 28  Vaccinated_full                      47952 non-null   object
+ 29  Vaccinated_once                      50509 non-null   object
+ 30  Vaccinations                         53183 non-null   object
+ 31  Vaccinations_boosters                26167 non-null   object
+ 32  Workplace_closing                    173985 non-null  object
+dtypes: category(3), datetime64[ns](1), object(27), string(2)
+memory usage: 51.7+ MB
+</pre></div></div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer.citations()</span></code> shows citations of the datasets.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eng</span><span class="o">.</span><span class="n">citations</span><span class="p">()))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eng</span><span class="o">.</span><span class="n">citations</span><span class="p">()))</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
+Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https: //doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
+</pre></div></div>
 </div>
 <p>Note that, as default, <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code> collects country-level data and save the datasets as CSV files in “input” (=``directory`` argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer()</span></code>) folder of the current directory. If the last modification time of the saved CSV files is within the last 12 (=``update_interval`` argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer()</span></code>) hours, the saved CSV files will be used as the database.</p>
 <p>For some countries (eg. Japan), province/state/prefecture level data is available and we can download it as follows.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng_jpn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng_jpn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
 <span class="n">eng_jpn</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="n">eng_jpn</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>For some countries (eg. USA), city-level data is available and we can download it as follows.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
+Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+Retrieving datasets from COVID-19 Open Data by Google Cloud Platform https://github.com/GoogleCloudPlatform/covid-19-open-data
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng_alabama</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ISO3</th>
+      <th>Province</th>
+      <th>City</th>
+      <th>Date</th>
+      <th>Cancel_events</th>
+      <th>Confirmed</th>
+      <th>Contact_tracing</th>
+      <th>Country</th>
+      <th>Fatal</th>
+      <th>Gatherings_restrictions</th>
+      <th>...</th>
+      <th>Stay_home_restrictions</th>
+      <th>Stringency_index</th>
+      <th>Testing_policy</th>
+      <th>Tests</th>
+      <th>Transport_closing</th>
+      <th>Vaccinated_full</th>
+      <th>Vaccinated_once</th>
+      <th>Vaccinations</th>
+      <th>Vaccinations_boosters</th>
+      <th>Workplace_closing</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>JPN</td>
+      <td>Aichi</td>
+      <td>-</td>
+      <td>2020-01-15</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>Japan</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>-2.78</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>JPN</td>
+      <td>Aichi</td>
+      <td>-</td>
+      <td>2020-01-16</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>Japan</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>-2.78</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>JPN</td>
+      <td>Aichi</td>
+      <td>-</td>
+      <td>2020-01-17</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>2.0</td>
+      <td>Japan</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>-2.78</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>JPN</td>
+      <td>Aichi</td>
+      <td>-</td>
+      <td>2020-01-18</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>2.0</td>
+      <td>Japan</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>-2.78</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>JPN</td>
+      <td>Aichi</td>
+      <td>-</td>
+      <td>2020-01-19</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>2.0</td>
+      <td>Japan</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>-2.78</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 32 columns</p>
+</div></div>
+</div>
+<p>For some countries (eg. USA), city-level data is available and we can download it as follows.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng_alabama</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
 <span class="n">eng_alabama</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;USA&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Alabama&quot;</span><span class="p">)</span>
 <span class="n">eng_alabama</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ISO3</th>
+      <th>Province</th>
+      <th>City</th>
+      <th>Date</th>
+      <th>Cancel_events</th>
+      <th>Confirmed</th>
+      <th>Contact_tracing</th>
+      <th>Country</th>
+      <th>Fatal</th>
+      <th>Gatherings_restrictions</th>
+      <th>...</th>
+      <th>Mobility_workplaces</th>
+      <th>Population</th>
+      <th>Recovered</th>
+      <th>School_closing</th>
+      <th>Stay_home_restrictions</th>
+      <th>Stringency_index</th>
+      <th>Testing_policy</th>
+      <th>Tests</th>
+      <th>Transport_closing</th>
+      <th>Workplace_closing</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>USA</td>
+      <td>Alabama</td>
+      <td>Autauga</td>
+      <td>2020-03-24</td>
+      <td>-2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>United States</td>
+      <td>0.0</td>
+      <td>-4.0</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>55869.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>3.0</td>
+      <td>-2.0</td>
+      <td>-68.98</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>-1.0</td>
+      <td>-3.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>USA</td>
+      <td>Alabama</td>
+      <td>Autauga</td>
+      <td>2020-03-25</td>
+      <td>-2.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+      <td>United States</td>
+      <td>0.0</td>
+      <td>-4.0</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>55869.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>3.0</td>
+      <td>-2.0</td>
+      <td>-68.98</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>-1.0</td>
+      <td>-3.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>USA</td>
+      <td>Alabama</td>
+      <td>Autauga</td>
+      <td>2020-03-26</td>
+      <td>-2.0</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>United States</td>
+      <td>0.0</td>
+      <td>-4.0</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>55869.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>3.0</td>
+      <td>-2.0</td>
+      <td>-68.98</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>-1.0</td>
+      <td>-3.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>USA</td>
+      <td>Alabama</td>
+      <td>Autauga</td>
+      <td>2020-03-27</td>
+      <td>-2.0</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>United States</td>
+      <td>0.0</td>
+      <td>-4.0</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>55869.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>3.0</td>
+      <td>-2.0</td>
+      <td>-68.98</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>-1.0</td>
+      <td>-3.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>USA</td>
+      <td>Alabama</td>
+      <td>Autauga</td>
+      <td>2020-03-28</td>
+      <td>2.0</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>United States</td>
+      <td>0.0</td>
+      <td>-4.0</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>55869.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>3.0</td>
+      <td>-2.0</td>
+      <td>-73.61</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>-1.0</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 28 columns</p>
+</div></div>
 </div>
 </div>
 <div class="section" id="1-2.-With-DataDownloader-class">
 <h3>1-2. With <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class<a class="headerlink" href="#1-2.-With-DataDownloader-class" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> class is suggested because it has data cleaning methods and so on, but we can use <code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code> class for data downloading.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataDownloader</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataDownloader</span><span class="p">()</span>
 <span class="n">dl_df</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Overview of the records</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Overview of the records</span>
 <span class="n">dl_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 222240 entries, 0 to 222239
+Data columns (total 33 columns):
+ #   Column                               Non-Null Count   Dtype
+---  ------                               --------------   -----
+ 0   ISO3                                 222240 non-null  string
+ 1   Province                             222240 non-null  string
+ 2   City                                 222240 non-null  string
+ 3   Date                                 222240 non-null  datetime64[ns]
+ 4   Cancel_events                        173960 non-null  Float64
+ 5   Confirmed                            200875 non-null  Float64
+ 6   Contact_tracing                      173927 non-null  Float64
+ 7   Country                              219635 non-null  string
+ 8   Fatal                                184465 non-null  Float64
+ 9   Gatherings_restrictions              173983 non-null  Float64
+ 10  Information_campaigns                173948 non-null  Float64
+ 11  Internal_movement_restrictions       174004 non-null  Float64
+ 12  International_movement_restrictions  174020 non-null  Float64
+ 13  Mobility_grocery_and_pharmacy        117506 non-null  Float64
+ 14  Mobility_parks                       117326 non-null  Float64
+ 15  Mobility_residential                 117183 non-null  Float64
+ 16  Mobility_retail_and_recreation       117577 non-null  Float64
+ 17  Mobility_transit_stations            118495 non-null  Float64
+ 18  Mobility_workplaces                  118932 non-null  Float64
+ 19  Population                           218665 non-null  Float64
+ 20  Product                              116920 non-null  string
+ 21  Recovered                            71607 non-null   Float64
+ 22  School_closing                       174008 non-null  Float64
+ 23  Stay_home_restrictions               173984 non-null  Float64
+ 24  Stringency_index                     173927 non-null  Float64
+ 25  Testing_policy                       173963 non-null  Float64
+ 26  Tests                                85554 non-null   Float64
+ 27  Transport_closing                    173981 non-null  Float64
+ 28  Vaccinated_full                      47952 non-null   Float64
+ 29  Vaccinated_once                      50509 non-null   Float64
+ 30  Vaccinations                         53183 non-null   Float64
+ 31  Vaccinations_boosters                26167 non-null   Float64
+ 32  Workplace_closing                    173985 non-null  Float64
+dtypes: Float64(27), datetime64[ns](1), string(5)
+memory usage: 61.7 MB
+</pre></div></div>
+</div>
 <p>Note that ISO3/Province/City columns have string data instead of categorical data.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Citations</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Citations</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">citations</span><span class="p">()))</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
+Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https: //doi.org/10.1038/s41597-020-00688-8
+O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2,  Work in progress, https://goo.gle/covid-19-open-data
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Acknowledgement">
@@ -574,76 +1073,689 @@ div.rendered_html tbody tr:hover {
 <p>At first, we will prepare the new dataset as <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. Just as a demonstration, we use <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">COVID-19 dataset in Japan</a>. (Note that this is included in the recommended servers and the following is usually un-necessary.)</p>
 <p>Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/data/japan">https://github.com/lisphilar/covid19-sir/data/japan</a></p>
 <p>Country-level data:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">c_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv&quot;</span>
 <span class="n">c_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">c_url</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="c1"># Check columns of the pandas.DataFrame</span>
 <span class="n">c_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Prefecture-level data:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv&quot;</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Location</th>
+      <th>Positive</th>
+      <th>Tested</th>
+      <th>Symptomatic</th>
+      <th>Asymptomatic</th>
+      <th>Sym-unknown</th>
+      <th>Hosp_require</th>
+      <th>Hosp_mild</th>
+      <th>Hosp_severe</th>
+      <th>Hosp_unknown</th>
+      <th>Hosp_waiting</th>
+      <th>Discharged</th>
+      <th>Fatal</th>
+      <th>Vaccinated_1st</th>
+      <th>Vaccinated_2nd</th>
+      <th>Vaccinated_3rd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2822</th>
+      <td>2022-09-16</td>
+      <td>Airport</td>
+      <td>21901</td>
+      <td>2352071.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>190.0</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>21703</td>
+      <td>8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2823</th>
+      <td>2022-09-16</td>
+      <td>Returnee</td>
+      <td>15</td>
+      <td>829.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>15</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2824</th>
+      <td>2022-09-17</td>
+      <td>Domestic</td>
+      <td>20544165</td>
+      <td>72608686.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>769498.0</td>
+      <td>NaN</td>
+      <td>309</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19613598</td>
+      <td>43525</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2825</th>
+      <td>2022-09-17</td>
+      <td>Airport</td>
+      <td>21936</td>
+      <td>2352575.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>195.0</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>21733</td>
+      <td>8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2826</th>
+      <td>2022-09-17</td>
+      <td>Returnee</td>
+      <td>15</td>
+      <td>829.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>15</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Prefecture-level data:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv&quot;</span>
 <span class="n">p_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">p_url</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="c1"># Check columns of the pandas.DataFrame</span>
 <span class="n">p_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>We may create a <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> instance, specifying the layer of location names. However, there is a discrepancy of layer names. <code class="docutils literal notranslate"><span class="pre">c_df</span></code> had “Location” layer and <code class="docutils literal notranslate"><span class="pre">p_df</span></code> had “Prefecture” layer.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Prefecture</th>
+      <th>Positive</th>
+      <th>Tested</th>
+      <th>Discharged</th>
+      <th>Fatal</th>
+      <th>Hosp_require</th>
+      <th>Hosp_severe</th>
+      <th>Unnamed: 8</th>
+      <th>Unnamed: 9</th>
+      <th>Unnamed: 10</th>
+      <th>Unnamed: 11</th>
+      <th>Unnamed: 12</th>
+      <th>Unnamed: 13</th>
+      <th>Unnamed: 14</th>
+      <th>Unnamed: 15</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>42906</th>
+      <td>2022-09-16</td>
+      <td>Kumamoto</td>
+      <td>319920</td>
+      <td>532642.0</td>
+      <td>310403.0</td>
+      <td>609.0</td>
+      <td>8908.0</td>
+      <td>7.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42907</th>
+      <td>2022-09-16</td>
+      <td>Oita</td>
+      <td>169876</td>
+      <td>875381.0</td>
+      <td>165976.0</td>
+      <td>333.0</td>
+      <td>3567.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42908</th>
+      <td>2022-09-16</td>
+      <td>Miyazaki</td>
+      <td>188477</td>
+      <td>237756.0</td>
+      <td>181817.0</td>
+      <td>342.0</td>
+      <td>5626.0</td>
+      <td>4.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42909</th>
+      <td>2022-09-16</td>
+      <td>Kagoshima</td>
+      <td>289902</td>
+      <td>729933.0</td>
+      <td>281507.0</td>
+      <td>513.0</td>
+      <td>6638.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42910</th>
+      <td>2022-09-16</td>
+      <td>Okinawa</td>
+      <td>493138</td>
+      <td>1167985.0</td>
+      <td>484789.0</td>
+      <td>698.0</td>
+      <td>7236.0</td>
+      <td>14.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>We may create a <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> instance, specifying the layer of location names. However, there is a discrepancy of layer names. <code class="docutils literal notranslate"><span class="pre">c_df</span></code> had “Location” layer and <code class="docutils literal notranslate"><span class="pre">p_df</span></code> had “Prefecture” layer.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">p_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Index([&#39;Date&#39;, &#39;Location&#39;, &#39;Positive&#39;, &#39;Tested&#39;, &#39;Symptomatic&#39;, &#39;Asymptomatic&#39;,
+       &#39;Sym-unknown&#39;, &#39;Hosp_require&#39;, &#39;Hosp_mild&#39;, &#39;Hosp_severe&#39;,
+       &#39;Hosp_unknown&#39;, &#39;Hosp_waiting&#39;, &#39;Discharged&#39;, &#39;Fatal&#39;, &#39;Vaccinated_1st&#39;,
+       &#39;Vaccinated_2nd&#39;, &#39;Vaccinated_3rd&#39;],
+      dtype=&#39;object&#39;)
+Index([&#39;Date&#39;, &#39;Prefecture&#39;, &#39;Positive&#39;, &#39;Tested&#39;, &#39;Discharged&#39;, &#39;Fatal&#39;,
+       &#39;Hosp_require&#39;, &#39;Hosp_severe&#39;, &#39;Unnamed: 8&#39;, &#39;Unnamed: 9&#39;,
+       &#39;Unnamed: 10&#39;, &#39;Unnamed: 11&#39;, &#39;Unnamed: 12&#39;, &#39;Unnamed: 13&#39;,
+       &#39;Unnamed: 14&#39;, &#39;Unnamed: 15&#39;],
+      dtype=&#39;object&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c_df</span><span class="o">.</span><span class="n">Location</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c_df</span><span class="o">.</span><span class="n">Location</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Domestic&#39; &#39;Returnee&#39; &#39;Airport&#39;]
+</pre></div></div>
 </div>
 <p>To make country-level dataset, calculate total values of Domestic/Returnee/Airport.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">country_df</span> <span class="o">=</span> <span class="n">c_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">country_df</span> <span class="o">=</span> <span class="n">c_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="n">country_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="n">country_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Prefecture&quot;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">NA</span><span class="p">)</span>
 <span class="n">country_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>To make prefecture-level data, add “Country” column.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prefecture_df</span> <span class="o">=</span> <span class="n">p_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Country</th>
+      <th>Prefecture</th>
+      <th>Positive</th>
+      <th>Tested</th>
+      <th>Symptomatic</th>
+      <th>Asymptomatic</th>
+      <th>Sym-unknown</th>
+      <th>Hosp_require</th>
+      <th>Hosp_mild</th>
+      <th>Hosp_severe</th>
+      <th>Hosp_unknown</th>
+      <th>Hosp_waiting</th>
+      <th>Discharged</th>
+      <th>Fatal</th>
+      <th>Vaccinated_1st</th>
+      <th>Vaccinated_2nd</th>
+      <th>Vaccinated_3rd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>945</th>
+      <td>2022-09-13</td>
+      <td>Japan</td>
+      <td>&lt;NA&gt;</td>
+      <td>20221686</td>
+      <td>74136488.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>916793.0</td>
+      <td>0.0</td>
+      <td>412</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19153962</td>
+      <td>42794</td>
+      <td>1162.0</td>
+      <td>0.0</td>
+      <td>81921292.0</td>
+    </tr>
+    <tr>
+      <th>946</th>
+      <td>2022-09-14</td>
+      <td>Japan</td>
+      <td>&lt;NA&gt;</td>
+      <td>20300387</td>
+      <td>74386604.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>871243.0</td>
+      <td>0.0</td>
+      <td>376</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19265108</td>
+      <td>42985</td>
+      <td>917.0</td>
+      <td>0.0</td>
+      <td>81951221.0</td>
+    </tr>
+    <tr>
+      <th>947</th>
+      <td>2022-09-15</td>
+      <td>Japan</td>
+      <td>&lt;NA&gt;</td>
+      <td>20399933</td>
+      <td>74581763.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>831189.0</td>
+      <td>0.0</td>
+      <td>364</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19415557</td>
+      <td>43177</td>
+      <td>600.0</td>
+      <td>0.0</td>
+      <td>81978572.0</td>
+    </tr>
+    <tr>
+      <th>948</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>&lt;NA&gt;</td>
+      <td>20488312</td>
+      <td>74773033.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>804604.0</td>
+      <td>0.0</td>
+      <td>326</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19518267</td>
+      <td>43347</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>82001502.0</td>
+    </tr>
+    <tr>
+      <th>949</th>
+      <td>2022-09-17</td>
+      <td>Japan</td>
+      <td>&lt;NA&gt;</td>
+      <td>20566116</td>
+      <td>74962090.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>769693.0</td>
+      <td>0.0</td>
+      <td>309</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19635346</td>
+      <td>43533</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>To make prefecture-level data, add “Country” column.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prefecture_df</span> <span class="o">=</span> <span class="n">p_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">prefecture_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="n">prefecture_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Create <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> instance and register datasets.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set layers and specify layer name of country (which will be converted to ISO3 code for standardization)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Country</th>
+      <th>Prefecture</th>
+      <th>Positive</th>
+      <th>Tested</th>
+      <th>Discharged</th>
+      <th>Fatal</th>
+      <th>Hosp_require</th>
+      <th>Hosp_severe</th>
+      <th>Unnamed: 8</th>
+      <th>Unnamed: 9</th>
+      <th>Unnamed: 10</th>
+      <th>Unnamed: 11</th>
+      <th>Unnamed: 12</th>
+      <th>Unnamed: 13</th>
+      <th>Unnamed: 14</th>
+      <th>Unnamed: 15</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>42906</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>Kumamoto</td>
+      <td>319920</td>
+      <td>532642.0</td>
+      <td>310403.0</td>
+      <td>609.0</td>
+      <td>8908.0</td>
+      <td>7.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42907</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>Oita</td>
+      <td>169876</td>
+      <td>875381.0</td>
+      <td>165976.0</td>
+      <td>333.0</td>
+      <td>3567.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42908</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>Miyazaki</td>
+      <td>188477</td>
+      <td>237756.0</td>
+      <td>181817.0</td>
+      <td>342.0</td>
+      <td>5626.0</td>
+      <td>4.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42909</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>Kagoshima</td>
+      <td>289902</td>
+      <td>729933.0</td>
+      <td>281507.0</td>
+      <td>513.0</td>
+      <td>6638.0</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>42910</th>
+      <td>2022-09-16</td>
+      <td>Japan</td>
+      <td>Okinawa</td>
+      <td>493138</td>
+      <td>1167985.0</td>
+      <td>484789.0</td>
+      <td>698.0</td>
+      <td>7236.0</td>
+      <td>14.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Create <code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code> instance and register datasets.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set layers and specify layer name of country (which will be converted to ISO3 code for standardization)</span>
 <span class="n">eng_own</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;Prefecture&quot;</span><span class="p">],</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span>
 <span class="c1"># Country-level data</span>
 <span class="n">eng_own</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">country_df</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="s2">&quot;New country-level data&quot;</span><span class="p">,</span> <span class="n">dayfirst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -656,6 +1768,186 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Country</th>
+      <th>Prefecture</th>
+      <th>Date</th>
+      <th>Asymptomatic</th>
+      <th>Discharged</th>
+      <th>Fatal</th>
+      <th>Hosp_mild</th>
+      <th>Hosp_require</th>
+      <th>Hosp_severe</th>
+      <th>Hosp_unknown</th>
+      <th>...</th>
+      <th>Unnamed: 11</th>
+      <th>Unnamed: 12</th>
+      <th>Unnamed: 13</th>
+      <th>Unnamed: 14</th>
+      <th>Unnamed: 15</th>
+      <th>Unnamed: 8</th>
+      <th>Unnamed: 9</th>
+      <th>Vaccinated_1st</th>
+      <th>Vaccinated_2nd</th>
+      <th>Vaccinated_3rd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>43856</th>
+      <td>JPN</td>
+      <td>Yamanashi</td>
+      <td>2022-09-12</td>
+      <td>&lt;NA&gt;</td>
+      <td>87199</td>
+      <td>143</td>
+      <td>&lt;NA&gt;</td>
+      <td>3639</td>
+      <td>0</td>
+      <td>&lt;NA&gt;</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>43857</th>
+      <td>JPN</td>
+      <td>Yamanashi</td>
+      <td>2022-09-13</td>
+      <td>&lt;NA&gt;</td>
+      <td>87700</td>
+      <td>143</td>
+      <td>&lt;NA&gt;</td>
+      <td>3293</td>
+      <td>0</td>
+      <td>&lt;NA&gt;</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>43858</th>
+      <td>JPN</td>
+      <td>Yamanashi</td>
+      <td>2022-09-14</td>
+      <td>&lt;NA&gt;</td>
+      <td>88194</td>
+      <td>145</td>
+      <td>&lt;NA&gt;</td>
+      <td>3407</td>
+      <td>0</td>
+      <td>&lt;NA&gt;</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>43859</th>
+      <td>JPN</td>
+      <td>Yamanashi</td>
+      <td>2022-09-15</td>
+      <td>&lt;NA&gt;</td>
+      <td>88628</td>
+      <td>145</td>
+      <td>&lt;NA&gt;</td>
+      <td>3444</td>
+      <td>0</td>
+      <td>&lt;NA&gt;</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>43860</th>
+      <td>JPN</td>
+      <td>Yamanashi</td>
+      <td>2022-09-16</td>
+      <td>&lt;NA&gt;</td>
+      <td>89143</td>
+      <td>145</td>
+      <td>&lt;NA&gt;</td>
+      <td>3293</td>
+      <td>0</td>
+      <td>&lt;NA&gt;</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 26 columns</p>
+</div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+New country-level data
+New prefecture-level data
+</pre></div></div>
+</div>
 </div>
 <div class="section" id="3.-Generator-of-sample-data-with-SIR-derived-ODE-model">
 <h2>3. Generator of sample data with SIR-derived ODE model<a class="headerlink" href="#3.-Generator-of-sample-data-with-SIR-derived-ODE-model" title="Permalink to this heading"></a></h2>
@@ -663,35 +1955,191 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="3.1-Sample-data-of-one-phase-ODE-model">
 <h3>3.1 Sample data of one-phase ODE model<a class="headerlink" href="#3.1-Sample-data-of-one-phase-ODE-model" title="Permalink to this heading"></a></h3>
 <p>Regarding ODE models, please refer to <strong>[TBC]</strong>. Here, we will create a sample data with one-phase SIR model and tau value 1440 min, the first date 01Jan2022, the last date 30Jun2022. ODE parameter values are preset.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create solver with preset</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create solver with preset</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
 <span class="c1"># Show settings</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">settings</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;date_range&#39;: (&#39;01Jan2022&#39;, &#39;30Jun2022&#39;),
+ &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
+                  &#39;Infected&#39;: 1000,
+                  &#39;Susceptible&#39;: 999000},
+ &#39;param_dict&#39;: {&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075},
+ &#39;tau&#39;: 1440}
+</pre></div></div>
+</div>
 <p>Solve the ODE model with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">one_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">one_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">one_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="n">display</span><span class="p">(</span><span class="n">one_df</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Fatal or Recovered</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2022-01-02</th>
+      <td>998787</td>
+      <td>1133</td>
+      <td>80</td>
+    </tr>
+    <tr>
+      <th>2022-01-03</th>
+      <td>998546</td>
+      <td>1283</td>
+      <td>170</td>
+    </tr>
+    <tr>
+      <th>2022-01-04</th>
+      <td>998273</td>
+      <td>1454</td>
+      <td>273</td>
+    </tr>
+    <tr>
+      <th>2022-01-05</th>
+      <td>997964</td>
+      <td>1647</td>
+      <td>389</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Fatal or Recovered</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-06-26</th>
+      <td>88354</td>
+      <td>750</td>
+      <td>910895</td>
+    </tr>
+    <tr>
+      <th>2022-06-27</th>
+      <td>88342</td>
+      <td>708</td>
+      <td>910950</td>
+    </tr>
+    <tr>
+      <th>2022-06-28</th>
+      <td>88329</td>
+      <td>669</td>
+      <td>911002</td>
+    </tr>
+    <tr>
+      <th>2022-06-29</th>
+      <td>88318</td>
+      <td>632</td>
+      <td>911050</td>
+    </tr>
+    <tr>
+      <th>2022-06-30</th>
+      <td>88307</td>
+      <td>596</td>
+      <td>911096</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 <p>Plot the time-series data.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">one_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of SIR model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">settings</span><span class="p">()[</span><span class="s1">&#39;param_dict&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">one_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of SIR model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">settings</span><span class="p">()[</span><span class="s1">&#39;param_dict&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/01_data_preparation_42_0.png" src="_images/01_data_preparation_42_0.png" />
 </div>
 </div>
 </div>
@@ -703,55 +2151,338 @@ div.rendered_html tbody tr:hover {
 <div class="line">The 1st phase: 01Mar2022 - 30Jun2022, <strong>rho=0.4</strong>, sigma=0.075</div>
 </div>
 <p>We will use <code class="docutils literal notranslate"><span class="pre">Dynamics</span></code> class. At first, set the first/date of dynamics and set th 0th phase ODE parameters.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">))</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Add the 1st phase with <code class="docutils literal notranslate"><span class="pre">Dynamics.register()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-06-30</td>
+      <td>2.67</td>
+      <td>0.2</td>
+      <td>0.075</td>
+      <td>5</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Add the 1st phase with <code class="docutils literal notranslate"><span class="pre">Dynamics.register()</span></code> method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">setting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">:</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">]</span>
 <span class="n">setting_df</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">setting_df</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.2</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-01-02</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-03</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-04</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-05</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2022-06-26</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-06-27</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-06-28</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-06-29</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-06-30</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+  </tbody>
+</table>
+<p>181 rows × 6 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">setting_df</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Solve the ODE model with <code class="docutils literal notranslate"><span class="pre">Dynamics().simulate()</span></code> method and plot the time-series data.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">two_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-28</td>
+      <td>2.67</td>
+      <td>0.2</td>
+      <td>0.075</td>
+      <td>5</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-03-01</td>
+      <td>2022-06-30</td>
+      <td>5.33</td>
+      <td>0.4</td>
+      <td>0.075</td>
+      <td>2</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Solve the ODE model with <code class="docutils literal notranslate"><span class="pre">Dynamics().simulate()</span></code> method and plot the time-series data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">two_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">two_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sample data of two-phase SIR model&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/01_data_preparation_49_0.png" src="_images/01_data_preparation_49_0.png" />
+</div>
+</div>
 <p>When we need convert model-specific variables to model-free variables (Susceptible/Infected/Fatal/Recovered), we will set <code class="docutils literal notranslate"><span class="pre">model_specific=False</span></code> (default). Because R=“Fatal or Recovered” in SIR model, we assume that R=“Recovered” and F = 0.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">two_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">two_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">two_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sample data of two-phase SIR model with SIRF variables&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/01_data_preparation_51_0.png" src="_images/01_data_preparation_51_0.png" />
 </div>
 </div>
 <p>Actually, observable variables are Population/Confirmed/Infected/Recovered. We can calculate Population and Confirmed as follows.</p>
@@ -759,16 +2490,23 @@ div.rendered_html tbody tr:hover {
 <li><p>Confirmed = Infected + Fatal + Recovered</p></li>
 <li><p>Population = Susceptible + Confirmed</p></li>
 </ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">real_df</span> <span class="o">=</span> <span class="n">two_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">real_df</span> <span class="o">=</span> <span class="n">two_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">real_df</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_df</span><span class="p">[[</span><span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">real_df</span><span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_df</span><span class="p">[[</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">real_df</span> <span class="o">=</span> <span class="n">real_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">]]</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">real_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sample data of two-phase SIR model with observable variables&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/01_data_preparation_53_0.png" src="_images/01_data_preparation_53_0.png" />
 </div>
 </div>
 <p>Thank you!</p>

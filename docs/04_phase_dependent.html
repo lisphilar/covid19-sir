@@ -22,6 +22,7 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -48,7 +49,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-gamma
+                2.27.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -426,17 +427,26 @@ div.rendered_html tbody tr:hover {
 <p>The first section will show the dynamics of phase-dependent SIR models with sample data.</p>
 <p>The Kaggle notebook also suggested detailed steps of applying phase-dependent SIR models to actual data. The second section demonstrates how to divide actual time-series data to phases (time-series segmentation with “S-R change point analysis”). The third section is to estimate ODE parameter values of phases (“ODE parameter estimation”).</p>
 <p>With fourth section, we will perform them with actual data of Tokyo/Japan as an example.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="kn">import</span> <span class="nn">sympy</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.27.0-zeta&#39;
+</pre></div></div>
 </div>
 <div class="section" id="1.-Dynamics-of-phase-dependent-SIR-models">
 <h2>1. Dynamics of phase-dependent SIR models<a class="headerlink" href="#1.-Dynamics-of-phase-dependent-SIR-models" title="Permalink to this heading"></a></h2>
@@ -449,88 +459,676 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="1-1.-Define-the-0th-phase">
 <h3>1-1. Define the 0th phase<a class="headerlink" href="#1-1.-Define-the-0th-phase" title="Permalink to this heading"></a></h3>
 <p>As the first step, define the 0th (initial) phase with preset ODE parameter values.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-06-30</td>
+      <td>2.67</td>
+      <td>0.2</td>
+      <td>0.075</td>
+      <td>5</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 <div class="section" id="1-2.-Define-the-1st-phase">
 <h3>1-2. Define the 1st phase<a class="headerlink" href="#1-2.-Define-the-1st-phase" title="Permalink to this heading"></a></h3>
 <p>Get the current settings of initial values of variables and ODE parameter values as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. Then, edit it and register it to the instance.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">before_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">before_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">before_df</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.2</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-01-02</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-03</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-04</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-05</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2022-06-26</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-27</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-28</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-29</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-30</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+<p>181 rows × 6 columns</p>
+</div></div>
+</div>
 <p>Without NAs:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">before_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">before_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.2</td>
+      <td>0.075</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 <p>Edit the dataframe to set the ODE parameter values of the 1st phase.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">setting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">]</span>
 <span class="n">setting_df</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.2</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-01-02</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-03</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-04</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-01-05</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2022-06-26</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-27</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-28</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-29</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-06-30</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+<p>181 rows × 6 columns</p>
+</div></div>
+</div>
 <p>Without NAs:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">setting_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-01-01</th>
+      <td>999000</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.2</td>
+      <td>0.075</td>
+    </tr>
+    <tr>
+      <th>2022-03-01</th>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.4</td>
+      <td>0.075</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 <p>Register the new settings. Because initial values on 01Mar2022 will be calculated with analytical solution of the 0th phase, they were not registered manually.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">setting_df</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">setting_df</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-28</td>
+      <td>2.67</td>
+      <td>0.2</td>
+      <td>0.075</td>
+      <td>5</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-03-01</td>
+      <td>2022-06-30</td>
+      <td>5.33</td>
+      <td>0.4</td>
+      <td>0.075</td>
+      <td>2</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 <p>High-lightened:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">highlight_max</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;1/beta [day]&quot;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">highlight_max</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;1/beta [day]&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_8e976_row0_col5, #T_8e976_row1_col2, #T_8e976_row1_col3 {
+  background-color: yellow;
+}
+</style>
+<table id="T_8e976">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_8e976_level0_col0" class="col_heading level0 col0" >Start</th>
+      <th id="T_8e976_level0_col1" class="col_heading level0 col1" >End</th>
+      <th id="T_8e976_level0_col2" class="col_heading level0 col2" >Rt</th>
+      <th id="T_8e976_level0_col3" class="col_heading level0 col3" >rho</th>
+      <th id="T_8e976_level0_col4" class="col_heading level0 col4" >sigma</th>
+      <th id="T_8e976_level0_col5" class="col_heading level0 col5" >1/beta [day]</th>
+      <th id="T_8e976_level0_col6" class="col_heading level0 col6" >1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Phase</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_8e976_level0_row0" class="row_heading level0 row0" >0th</th>
+      <td id="T_8e976_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
+      <td id="T_8e976_row0_col1" class="data row0 col1" >2022-02-28 00:00:00</td>
+      <td id="T_8e976_row0_col2" class="data row0 col2" >2.670000</td>
+      <td id="T_8e976_row0_col3" class="data row0 col3" >0.200000</td>
+      <td id="T_8e976_row0_col4" class="data row0 col4" >0.075000</td>
+      <td id="T_8e976_row0_col5" class="data row0 col5" >5</td>
+      <td id="T_8e976_row0_col6" class="data row0 col6" >13</td>
+    </tr>
+    <tr>
+      <th id="T_8e976_level0_row1" class="row_heading level0 row1" >1st</th>
+      <td id="T_8e976_row1_col0" class="data row1 col0" >2022-03-01 00:00:00</td>
+      <td id="T_8e976_row1_col1" class="data row1 col1" >2022-06-30 00:00:00</td>
+      <td id="T_8e976_row1_col2" class="data row1 col2" >5.330000</td>
+      <td id="T_8e976_row1_col3" class="data row1 col3" >0.400000</td>
+      <td id="T_8e976_row1_col4" class="data row1 col4" >0.075000</td>
+      <td id="T_8e976_row1_col5" class="data row1 col5" >2</td>
+      <td id="T_8e976_row1_col6" class="data row1 col6" >13</td>
+    </tr>
+  </tbody>
+</table></div>
 </div>
 <p>With the same way, we can set additional phases, if necessary for your analysis.</p>
 </div>
 <div class="section" id="1-3.-Track-ODE-parameter-values">
 <h3>1-3. Track ODE parameter values<a class="headerlink" href="#1-3.-Track-ODE-parameter-values" title="Permalink to this heading"></a></h3>
 <p>Confirm the phase-dependent ODE parameter values and Rt (reproduction number) by plotting.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Rt&quot;</span><span class="p">],</span>
     <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">dyn</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">: phase-dependent Rt values&quot;</span><span class="p">,</span>
@@ -542,17 +1140,96 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_20_0.png" src="_images/04_phase_dependent_20_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_b38d1_row0_col3, #T_b38d1_row1_col3, #T_b38d1_row2_col0, #T_b38d1_row2_col1, #T_b38d1_row3_col0, #T_b38d1_row3_col1 {
+  background-color: yellow;
+}
+</style>
+<table id="T_b38d1">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_b38d1_level0_col0" class="col_heading level0 col0" >Rt</th>
+      <th id="T_b38d1_level0_col1" class="col_heading level0 col1" >rho</th>
+      <th id="T_b38d1_level0_col2" class="col_heading level0 col2" >sigma</th>
+      <th id="T_b38d1_level0_col3" class="col_heading level0 col3" >1/beta [day]</th>
+      <th id="T_b38d1_level0_col4" class="col_heading level0 col4" >1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Date</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_b38d1_level0_row0" class="row_heading level0 row0" >2022-02-27 00:00:00</th>
+      <td id="T_b38d1_row0_col0" class="data row0 col0" >2.670000</td>
+      <td id="T_b38d1_row0_col1" class="data row0 col1" >0.200000</td>
+      <td id="T_b38d1_row0_col2" class="data row0 col2" >0.075000</td>
+      <td id="T_b38d1_row0_col3" class="data row0 col3" >5</td>
+      <td id="T_b38d1_row0_col4" class="data row0 col4" >13</td>
+    </tr>
+    <tr>
+      <th id="T_b38d1_level0_row1" class="row_heading level0 row1" >2022-02-28 00:00:00</th>
+      <td id="T_b38d1_row1_col0" class="data row1 col0" >2.670000</td>
+      <td id="T_b38d1_row1_col1" class="data row1 col1" >0.200000</td>
+      <td id="T_b38d1_row1_col2" class="data row1 col2" >0.075000</td>
+      <td id="T_b38d1_row1_col3" class="data row1 col3" >5</td>
+      <td id="T_b38d1_row1_col4" class="data row1 col4" >13</td>
+    </tr>
+    <tr>
+      <th id="T_b38d1_level0_row2" class="row_heading level0 row2" >2022-03-01 00:00:00</th>
+      <td id="T_b38d1_row2_col0" class="data row2 col0" >5.330000</td>
+      <td id="T_b38d1_row2_col1" class="data row2 col1" >0.400000</td>
+      <td id="T_b38d1_row2_col2" class="data row2 col2" >0.075000</td>
+      <td id="T_b38d1_row2_col3" class="data row2 col3" >2</td>
+      <td id="T_b38d1_row2_col4" class="data row2 col4" >13</td>
+    </tr>
+    <tr>
+      <th id="T_b38d1_level0_row3" class="row_heading level0 row3" >2022-03-02 00:00:00</th>
+      <td id="T_b38d1_row3_col0" class="data row3 col0" >5.330000</td>
+      <td id="T_b38d1_row3_col1" class="data row3 col1" >0.400000</td>
+      <td id="T_b38d1_row3_col2" class="data row3 col2" >0.075000</td>
+      <td id="T_b38d1_row3_col3" class="data row3 col3" >2</td>
+      <td id="T_b38d1_row3_col4" class="data row3 col4" >13</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
 </div>
 <div class="section" id="1-4.-Simulation">
 <h3>1-4. Simulation<a class="headerlink" href="#1-4.-Simulation" title="Permalink to this heading"></a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">Dynamics().simulate()</span></code>, simulate the phase-dependent ODE model with numerical analysis of each phase. Because we did not specify the initial values on the start date of the 1st phase, simulated values on the 1st phase’s start date will be used as the initial values of the 1st phase.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Two-phase </span><span class="si">{</span><span class="n">dyn</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">dyn</span><span class="o">.</span><span class="n">start_dates</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_22_0.png" src="_images/04_phase_dependent_22_0.png" />
 </div>
 </div>
 <p>When we need convert model-specific variables to model-free variables (Susceptible/Infected/Fatal/Recovered), we will set <code class="docutils literal notranslate"><span class="pre">model_specific=False</span></code> (default). SIR model cannot separate “Fatal” cases and “Recovered” cases into different groups. Please use SIR-D model or SIR-F model if the following role is not acceptable for your analysis.</p>
@@ -560,13 +1237,20 @@ div.rendered_html tbody tr:hover {
 <li><p>“Fatal” is always equal to 0</p></li>
 <li><p>“Recovered” is equal to “Fatal or Recovered” of SIR model</p></li>
 </ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Two-phase </span><span class="si">{</span><span class="n">dyn</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">dyn</span><span class="o">.</span><span class="n">start_dates</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_24_0.png" src="_images/04_phase_dependent_24_0.png" />
 </div>
 </div>
 </div>
@@ -577,16 +1261,23 @@ div.rendered_html tbody tr:hover {
 <li><p>Confirmed = Infected + Fatal + Recovered</p></li>
 <li><p>Population = Susceptible + Confirmed</p></li>
 </ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">real_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">real_df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">real_df</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_df</span><span class="p">[[</span><span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">real_df</span><span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_df</span><span class="p">[[</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">real_df</span> <span class="o">=</span> <span class="n">real_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">]]</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">real_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Two-phase </span><span class="si">{</span><span class="n">dyn</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> with observable variables&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">dyn</span><span class="o">.</span><span class="n">start_dates</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_26_0.png" src="_images/04_phase_dependent_26_0.png" />
 </div>
 </div>
 </div>
@@ -607,11 +1298,11 @@ div.rendered_html tbody tr:hover {
 & \beta, \gamma, N: const.
 \end{align*}</span></p>
 <p>Because <span class="math notranslate nohighlight">\(S(0) = N\)</span>, <span class="math notranslate nohighlight">\(S\)</span> is a function of <span class="math notranslate nohighlight">\(R\)</span> as follows.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">S</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">sympy</span><span class="o">.</span><span class="n">Function</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">S</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">sympy</span><span class="o">.</span><span class="n">Function</span><span class="p">)</span>
 <span class="n">N</span><span class="p">,</span> <span class="n">R</span>  <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;N R&quot;</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\beta \gamma&quot;</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">dS</span> <span class="o">=</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">*</span> <span class="n">S</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
@@ -620,28 +1311,44 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle S{\left(R \right)} = N e^{- \frac{R \beta}{N \gamma}}$</div></div>
+</div>
 </div>
 <div class="section" id="2-2.-log(S)-vs. R-plane">
 <h3>2-2. log(S) vs. R plane<a class="headerlink" href="#2-2.-log(S)-vs. R-plane" title="Permalink to this heading"></a></h3>
 <p>Then,</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sympy</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">lhs</span><span class="p">)),</span> <span class="n">sympy</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">rhs</span><span class="p">)))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sympy</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">lhs</span><span class="p">)),</span> <span class="n">sympy</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sr</span><span class="o">.</span><span class="n">rhs</span><span class="p">)))</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - \frac{R \beta}{N \gamma}$</div></div>
 </div>
 <p>Where <span class="math notranslate nohighlight">\(a=\cfrac{\beta}{N \gamma} \ (&gt; 0)\)</span>, <span class="math">\begin{align*}
 & \log S_{(R)} = - a R + \log N  \\
 & N: const.
 \end{align*}</span></p>
 <p><span class="math notranslate nohighlight">\(\log S\)</span> decreases constantly with increase of <span class="math notranslate nohighlight">\(R\)</span>, when the records follow a SIR-derived model and the parameter values of the model are constant. Plot of <span class="math notranslate nohighlight">\((x, y) = (R, \log S)\)</span> shows a line.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
 <span class="n">sirf</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
 <span class="n">solved_df</span> <span class="o">=</span> <span class="n">sirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">sr_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sr</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">solved_df</span><span class="p">))</span>
@@ -656,6 +1363,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_37_0.png" src="_images/04_phase_dependent_37_0.png" />
+</div>
+</div>
 <p>Initial values on the first date was set, but the summary shows just a phase with no set ODE parameter values.</p>
 <div class="line-block">
 <div class="line">Limitations:</div>
@@ -666,11 +1380,11 @@ div.rendered_html tbody tr:hover {
 <h3>2-3. Plane of phase-dependent models<a class="headerlink" href="#2-3.-Plane-of-phase-dependent-models" title="Permalink to this heading"></a></h3>
 <p>Correlation coefficient is about -1.0 when ODE parameter values are constant The slope of the line may change when the ODE parameter values are changed.</p>
 <p>Sample data of phase-dependent SIR-F model is here.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">))</span>
 <span class="c1"># Set some phases by changing ODE parameter values</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
@@ -685,12 +1399,143 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>Dynamics:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/tmp/ipykernel_5064/769106474.py:12: FutureWarning: this method is deprecated in favour of `Styler.format(precision=..)`
+  dyn.summary()[[&#34;Start&#34;, &#34;End&#34;, &#34;Rt&#34;, *parameters]].style.set_precision(4).background_gradient()
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<style type="text/css">
+#T_efac3_row0_col2 {
+  background-color: #dddbec;
+  color: #000000;
+}
+#T_efac3_row0_col3, #T_efac3_row0_col4, #T_efac3_row1_col4, #T_efac3_row1_col5, #T_efac3_row2_col4, #T_efac3_row3_col2, #T_efac3_row3_col5, #T_efac3_row4_col4, #T_efac3_row4_col5, #T_efac3_row4_col6, #T_efac3_row5_col4, #T_efac3_row5_col5, #T_efac3_row5_col6 {
+  background-color: #023858;
+  color: #f1f1f1;
+}
+#T_efac3_row0_col5 {
+  background-color: #dbdaeb;
+  color: #000000;
+}
+#T_efac3_row0_col6, #T_efac3_row1_col6, #T_efac3_row2_col2, #T_efac3_row2_col5, #T_efac3_row2_col6, #T_efac3_row3_col4, #T_efac3_row3_col6, #T_efac3_row5_col3 {
+  background-color: #fff7fb;
+  color: #000000;
+}
+#T_efac3_row1_col2 {
+  background-color: #034369;
+  color: #f1f1f1;
+}
+#T_efac3_row1_col3, #T_efac3_row2_col3, #T_efac3_row3_col3, #T_efac3_row4_col3 {
+  background-color: #f0eaf4;
+  color: #000000;
+}
+#T_efac3_row4_col2, #T_efac3_row5_col2 {
+  background-color: #d8d7e9;
+  color: #000000;
+}
+</style>
+<table id="T_efac3">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_efac3_level0_col0" class="col_heading level0 col0" >Start</th>
+      <th id="T_efac3_level0_col1" class="col_heading level0 col1" >End</th>
+      <th id="T_efac3_level0_col2" class="col_heading level0 col2" >Rt</th>
+      <th id="T_efac3_level0_col3" class="col_heading level0 col3" >theta</th>
+      <th id="T_efac3_level0_col4" class="col_heading level0 col4" >kappa</th>
+      <th id="T_efac3_level0_col5" class="col_heading level0 col5" >rho</th>
+      <th id="T_efac3_level0_col6" class="col_heading level0 col6" >sigma</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Phase</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_efac3_level0_row0" class="row_heading level0 row0" >0th</th>
+      <td id="T_efac3_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
+      <td id="T_efac3_row0_col1" class="data row0 col1" >2022-02-17 00:00:00</td>
+      <td id="T_efac3_row0_col2" class="data row0 col2" >2.5000</td>
+      <td id="T_efac3_row0_col3" class="data row0 col3" >0.0020</td>
+      <td id="T_efac3_row0_col4" class="data row0 col4" >0.0050</td>
+      <td id="T_efac3_row0_col5" class="data row0 col5" >0.2000</td>
+      <td id="T_efac3_row0_col6" class="data row0 col6" >0.0750</td>
+    </tr>
+    <tr>
+      <th id="T_efac3_level0_row1" class="row_heading level0 row1" >1st</th>
+      <td id="T_efac3_row1_col0" class="data row1 col0" >2022-02-18 00:00:00</td>
+      <td id="T_efac3_row1_col1" class="data row1 col1" >2022-02-23 00:00:00</td>
+      <td id="T_efac3_row1_col2" class="data row1 col2" >5.0000</td>
+      <td id="T_efac3_row1_col3" class="data row1 col3" >0.0002</td>
+      <td id="T_efac3_row1_col4" class="data row1 col4" >0.0050</td>
+      <td id="T_efac3_row1_col5" class="data row1 col5" >0.4000</td>
+      <td id="T_efac3_row1_col6" class="data row1 col6" >0.0750</td>
+    </tr>
+    <tr>
+      <th id="T_efac3_level0_row2" class="row_heading level0 row2" >2nd</th>
+      <td id="T_efac3_row2_col0" class="data row2 col0" >2022-02-24 00:00:00</td>
+      <td id="T_efac3_row2_col1" class="data row2 col1" >2022-02-28 00:00:00</td>
+      <td id="T_efac3_row2_col2" class="data row2 col2" >1.8700</td>
+      <td id="T_efac3_row2_col3" class="data row2 col3" >0.0002</td>
+      <td id="T_efac3_row2_col4" class="data row2 col4" >0.0050</td>
+      <td id="T_efac3_row2_col5" class="data row2 col5" >0.1500</td>
+      <td id="T_efac3_row2_col6" class="data row2 col6" >0.0750</td>
+    </tr>
+    <tr>
+      <th id="T_efac3_level0_row3" class="row_heading level0 row3" >3rd</th>
+      <td id="T_efac3_row3_col0" class="data row3 col0" >2022-03-01 00:00:00</td>
+      <td id="T_efac3_row3_col1" class="data row3 col1" >2022-03-07 00:00:00</td>
+      <td id="T_efac3_row3_col2" class="data row3 col2" >5.1300</td>
+      <td id="T_efac3_row3_col3" class="data row3 col3" >0.0002</td>
+      <td id="T_efac3_row3_col4" class="data row3 col4" >0.0030</td>
+      <td id="T_efac3_row3_col5" class="data row3 col5" >0.4000</td>
+      <td id="T_efac3_row3_col6" class="data row3 col6" >0.0750</td>
+    </tr>
+    <tr>
+      <th id="T_efac3_level0_row4" class="row_heading level0 row4" >4th</th>
+      <td id="T_efac3_row4_col0" class="data row4 col0" >2022-03-08 00:00:00</td>
+      <td id="T_efac3_row4_col1" class="data row4 col1" >2022-03-14 00:00:00</td>
+      <td id="T_efac3_row4_col2" class="data row4 col2" >2.5800</td>
+      <td id="T_efac3_row4_col3" class="data row4 col3" >0.0002</td>
+      <td id="T_efac3_row4_col4" class="data row4 col4" >0.0050</td>
+      <td id="T_efac3_row4_col5" class="data row4 col5" >0.4000</td>
+      <td id="T_efac3_row4_col6" class="data row4 col6" >0.1500</td>
+    </tr>
+    <tr>
+      <th id="T_efac3_level0_row5" class="row_heading level0 row5" >5th</th>
+      <td id="T_efac3_row5_col0" class="data row5 col0" >2022-03-15 00:00:00</td>
+      <td id="T_efac3_row5_col1" class="data row5 col1" >2022-06-30 00:00:00</td>
+      <td id="T_efac3_row5_col2" class="data row5 col2" >2.5800</td>
+      <td id="T_efac3_row5_col3" class="data row5 col3" >0.0000</td>
+      <td id="T_efac3_row5_col4" class="data row5 col4" >0.0050</td>
+      <td id="T_efac3_row5_col5" class="data row5 col5" >0.4000</td>
+      <td id="T_efac3_row5_col6" class="data row5 col6" >0.1500</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
+<p>Dynamics:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">model_specific</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]],</span>
@@ -702,12 +1547,19 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_44_0.png" src="_images/04_phase_dependent_44_0.png" />
+</div>
+</div>
 <p>Plot of <span class="math notranslate nohighlight">\((R, \log _{10} S)\)</span>: with vertical lines on change points (= start dates of phases 1st - last):</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">)</span>
 <span class="c1"># Get (R, log10S)</span>
 <span class="n">sr_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sr</span><span class="p">(</span><span class="n">dyn</span><span class="o">.</span><span class="n">simulate</span><span class="p">())</span>
 <span class="c1"># Plotting</span>
@@ -722,17 +1574,24 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_46_0.png" src="_images/04_phase_dependent_46_0.png" />
+</div>
+</div>
 <p>With the plotting, we can confirm most of the change points (except for 5th - 6th: difficult because the change was for <span class="math notranslate nohighlight">\(\alpha_1\)</span>).</p>
 </div>
 <div class="section" id="2.4-Time-series-segmentation">
 <h3>2.4 Time-series segmentation<a class="headerlink" href="#2.4-Time-series-segmentation" title="Permalink to this heading"></a></h3>
 <p>The previous sub-sections demonstrated that change points of S-R trend suggest change points of phases. Here, we will detect the change points of S-R trend with <code class="docutils literal notranslate"><span class="pre">Dynamics().detect()</span></code> via <code class="docutils literal notranslate"><span class="pre">Dynamics.segment()</span></code>. They uses <a class="reference external" href="https://github.com/deepcharles/ruptures">ruptures library: change point detection in Python</a> for off-line change point detection.</p>
 <p>We will prepare a dataset which has the 0th - 5th phase.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
 <span class="c1"># Set some phases by changing ODE parameter values</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
@@ -752,25 +1611,73 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_50_0.png" src="_images/04_phase_dependent_50_0.png" />
+</div>
+</div>
 <p>Create an instance of <code class="docutils literal notranslate"><span class="pre">Dynamics</span></code> with the prepared data. Note that the instance does not know the change points of phases.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sample data&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sample data&quot;</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">display</span><span class="p">(</span><span class="n">dyn_sim</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-06-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">Dynamics().detect()</span></code> performs S-R change point analysis (trend analysis) and show the trend on S-R plane. Dot lines are the change points of phases.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">algo</span></code> argument, we can select the algorithm and models to detect the change points from “Binseg-normal” (default), “Pelt-rbf”, “Binseg-rbf”, “BottomUp-rbf”, “BottomUp-normal”. Please refer to <a class="reference external" href="https://centre-borelli.github.io/ruptures-docs/">the documentation of ruptures library</a>.</p>
 <p>Additionally, we can specify the minimum size of phases with argument <code class="docutils literal notranslate"><span class="pre">min_size=7</span></code> (as default, [days]).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span> <span class="o">=</span> <span class="n">dyn_sim</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-rbf&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span> <span class="o">=</span> <span class="n">dyn_sim</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-rbf&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="c1"># List of change points</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="c1"># Plotted values</span>
@@ -778,32 +1685,318 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_54_0.png" src="_images/04_phase_dependent_54_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Timestamp(&#39;2022-02-11 00:00:00&#39;),
+ Timestamp(&#39;2022-02-20 00:00:00&#39;),
+ Timestamp(&#39;2022-03-04 00:00:00&#39;),
+ Timestamp(&#39;2022-03-14 00:00:00&#39;)]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Actual</th>
+      <th>0th</th>
+      <th>1st</th>
+      <th>2nd</th>
+      <th>3rd</th>
+      <th>4th</th>
+      <th>Fitted</th>
+    </tr>
+    <tr>
+      <th>R</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.999565</td>
+      <td>5.999569</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.999569</td>
+    </tr>
+    <tr>
+      <th>80</th>
+      <td>5.999473</td>
+      <td>5.999476</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.999476</td>
+    </tr>
+    <tr>
+      <th>169</th>
+      <td>5.999369</td>
+      <td>5.999373</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.999373</td>
+    </tr>
+    <tr>
+      <th>271</th>
+      <td>5.999252</td>
+      <td>5.999255</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.999255</td>
+    </tr>
+    <tr>
+      <th>385</th>
+      <td>5.999120</td>
+      <td>5.999123</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>5.999123</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>910075</th>
+      <td>4.652981</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.652989</td>
+      <td>4.652989</td>
+    </tr>
+    <tr>
+      <th>910076</th>
+      <td>4.652981</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.652988</td>
+      <td>4.652988</td>
+    </tr>
+    <tr>
+      <th>910077</th>
+      <td>4.652981</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.652986</td>
+      <td>4.652986</td>
+    </tr>
+    <tr>
+      <th>910078</th>
+      <td>4.652981</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.652985</td>
+      <td>4.652985</td>
+    </tr>
+    <tr>
+      <th>910079</th>
+      <td>4.652981</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>4.652984</td>
+      <td>4.652984</td>
+    </tr>
+  </tbody>
+</table>
+<p>153 rows × 7 columns</p>
+</div></div>
+</div>
 <p>Note that detected phases are un-registered to the instance.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-06-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 <p>To perform time-series segmentation with S-R trend analysis, we will use <code class="docutils literal notranslate"><span class="pre">Dynamics().segment()</span></code>, which accepts all keyword arguments of <code class="docutils literal notranslate"><span class="pre">Dynamics().detect()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-rbf&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_sim</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-rbf&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn_sim</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>If we need to add new change points or over-write change points, we will use <code class="docutils literal notranslate"><span class="pre">Dynamics().segment(points=&lt;list&gt;,</span> <span class="pre">overwrite=&lt;bool&gt;)</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_58_0.png" src="_images/04_phase_dependent_58_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Over-write</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-10</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-02-11</td>
+      <td>2022-02-19</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>2022-02-20</td>
+      <td>2022-03-03</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>2022-03-04</td>
+      <td>2022-03-13</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>2022-03-14</td>
+      <td>2022-06-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>If we need to add new change points or over-write change points, we will use <code class="docutils literal notranslate"><span class="pre">Dynamics().segment(points=&lt;list&gt;,</span> <span class="pre">overwrite=&lt;bool&gt;)</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Over-write</span>
 <span class="n">dyn_sim</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;01Mar2022&quot;</span><span class="p">,</span> <span class="s2">&quot;01Jun2022&quot;</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># Add</span>
 <span class="n">dyn_sim</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;01May2022&quot;</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -811,6 +2004,63 @@ div.rendered_html tbody tr:hover {
 <span class="n">dyn_sim</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-28</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-03-01</td>
+      <td>2022-04-30</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>2022-05-01</td>
+      <td>2022-05-31</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>2022-06-01</td>
+      <td>2022-06-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 </div>
@@ -821,11 +2071,11 @@ div.rendered_html tbody tr:hover {
 <h3>3.1 Preparation<a class="headerlink" href="#3.1-Preparation" title="Permalink to this heading"></a></h3>
 <p>Create an <code class="docutils literal notranslate"><span class="pre">Dynamics()</span></code> instance which has a dataset with 6 phases (the 0th - 5th). The instance knows change points, but does not know tau value and ODE parameter values.</p>
 <p>Create dataset.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;30Jun2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">)</span>
 <span class="c1"># Set some phases by changing ODE parameter values</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">dyn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
@@ -845,12 +2095,19 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_64_0.png" src="_images/04_phase_dependent_64_0.png" />
+</div>
+</div>
 <p>Create <code class="docutils literal notranslate"><span class="pre">Dynamics()</span></code> instance.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_est</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sample data&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_est</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sample data&quot;</span><span class="p">)</span>
 <span class="n">dyn_est</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;18Feb2022&quot;</span><span class="p">,</span> <span class="s2">&quot;24Feb2022&quot;</span><span class="p">,</span> <span class="s2">&quot;01Mar2022&quot;</span><span class="p">,</span> <span class="s2">&quot;08Mar2022&quot;</span><span class="p">,</span> <span class="s2">&quot;15Mar2022&quot;</span><span class="p">])</span>
 <span class="c1"># Show tau value</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tau value [min]: </span><span class="si">{</span><span class="n">dyn_est</span><span class="o">.</span><span class="n">tau</span> <span class="ow">or</span> <span class="s1">&#39;un-set&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -858,6 +2115,80 @@ div.rendered_html tbody tr:hover {
 <span class="n">display</span><span class="p">(</span><span class="n">dyn_est</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Tau value [min]: un-set
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-17</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-02-18</td>
+      <td>2022-02-23</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>2022-02-24</td>
+      <td>2022-02-28</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>2022-03-01</td>
+      <td>2022-03-07</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>2022-03-08</td>
+      <td>2022-03-14</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>2022-03-15</td>
+      <td>2022-06-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 <div class="section" id="3.2-Tau-estimation">
@@ -885,11 +2216,11 @@ div.rendered_html tbody tr:hover {
 <p>For example, RMSLE score will be calculated with the following equation. <span class="math">\begin{align*}
 \mathrm{RMSLE} = \sqrt{\cfrac{1}{n}\sum_{i=1}^{n}(log_{10}(A_{i} + 1) - log_{10}(P_{i} + 1))^2}
 \end{align*}</span> Where <span class="math notranslate nohighlight">\(A\)</span> is the observed (actual) values, <span class="math notranslate nohighlight">\(P\)</span> is estimated (predicted) values. Variables are <span class="math notranslate nohighlight">\(S (i=1), I (i=2), R (i=3)\ \mathrm{and}\ F (i=n=4)\)</span> for SIR-F model. When RMSLE score is low, hyperparameter estimation is highly accurate. Please refer to external sites, including <a class="reference external" href="https://medium.com/analytics-vidhya/root-mean-square-log-error-rmse-vs-rmlse-935c6cc1802a">Medium: What’s the Difference Between RMSE and RMSLE?</a>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span>
 <span class="n">tau</span><span class="p">,</span> <span class="n">score_df</span> <span class="o">=</span> <span class="n">dyn_est</span><span class="o">.</span><span class="n">estimate_tau</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tau value [min]: </span><span class="si">{</span><span class="n">dyn_est</span><span class="o">.</span><span class="n">tau</span> <span class="ow">or</span> <span class="s1">&#39;un-set&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">score_df</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
@@ -897,6 +2228,21 @@ div.rendered_html tbody tr:hover {
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Tau value [min]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">);</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Tau value [min]: 48
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_68_1.png" src="_images/04_phase_dependent_68_1.png" />
 </div>
 </div>
 </div>
@@ -922,11 +2268,11 @@ div.rendered_html tbody tr:hover {
 </ul>
 </li>
 </ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">est_df</span> <span class="o">=</span> <span class="n">dyn_est</span><span class="o">.</span><span class="n">estimate_params</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">est_df</span> <span class="o">=</span> <span class="n">dyn_est</span><span class="o">.</span><span class="n">estimate_params</span><span class="p">()</span>
 <span class="c1"># Show RMSLE scores pf phases</span>
 <span class="n">est_df</span> <span class="o">=</span> <span class="n">est_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
 <span class="n">est_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Start&quot;</span>
@@ -934,13 +2280,283 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+&lt;SIR-F Model: parameter estimation&gt;
+Running optimization with 2 CPUs...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ff319150c9fc458ba231e72a26362112"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Completed optimization. Total: 0 min 40 sec
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>RMSLE</th>
+      <th>Trials</th>
+      <th>Runtime</th>
+    </tr>
+    <tr>
+      <th>Start</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-02-18</th>
+      <td>0.000129</td>
+      <td>0.000188</td>
+      <td>0.015311</td>
+      <td>0.002773</td>
+      <td>0.049814</td>
+      <td>164</td>
+      <td>0 min  5 sec</td>
+    </tr>
+    <tr>
+      <th>2022-01-01</th>
+      <td>0.000573</td>
+      <td>0.000175</td>
+      <td>0.006643</td>
+      <td>0.002469</td>
+      <td>0.005846</td>
+      <td>330</td>
+      <td>0 min 14 sec</td>
+    </tr>
+    <tr>
+      <th>2022-02-24</th>
+      <td>0.000014</td>
+      <td>0.000212</td>
+      <td>0.006509</td>
+      <td>0.00317</td>
+      <td>0.037928</td>
+      <td>283</td>
+      <td>0 min  9 sec</td>
+    </tr>
+    <tr>
+      <th>2022-03-01</th>
+      <td>0.000035</td>
+      <td>0.000115</td>
+      <td>0.016226</td>
+      <td>0.002908</td>
+      <td>0.054408</td>
+      <td>310</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>2022-03-15</th>
+      <td>0.05517</td>
+      <td>0.000166</td>
+      <td>0.014084</td>
+      <td>0.004987</td>
+      <td>0.016397</td>
+      <td>184</td>
+      <td>0 min  9 sec</td>
+    </tr>
+    <tr>
+      <th>2022-03-08</th>
+      <td>0.000005</td>
+      <td>0.000204</td>
+      <td>0.016929</td>
+      <td>0.006109</td>
+      <td>0.061401</td>
+      <td>678</td>
+      <td>0 min 25 sec</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_est</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_est</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2022-01-01</td>
+      <td>2022-02-17</td>
+      <td>2.51</td>
+      <td>0.000573</td>
+      <td>0.000175</td>
+      <td>0.006643</td>
+      <td>0.002469</td>
+      <td>0.001</td>
+      <td>190</td>
+      <td>5</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2022-02-18</td>
+      <td>2022-02-23</td>
+      <td>5.17</td>
+      <td>0.000129</td>
+      <td>0.000188</td>
+      <td>0.015311</td>
+      <td>0.002773</td>
+      <td>0.0</td>
+      <td>177</td>
+      <td>2</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>2022-02-24</td>
+      <td>2022-02-28</td>
+      <td>1.92</td>
+      <td>0.000014</td>
+      <td>0.000212</td>
+      <td>0.006509</td>
+      <td>0.00317</td>
+      <td>0.0</td>
+      <td>157</td>
+      <td>5</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>2022-03-01</td>
+      <td>2022-03-07</td>
+      <td>5.37</td>
+      <td>0.000035</td>
+      <td>0.000115</td>
+      <td>0.016226</td>
+      <td>0.002908</td>
+      <td>0.0</td>
+      <td>290</td>
+      <td>2</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>2022-03-08</td>
+      <td>2022-03-14</td>
+      <td>2.68</td>
+      <td>0.000005</td>
+      <td>0.000204</td>
+      <td>0.016929</td>
+      <td>0.006109</td>
+      <td>0.0</td>
+      <td>163</td>
+      <td>2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>2022-03-15</td>
+      <td>2022-06-30</td>
+      <td>2.58</td>
+      <td>0.05517</td>
+      <td>0.000166</td>
+      <td>0.014084</td>
+      <td>0.004987</td>
+      <td>0.055</td>
+      <td>200</td>
+      <td>2</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 </div>
@@ -952,20 +2568,20 @@ div.rendered_html tbody tr:hover {
 <p>Prepare actual prefecture-level time-series data in Japan for demonstration.</p>
 <p>Download the dataset.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">,</span> <span class="s2">&quot;covid19dh&quot;</span><span class="p">]);</span>
 </pre></div>
 </div>
 </div>
 <p>Data cleaning, transformation, subsetting, complement.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
 <span class="n">actual_df</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">,),</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;SIRF&quot;</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
@@ -973,96 +2589,1168 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>Plotting: removed “Susceptible” from the figure because “Susceptible” &gt;&gt; max(“Infected”, “Infected”, “Recovered”).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+monotonic increasing complemented confirmed data and
+monotonic increasing complemented fatal data and
+partially complemented recovered data
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">actual_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Actual data in Japan&quot;</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-09-13</th>
+      <td>106307414</td>
+      <td>1024930</td>
+      <td>19153962</td>
+      <td>42794</td>
+    </tr>
+    <tr>
+      <th>2022-09-14</th>
+      <td>106228713</td>
+      <td>992294</td>
+      <td>19265108</td>
+      <td>42985</td>
+    </tr>
+    <tr>
+      <th>2022-09-15</th>
+      <td>106129167</td>
+      <td>941199</td>
+      <td>19415557</td>
+      <td>43177</td>
+    </tr>
+    <tr>
+      <th>2022-09-16</th>
+      <td>106040788</td>
+      <td>926698</td>
+      <td>19518267</td>
+      <td>43347</td>
+    </tr>
+    <tr>
+      <th>2022-09-17</th>
+      <td>105962984</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Plotting: removed “Susceptible” from the figure because “Susceptible” &gt;&gt; max(“Infected”, “Infected”, “Recovered”).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">actual_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Actual data in Japan&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_79_0.png" src="_images/04_phase_dependent_79_0.png" />
 </div>
 </div>
 <p>With the data, create an instance of <code class="docutils literal notranslate"><span class="pre">Dynamics</span></code> class.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">actual_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Dynamics</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">actual_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="c1"># Show registered values</span>
 <span class="n">dyn_act</span><span class="o">.</span><span class="n">register</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show summary</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Recovered</th>
+      <th>Fatal</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-09-13</th>
+      <td>106307414</td>
+      <td>1024930</td>
+      <td>19153962</td>
+      <td>42794</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-09-14</th>
+      <td>106228713</td>
+      <td>992294</td>
+      <td>19265108</td>
+      <td>42985</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-09-15</th>
+      <td>106129167</td>
+      <td>941199</td>
+      <td>19415557</td>
+      <td>43177</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-09-16</th>
+      <td>106040788</td>
+      <td>926698</td>
+      <td>19518267</td>
+      <td>43347</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2022-09-17</th>
+      <td>105962984</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show summary</span>
 <span class="n">dyn_act</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2020-01-22</td>
+      <td>2022-09-17</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 <div class="section" id="4-2.-Time-series-segmentation">
 <h3>4-2. Time-series segmentation<a class="headerlink" href="#4-2.-Time-series-segmentation" title="Permalink to this heading"></a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">Dynamics.segment()</span></code>, we will apply S-R change point analysis (trend analysis) to the prepared actual data.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span><span class="o">.</span><span class="n">segment</span><span class="p">();</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span><span class="o">.</span><span class="n">segment</span><span class="p">();</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn_act</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_84_0.png" src="_images/04_phase_dependent_84_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Phase</th>
+      <th>0th</th>
+      <th>1st</th>
+      <th>2nd</th>
+      <th>3rd</th>
+      <th>4th</th>
+      <th>5th</th>
+      <th>6th</th>
+      <th>7th</th>
+      <th>8th</th>
+      <th>9th</th>
+      <th>...</th>
+      <th>35th</th>
+      <th>36th</th>
+      <th>37th</th>
+      <th>38th</th>
+      <th>39th</th>
+      <th>40th</th>
+      <th>41st</th>
+      <th>42nd</th>
+      <th>43rd</th>
+      <th>44th</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Start</th>
+      <td>2020-01-22</td>
+      <td>2020-08-09</td>
+      <td>2020-11-15</td>
+      <td>2020-12-24</td>
+      <td>2021-01-17</td>
+      <td>2021-02-11</td>
+      <td>2021-04-04</td>
+      <td>2021-04-22</td>
+      <td>2021-05-07</td>
+      <td>2021-05-25</td>
+      <td>...</td>
+      <td>2022-06-30</td>
+      <td>2022-07-09</td>
+      <td>2022-07-19</td>
+      <td>2022-07-26</td>
+      <td>2022-08-02</td>
+      <td>2022-08-09</td>
+      <td>2022-08-16</td>
+      <td>2022-08-23</td>
+      <td>2022-09-03</td>
+      <td>2022-09-10</td>
+    </tr>
+    <tr>
+      <th>End</th>
+      <td>2020-08-08</td>
+      <td>2020-11-14</td>
+      <td>2020-12-23</td>
+      <td>2021-01-16</td>
+      <td>2021-02-10</td>
+      <td>2021-04-03</td>
+      <td>2021-04-21</td>
+      <td>2021-05-06</td>
+      <td>2021-05-24</td>
+      <td>2021-07-01</td>
+      <td>...</td>
+      <td>2022-07-08</td>
+      <td>2022-07-18</td>
+      <td>2022-07-25</td>
+      <td>2022-08-01</td>
+      <td>2022-08-08</td>
+      <td>2022-08-15</td>
+      <td>2022-08-22</td>
+      <td>2022-09-02</td>
+      <td>2022-09-09</td>
+      <td>2022-09-17</td>
+    </tr>
+  </tbody>
+</table>
+<p>2 rows × 45 columns</p>
+</div></div>
+</div>
 </div>
 <div class="section" id="4-3.-Parameter-estimation">
 <h3>4-3. Parameter estimation<a class="headerlink" href="#4-3.-Parameter-estimation" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Dynamics().estimate(**kwargs)</span></code> performs <code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_tau()</span></code> and <code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_params()</span></code> in order.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span><span class="o">.</span><span class="n">estimate</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dyn_act</span><span class="o">.</span><span class="n">estimate</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tau value [min]: </span><span class="si">{</span><span class="n">dyn_act</span><span class="o">.</span><span class="n">tau</span> <span class="ow">or</span> <span class="s1">&#39;un-set&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="c1"># Show summary</span>
 <span class="n">dyn_act</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+&lt;SIR-F Model: parameter estimation&gt;
+Running optimization with 2 CPUs...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "72105af3ea524b3b86c598f44e690d49"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Completed optimization. Total: 2 min 47 sec
+
+Tau value [min]: 24
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Rt</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>2020-01-22</td>
+      <td>2020-08-08</td>
+      <td>1.62</td>
+      <td>0.096663</td>
+      <td>0.000008</td>
+      <td>0.002151</td>
+      <td>0.001194</td>
+      <td>0.097</td>
+      <td>2051</td>
+      <td>8</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>2020-08-09</td>
+      <td>2020-11-14</td>
+      <td>0.85</td>
+      <td>0.002876</td>
+      <td>0.000012</td>
+      <td>0.000972</td>
+      <td>0.001126</td>
+      <td>0.003</td>
+      <td>1343</td>
+      <td>17</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>2020-11-15</td>
+      <td>2020-12-23</td>
+      <td>1.3</td>
+      <td>0.002191</td>
+      <td>0.000017</td>
+      <td>0.001921</td>
+      <td>0.001456</td>
+      <td>0.002</td>
+      <td>1006</td>
+      <td>9</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>2020-12-24</td>
+      <td>2021-01-16</td>
+      <td>1.61</td>
+      <td>0.000149</td>
+      <td>0.000021</td>
+      <td>0.001576</td>
+      <td>0.00096</td>
+      <td>0.0</td>
+      <td>789</td>
+      <td>11</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>2021-01-17</td>
+      <td>2021-02-10</td>
+      <td>0.75</td>
+      <td>0.003691</td>
+      <td>0.000019</td>
+      <td>0.001312</td>
+      <td>0.001715</td>
+      <td>0.004</td>
+      <td>883</td>
+      <td>13</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>2021-02-11</td>
+      <td>2021-04-03</td>
+      <td>0.79</td>
+      <td>0.011267</td>
+      <td>0.000023</td>
+      <td>0.000865</td>
+      <td>0.001059</td>
+      <td>0.011</td>
+      <td>729</td>
+      <td>19</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>2021-04-04</td>
+      <td>2021-04-21</td>
+      <td>1.49</td>
+      <td>0.001988</td>
+      <td>0.000009</td>
+      <td>0.001614</td>
+      <td>0.001074</td>
+      <td>0.002</td>
+      <td>1820</td>
+      <td>10</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>7th</th>
+      <td>2021-04-22</td>
+      <td>2021-05-06</td>
+      <td>1.42</td>
+      <td>0.000159</td>
+      <td>0.000014</td>
+      <td>0.001438</td>
+      <td>0.000997</td>
+      <td>0.0</td>
+      <td>1152</td>
+      <td>12</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>8th</th>
+      <td>2021-05-07</td>
+      <td>2021-05-24</td>
+      <td>1.15</td>
+      <td>0.000504</td>
+      <td>0.00002</td>
+      <td>0.001246</td>
+      <td>0.001067</td>
+      <td>0.001</td>
+      <td>852</td>
+      <td>13</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>9th</th>
+      <td>2021-05-25</td>
+      <td>2021-07-01</td>
+      <td>0.62</td>
+      <td>0.015739</td>
+      <td>0.000024</td>
+      <td>0.000816</td>
+      <td>0.001281</td>
+      <td>0.016</td>
+      <td>680</td>
+      <td>20</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>10th</th>
+      <td>2021-07-02</td>
+      <td>2021-07-27</td>
+      <td>1.31</td>
+      <td>0.001468</td>
+      <td>0.000008</td>
+      <td>0.001466</td>
+      <td>0.001108</td>
+      <td>0.001</td>
+      <td>1973</td>
+      <td>11</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>11th</th>
+      <td>2021-07-28</td>
+      <td>2021-08-06</td>
+      <td>2.55</td>
+      <td>0.000076</td>
+      <td>0.000003</td>
+      <td>0.002469</td>
+      <td>0.000967</td>
+      <td>0.0</td>
+      <td>6483</td>
+      <td>7</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>12th</th>
+      <td>2021-08-07</td>
+      <td>2021-08-19</td>
+      <td>1.47</td>
+      <td>0.00063</td>
+      <td>0.000003</td>
+      <td>0.001911</td>
+      <td>0.001297</td>
+      <td>0.001</td>
+      <td>6090</td>
+      <td>9</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>13th</th>
+      <td>2021-08-20</td>
+      <td>2021-08-31</td>
+      <td>1.4</td>
+      <td>0.00017</td>
+      <td>0.000003</td>
+      <td>0.00162</td>
+      <td>0.001155</td>
+      <td>0.0</td>
+      <td>5099</td>
+      <td>10</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>14th</th>
+      <td>2021-09-01</td>
+      <td>2021-09-15</td>
+      <td>0.67</td>
+      <td>0.000417</td>
+      <td>0.000007</td>
+      <td>0.001204</td>
+      <td>0.001777</td>
+      <td>0.0</td>
+      <td>2246</td>
+      <td>14</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>15th</th>
+      <td>2021-09-16</td>
+      <td>2022-01-10</td>
+      <td>0.47</td>
+      <td>0.000264</td>
+      <td>0.000007</td>
+      <td>0.000555</td>
+      <td>0.001185</td>
+      <td>0.0</td>
+      <td>2240</td>
+      <td>30</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>16th</th>
+      <td>2022-01-11</td>
+      <td>2022-01-17</td>
+      <td>5.66</td>
+      <td>0.00048</td>
+      <td>0.000002</td>
+      <td>0.003995</td>
+      <td>0.000704</td>
+      <td>0.0</td>
+      <td>9585</td>
+      <td>4</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <th>17th</th>
+      <td>2022-01-18</td>
+      <td>2022-01-26</td>
+      <td>3.25</td>
+      <td>0.000086</td>
+      <td>0.000001</td>
+      <td>0.0034</td>
+      <td>0.001044</td>
+      <td>0.0</td>
+      <td>15782</td>
+      <td>5</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>18th</th>
+      <td>2022-01-27</td>
+      <td>2022-02-03</td>
+      <td>1.87</td>
+      <td>0.000036</td>
+      <td>0.000002</td>
+      <td>0.002601</td>
+      <td>0.001386</td>
+      <td>0.0</td>
+      <td>7755</td>
+      <td>6</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>19th</th>
+      <td>2022-02-04</td>
+      <td>2022-02-11</td>
+      <td>1.33</td>
+      <td>0.000079</td>
+      <td>0.000002</td>
+      <td>0.002191</td>
+      <td>0.00165</td>
+      <td>0.0</td>
+      <td>7998</td>
+      <td>8</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>20th</th>
+      <td>2022-02-12</td>
+      <td>2022-02-19</td>
+      <td>0.96</td>
+      <td>0.000222</td>
+      <td>0.000003</td>
+      <td>0.001914</td>
+      <td>0.001983</td>
+      <td>0.0</td>
+      <td>4991</td>
+      <td>9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>21st</th>
+      <td>2022-02-20</td>
+      <td>2022-03-02</td>
+      <td>0.86</td>
+      <td>0.000238</td>
+      <td>0.000005</td>
+      <td>0.001554</td>
+      <td>0.001798</td>
+      <td>0.0</td>
+      <td>3534</td>
+      <td>11</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>22nd</th>
+      <td>2022-03-03</td>
+      <td>2022-03-12</td>
+      <td>0.9</td>
+      <td>0.000134</td>
+      <td>0.000005</td>
+      <td>0.001889</td>
+      <td>0.002094</td>
+      <td>0.0</td>
+      <td>3238</td>
+      <td>9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>23rd</th>
+      <td>2022-03-13</td>
+      <td>2022-03-23</td>
+      <td>0.87</td>
+      <td>0.000198</td>
+      <td>0.000004</td>
+      <td>0.001834</td>
+      <td>0.002114</td>
+      <td>0.0</td>
+      <td>4552</td>
+      <td>9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>24th</th>
+      <td>2022-03-24</td>
+      <td>2022-04-02</td>
+      <td>1.05</td>
+      <td>0.000127</td>
+      <td>0.000003</td>
+      <td>0.002006</td>
+      <td>0.001916</td>
+      <td>0.0</td>
+      <td>5400</td>
+      <td>8</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>25th</th>
+      <td>2022-04-03</td>
+      <td>2022-04-13</td>
+      <td>1.16</td>
+      <td>0.00035</td>
+      <td>0.000002</td>
+      <td>0.001738</td>
+      <td>0.00149</td>
+      <td>0.0</td>
+      <td>7266</td>
+      <td>10</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>26th</th>
+      <td>2022-04-14</td>
+      <td>2022-04-21</td>
+      <td>1.02</td>
+      <td>0.000026</td>
+      <td>0.000001</td>
+      <td>0.002024</td>
+      <td>0.00199</td>
+      <td>0.0</td>
+      <td>12475</td>
+      <td>8</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>27th</th>
+      <td>2022-04-22</td>
+      <td>2022-04-30</td>
+      <td>0.93</td>
+      <td>0.000036</td>
+      <td>0.000001</td>
+      <td>0.001849</td>
+      <td>0.001993</td>
+      <td>0.0</td>
+      <td>11209</td>
+      <td>9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>28th</th>
+      <td>2022-05-01</td>
+      <td>2022-05-10</td>
+      <td>0.78</td>
+      <td>0.000184</td>
+      <td>0.000002</td>
+      <td>0.001618</td>
+      <td>0.002081</td>
+      <td>0.0</td>
+      <td>7715</td>
+      <td>10</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>29th</th>
+      <td>2022-05-11</td>
+      <td>2022-05-20</td>
+      <td>1.18</td>
+      <td>0.000105</td>
+      <td>0.000002</td>
+      <td>0.002331</td>
+      <td>0.00197</td>
+      <td>0.0</td>
+      <td>7020</td>
+      <td>7</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>30th</th>
+      <td>2022-05-21</td>
+      <td>2022-05-30</td>
+      <td>0.89</td>
+      <td>0.000203</td>
+      <td>0.000002</td>
+      <td>0.001986</td>
+      <td>0.002233</td>
+      <td>0.0</td>
+      <td>8693</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>31st</th>
+      <td>2022-05-31</td>
+      <td>2022-06-06</td>
+      <td>0.75</td>
+      <td>0.000103</td>
+      <td>0.000002</td>
+      <td>0.001795</td>
+      <td>0.002385</td>
+      <td>0.0</td>
+      <td>8495</td>
+      <td>9</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>32nd</th>
+      <td>2022-06-07</td>
+      <td>2022-06-13</td>
+      <td>0.85</td>
+      <td>0.000951</td>
+      <td>0.000002</td>
+      <td>0.001935</td>
+      <td>0.002262</td>
+      <td>0.001</td>
+      <td>10233</td>
+      <td>9</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>33rd</th>
+      <td>2022-06-14</td>
+      <td>2022-06-21</td>
+      <td>0.97</td>
+      <td>0.001246</td>
+      <td>0.000003</td>
+      <td>0.002068</td>
+      <td>0.002118</td>
+      <td>0.001</td>
+      <td>5712</td>
+      <td>8</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>34th</th>
+      <td>2022-06-22</td>
+      <td>2022-06-29</td>
+      <td>1.17</td>
+      <td>0.000439</td>
+      <td>0.000005</td>
+      <td>0.002158</td>
+      <td>0.001846</td>
+      <td>0.0</td>
+      <td>3034</td>
+      <td>8</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>35th</th>
+      <td>2022-06-30</td>
+      <td>2022-07-08</td>
+      <td>1.92</td>
+      <td>0.000362</td>
+      <td>0.000001</td>
+      <td>0.002504</td>
+      <td>0.0013</td>
+      <td>0.0</td>
+      <td>13640</td>
+      <td>7</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>36th</th>
+      <td>2022-07-09</td>
+      <td>2022-07-18</td>
+      <td>2.67</td>
+      <td>0.00008</td>
+      <td>0.000001</td>
+      <td>0.003042</td>
+      <td>0.001138</td>
+      <td>0.0</td>
+      <td>16734</td>
+      <td>5</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>37th</th>
+      <td>2022-07-19</td>
+      <td>2022-07-25</td>
+      <td>2.05</td>
+      <td>0.000161</td>
+      <td>0.000001</td>
+      <td>0.003286</td>
+      <td>0.001603</td>
+      <td>0.0</td>
+      <td>22321</td>
+      <td>5</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>38th</th>
+      <td>2022-07-26</td>
+      <td>2022-08-01</td>
+      <td>1.9</td>
+      <td>0.000052</td>
+      <td>0.000001</td>
+      <td>0.00264</td>
+      <td>0.001391</td>
+      <td>0.0</td>
+      <td>12773</td>
+      <td>6</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>39th</th>
+      <td>2022-08-02</td>
+      <td>2022-08-08</td>
+      <td>1.34</td>
+      <td>0.000097</td>
+      <td>0.000002</td>
+      <td>0.002397</td>
+      <td>0.001787</td>
+      <td>0.0</td>
+      <td>11067</td>
+      <td>7</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>40th</th>
+      <td>2022-08-09</td>
+      <td>2022-08-15</td>
+      <td>1.13</td>
+      <td>0.000057</td>
+      <td>0.000002</td>
+      <td>0.002283</td>
+      <td>0.002022</td>
+      <td>0.0</td>
+      <td>7694</td>
+      <td>7</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>41st</th>
+      <td>2022-08-16</td>
+      <td>2022-08-22</td>
+      <td>1.17</td>
+      <td>0.000109</td>
+      <td>0.000002</td>
+      <td>0.002743</td>
+      <td>0.002342</td>
+      <td>0.0</td>
+      <td>6674</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>42nd</th>
+      <td>2022-08-23</td>
+      <td>2022-09-02</td>
+      <td>1.09</td>
+      <td>0.000243</td>
+      <td>0.000003</td>
+      <td>0.002008</td>
+      <td>0.001846</td>
+      <td>0.0</td>
+      <td>6075</td>
+      <td>8</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>43rd</th>
+      <td>2022-09-03</td>
+      <td>2022-09-09</td>
+      <td>0.81</td>
+      <td>0.000013</td>
+      <td>0.000003</td>
+      <td>0.001619</td>
+      <td>0.002006</td>
+      <td>0.0</td>
+      <td>4824</td>
+      <td>10</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>44th</th>
+      <td>2022-09-10</td>
+      <td>2022-09-17</td>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 </div>
 <div class="section" id="4-4.-Accuracy-evaluation">
 <h3>4-4. Accuracy evaluation<a class="headerlink" href="#4-4.-Accuracy-evaluation" title="Permalink to this heading"></a></h3>
 <p>Compare the simulated results and actual records, and evaluate the differences.</p>
 <p>Arguments: - date_range (tuple of (str or pandas.Timestamp or None) or None): range of dates to evaluate or None (the first and the last date) - metric (str): metric to evaluate the difference, “RMSLE” as default - display (bool): whether display figure of comparison or not - kwargs: keyword arguments of <code class="docutils literal notranslate"><span class="pre">covsirphy.compare_plot()</span></code></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span>
 <span class="n">score</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.4</span><span class="si">}</span><span class="s2"> (overall score for time-series segmentation, tau estimation and ODE parameter estimation)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_88_0.png" src="_images/04_phase_dependent_88_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+RMSLE: 3.098 (overall score for time-series segmentation, tau estimation and ODE parameter estimation)
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="4-5.-Simulation">
 <h3>4-5. Simulation<a class="headerlink" href="#4-5.-Simulation" title="Permalink to this heading"></a></h3>
 <p>Simulate the dynamics with the estimated parameter sets of phases.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">simulated_df</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">simulated_df</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">simulated_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Simulated data in Tokyo/Japan&quot;</span><span class="p">,</span>
     <span class="n">v</span><span class="o">=</span><span class="n">dyn_act</span><span class="o">.</span><span class="n">start_dates</span><span class="p">()[</span><span class="mi">1</span><span class="p">:],</span>
@@ -1071,12 +3759,19 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_91_0.png" src="_images/04_phase_dependent_91_0.png" />
+</div>
+</div>
 <p>When we need to simulate for the last 30 days, we can use <code class="docutils literal notranslate"><span class="pre">Dynamics().parse_days(days=-30,</span> <span class="pre">ref=&quot;last&quot;)</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">parse_days</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">parse_days</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">simulated_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span> <span class="n">end</span><span class="p">],</span>
     <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Simulated: Japan, </span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s2"> %Y-%m-%d</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s2"> %Y-%m-%d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1084,14 +3779,21 @@ div.rendered_html tbody tr:hover {
     <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_93_0.png" src="_images/04_phase_dependent_93_0.png" />
 </div>
 </div>
 <p>When we need to perform simulation for th 5th and 6th phase, We can use <code class="docutils literal notranslate"><span class="pre">Dynamics().parse_phases(phases=[&quot;5th&quot;,</span> <span class="pre">&quot;6th&quot;])</span></code>).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">parse_phases</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;5th&quot;</span><span class="p">,</span> <span class="s2">&quot;6th&quot;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">parse_phases</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;5th&quot;</span><span class="p">,</span> <span class="s2">&quot;6th&quot;</span><span class="p">])</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
     <span class="n">simulated_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span> <span class="n">end</span><span class="p">],</span>
     <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Simulated: Japan, </span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s2"> %Y-%m-%d</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s2"> %Y-%m-%d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1099,34 +3801,163 @@ div.rendered_html tbody tr:hover {
     <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_95_0.png" src="_images/04_phase_dependent_95_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="4-6.-Tracking-of-ODE-parameters">
 <h3>4-6. Tracking of ODE parameters<a class="headerlink" href="#4-6.-Tracking-of-ODE-parameters" title="Permalink to this heading"></a></h3>
 <p>Track the estimated ODE parameter values.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">track_df</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">track_df</span> <span class="o">=</span> <span class="n">dyn_act</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
 <span class="n">track_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rt</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-09-13</th>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2022-09-14</th>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2022-09-15</th>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2022-09-16</th>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2022-09-17</th>
+      <td>0.84</td>
+      <td>0.00069</td>
+      <td>0.000003</td>
+      <td>0.001994</td>
+      <td>0.00238</td>
+      <td>0.001</td>
+      <td>6241</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">track_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Index([&#39;Rt&#39;, &#39;theta&#39;, &#39;kappa&#39;, &#39;rho&#39;, &#39;sigma&#39;, &#39;alpha1 [-]&#39;, &#39;1/alpha2 [day]&#39;,
+       &#39;1/beta [day]&#39;, &#39;1/gamma [day]&#39;],
+      dtype=&#39;object&#39;)
+</pre></div></div>
+</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">track_df</span><span class="o">.</span><span class="n">columns</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Display the history of ODE parameter values tracked with global `track_df`.</span>
 
 <span class="sd">    Args:</span>
@@ -1150,96 +3981,161 @@ div.rendered_html tbody tr:hover {
 <div class="line"><span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\alpha_1\)</span>:</div>
 <div class="line">Enhancement of PCR tests suppressed the number of fatal cases before confirmation.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_101_0.png" src="_images/04_phase_dependent_101_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;alpha1 [-]&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;alpha1 [-]&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_102_0.png" src="_images/04_phase_dependent_102_0.png" />
 </div>
 </div>
 <div class="line-block">
 <div class="line"><span class="math notranslate nohighlight">\(\kappa\)</span> and <span class="math notranslate nohighlight">\(1/\alpha_2\)</span>:</div>
 <div class="line">Enhancement of medical system suppressed the number of fatal cases.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_104_0.png" src="_images/04_phase_dependent_104_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/alpha2 [day]&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/alpha2 [day]&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_105_0.png" src="_images/04_phase_dependent_105_0.png" />
 </div>
 </div>
 <div class="line-block">
 <div class="line"><span class="math notranslate nohighlight">\(\rho\)</span> and <span class="math notranslate nohighlight">\(1/\beta\)</span>:</div>
 <div class="line">Contact rate was changed with emergency declaration in Tokyo.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_107_0.png" src="_images/04_phase_dependent_107_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/beta [day]&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/beta [day]&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_108_0.png" src="_images/04_phase_dependent_108_0.png" />
 </div>
 </div>
 <div class="line-block">
 <div class="line"><span class="math notranslate nohighlight">\(\sigma\)</span> and <span class="math notranslate nohighlight">\(1/\gamma\)</span>:</div>
 <div class="line">Recovery period is not changed clearly at this time.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_110_0.png" src="_images/04_phase_dependent_110_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/gamma [day]&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;1/gamma [day]&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_111_0.png" src="_images/04_phase_dependent_111_0.png" />
 </div>
 </div>
 <div class="line-block">
 <div class="line">Reproduction number:</div>
 <div class="line">Rt &gt; 1 means explosive outbreak.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Tracked reproduction number&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Tracked reproduction number&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/04_phase_dependent_113_0.png" src="_images/04_phase_dependent_113_0.png" />
 </div>
 </div>
 <p>Thank you!</p>
-</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"fe4f4bd4eb3b4b39ab83ccf4ccf0e6ac": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c66231773f124cb6914e62fc0ca25259": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "44082bda46be40609c943c2ecd77ea7d": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_fe4f4bd4eb3b4b39ab83ccf4ccf0e6ac", "max": 6.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_c66231773f124cb6914e62fc0ca25259", "tabbable": null, "tooltip": null, "value": 6.0}}, "712fdaa7597744279e3e60f7f210f5b3": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2153565cf1cb4ea984234efe39162bd8": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "80980604e58c4491aff3c5314c9cd4fc": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_712fdaa7597744279e3e60f7f210f5b3", "placeholder": "\u200b", "style": "IPY_MODEL_2153565cf1cb4ea984234efe39162bd8", "tabbable": null, "tooltip": null, "value": "100%"}}, "a7a3c74124214c53b8df573b62e1904a": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e2ef147a36f444bf884b71a5be9743eb": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "b5fba5b810134cc4961dcf74c28fa3d3": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_a7a3c74124214c53b8df573b62e1904a", "placeholder": "\u200b", "style": "IPY_MODEL_e2ef147a36f444bf884b71a5be9743eb", "tabbable": null, "tooltip": null, "value": " 6/6 [00:40&lt;00:00,  7.09s/it]"}}, "e805bd6bb74f4ede8cdaa0293e08f3ae": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ff319150c9fc458ba231e72a26362112": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_80980604e58c4491aff3c5314c9cd4fc", "IPY_MODEL_44082bda46be40609c943c2ecd77ea7d", "IPY_MODEL_b5fba5b810134cc4961dcf74c28fa3d3"], "layout": "IPY_MODEL_e805bd6bb74f4ede8cdaa0293e08f3ae", "tabbable": null, "tooltip": null}}, "9b8c0ed6ace943c894e96cb023e0ee22": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b770650416b7420291df16385e39a7d6": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "fd2e3540c7904c6a865fc87fcd0f1de8": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_9b8c0ed6ace943c894e96cb023e0ee22", "max": 45.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_b770650416b7420291df16385e39a7d6", "tabbable": null, "tooltip": null, "value": 45.0}}, "06608f9502484c1fb85029596c222747": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9dd5f6a4d9334c7ca461bf7f1f38e921": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "9281918e17bf464d83c86c8f0592ceb4": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_06608f9502484c1fb85029596c222747", "placeholder": "\u200b", "style": "IPY_MODEL_9dd5f6a4d9334c7ca461bf7f1f38e921", "tabbable": null, "tooltip": null, "value": "100%"}}, "cf9e4f602747411db650db4fe6728b53": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "abb159f7a6994fe6bd6ba8d8ea2b4856": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "5acb7f2a3f374d6889d8af5b574339a7": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_cf9e4f602747411db650db4fe6728b53", "placeholder": "\u200b", "style": "IPY_MODEL_abb159f7a6994fe6bd6ba8d8ea2b4856", "tabbable": null, "tooltip": null, "value": " 45/45 [02:47&lt;00:00,  1.91s/it]"}}, "87362f6ae3f947a0bea53ac7b4fd0800": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "72105af3ea524b3b86c598f44e690d49": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_9281918e17bf464d83c86c8f0592ceb4", "IPY_MODEL_fd2e3540c7904c6a865fc87fcd0f1de8", "IPY_MODEL_5acb7f2a3f374d6889d8af5b574339a7"], "layout": "IPY_MODEL_87362f6ae3f947a0bea53ac7b4fd0800", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
 </div>
 

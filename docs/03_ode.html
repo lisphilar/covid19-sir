@@ -22,6 +22,7 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -48,7 +49,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-gamma
+                2.27.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -426,17 +427,26 @@ div.rendered_html tbody tr:hover {
 <h1>SIR-derived ODE models<a class="headerlink" href="#SIR-derived-ODE-models" title="Permalink to this heading"></a></h1>
 <p>SIR-derived ODE (ordinary differential equation) models are used in epidemiology. They are also named as compartment models and useful to understand the dynamics of outbreak of infectious diseases, including COVID-19.</p>
 <p>Mathematical model enables us to describe complicated systems with some parameters simply. So, we can study how to predict and end the outbreak in epidemiology.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.27.0-zeta&#39;
+</pre></div></div>
 </div>
 <div class="section" id="1.-SIR-model">
 <h2>1. SIR model<a class="headerlink" href="#1.-SIR-model" title="Permalink to this heading"></a></h2>
@@ -484,30 +494,48 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="1-3.-Create-sample-data">
 <h3>1-3. Create sample data<a class="headerlink" href="#1-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SIRModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default) and this method creates an instance with preset parameter values and initial values of variables.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
 <span class="nb">repr</span><span class="p">(</span><span class="n">sir</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRModel(date_range=(&#39;18Sep2022&#39;, &#39;17Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
+</div>
 <p>We can specify the start/end date of dynamics and tau value as follows. Note that tau value [min] should be a divisor of 1440 to simplify operations.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;31Dec2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">(</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">,</span> <span class="s2">&quot;31Dec2022&quot;</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Fatal or Recovered&#39;: 0}, param_dict={&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})
+</pre></div></div>
 </div>
 <p>When we need to change the values of arguments, create an instance directly with the class.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">SIRModel</span><span class="p">(</span>
     <span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;01Jan2022&#39;</span><span class="p">,</span> <span class="s1">&#39;31Dec2022&#39;</span><span class="p">),</span>
     <span class="n">tau</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span>
     <span class="n">initial_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Susceptible&#39;</span><span class="p">:</span> <span class="mi">995_000</span><span class="p">,</span> <span class="s1">&#39;Infected&#39;</span><span class="p">:</span> <span class="mi">4_000</span><span class="p">,</span> <span class="s1">&#39;Fatal or Recovered&#39;</span><span class="p">:</span> <span class="mi">1_000</span><span class="p">},</span>
@@ -516,52 +544,170 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SIRModel(date_range=(&#39;01Jan2022&#39;, &#39;31Dec2022&#39;), tau=720, initial_dict={&#39;Susceptible&#39;: 995000, &#39;Infected&#39;: 4000, &#39;Fatal or Recovered&#39;: 1000}, param_dict={&#39;rho&#39;: 0.4, &#39;sigma&#39;: 0.075})
+</pre></div></div>
+</div>
 <p>We can also confirm the settings and definitions of the instance with instance method <code class="docutils literal notranslate"><span class="pre">ODEModel().settings()</span></code> and class method <code class="docutils literal notranslate"><span class="pre">ODEModel.definition()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">sir</span><span class="o">.</span><span class="n">settings</span><span class="p">())</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">sir</span><span class="o">.</span><span class="n">settings</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;date_range&#39;: (&#39;18Sep2022&#39;, &#39;17Mar2023&#39;),
+ &#39;initial_dict&#39;: {&#39;Fatal or Recovered&#39;: 0,
+                  &#39;Infected&#39;: 1000,
+                  &#39;Susceptible&#39;: 999000},
+ &#39;param_dict&#39;: {&#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075},
+ &#39;tau&#39;: 1440}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># pprint(cs.SIRModel.definitions())</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pprint(cs.SIRModel.definitions())</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">sir</span><span class="o">.</span><span class="n">definitions</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;dimensional_parameters&#39;: [&#39;1/beta [day]&#39;, &#39;1/gamma [day]&#39;],
+ &#39;name&#39;: &#39;SIR Model&#39;,
+ &#39;parameters&#39;: [&#39;rho&#39;, &#39;sigma&#39;],
+ &#39;variables&#39;: [&#39;Susceptible&#39;, &#39;Infected&#39;, &#39;Fatal or Recovered&#39;]}
+</pre></div></div>
+</div>
 <p>We can calculate dimensional parameter values with <code class="docutils literal notranslate"><span class="pre">ODEModel().dimensional_parameters()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">dimensional_parameters</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">dimensional_parameters</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;1/beta [day]&#39;: 5, &#39;1/gamma [day]&#39;: 13}
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="1-4.-Solve-ODEs">
 <h3>1-4. Solve ODEs<a class="headerlink" href="#1-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
 <p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sir_df</span> <span class="o">=</span> <span class="n">sir</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir_df</span> <span class="o">=</span> <span class="n">sir</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">sir_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sir_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Susceptible</th>
+      <th>Infected</th>
+      <th>Fatal or Recovered</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2023-03-13</th>
+      <td>88354</td>
+      <td>750</td>
+      <td>910895</td>
+    </tr>
+    <tr>
+      <th>2023-03-14</th>
+      <td>88342</td>
+      <td>708</td>
+      <td>910950</td>
+    </tr>
+    <tr>
+      <th>2023-03-15</th>
+      <td>88329</td>
+      <td>669</td>
+      <td>911002</td>
+    </tr>
+    <tr>
+      <th>2023-03-16</th>
+      <td>88318</td>
+      <td>632</td>
+      <td>911050</td>
+    </tr>
+    <tr>
+      <th>2023-03-17</th>
+      <td>88307</td>
+      <td>596</td>
+      <td>911096</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sir_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_22_0.png" src="_images/03_ode_22_0.png" />
 </div>
 </div>
 </div>
@@ -573,23 +719,32 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 \end{align*}</span></p>
 <p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">external link: Infection Modeling — Part 1</a>).</p>
 <p>We can calculate reproduction number using <code class="docutils literal notranslate"><span class="pre">ODEModel().r0()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sir</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.67
+</pre></div></div>
 </div>
 <div class="line-block">
 <div class="line">When <span class="math notranslate nohighlight">\(x=\frac{1}{R_0}\)</span>, <span class="math notranslate nohighlight">\(\frac{\mathrm{d}y}{\mathrm{d}t}=0\)</span> (the number of infected cases does not change)</div>
 <div class="line">because <span class="math notranslate nohighlight">\(\frac{\mathrm{d}y}{\mathrm{d}t}=\rho x y - \sigma y=\rho \times (\rho \sigma^{-1})^{-1} \times y - \sigma y=0\)</span>.</div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">sir</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">sir</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">sir_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="c1"># Calculate R0</span>
 <span class="n">r0</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
@@ -612,6 +767,13 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
     <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_26_0.png" src="_images/03_ode_26_0.png" />
 </div>
 </div>
 </div>
@@ -655,26 +817,42 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 <div class="section" id="2-3.-Create-sample-data">
 <h3>2-3. Create sample data<a class="headerlink" href="#2-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SIRDModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRDModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRDModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
 <span class="nb">repr</span><span class="p">(</span><span class="n">sird</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRDModel(date_range=(&#39;18Sep2022&#39;, &#39;17Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="2-4.-Solve-ODEs">
 <h3>2-4. Solve ODEs<a class="headerlink" href="#2-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
 <p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sird_df</span> <span class="o">=</span> <span class="n">sird</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird_df</span> <span class="o">=</span> <span class="n">sird</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sird_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sird</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_35_0.png" src="_images/03_ode_35_0.png" />
 </div>
 </div>
 </div>
@@ -684,13 +862,22 @@ R_0 = \rho \sigma^{-1} = \beta \gamma^{-1}
 <p><span class="math">\begin{align*}
 R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 \end{align*}</span></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sird</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.5
+</pre></div></div>
 </div>
 </div>
 </div>
@@ -751,26 +938,42 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 <div class="section" id="3-3.-Create-sample-data">
 <h3>3-3. Create sample data<a class="headerlink" href="#3-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
 <span class="nb">repr</span><span class="p">(</span><span class="n">sirf</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SIRFModel(date_range=(&#39;18Sep2022&#39;, &#39;17Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 999000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho&#39;: 0.2, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="3-4.-Solve-ODEs">
 <h3>3-4. Solve ODEs<a class="headerlink" href="#3-4.-Solve-ODEs" title="Permalink to this heading"></a></h3>
 <p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sirf_df</span> <span class="o">=</span> <span class="n">sirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf_df</span> <span class="o">=</span> <span class="n">sirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sirf_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sirf</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_49_0.png" src="_images/03_ode_49_0.png" />
 </div>
 </div>
 </div>
@@ -780,13 +983,22 @@ R_0 = \rho (\sigma + \kappa)^{-1} = \beta (\gamma + \alpha)^{-1}
 <p><span class="math">\begin{align*}
 R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + \alpha_2)^{-1}
 \end{align*}</span></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.5
+</pre></div></div>
 </div>
 </div>
 </div>
@@ -845,26 +1057,42 @@ R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + 
 <div class="section" id="4-3.-Create-sample-data">
 <h3>4-3. Create sample data<a class="headerlink" href="#4-3.-Create-sample-data" title="Permalink to this heading"></a></h3>
 <p>We use <code class="docutils literal notranslate"><span class="pre">SEWIRFModel</span></code> class, a child class of <code class="docutils literal notranslate"><span class="pre">ODEModel</span></code>. They have class method <code class="docutils literal notranslate"><span class="pre">.from_sample(date_range=None,</span> <span class="pre">tau=1440)</span></code> (as default).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SEWIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SEWIRFModel</span><span class="o">.</span><span class="n">from_sample</span><span class="p">()</span>
 <span class="nb">repr</span><span class="p">(</span><span class="n">sewirf</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#34;SEWIRFModel(date_range=(&#39;18Sep2022&#39;, &#39;17Mar2023&#39;), tau=1440, initial_dict={&#39;Susceptible&#39;: 994000, &#39;Exposed&#39;: 3000, &#39;Waiting&#39;: 2000, &#39;Infected&#39;: 1000, &#39;Recovered&#39;: 0, &#39;Fatal&#39;: 0}, param_dict={&#39;theta&#39;: 0.002, &#39;kappa&#39;: 0.005, &#39;rho1&#39;: 0.2, &#39;rho2&#39;: 0.167, &#39;rho3&#39;: 0.167, &#39;sigma&#39;: 0.075})&#34;
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="id11">
 <h3>3-4. Solve ODEs<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>We can solve the ODEs with <code class="docutils literal notranslate"><span class="pre">ODEModel().solve()</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf_df</span> <span class="o">=</span> <span class="n">sewirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf_df</span> <span class="o">=</span> <span class="n">sewirf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">sewirf_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sample data of </span><span class="si">{</span><span class="n">sewirf</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/03_ode_61_0.png" src="_images/03_ode_61_0.png" />
 </div>
 </div>
 </div>
@@ -874,13 +1102,22 @@ R_0 = \rho (1 - \theta) (\sigma + \kappa)^{-1} = \beta (1 - \alpha_1) (\gamma + 
 <p><span class="math">\begin{align*}
 R_0 = \rho_1 /\rho_2 * \rho_3 (1-\theta) (\sigma + \kappa)^{-1}
 \end{align*}</span></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sewirf</span><span class="o">.</span><span class="n">r0</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.49
+</pre></div></div>
 </div>
 </div>
 </div>

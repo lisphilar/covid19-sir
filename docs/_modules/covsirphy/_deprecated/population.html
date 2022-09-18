@@ -1,3 +1,5 @@
+<!-- Refer to https://stackoverflow.com/a/50495306 -->
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
@@ -20,9 +22,18 @@
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+    window.onload = function () {
+        string = document.body.innerHTML;
+        string = string.replace(/ package/g, '').replace(/ module/g, '');
+        document.body.innerHTML = string;
+    }
+</script>
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -34,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-gamma
+                2.27.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -101,7 +112,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
+<span class="kn">from</span> <span class="nn">covsirphy._deprecated.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
 <div class="viewcode-block" id="PopulationData"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PopulationData">[docs]</a><span class="k">class</span> <span class="nc">PopulationData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
