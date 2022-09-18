@@ -11,7 +11,7 @@ from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.oxcgrt import OxCGRTData
 from covsirphy._deprecated.population import PopulationData
-from covsirphy.cleaning.pyramid import PopulationPyramidData
+from covsirphy._deprecated.pyramid import PopulationPyramidData
 from covsirphy._deprecated.linelist import LinelistData
 from covsirphy._deprecated.pcr_data import PCRData
 from covsirphy._deprecated.vaccine_data import VaccineData

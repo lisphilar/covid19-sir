@@ -9,6 +9,7 @@ from covsirphy.downloading._db_cs_japan import _CSJapan
 from covsirphy.downloading._db_covid19dh import _COVID19dh
 from covsirphy.downloading._db_google import _GoogleOpenData
 from covsirphy.downloading._db_owid import _OWID
+from covsirphy.downloading._db_wpp import _WPP
 
 
 class DataDownloader(Term):
@@ -40,11 +41,12 @@ class DataDownloader(Term):
         Args:
             country (str or None): country name or None
             province (str or None): province/state/prefecture name or None
-            databases (list[str] or None): list of databases to use or None (all available databases).
+            databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).
                 "japan": COVID-19 Dataset in Japan,
                 "covid19dh": COVID-19 Data Hub,
                 "google: COVID-19 Open Data by Google Cloud Platform,
-                "owid": Our World In Data.
+                "owid": Our World In Data,
+                "wpp": World Population Prospects by United nations.
 
         Returns:
             pandas.DataFrame:
@@ -101,9 +103,11 @@ class DataDownloader(Term):
             "covid19dh": _COVID19dh,
             "google": _GoogleOpenData,
             "owid": _OWID,
+            "wpp": _WPP,
         }
-        all_databases = list(db_dict.keys())
-        selected = Validator(databases, "databases").sequence(default=all_databases, candidates=all_databases)
+        all_databases = ["japan", "covid19dh", "google", "owid"]
+        selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
+        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
         for database in selected:
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)

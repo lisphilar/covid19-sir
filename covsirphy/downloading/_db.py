@@ -122,7 +122,7 @@ class _DataBase(Term):
         """
         raise NotImplementedError
 
-    def _provide(self, url, suffix, columns, date, date_format):
+    def _provide(self, url, suffix, columns, date=None, date_format="%Y-%m-%d"):
         """Provide the latest data and rename with class variable .COL_DICT.
 
         Args:

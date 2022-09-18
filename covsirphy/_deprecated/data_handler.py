@@ -10,7 +10,7 @@ import ruptures as rpt
 from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError, deprecate
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 from covsirphy._deprecated.country_data import CountryData
 from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.jhu_data import JHUData

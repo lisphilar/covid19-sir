@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class JapanData(CleaningBase):
@@ -32,7 +32,7 @@ class JapanData(CleaningBase):
             - Vaccinations (int): cumulative number of vaccinations
             - Vaccinations_boosters (int): cumulative number of booster vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-            - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+            - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
     """
     GITHUB_URL = "https://raw.githubusercontent.com"
     URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
@@ -120,9 +120,9 @@ class JapanData(CleaningBase):
         ]
         cols_v = ["Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
         c_df = pd.read_csv(self.URL_C, header=0).rename({"Location": "Area"}, axis=1)[cols + cols_v]
-        # Download the datset at province level
+        # Download the dataset at province level
         p_df = pd.read_csv(self.URL_P, header=0).rename({"Prefecture": "Area"}, axis=1)[cols]
-        # Combine the datsets
+        # Combine the datasets
         df = pd.concat([c_df, p_df], axis=0, ignore_index=True, sort=True)
         # Save the raw data
         df.to_csv(filename, index=False)

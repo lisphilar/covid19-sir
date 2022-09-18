@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.util.validator import Validator
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 from covsirphy._deprecated.country_data import CountryData
 from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
 

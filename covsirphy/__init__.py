@@ -43,13 +43,13 @@ from covsirphy.downloading.downloader import DataDownloader
 # engineering
 from covsirphy.engineering.engineer import DataEngineer
 # cleaning
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 from covsirphy._deprecated.jhu_data import JHUData
 from covsirphy._deprecated.jhu_complement import JHUDataComplementHandler
 from covsirphy._deprecated.country_data import CountryData
 from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.population import PopulationData, Population
-from covsirphy.cleaning.pyramid import PopulationPyramidData
+from covsirphy._deprecated.pyramid import PopulationPyramidData
 from covsirphy._deprecated.oxcgrt import OxCGRTData
 from covsirphy._deprecated.pcr_data import PCRData
 from covsirphy._deprecated.linelist import LinelistData
@@ -142,8 +142,6 @@ __all__ = [
     "DataDownloader",
     # engineer
     "DataEngineer",
-    # cleaning
-    "CleaningBase", "PopulationPyramidData",
     # dynamics
     "ODEModel", "SIRModel", "SIRDModel", "SIRFModel", "SEWIRFModel", "Dynamics",
     # science
@@ -158,7 +156,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     "RegressionHandler",
     "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
-    "DataLoader", "AutoMLHandler", "JapanData",
+    "DataLoader", "AutoMLHandler", "JapanData", "CleaningBase", "PopulationPyramidData",
 ]
 
 # Show exceptions in better format if used from command line

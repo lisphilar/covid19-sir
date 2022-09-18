@@ -6,8 +6,8 @@ import country_converter as coco
 import numpy as np
 import pandas as pd
 import wbdata
-from covsirphy.util.error import SubsetNotFoundError
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy.util.error import deprecate, SubsetNotFoundError
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class PopulationPyramidData(CleaningBase):
@@ -41,6 +41,7 @@ class PopulationPyramidData(CleaningBase):
     PYRAMID_COLS = [CleaningBase.COUNTRY, YEAR, SEX, AGE, CleaningBase.N]
     PORTION = "Per_total"
 
+    @deprecate("CleaningBase", version="2.27.0-zeta")
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:

@@ -3,7 +3,7 @@
 
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class OxCGRTData(CleaningBase):

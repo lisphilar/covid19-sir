@@ -43,6 +43,7 @@ class CleaningBase(Term):
         - The directory of geography information could be changed with .directory property.
     """
 
+    @deprecate("CleaningBase", version="2.27.0-zeta")
     def __init__(self, filename=None, data=None, citation=None, variables=None):
         # Columns of self._raw, self._clean_df and self.cleaned()
         self._raw_cols = [self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE] + (variables or [])

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError, deprecate
 from covsirphy.visualization.line_plot import line_plot
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 from covsirphy._deprecated.country_data import CountryData
 
 

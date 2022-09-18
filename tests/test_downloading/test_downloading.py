@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from covsirphy import DataDownloader, SubsetNotFoundError
+from covsirphy import DataDownloader, SubsetNotFoundError, Term
 
 
 class TestDataDownloader(object):
@@ -17,9 +17,9 @@ class TestDataDownloader(object):
         ]
     )
     def test_download(self, country, province):
-        downloader = DataDownloader()
-        downloader.layer(country=country, province=province)
-        assert downloader.citations()
+        dl = DataDownloader()
+        dl.layer(country=country, province=province)
+        assert dl.citations()
 
     @pytest.mark.parametrize(
         "country, province",
@@ -28,6 +28,15 @@ class TestDataDownloader(object):
         ]
     )
     def test_download_error(self, country, province):
-        downloader = DataDownloader()
+        dl = DataDownloader()
         with pytest.raises(SubsetNotFoundError):
-            downloader.layer(country=country, province=province, databases=["covid19dh"])
+            dl.layer(country=country, province=province, databases=["covid19dh"])
+
+    def test_download_wpp(self):
+        dl = DataDownloader()
+        c_df = dl.layer(databases=["wpp"])
+        assert Term.N in c_df
+        with pytest.raises(SubsetNotFoundError):
+            dl.layer(databases=["wpp"], country="Japan")
+        with pytest.raises(SubsetNotFoundError):
+            dl.layer(databases=["wpp"], country="Japan", province="Tokyo")

@@ -53,7 +53,7 @@ class _OWID(_DataBase):
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescribed by the protocol
         """
         # URLs
         URL_V = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/"
@@ -106,7 +106,7 @@ class _OWID(_DataBase):
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescribed by the protocol
         """
         return self._empty()
 
@@ -131,7 +131,7 @@ class _OWID(_DataBase):
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescribed by the protocol
         """
         return self._empty()
 
@@ -152,7 +152,7 @@ class _OWID(_DataBase):
                     - Vaccinations (numpy.int64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.int64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.int64): cumulative number of people who received all doses prescribed by the protocol
         """
         columns = [
             self.DATE, self.ISO3, self.PROVINCE, self.CITY, self.TESTS, self.PRODUCT, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL]

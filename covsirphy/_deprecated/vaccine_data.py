@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from covsirphy.util.error import deprecate, SubsetNotFoundError
-from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy._deprecated.cbase import CleaningBase
 
 
 class VaccineData(CleaningBase):
@@ -27,7 +27,7 @@ class VaccineData(CleaningBase):
                 - Vaccinations: cumulative number of vaccinations
                 - Vaccinations: cumulative number of booster vaccinations
                 - Vaccinated_once: cumulative number of people who received at least one vaccine dose
-                - Vaccinated_full: cumulative number of people who received all doses prescrived by the protocol
+                - Vaccinated_full: cumulative number of people who received all doses prescribed by the protocol
         citation (str or None): citation or None (empty)
         kwargs: the other arguments will be ignored
 
@@ -123,7 +123,7 @@ class VaccineData(CleaningBase):
                 - Vaccinations (int): cumulative number of vaccinations
                 - Vaccinations (int): cumulative number of booster vaccinations
                 - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-                - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
         """
         df = self._raw.copy()
         # Date
@@ -170,7 +170,7 @@ class VaccineData(CleaningBase):
                     - Vaccinations (int): the number of vaccinations
                     - Vaccinations_boosters (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
         """
         df = self._cleaned_df.copy()
         # Subset by country
@@ -210,7 +210,7 @@ class VaccineData(CleaningBase):
                     - Vaccinations (int): the number of vaccinations
                     - Vaccinations (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
         """
         return self.subset(
             country=country, product=product, start_date=start_date, end_date=end_date)
@@ -228,7 +228,7 @@ class VaccineData(CleaningBase):
                     - Vaccinations (int): the number of vaccinations
                     - Vaccinations_boosters (int): the number of booster vaccinations
                     - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescribed by the protocol
         """
         df = self._cleaned_df.copy()
         # Select 'World' data
