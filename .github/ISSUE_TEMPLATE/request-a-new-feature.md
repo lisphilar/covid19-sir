@@ -2,7 +2,7 @@
 name: Request a new feature
 about: Suggest an idea for this project
 title: '[New] '
-labels: Brainstorming, enhancement
+labels: brainstorming, enhancement
 assignees: ''
 
 ---

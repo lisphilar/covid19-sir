@@ -2,7 +2,7 @@
 name: Request revision of internal codes
 about: Suggest an idea for this project
 title: '[Revise] '
-labels: Brainstorming, enhancement
+labels: brainstorming, revise
 assignees: ''
 
 ---

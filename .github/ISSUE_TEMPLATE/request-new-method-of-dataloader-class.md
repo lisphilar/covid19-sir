@@ -2,7 +2,7 @@
 name: Request a new downloader of datasets
 about: Request a new downloader of datasets.
 title: '[New] dataset regarding '
-labels: Brainstorming, New data loader, enhancement
+labels: brainstorming, New data loader, enhancement
 assignees: ''
 
 ---
