@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from covsirphy.util.term import Term
-from covsirphy.downloading.db import _DataBase
+from covsirphy.downloading._db import _DataBase
 
 
 class _COVID19dh(_DataBase):

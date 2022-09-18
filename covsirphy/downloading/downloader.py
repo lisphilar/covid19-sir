@@ -5,10 +5,10 @@ from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
-from covsirphy.downloading.db_cs_japan import _CSJapan
-from covsirphy.downloading.db_covid19dh import _COVID19dh
-from covsirphy.downloading.db_google import _GoogleOpenData
-from covsirphy.downloading.db_owid import _OWID
+from covsirphy.downloading._db_cs_japan import _CSJapan
+from covsirphy.downloading._db_covid19dh import _COVID19dh
+from covsirphy.downloading._db_google import _GoogleOpenData
+from covsirphy.downloading._db_owid import _OWID
 
 
 class DataDownloader(Term):

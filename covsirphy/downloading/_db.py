@@ -4,7 +4,7 @@
 
 from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term
-from covsirphy.downloading.provider import _DataProvider
+from covsirphy.downloading._provider import _DataProvider
 
 
 class _DataBase(Term):
