@@ -107,6 +107,7 @@ class DataDownloader(Term):
         }
         all_databases = ["japan", "covid19dh", "google", "owid"]
         selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
+        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
         for database in selected:
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)
