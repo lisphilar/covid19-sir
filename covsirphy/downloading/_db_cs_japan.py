@@ -54,7 +54,7 @@ class _CSJapan(_DataBase):
                     - Vaccinations (numpy.float64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.float64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.float64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescribed by the protocol
         """
         cols = [
             "Date", "Location", "Positive", "Tested", "Discharged", "Fatal", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
@@ -127,6 +127,6 @@ class _CSJapan(_DataBase):
                     - Vaccinations (numpy.float64): cumulative number of vaccinations
                     - Vaccinations_boosters (numpy.float64): cumulative number of booster vaccinations
                     - Vaccinated_once (numpy.float64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescrived by the protocol
+                    - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescribed by the protocol
         """
         return pd.DataFrame(columns=self._all_columns)
