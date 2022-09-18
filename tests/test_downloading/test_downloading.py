@@ -36,5 +36,7 @@ class TestDataDownloader(object):
         dl = DataDownloader()
         c_df = dl.layer(databases=["wpp"])
         assert Term.N in c_df
-        assert dl.layer(databases=["wpp"], country="Japan").empty
-        assert dl.layer(databases=["wpp"], country="Japan", province="Tokyo").empty
+        with pytest.raises(SubsetNotFoundError):
+            dl.layer(databases=["wpp"], country="Japan")
+        with pytest.raises(SubsetNotFoundError):
+            dl.layer(databases=["wpp"], country="Japan", province="Tokyo")
