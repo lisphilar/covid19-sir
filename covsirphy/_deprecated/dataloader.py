@@ -66,9 +66,11 @@ class DataLoader(Term):
             "wbdata_pyramid": "wbdata_population_pyramid.csv",
             "japan": "covid_japan.csv",
         }
-        file_dict.update(
-            {k: self.dir_path.joinpath((basename_dict or {}).get(k, v)) for (k, v) in file_dict.items()}
-        )
+        file_dict |= {
+            k: self.dir_path.joinpath((basename_dict or {}).get(k, v))
+            for (k, v) in file_dict.items()
+        }
+
         self._file_dict = file_dict.copy()
         # Verbosity
         self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
