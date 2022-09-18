@@ -97,5 +97,6 @@ todo_include_todos = True
 add_module_names = False
 
 # nbsphinx
+# nbsphinx_execute: "always", "auto" or "never" 
 nbsphinx_execute = "always"
 nbsphinx_kernel_name = "python"
