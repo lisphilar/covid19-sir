@@ -116,7 +116,7 @@ docs:
 	@cp --force SECURITY.md docs/SECURITY.md
 	@pandoc -f commonmark -o docs/README.rst README.md --to rst
 	# Create API reference
-	@poetry run sphinx-apidoc -o docs covsirphy -fMT
+	@poetry run sphinx-apidoc -o docs covsirphy -fMT -t=docs/_templates
 	# Execute sphinx
 	@cd docs; poetry run make html; cp -a _build/html/. ../docs
 
