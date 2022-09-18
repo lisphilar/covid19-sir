@@ -8,7 +8,7 @@ from covsirphy.util.error import deprecate, DBLockedError, NotDBLockedError, UnE
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy._deprecated.jhu_data import JHUData
-from covsirphy._cleaning.japan_data import JapanData
+from covsirphy._deprecated.japan_data import JapanData
 from covsirphy._deprecated.oxcgrt import OxCGRTData
 from covsirphy._deprecated.population import PopulationData
 from covsirphy.cleaning.pyramid import PopulationPyramidData
