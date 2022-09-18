@@ -84,7 +84,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases
                     - Population: population values
         """
-        if "population" in kwargs.keys():
+        if "population" in kwargs:
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
         df = self._cleaned_df.copy()

@@ -77,7 +77,7 @@ class JapanData(CleaningBase):
         self._cleaned_df = self._cleaning()
         self._country = "Japan"
         self._citation = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
-            "https://github.com/lisphilar/covid19-sir/data/japan"
+                "https://github.com/lisphilar/covid19-sir/data/japan"
         self.dir_path = Path(filename).parent
         self.verbose = verbose
         # Directory that save the file
