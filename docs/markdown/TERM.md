@@ -5,7 +5,7 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dl>
 
 <dt><strong>accuracy of models</strong></dt>
-<dd>Whether variables and parameters of a model are represent the currenct situation of the outbreak or not.</dd>
+<dd>Whether variables and parameters of a model are represent the current situation of the outbreak or not.</dd>
 
 <dt><strong>accuracy of parameter estimation</strong></dt>
 <dd>How small the difference of actual number of cases and simulated number of cases with the estimated parameter values in a phase. This will be scored with RMSLE.</dd>
@@ -38,7 +38,7 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dd>Calculation of the number of cases with fixed parameter values and initial values.</dd>
 
 <dt><strong>scenario analysis</strong></dt>
-<dd>Analyse the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</dd>
+<dd>Analyze the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</dd>
 
 <dt><strong>tau parameter in models</strong></dt>
 <dd>Tau is a parameter used to convert actual time (with unit [min]) to time steps (without units).
@@ -54,7 +54,7 @@ If for some reason tau would be set to more than 1 day, then many records would 
 <dt><strong>trend</strong></dt>
 <dd>Parameter set of a phase.</dd>
 
-<dt><strong>trend analysis</strong></dt>
+<dt><strong>change point analysis</strong></dt>
 <dd>Breaking down the series of records to phases.</dd>
 
 </dl>
