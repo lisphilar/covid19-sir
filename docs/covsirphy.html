@@ -47,7 +47,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-zeta
+                2.27.0-eta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -86,7 +86,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contribution guideline</a></li>
 </ul>
 
@@ -1314,7 +1314,7 @@ the other columns</p>
 <li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
 <li><p><strong>logscale</strong> (<em>bool</em>) – whether convert the value to log10 scale values or not</p></li>
 <li><p><strong>directory</strong> (<em>str</em><em> or </em><em>None</em>) – directory to save GeoJSON file of “Natural Earth” GitHub repository or None (the directory of GIS class script)</p></li>
-<li><p><strong>natural_earth</strong> (<em>str</em><em> or </em><em>None</em>) – title of GeoJSON file (without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
+<li><p><strong>natural_earth</strong> (<em>str</em><em> or </em><em>None</em>) – title of GeoJSON file(without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of the following classes and methods.
 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
 - pandas.DataFrame.plot()</p></li>
@@ -1323,7 +1323,7 @@ the other columns</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Regarding &#64;geo argument, please refer to covsirphy.GIS.layer().</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.layer().</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1375,6 +1375,10 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For “convert_date”, keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not” can be used.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For “resample”, <cite>date_range=&lt;tuple of (str or None, str or None) or None&gt;)</cite> can be applied as keyword arguments to set the range.</p>
 </div>
 </dd></dl>
 
@@ -1491,8 +1495,8 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – &#64;geo has un-expected types</p></li>
-<li><p><strong>ValueError</strong> – the length of &#64;geo is larger than the length of layers</p></li>
+<li><p><strong>TypeError</strong> – &#64; geo has un - expected types</p></li>
+<li><p><strong>ValueError</strong> – the length of &#64; geo is larger than the length of layers</p></li>
 <li><p><a class="reference internal" href="#covsirphy.NotRegisteredError" title="covsirphy.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered at the layer yet</p></li>
 </ul>
 </dd>
@@ -1502,8 +1506,8 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>(str): columns defined by covsirphy.GIS(layers)</p></li>
-<li><p>Date (pandas.Timestamp): observation dates</p></li>
-<li><p>columns defined by &#64;variables</p></li>
+<li><p>Date(pandas.Timestamp): observation dates</p></li>
+<li><p>columns defined by &#64; variables</p></li>
 </ul>
 </dd>
 </dl>
@@ -1519,7 +1523,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Regarding &#64;geo argument, please refer to covsirphy.GIS.layer().</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.layer().</p>
 </div>
 </dd></dl>
 
@@ -1553,19 +1557,19 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>data for calculation
 Index</p>
 <blockquote>
-<div><p>Date (pandas.Timestamp): observation dates</p>
+<div><p>Date(pandas.Timestamp): observation dates</p>
 </div></blockquote>
 <dl class="simple">
-<dt>Columns</dt><dd><p>Confirmed (int): the number of confirmed cases, optional
-Fatal (int): the number of fatal cases, optional
-Recovered (int): the number of recovered cases, optional
+<dt>Columns</dt><dd><p>Confirmed(int): the number of confirmed cases, optional
+Fatal(int): the number of fatal cases, optional
+Recovered(int): the number of recovered cases, optional
 the other columns will be ignored</p>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mode value of recovery period [days]</p>
+<dd class="field-even"><p>mode value of recovery period[days]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
@@ -1645,26 +1649,26 @@ the other columns will be also registered</p>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
 <li><p><strong>complement</strong> (<em>bool</em>) – whether perform data complement or not, True as default</p></li>
 <li><p><strong>**Kwargs</strong> – keyword arguments for complement and default values
-recovery_period (int): expected value of recovery period [days], 17
-interval (int): expected update interval of the number of recovered cases [days], 2
-max_ignored (int): Max number of recovered cases to be ignored [cases], 100
-max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days], 14
-upper_limit_days (int): maximum number of valid partial recovery periods [days], 90
-lower_limit_days (int): minimum number of valid partial recovery periods [days], 7
-upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5
-lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</p></li>
+recovery_period(int): expected value of recovery period[days], 17
+interval(int): expected update interval of the number of recovered cases[days], 2
+max_ignored(int): Max number of recovered cases to be ignored[cases], 100
+max_ending_unupdated(int): Max number of days to apply full complement, where max recovered cases are not updated[days], 14
+upper_limit_days(int): maximum number of valid partial recovery periods[days], 90
+lower_limit_days(int): minimum number of valid partial recovery periods[days], 7
+upper_percentage(float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5
+lower_percentage(float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>Date (pandas.DataFrame): observation dates</p>
+<dt>Index</dt><dd><p>Date(pandas.DataFrame): observation dates</p>
 </dd>
-<dt>Columns</dt><dd><p>Population (int): total population
-Tests (int): column of the number of tests
-Confirmed (int): the number of confirmed cases
-Fatal (int): the number of fatal cases
-Recovered (int): the number of recovered cases
+<dt>Columns</dt><dd><p>Population(int): total population
+Tests(int): column of the number of tests
+Confirmed(int): the number of confirmed cases
+Fatal(int): the number of fatal cases
+Recovered(int): the number of recovered cases
 the other columns registered</p>
 </dd>
 </dl>
@@ -1695,30 +1699,30 @@ the other columns registered</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Regarding &#64;geo argument, please refer to covsirphy.GIS.subset().</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.subset().</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Re-calculation of Susceptible and Infected will be done automatically.</p>
+<p>Re - calculation of Susceptible and Infected will be done automatically.</p>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataEngineer.subset_alias">
 <span class="sig-name descname"><span class="pre">subset_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.subset_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataEngineer.subset_alias" title="Permalink to this definition"></a></dt>
-<dd><p>Set/get/list-up alias name(s) of subset.</p>
+<dd><p>Set / get / list - up alias name(s) of subset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list-up alias names)</p></li>
-<li><p><strong>update</strong> (<em>bool</em>) – force updating the alias when &#64;alias is not None</p></li>
+<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
+<li><p><strong>update</strong> (<em>bool</em>) – force updating the alias when &#64; alias is not None</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.DataEngineer().subset()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p>tuple(pandas.DataFrame, str, dict): when &#64;alias is not None, the subset of the alias</p></li>
-<li><p>dict[str, tuple(pandas.DataFrame, str, dict)]: when &#64;alias is None, dictionary of aliases and subsets</p></li>
+<li><p>tuple(pandas.DataFrame, str, dict): when &#64; alias is not None, the subset of the alias</p></li>
+<li><p>dict[str, tuple(pandas.DataFrame, str, dict)]: when &#64; alias is None, dictionary of aliases and subsets</p></li>
 </ul>
 </p>
 </dd>
@@ -1757,21 +1761,21 @@ the other columns registered</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.DataEngineer.variables_alias">
 <span class="sig-name descname"><span class="pre">variables_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.variables_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.DataEngineer.variables_alias" title="Permalink to this definition"></a></dt>
-<dd><p>Set/get/list-up alias name(s) of variables.</p>
+<dd><p>Set / get / list - up alias name(s) of variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list-up alias names)</p></li>
+<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to register with the alias</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="#covsirphy.NotIncludedError" title="covsirphy.NotIncludedError"><strong>NotIncludedError</strong></a> – the alias is not None and un-registered</p>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.NotIncludedError" title="covsirphy.NotIncludedError"><strong>NotIncludedError</strong></a> – the alias is not None and un - registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p>list[str]: when &#64;alias is not None, the variables of the alias</p></li>
-<li><p>dict[str, list[str]]: when &#64;alias is None, dictionary of aliases and variables</p></li>
+<li><p>list[str]: when &#64; alias is not None, the variables of the alias</p></li>
+<li><p>dict[str, list[str]]: when &#64; alias is None, dictionary of aliases and variables</p></li>
 </ul>
 </p>
 </dd>
@@ -1781,7 +1785,7 @@ the other columns registered</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When &#64;variables is not None, alias will be registered/updated.</p>
+<p>When &#64; variables is not None, alias will be registered / updated.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

@@ -2,6 +2,9 @@
 
 `covsirphy` library supports Python 3.8 and newer versions.
 
+> **Warning**  
+> **We cannot use `covsirphy` on Google Colab, which uses Python 3.7. [Binder](https://mybinder.org/) is recommended.**
+
 **Please use `covsirphy` with a virtual environment** (venv/poetry/conda etc.) because it has many dependencies as listed in "tool.poetry.dependencies" of [pyproject.toml](https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml).
 
 If you have any concerns, kindly create issues in [CovsirPhy: GitHub Issues page](https://github.com/lisphilar/covid19-sir/issues). All discussions are recorded there.

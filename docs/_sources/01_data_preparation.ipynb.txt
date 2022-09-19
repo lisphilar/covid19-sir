@@ -34,7 +34,9 @@
       },
       "outputs": [],
       "source": [
+        "from datetime import date\n",
         "from pprint import pprint\n",
+        "import numpy as np\n",
         "import pandas as pd\n",
         "import covsirphy as cs\n",
         "cs.__version__"
@@ -64,11 +66,11 @@
         "    * O. Wahltinez and others (2020), COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, Work in progress, https://goo.gle/covid-19-open-data\n",
         "    * percentage to baseline in visits\n",
         "    * Note: Please refer to [Google Terms of Service](https://policies.google.com/terms) in advance.\n",
-        "* **[World Bank Open Data](https://data.worldbank.org/)**\n",
-        "    * World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/\n",
-        "    * Population pyramid\n",
+        "* **[World Population Prospects 2022](https://population.un.org/wpp/)**\n",
+        "    * United Nations, Department of Economic and Social Affairs, Population Division (2022). World Population Prospects 2022, Online Edition.\n",
+        "    * Total population in each country\n",
         "* **[Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)**\n",
-        "    * Hirokazu Takaya (2020-2022), GitHub repository, COVID-19 dataset in Japan, https://github.com/lisphilar/covid19-sir/tree/master/data.\n",
+        "    * Hirokazu Takaya (2020-2022), GitHub repository, COVID-19 dataset in Japan, https://github.com/lisphilar/covid19-sir/tree/master/data\n",
         "    * The number of cases in Japan (total/prefectures)\n",
         "    * Metadata regarding Japan prefectures\n",
         "\n",
@@ -219,12 +221,19 @@
     },
     {
       "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Move forward to [Tutorial: Data engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)."
+      ]
+    },
+    {
+      "cell_type": "markdown",
       "metadata": {
         "id": "XTYFC2gp0ft6"
       },
       "source": [
         "### 1-2. With `DataDownloader` class\n",
-        "`DataEngineer` class is suggested because it has data cleaning methods and so on, but we can use `DataDownloader` class for data downloading."
+        "`DataEngineer` class is useful because it has data cleaning methods and so on (explained with [Tutorial: Data engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)), but we can use `DataDownloader` class for data downloading."
       ]
     },
     {
@@ -311,194 +320,314 @@
         "id": "mKhWAUWn0ft7"
       },
       "source": [
-        "At first, we will prepare the new dataset as `pandas.DataFrame`. Just as a demonstration, we use [COVID-19 dataset in Japan](https://github.com/lisphilar/covid19-sir/tree/master/data). (Note that this is included in the recommended servers and the following is usually un-necessary.)\n",
+        "### 2-1. Retrieve Monkeypox line list\n",
         "\n",
-        "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan"
+        "At first, we will prepare the new dataset as `pandas.DataFrame`. We will use line list data regarding Monkeypox 2022.\n",
+        "\n",
+        "[Global.health Monkeypox under CC BY 4.0 license](https://github.com/globaldothealth/monkeypox)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "today = date.today()\n",
+        "mp_cite = f\"Global.health Monkeypox (accessed on {today.strftime('%Y-%M-%d')}):\\n\" \\\n",
+        "    \"Kraemer, Tegally, Pigott, Dasgupta, Sheldon, Wilkinson, Schultheiss, et al. \" \\\n",
+        "    \"Tracking the 2022 Monkeypox Outbreak with Epidemiological Data in Real-Time. \" \\\n",
+        "    \"The Lancet Infectious Diseases. https://doi.org/10.1016/S1473-3099(22)00359-0.\\n\" \\\n",
+        "    \"European Centre for Disease Prevention and Control/WHO Regional Office for Europe.\" \\\n",
+        "    f\" Monkeypox, Joint Epidemiological overview, {today.day} {today.month}, 2022\"\n",
+        "print(mp_cite)"
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "0lx_4keJ0ft7"
-      },
+      "metadata": {},
       "source": [
-        "Country-level data:"
+        "Retrieve CSV file with `pandas.read_csv()', specifying engine."
       ]
     },
     {
       "cell_type": "code",
       "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 288
-        },
-        "id": "PdPd010x0ft7",
-        "outputId": "1c0fd704-7fd3-45f6-dec0-4cd3d29ae599"
-      },
+      "metadata": {},
       "outputs": [],
       "source": [
-        "c_url = \"https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv\"\n",
-        "c_df = pd.read_csv(c_url, dayfirst=False)\n",
-        "# Check columns of the pandas.DataFrame\n",
-        "c_df.tail()"
+        "raw_url = \"https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest.csv\"\n",
+        "raw = pd.read_csv(raw_url, engine=\"pyarrow\")\n",
+        "raw.info()"
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "wi9cwGHH0ft7"
-      },
+      "metadata": {},
       "source": [
-        "Prefecture-level data:"
+        "Review the data."
       ]
     },
     {
       "cell_type": "code",
       "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 206
-        },
-        "id": "gFQLGs2g0ft7",
-        "outputId": "6e09e80e-6d00-43e2-8b00-e721148267eb"
-      },
+      "metadata": {},
       "outputs": [],
       "source": [
-        "p_url = \"https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv\"\n",
-        "p_df = pd.read_csv(p_url, dayfirst=False)\n",
-        "# Check columns of the pandas.DataFrame\n",
-        "p_df.tail()"
+        "raw.head()"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "pprint(raw.Status.unique())\n",
+        "pprint(raw.Outcome.unique())"
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "dZng7lhJ0ft7"
-      },
+      "metadata": {},
       "source": [
-        "We may create a `DataEngineer` instance, specifying the layer of location names. However, there is a discrepancy of layer names. `c_df` had \"Location\" layer and `p_df` had \"Prefecture\" layer. "
-      ]
-    },
-    {
-      "cell_type": "code",
-      "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "1OWNFwOG0ft8",
-        "outputId": "3407dc28-c0d7-4f20-f5c6-a347b11b5997"
-      },
-      "outputs": [],
-      "source": [
-        "print(c_df.columns)\n",
-        "print(p_df.columns)"
-      ]
-    },
-    {
-      "cell_type": "code",
-      "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "Mr81cc9e51o3",
-        "outputId": "19be41d0-13f6-4a78-b3fd-fd6fa5180506"
-      },
-      "outputs": [],
-      "source": [
-        "print(c_df.Location.unique())"
+        "### 2-2. Convert line list to the number of cases data\n",
+        "Prepare analyzable data, converting the line list to the number of case."
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "c-ize7yg47WM"
-      },
+      "metadata": {},
       "source": [
-        "To make country-level dataset, calculate total values of Domestic/Returnee/Airport."
+        "Prepare PPT (per protocol set) data."
       ]
     },
     {
       "cell_type": "code",
       "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 288
-        },
-        "id": "DUdncF_80ft8",
-        "outputId": "6b6a289b-67b7-4847-8709-908c4becd094"
-      },
+      "metadata": {},
       "outputs": [],
       "source": [
-        "country_df = c_df.groupby(\"Date\").sum().reset_index()\n",
-        "country_df.insert(1, \"Country\", \"Japan\")\n",
-        "country_df.insert(2, \"Prefecture\", pd.NA)\n",
-        "country_df.tail()"
+        "date_cols = [\n",
+        "    \"Date_onset\", \"Date_confirmation\", \"Date_hospitalisation\",\n",
+        "    \"Date_isolation\", \"Date_death\", \"Date_last_modified\"\n",
+        "]\n",
+        "cols = [\"ID\", \"Status\", \"City\", \"Country_ISO3\", \"Outcome\", *date_cols]\n",
+        "df = raw.loc[:, cols].rename(columns={\"Country_ISO3\": \"ISO3\"})\n",
+        "df = df.loc[df[\"Status\"].isin([\"confirmed\", \"suspected\"])]\n",
+        "\n",
+        "for col in date_cols:\n",
+        "    df[col] = pd.to_datetime(df[col])\n",
+        "\n",
+        "df[\"Date_min\"] = df[date_cols].min(axis=1)\n",
+        "df[\"Date_recovered\"] = df[[\"Outcome\", \"Date_last_modified\"]].apply(\n",
+        "    lambda x: x[1] if x[0] == \"Recovered\" else pd.NaT, axis=1)\n",
+        "df[\"City\"] = df[\"City\"].fillna(\"Unknown\")\n",
+        "\n",
+        "ppt_df = df.copy()\n",
+        "ppt_df.head()"
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "Io9Qlh2t7uHB"
-      },
+      "metadata": {},
       "source": [
-        "To make prefecture-level data, add \"Country\" column."
+        "Calculate daily new confirmed cases."
       ]
     },
     {
       "cell_type": "code",
       "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 206
-        },
-        "id": "-_yGoyb079Yl",
-        "outputId": "c53256c2-6a7f-4161-c26e-2c34153c72c0"
-      },
+      "metadata": {},
       "outputs": [],
       "source": [
-        "prefecture_df = p_df.copy()\n",
-        "prefecture_df.insert(1, \"Country\", \"Japan\")\n",
-        "prefecture_df.tail()"
+        "df = ppt_df.rename(columns={\"Date_min\": \"Date\"})\n",
+        "series = df.groupby([\"ISO3\", \"City\", \"Date\"])[\"ID\"].count()\n",
+        "series.name = \"Confirmed\"\n",
+        "c_df = pd.DataFrame(series)\n",
+        "c_df.head()"
       ]
     },
     {
       "cell_type": "markdown",
-      "metadata": {
-        "id": "GRU7lCdv8LMi"
-      },
+      "metadata": {},
       "source": [
-        "Create `DataEngineer` instance and register datasets."
+        "Calculate daily new recovered cases."
       ]
     },
     {
       "cell_type": "code",
       "execution_count": null,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 322
-        },
-        "id": "2tUaYxzA8J-r",
-        "outputId": "c22bbe89-0a8b-42eb-8911-d1ddefefa160"
-      },
+      "metadata": {},
       "outputs": [],
       "source": [
-        "# Set layers and specify layer name of country (which will be converted to ISO3 code for standardization)\n",
-        "eng_own = cs.DataEngineer(layers=[\"Country\", \"Prefecture\"], country=\"Country\")\n",
-        "# Country-level data\n",
-        "eng_own.register(data=country_df, citations=\"New country-level data\", dayfirst=False)\n",
-        "# Prefecture-level data\n",
-        "eng_own.register(data=prefecture_df, citations=\"New prefecture-level data\", dayfirst=False)\n",
-        "# Show data\n",
-        "display(eng_own.all().tail())\n",
+        "df = ppt_df.rename(columns={\"Date_recovered\": \"Date\"})\n",
+        "series = df.groupby([\"ISO3\", \"City\", \"Date\"])[\"ID\"].count()\n",
+        "series.name = \"Recovered\"\n",
+        "r_df = pd.DataFrame(series)\n",
+        "r_df.head()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Calculate daily new fatal cases."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "df = ppt_df.rename(columns={\"Date_death\": \"Date\"})\n",
+        "series = df.groupby([\"ISO3\", \"City\", \"Date\"])[\"ID\"].count()\n",
+        "series.name = \"Fatal\"\n",
+        "f_df = pd.DataFrame(series)\n",
+        "f_df.head()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Combine data (cumulative number)."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "df = c_df.combine_first(f_df).combine_first(r_df)\n",
+        "df = df.unstack(level=[\"ISO3\", \"City\"])\n",
+        "df = df.asfreq(\"D\").fillna(0).cumsum()\n",
+        "df = df.stack(level=[\"ISO3\", \"City\"]).reorder_levels([\"ISO3\", \"City\", \"Date\"])\n",
+        "df = df.sort_index().reset_index()\n",
+        "all_df_city = df.copy()\n",
+        "all_df_city.head()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "At country level (City = \"-\") and city level (City != \"=\"):"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "df2 = all_df_city.groupby([\"ISO3\", \"Date\"], as_index=False).sum()\n",
+        "df2.insert(1, \"City\", \"-\")\n",
+        "df = pd.concat([df2, all_df_city], axis=0)\n",
+        "df = df.loc[df[\"City\"] != \"Unknown\"]\n",
+        "all_df = df.convert_dtypes()\n",
+        "all_df"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Check data."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "gis = cs.GIS(layers=[\"ISO3\", \"City\"], country=\"ISO3\", date=\"Date\")\n",
+        "gis.register(data=all_df, convert_iso3=False);"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "variable = \"Confirmed\"\n",
+        "gis.choropleth(\n",
+        "    variable=variable, filename=None,\n",
+        "    title=f\"Choropleth map (the number of {variable} cases)\"\n",
+        ")"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "global_df = gis.subset(geo=None).set_index(\"Date\").astype(np.int64)\n",
+        "global_df.tail()\n",
+        "cs.line_plot(global_df, title=\"The number of cases (Global)\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### 2-3. Retrieve total population data\n",
+        "So that we can analyze the data, total population values are necessary (we will confirm this with [Tutorial: SIR-derived ODE models](https://lisphilar.github.io/covid19-sir/03_ode.html) later).\n",
+        "\n",
+        "Population data at **country-level** can be retrieved with `DataDownloader().layer(databases=[\"wpp\"])` via `DataEngineer().register(databases=[\"wpp\"])`."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# Set layers and specify layer name of country\n",
+        "# (which will be converted to ISO3 code for standardization)\n",
+        "eng = cs.DataEngineer(layers=[\"ISO3\", \"City\"], country=[\"ISO3\"], verbose=1)\n",
+        "# Download and automated registration of population data\n",
+        "eng.download(databases=[\"wpp\"])\n",
+        "# Specify date range to reduce the memory\n",
+        "date_range = (all_df[\"Date\"].min(), all_df[\"Date\"].max())\n",
+        "eng.clean(kinds=[\"resample\"], date_range=date_range)\n",
+        "# Show all data\n",
+        "display(eng.all())\n",
         "# Show citations\n",
-        "print(\"\\n\".join(eng_own.citations()))"
+        "pprint(eng.citations())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### 2-4. Register Monkeypox data\n",
+        "Register the Monkeypox data to `DataEngineer()` instance."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "eng.register(data=all_df, citations=[mp_cite])\n",
+        "# Show all data\n",
+        "display(eng.all())\n",
+        "# Show citations\n",
+        "pprint(eng.citations())"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Move forward to [Tutorial: Data engineering](https://lisphilar.github.io/covid19-sir/02_data_engineering.html)."
       ]
     },
     {
@@ -779,7 +908,7 @@
     },
     "language_info": {
       "name": "python",
-      "version": "3.9.13"
+      "version": "3.10.7"
     },
     "orig_nbformat": 4,
     "vscode": {
