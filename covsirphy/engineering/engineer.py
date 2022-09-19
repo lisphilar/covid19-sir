@@ -9,9 +9,9 @@ from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
 from covsirphy.downloading.downloader import DataDownloader
-from covsirphy.engineering.cleaner import _DataCleaner
-from covsirphy.engineering.transformer import _DataTransformer
-from covsirphy.engineering.complement import _ComplementHandler
+from covsirphy.engineering._cleaner import _DataCleaner
+from covsirphy.engineering._transformer import _DataTransformer
+from covsirphy.engineering._complement import _ComplementHandler
 
 
 class DataEngineer(Term):
