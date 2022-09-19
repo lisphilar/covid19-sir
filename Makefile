@@ -145,3 +145,8 @@ clean:
 	@rm -rf dist covsirphy.egg-info
 	@rm -f .coverage*
 	@poetry cache clear . --all
+
+.PHONY: shell
+shell:
+	@poetry shell
+	@python -i
