@@ -39,12 +39,6 @@ The latest stable version of CovsirPhy is available at [PyPI (The Python Package
 pip install --upgrade covsirphy
 ```
 
-Python 3.10 users may need to install `datatable` with the following before `covsirphy` installation per [Issue #1159](https://github.com/lisphilar/covid19-sir/issues/1159).
-
-```Bash
-pip install git+https://github.com/h2oai/datatable.git
-```
-
 ## Demo
 
 Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan.
