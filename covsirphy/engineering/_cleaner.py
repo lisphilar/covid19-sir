@@ -54,11 +54,17 @@ class _DataCleaner(Term):
             df[self._date] = df[self._date].dt.tz_convert(None)
         self._df = df.copy()
 
-    def resample(self):
+    def resample(self, date_range=None):
         """Resample records with dates.
         """
         self.convert_date()
         df = self._df.copy()
+        if date_range is not None:
+            start_date, end_date = Validator(date_range, "date_range").sequence(length=2)
+            start = Validator(start_date, name="the first value of @date_range").date(default=df[self._date].min())
+            end = Validator(
+                end_date, name="the second date of @date_range").date(default=df[self._date].max(), value_range=(start, None))
+            df = df[df[self._date].between(start, end, inclusive="both")]
         grouped = df.set_index(self._date).groupby(self._layers, as_index=False)
         df = grouped.resample("D").ffill()
         self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
