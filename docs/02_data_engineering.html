@@ -49,7 +49,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0-zeta
+                2.27.0-eta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -100,7 +100,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
-<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contribution guideline</a></li>
 </ul>
 
@@ -435,7 +435,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.27.0-zeta&#39;
+&#39;2.27.0-eta&#39;
 </pre></div></div>
 </div>
 <p>We will use the recommended datasets at country-level data as an example.</p>
@@ -455,21 +455,21 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222240 entries, 0 to 222239
+RangeIndex: 222269 entries, 0 to 222268
 Data columns (total 33 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 222240 non-null  category
- 1   Province                             222240 non-null  category
- 2   City                                 222240 non-null  category
- 3   Date                                 222240 non-null  datetime64[ns]
+ 0   ISO3                                 222269 non-null  category
+ 1   Province                             222269 non-null  category
+ 2   City                                 222269 non-null  category
+ 3   Date                                 222269 non-null  datetime64[ns]
  4   Cancel_events                        173960 non-null  object
- 5   Confirmed                            200875 non-null  object
+ 5   Confirmed                            200882 non-null  object
  6   Contact_tracing                      173927 non-null  object
- 7   Country                              219635 non-null  string
- 8   Fatal                                184465 non-null  object
+ 7   Country                              219643 non-null  string
+ 8   Fatal                                184472 non-null  object
  9   Gatherings_restrictions              173983 non-null  object
- 10  Information_campaigns                173948 non-null  object
+ 10  Information_campaigns                173949 non-null  object
  11  Internal_movement_restrictions       174004 non-null  object
  12  International_movement_restrictions  174020 non-null  object
  13  Mobility_grocery_and_pharmacy        117506 non-null  object
@@ -478,19 +478,19 @@ Data columns (total 33 columns):
  16  Mobility_retail_and_recreation       117577 non-null  object
  17  Mobility_transit_stations            118495 non-null  object
  18  Mobility_workplaces                  118932 non-null  object
- 19  Population                           218665 non-null  object
- 20  Product                              116920 non-null  string
- 21  Recovered                            71607 non-null   object
+ 19  Population                           218673 non-null  object
+ 20  Product                              117001 non-null  string
+ 21  Recovered                            71609 non-null   object
  22  School_closing                       174008 non-null  object
  23  Stay_home_restrictions               173984 non-null  object
  24  Stringency_index                     173927 non-null  object
- 25  Testing_policy                       173963 non-null  object
- 26  Tests                                85554 non-null   object
+ 25  Testing_policy                       173964 non-null  object
+ 26  Tests                                85555 non-null   object
  27  Transport_closing                    173981 non-null  object
- 28  Vaccinated_full                      47952 non-null   object
- 29  Vaccinated_once                      50509 non-null   object
- 30  Vaccinations                         53183 non-null   object
- 31  Vaccinations_boosters                26167 non-null   object
+ 28  Vaccinated_full                      47981 non-null   object
+ 29  Vaccinated_once                      50550 non-null   object
+ 30  Vaccinations                         53220 non-null   object
+ 31  Vaccinations_boosters                26198 non-null   object
  32  Workplace_closing                    173985 non-null  object
 dtypes: category(3), datetime64[ns](1), object(27), string(2)
 memory usage: 51.7+ MB
@@ -504,6 +504,8 @@ memory usage: 51.7+ MB
 <li><p>“resample”: Resample records with dates.</p></li>
 <li><p>“fillna”: Fill NA values with ‘-’ (layers) and the previous values and 0.</p></li>
 </ul>
+<p>For “convert_date”, keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not” can be used.</p>
+<p>For “resample”, <code class="docutils literal notranslate"><span class="pre">date_range=&lt;tuple</span> <span class="pre">of</span> <span class="pre">(str</span> <span class="pre">or</span> <span class="pre">None,</span> <span class="pre">str</span> <span class="pre">or</span> <span class="pre">None)</span> <span class="pre">or</span> <span class="pre">None&gt;)</span></code> can be applied as keyword arguments to set the range.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -519,43 +521,43 @@ memory usage: 51.7+ MB
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222305 entries, 0 to 222304
+RangeIndex: 222334 entries, 0 to 222333
 Data columns (total 33 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 222305 non-null  category
- 1   Province                             222305 non-null  category
- 2   City                                 222305 non-null  category
- 3   Date                                 222305 non-null  datetime64[ns]
- 4   Cancel_events                        222305 non-null  Int64
- 5   Confirmed                            222305 non-null  Int64
- 6   Contact_tracing                      222305 non-null  Int64
- 7   Country                              222305 non-null  object
- 8   Fatal                                222305 non-null  Int64
- 9   Gatherings_restrictions              222305 non-null  Int64
- 10  Information_campaigns                222305 non-null  Int64
- 11  Internal_movement_restrictions       222305 non-null  Int64
- 12  International_movement_restrictions  222305 non-null  Int64
- 13  Mobility_grocery_and_pharmacy        222305 non-null  Int64
- 14  Mobility_parks                       222305 non-null  Int64
- 15  Mobility_residential                 222305 non-null  Int64
- 16  Mobility_retail_and_recreation       222305 non-null  Int64
- 17  Mobility_transit_stations            222305 non-null  Int64
- 18  Mobility_workplaces                  222305 non-null  Int64
- 19  Population                           222305 non-null  Int64
- 20  Product                              222305 non-null  object
- 21  Recovered                            222305 non-null  Int64
- 22  School_closing                       222305 non-null  Int64
- 23  Stay_home_restrictions               222305 non-null  Int64
- 24  Stringency_index                     222305 non-null  Float64
- 25  Testing_policy                       222305 non-null  Int64
- 26  Tests                                222305 non-null  Int64
- 27  Transport_closing                    222305 non-null  Int64
- 28  Vaccinated_full                      222305 non-null  Int64
- 29  Vaccinated_once                      222305 non-null  Int64
- 30  Vaccinations                         222305 non-null  Int64
- 31  Vaccinations_boosters                222305 non-null  Int64
- 32  Workplace_closing                    222305 non-null  Int64
+ 0   ISO3                                 222334 non-null  category
+ 1   Province                             222334 non-null  category
+ 2   City                                 222334 non-null  category
+ 3   Date                                 222334 non-null  datetime64[ns]
+ 4   Cancel_events                        222334 non-null  Int64
+ 5   Confirmed                            222334 non-null  Int64
+ 6   Contact_tracing                      222334 non-null  Int64
+ 7   Country                              222334 non-null  object
+ 8   Fatal                                222334 non-null  Int64
+ 9   Gatherings_restrictions              222334 non-null  Int64
+ 10  Information_campaigns                222334 non-null  Int64
+ 11  Internal_movement_restrictions       222334 non-null  Int64
+ 12  International_movement_restrictions  222334 non-null  Int64
+ 13  Mobility_grocery_and_pharmacy        222334 non-null  Int64
+ 14  Mobility_parks                       222334 non-null  Int64
+ 15  Mobility_residential                 222334 non-null  Int64
+ 16  Mobility_retail_and_recreation       222334 non-null  Int64
+ 17  Mobility_transit_stations            222334 non-null  Int64
+ 18  Mobility_workplaces                  222334 non-null  Int64
+ 19  Population                           222334 non-null  Int64
+ 20  Product                              222334 non-null  object
+ 21  Recovered                            222334 non-null  Int64
+ 22  School_closing                       222334 non-null  Int64
+ 23  Stay_home_restrictions               222334 non-null  Int64
+ 24  Stringency_index                     222334 non-null  Float64
+ 25  Testing_policy                       222334 non-null  Int64
+ 26  Tests                                222334 non-null  Int64
+ 27  Transport_closing                    222334 non-null  Int64
+ 28  Vaccinated_full                      222334 non-null  Int64
+ 29  Vaccinated_once                      222334 non-null  Int64
+ 30  Vaccinations                         222334 non-null  Int64
+ 31  Vaccinations_boosters                222334 non-null  Int64
+ 32  Workplace_closing                    222334 non-null  Int64
 dtypes: Float64(1), Int64(26), category(3), datetime64[ns](1), object(2)
 memory usage: 57.5+ MB
 </pre></div></div>
@@ -622,7 +624,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -635,7 +637,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -648,7 +650,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -661,7 +663,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -674,7 +676,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -737,7 +739,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -750,7 +752,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -763,7 +765,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -776,7 +778,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -789,7 +791,7 @@ memory usage: 57.5+ MB
       <td>82994</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -860,7 +862,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -869,7 +871,7 @@ memory usage: 57.5+ MB
       <td>16</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -878,7 +880,7 @@ memory usage: 57.5+ MB
       <td>35</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -887,7 +889,7 @@ memory usage: 57.5+ MB
       <td>0</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -896,7 +898,7 @@ memory usage: 57.5+ MB
       <td>0</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -952,7 +954,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -962,7 +964,7 @@ memory usage: 57.5+ MB
       <td>88590</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -972,7 +974,7 @@ memory usage: 57.5+ MB
       <td>88590</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -982,7 +984,7 @@ memory usage: 57.5+ MB
       <td>88590</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -992,7 +994,7 @@ memory usage: 57.5+ MB
       <td>88590</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1049,7 +1051,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1059,7 +1061,7 @@ memory usage: 57.5+ MB
       <td>21321490576</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1069,7 +1071,7 @@ memory usage: 57.5+ MB
       <td>21324395366</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1079,7 +1081,7 @@ memory usage: 57.5+ MB
       <td>21324395366</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1089,7 +1091,7 @@ memory usage: 57.5+ MB
       <td>21324395366</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1148,7 +1150,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1158,7 +1160,7 @@ memory usage: 57.5+ MB
       <td>10.794708</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1168,7 +1170,7 @@ memory usage: 57.5+ MB
       <td>10.796178</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1178,7 +1180,7 @@ memory usage: 57.5+ MB
       <td>10.796178</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1188,7 +1190,7 @@ memory usage: 57.5+ MB
       <td>10.796178</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1268,7 +1270,7 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222300</th>
+      <th>222329</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1292,7 +1294,7 @@ memory usage: 57.5+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>222301</th>
+      <th>222330</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1316,7 +1318,7 @@ memory usage: 57.5+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>222302</th>
+      <th>222331</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1340,7 +1342,7 @@ memory usage: 57.5+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>222303</th>
+      <th>222332</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1364,7 +1366,7 @@ memory usage: 57.5+ MB
       <td>1</td>
     </tr>
     <tr>
-      <th>222304</th>
+      <th>222333</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -1426,19 +1428,11 @@ memory usage: 57.5+ MB
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_21_1.png" src="_images/02_data_engineering_21_1.png" />
+<img alt="_images/02_data_engineering_21_0.png" src="_images/02_data_engineering_21_0.png" />
 </div>
 </div>
 </div>
