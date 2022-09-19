@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from pandas.testing import assert_frame_equal
 import pytest
 from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
@@ -67,3 +68,11 @@ class TestDataEngineer(object):
         assert engineer.variables_alias(alias="nc") == [Term.N, Term.C]
         with pytest.raises(NotIncludedError):
             engineer.variables_alias(alias="unknown")
+
+    def test_resample_with_date_range(self):
+        eng = DataEngineer(layers=["Country"], country=["Country"], verbose=1)
+        eng.download(databases=["wpp"])
+        eng.clean(kinds=["resample"], date_range=("01Jan2022", "19Sep2022"))
+        df = eng.all()
+        assert df["Date"].min() >= datetime("01Jan2022")
+        assert df["Date"].max() <= datetime("19Sep2022")
