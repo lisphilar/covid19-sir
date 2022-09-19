@@ -1,4 +1,4 @@
-# Security policy of CovsirPhy
+# Security policy
 
 This document outlines security procedures and general policies for CovsirPhy project.
 
