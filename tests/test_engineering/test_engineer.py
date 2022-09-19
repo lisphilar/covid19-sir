@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 from covsirphy import DataEngineer, Term, Dynamics, SIRFModel
@@ -74,5 +74,5 @@ class TestDataEngineer(object):
         eng.download(databases=["wpp"])
         eng.clean(kinds=["resample"], date_range=("01Jan2022", "19Sep2022"))
         df = eng.all()
-        assert df["Date"].min() >= datetime("01Jan2022")
-        assert df["Date"].max() <= datetime("19Sep2022")
+        assert df["Date"].min() >= pd.to_datetime("01Jan2022")
+        assert df["Date"].max() <= pd.to_datetime("19Sep2022")
