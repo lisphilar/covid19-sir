@@ -4,7 +4,7 @@
 import pandas as pd
 import pytest
 from covsirphy import Term
-from covsirphy.gis.subset import _SubsetManager as SubsetManager
+from covsirphy.gis._subset import _SubsetManager as SubsetManager
 
 
 class TestSubsetManager(object):
