@@ -140,6 +140,9 @@ class DataEngineer(Term):
 
         Note:
             For "convert_date", keyword arguments of pandas.to_datetime() including "dayfirst (bool): whether date format is DD/MM or not" can be used.
+
+        Note:
+            For "resample", `date_range=<tuple of (str or None, str or None) or None>)` can be applied as keyword arguments to set the range.
         """
         cleaner = _DataCleaner(data=self._gis.all(), layers=self._layers, date=self.DATE)
         kind_dict = {
