@@ -118,7 +118,7 @@ docs:
 	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT -t=docs/_templates
 	# Execute sphinx
-	@cd docs; poetry run make html; cp -a _build/html/. ../docs
+	@cd docs; poetry run make html --no-print-directory; cp -a _build/html/. ../docs
 
 .PHONY: pypi
 pypi:
