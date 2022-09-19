@@ -8,10 +8,10 @@ import pandas as pd
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
-from covsirphy.gis.subset import _SubsetManager
-from covsirphy.gis.layer import _LayerAdjuster
-from covsirphy.gis.geometry import _Geometry
-from covsirphy.gis.choropleth import _ChoroplethMap
+from covsirphy.gis._subset import _SubsetManager
+from covsirphy.gis._layer import _LayerAdjuster
+from covsirphy.gis._geometry import _Geometry
+from covsirphy.gis._choropleth import _ChoroplethMap
 
 
 class GIS(Term):
