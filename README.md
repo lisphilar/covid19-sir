@@ -32,12 +32,12 @@ Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/is
 
 The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.8 or newer versions. Details are explained in [Documentation: Installation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html).
 
-> **Warning**  
-> Because Python 3.7 is not supported, we cannot use `covsirphy` on Google Colab, which uses Python 3.7. [Binder](https://mybinder.org/) is recommended.
-
 ```Bash
 pip install --upgrade covsirphy
 ```
+
+> **Warning**  
+> We cannot use `covsirphy` on Google Colab, which uses Python 3.7. [Binder](https://mybinder.org/) is recommended.
 
 ## Demo
 
