@@ -75,9 +75,9 @@ class _DataTransformer(Term):
         """
         df = Validator(self._df, "raw data").dataframe(columns=[column])
         new_column = f"{column}{suffix}"
-        series = df.set_index(self._date).groupby(self._layers).shift(freq=freq)[column]
-        series.name = new_column
-        df = df.merge(series, how="left", left_on=[*self._layers, self._date], right_index=True)
+        new_df = df.set_index(self._date).groupby(self._layers).shift(freq=freq)
+        new_df = new_df.loc[:, [column, *self._layers]].rename(columns={column: new_column})
+        df = df.merge(new_df, how="left", on=[*self._layers, self._date])
         df[new_column] = (df[column] - df[new_column]).fillna(0)
         self._df = df.copy()
 
