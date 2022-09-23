@@ -20,7 +20,7 @@ class TestScatterPlot(object):
                 sp.line_straight()
         # Error with colormap
         with ScatterPlot(filename=imgfile) as sp:
-            with pytest.raises(ValueError):
+            with pytest.raises(KeyError):
                 sp.plot(data=df, colormap="unknown")
         # Cannot show a legend
         with ScatterPlot(filename=imgfile) as sp:
