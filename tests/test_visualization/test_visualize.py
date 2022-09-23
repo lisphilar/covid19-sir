@@ -18,7 +18,7 @@ class TestVisualizeBase(object):
     def test_file(self, imgfile):
         with VisualizeBase(filename=imgfile):
             pass
-        assert Path(imgfile).exists()
+        assert Path(imgfile).resolve().exists()
 
     def test_setting(self, imgfile):
         with VisualizeBase(filename=imgfile) as vb:
