@@ -55,8 +55,8 @@ class LinePlot(VisualizeBase):
         # Set plotting
         try:
             self._ax = data.plot(**color_args, **kwargs)
-        except ValueError as e:
-            raise ValueError(e.args[0]) from None
+        except KeyError as e:
+            raise KeyError(e.args[0]) from None
 
     def x_axis(self, xlabel=None, x_logscale=False, xlim=(None, None)):
         """
