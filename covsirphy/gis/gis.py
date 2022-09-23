@@ -305,14 +305,14 @@ class GIS(Term):
         series = df[self._date].copy()
         start = Validator(start_date).date(default=series.min())
         end = Validator(end_date).date(default=series.max())
-        df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
+        df = df.loc[df[self._date].between(start, end)]
         if df.empty and errors == "raise":
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
         # Get representative records for dates
         df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
-    @classmethod
+    @ classmethod
     def area_name(cls, geo=None):
         """
         Return area name of the geographic information, like 'Japan', 'Tokyo/Japan', 'Japan_UK', 'the world'.
@@ -327,7 +327,7 @@ class GIS(Term):
             return "the world"
         names = [
             info if isinstance(info, str) else "_".join(list(info)) for info in ([geo] if isinstance(geo, str) else geo)]
-        return cls.SEP.join(names[::-1])
+        return cls.SEP.join(names[:: -1])
 
     def _parse_geo(self, geo, data):
         """Parse geographic specifier.
