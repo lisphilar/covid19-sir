@@ -47,7 +47,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0
+                2.27.1-delta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -1148,58 +1148,62 @@ If &#64;verbose is 1 or larger, URL and database name will be shown.</p>
 <li><p><strong>databases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – databases to use or None (japan, covid19dh, google, owid).
 “japan”: COVID-19 Dataset in Japan,
 “covid19dh”: COVID-19 Data Hub,
-“google: COVID-19 Open Data by Google Cloud Platform,
+“google”: COVID-19 Open Data by Google Cloud Platform (deprecated),
 “owid”: Our World In Data,
 “wpp”: World Population Prospects by United nations.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“google” for &#64;database was deprecated and refer to <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/1223">https://github.com/lisphilar/covid19-sir/issues/1223</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pandas.Timestamp): observation date</p></li>
-<li><p>ISO3 (str): country names</p></li>
-<li><p>Province (str): province/state/prefecture names</p></li>
-<li><p>City (str): city names</p></li>
-<li><p>Country (str): country names (top level administration)</p></li>
-<li><p>Province (str): province names (2nd level administration)</p></li>
-<li><p>ISO3 (str): ISO3 codes</p></li>
-<li><p>Confirmed (pandas.Int64): the number of confirmed cases</p></li>
-<li><p>Fatal (pandas.Int64): the number of fatal cases</p></li>
-<li><p>Recovered (pandas.Int64): the number of recovered cases</p></li>
-<li><p>Population (pandas.Int64): population values</p></li>
-<li><p>Tests (pandas.Int64): the number of tests</p></li>
-<li><p>Product (pandas.Int64): vaccine product names</p></li>
-<li><p>Vaccinations (pandas.Int64): cumulative number of vaccinations</p></li>
-<li><p>Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations</p></li>
-<li><p>Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose</p></li>
-<li><p>Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol</p></li>
-<li><p>School_closing</p></li>
-<li><p>Workplace_closing</p></li>
-<li><p>Cancel_events</p></li>
-<li><p>Gatherings_restrictions</p></li>
-<li><p>Transport_closing</p></li>
-<li><p>Stay_home_restrictions</p></li>
-<li><p>Internal_movement_restrictions</p></li>
-<li><p>International_movement_restrictions</p></li>
-<li><p>Information_campaigns</p></li>
-<li><p>Testing_policy</p></li>
-<li><p>Contact_tracing</p></li>
-<li><p>Stringency_index</p></li>
-<li><p>Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)</p></li>
-<li><p>Mobility_parks: % to baseline in visits (parks etc.)</p></li>
-<li><p>Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)</p></li>
-<li><p>Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)</p></li>
-<li><p>Mobility_residential: % to baseline in visits (places of residence)</p></li>
-<li><p>Mobility_workplaces: % to baseline in visits (places of work)</p></li>
-</ul>
+<dt>Columns</dt><dd><p>Date (pandas.Timestamp): observation date
+ISO3 (str): country names
+Province (str): province/state/prefecture names
+City (str): city names
+Country (str): country names (top level administration)
+Province (str): province names (2nd level administration)
+ISO3 (str): ISO3 codes
+Confirmed (pandas.Int64): the number of confirmed cases
+Fatal (pandas.Int64): the number of fatal cases
+Recovered (pandas.Int64): the number of recovered cases
+Population (pandas.Int64): population values
+Tests (pandas.Int64): the number of tests
+Product (pandas.Int64): vaccine product names
+Vaccinations (pandas.Int64): cumulative number of vaccinations
+Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations
+Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose
+Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol
+School_closing
+Workplace_closing
+Cancel_events
+Gatherings_restrictions
+Transport_closing
+Stay_home_restrictions
+Internal_movement_restrictions
+International_movement_restrictions
+Information_campaigns
+Testing_policy
+Contact_tracing
+Stringency_index
+(deprecated) Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
+(deprecated) Mobility_parks: % to baseline in visits (parks etc.)
+(deprecated) Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
+(deprecated) Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
+(deprecated) Mobility_residential: % to baseline in visits (places of residence)
+(deprecated) Mobility_workplaces: % to baseline in visits (places of work)</p>
 </dd>
 </dl>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -3842,7 +3846,7 @@ Index</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When <cite>geo=None</cite> or <cite>geo=(None,)</cite>, returns total values of all country-level data, assuming we have country/province/city as layers here.</p>
+<p>When <cite>geo=None</cite> or <cite>geo=(None,)</cite>, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

@@ -49,7 +49,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.0
+                2.27.1-delta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -435,7 +435,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.27.0&#39;
+&#39;2.27.1-delta&#39;
 </pre></div></div>
 </div>
 <p>We will use the recommended datasets at country-level data as an example.</p>
@@ -444,10 +444,29 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataEngineer</span><span class="p">()</span>
-<span class="n">eng</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+<span class="n">eng</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">databases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">,</span> <span class="s2">&quot;covid19dh&quot;</span><span class="p">,</span> <span class="s2">&quot;owid&quot;</span><span class="p">])</span>
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/downloading/_db_cs_japan.py:62: FutureWarning: The default value of numeric_only in DataFrameGroupBy.sum is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  df = df.groupby(&#34;Date&#34;).sum().reset_index()
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_subset.py:64: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -455,45 +474,39 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222269 entries, 0 to 222268
-Data columns (total 33 columns):
+RangeIndex: 222927 entries, 0 to 222926
+Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 222269 non-null  category
- 1   Province                             222269 non-null  category
- 2   City                                 222269 non-null  category
- 3   Date                                 222269 non-null  datetime64[ns]
- 4   Cancel_events                        173960 non-null  object
- 5   Confirmed                            200882 non-null  object
- 6   Contact_tracing                      173927 non-null  object
- 7   Country                              219643 non-null  string
- 8   Fatal                                184472 non-null  object
- 9   Gatherings_restrictions              173983 non-null  object
- 10  Information_campaigns                173949 non-null  object
- 11  Internal_movement_restrictions       174004 non-null  object
- 12  International_movement_restrictions  174020 non-null  object
- 13  Mobility_grocery_and_pharmacy        117506 non-null  object
- 14  Mobility_parks                       117326 non-null  object
- 15  Mobility_residential                 117183 non-null  object
- 16  Mobility_retail_and_recreation       117577 non-null  object
- 17  Mobility_transit_stations            118495 non-null  object
- 18  Mobility_workplaces                  118932 non-null  object
- 19  Population                           218673 non-null  object
- 20  Product                              117001 non-null  string
- 21  Recovered                            71609 non-null   object
- 22  School_closing                       174008 non-null  object
- 23  Stay_home_restrictions               173984 non-null  object
- 24  Stringency_index                     173927 non-null  object
- 25  Testing_policy                       173964 non-null  object
- 26  Tests                                85555 non-null   object
- 27  Transport_closing                    173981 non-null  object
- 28  Vaccinated_full                      47981 non-null   object
- 29  Vaccinated_once                      50550 non-null   object
- 30  Vaccinations                         53220 non-null   object
- 31  Vaccinations_boosters                26198 non-null   object
- 32  Workplace_closing                    173985 non-null  object
-dtypes: category(3), datetime64[ns](1), object(27), string(2)
-memory usage: 51.7+ MB
+ 0   ISO3                                 222927 non-null  category
+ 1   Province                             222927 non-null  category
+ 2   City                                 222927 non-null  category
+ 3   Date                                 222927 non-null  datetime64[ns]
+ 4   Cancel_events                        175043 non-null  Float64
+ 5   Confirmed                            201946 non-null  Float64
+ 6   Contact_tracing                      174946 non-null  Float64
+ 7   Country                              220731 non-null  string
+ 8   Fatal                                185516 non-null  Float64
+ 9   Gatherings_restrictions              175031 non-null  Float64
+ 10  Information_campaigns                174974 non-null  Float64
+ 11  Internal_movement_restrictions       175073 non-null  Float64
+ 12  International_movement_restrictions  175074 non-null  Float64
+ 13  Population                           219756 non-null  Float64
+ 14  Product                              117905 non-null  string
+ 15  Recovered                            71671 non-null   Float64
+ 16  School_closing                       175098 non-null  Float64
+ 17  Stay_home_restrictions               175040 non-null  Float64
+ 18  Stringency_index                     174965 non-null  Float64
+ 19  Testing_policy                       174942 non-null  Float64
+ 20  Tests                                85678 non-null   Float64
+ 21  Transport_closing                    175051 non-null  Float64
+ 22  Vaccinated_full                      48271 non-null   Float64
+ 23  Vaccinated_once                      50843 non-null   Float64
+ 24  Vaccinations                         53516 non-null   Float64
+ 25  Vaccinations_boosters                26468 non-null   Float64
+ 26  Workplace_closing                    175063 non-null  Float64
+dtypes: Float64(21), category(3), datetime64[ns](1), string(2)
+memory usage: 46.1 MB
 </pre></div></div>
 </div>
 <div class="section" id="1.-Data-cleaning">
@@ -515,51 +528,56 @@ memory usage: 51.7+ MB
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/engineering/_cleaner.py:76: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 222334 entries, 0 to 222333
-Data columns (total 33 columns):
+RangeIndex: 222993 entries, 0 to 222992
+Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 222334 non-null  category
- 1   Province                             222334 non-null  category
- 2   City                                 222334 non-null  category
- 3   Date                                 222334 non-null  datetime64[ns]
- 4   Cancel_events                        222334 non-null  Int64
- 5   Confirmed                            222334 non-null  Int64
- 6   Contact_tracing                      222334 non-null  Int64
- 7   Country                              222334 non-null  object
- 8   Fatal                                222334 non-null  Int64
- 9   Gatherings_restrictions              222334 non-null  Int64
- 10  Information_campaigns                222334 non-null  Int64
- 11  Internal_movement_restrictions       222334 non-null  Int64
- 12  International_movement_restrictions  222334 non-null  Int64
- 13  Mobility_grocery_and_pharmacy        222334 non-null  Int64
- 14  Mobility_parks                       222334 non-null  Int64
- 15  Mobility_residential                 222334 non-null  Int64
- 16  Mobility_retail_and_recreation       222334 non-null  Int64
- 17  Mobility_transit_stations            222334 non-null  Int64
- 18  Mobility_workplaces                  222334 non-null  Int64
- 19  Population                           222334 non-null  Int64
- 20  Product                              222334 non-null  object
- 21  Recovered                            222334 non-null  Int64
- 22  School_closing                       222334 non-null  Int64
- 23  Stay_home_restrictions               222334 non-null  Int64
- 24  Stringency_index                     222334 non-null  Float64
- 25  Testing_policy                       222334 non-null  Int64
- 26  Tests                                222334 non-null  Int64
- 27  Transport_closing                    222334 non-null  Int64
- 28  Vaccinated_full                      222334 non-null  Int64
- 29  Vaccinated_once                      222334 non-null  Int64
- 30  Vaccinations                         222334 non-null  Int64
- 31  Vaccinations_boosters                222334 non-null  Int64
- 32  Workplace_closing                    222334 non-null  Int64
-dtypes: Float64(1), Int64(26), category(3), datetime64[ns](1), object(2)
-memory usage: 57.5+ MB
+ 0   ISO3                                 222993 non-null  category
+ 1   Province                             222993 non-null  category
+ 2   City                                 222993 non-null  category
+ 3   Date                                 222993 non-null  datetime64[ns]
+ 4   Cancel_events                        222993 non-null  Float64
+ 5   Confirmed                            222993 non-null  Float64
+ 6   Contact_tracing                      222993 non-null  Float64
+ 7   Country                              222993 non-null  object
+ 8   Fatal                                222993 non-null  Float64
+ 9   Gatherings_restrictions              222993 non-null  Float64
+ 10  Information_campaigns                222993 non-null  Float64
+ 11  Internal_movement_restrictions       222993 non-null  Float64
+ 12  International_movement_restrictions  222993 non-null  Float64
+ 13  Population                           222993 non-null  Float64
+ 14  Product                              222993 non-null  object
+ 15  Recovered                            222993 non-null  Float64
+ 16  School_closing                       222993 non-null  Float64
+ 17  Stay_home_restrictions               222993 non-null  Float64
+ 18  Stringency_index                     222993 non-null  Float64
+ 19  Testing_policy                       222993 non-null  Float64
+ 20  Tests                                222993 non-null  Float64
+ 21  Transport_closing                    222993 non-null  Float64
+ 22  Vaccinated_full                      222993 non-null  Float64
+ 23  Vaccinated_once                      222993 non-null  Float64
+ 24  Vaccinations                         222993 non-null  Float64
+ 25  Vaccinations_boosters                222993 non-null  Float64
+ 26  Workplace_closing                    222993 non-null  Float64
+dtypes: Float64(21), category(3), datetime64[ns](1), object(2)
+memory usage: 46.2+ MB
 </pre></div></div>
 </div>
 </div>
@@ -587,6 +605,15 @@ memory usage: 57.5+ MB
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -624,69 +651,69 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>14439018</td>
-      <td>14182114</td>
-      <td>256904</td>
-      <td>168314</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>2022-09-18</td>
+      <td>14439018.0</td>
+      <td>14182022.0</td>
+      <td>256996.0</td>
+      <td>168404.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>2022-09-19</td>
+      <td>14439018.0</td>
+      <td>14181928.0</td>
+      <td>257090.0</td>
+      <td>168498.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>2022-09-20</td>
+      <td>14439018.0</td>
+      <td>14181862.0</td>
+      <td>257156.0</td>
+      <td>168564.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222991</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>2022-09-21</td>
+      <td>14439018.0</td>
+      <td>14181862.0</td>
+      <td>257156.0</td>
+      <td>168564.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222333</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-17</td>
-      <td>14439018</td>
-      <td>14182030</td>
-      <td>256988</td>
-      <td>168396</td>
-      <td>5598</td>
-      <td>82994</td>
+      <td>2022-09-22</td>
+      <td>14439018.0</td>
+      <td>14181759.0</td>
+      <td>257259.0</td>
+      <td>168667.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
   </tbody>
 </table>
@@ -701,6 +728,17 @@ memory usage: 57.5+ MB
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">main_variables</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -739,69 +777,69 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
+      <td>2022-09-18</td>
       <td>14439018</td>
-      <td>14182114</td>
-      <td>256904</td>
-      <td>168314</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>14182022.0</td>
+      <td>256996</td>
+      <td>168404.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
+      <td>2022-09-19</td>
       <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>14181928.0</td>
+      <td>257090</td>
+      <td>168498.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
+      <td>2022-09-20</td>
       <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>14181862.0</td>
+      <td>257156</td>
+      <td>168564.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222991</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
+      <td>2022-09-21</td>
       <td>14439018</td>
-      <td>14182079</td>
-      <td>256939</td>
-      <td>168349</td>
-      <td>5596</td>
-      <td>82994</td>
+      <td>14181862.0</td>
+      <td>257156</td>
+      <td>168564.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
     <tr>
-      <th>222333</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-17</td>
+      <td>2022-09-22</td>
       <td>14439018</td>
-      <td>14182030</td>
-      <td>256988</td>
-      <td>168396</td>
-      <td>5598</td>
-      <td>82994</td>
+      <td>14181759.0</td>
+      <td>257259</td>
+      <td>168667.0</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
     </tr>
   </tbody>
 </table>
@@ -828,6 +866,15 @@ memory usage: 57.5+ MB
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed_diff&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
@@ -862,49 +909,49 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>256904</td>
-      <td>16</td>
+      <td>2022-09-18</td>
+      <td>256996</td>
+      <td>8</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>256939</td>
-      <td>35</td>
+      <td>2022-09-19</td>
+      <td>257090</td>
+      <td>94</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>256939</td>
+      <td>2022-09-20</td>
+      <td>257156</td>
+      <td>66</td>
+    </tr>
+    <tr>
+      <th>222991</th>
+      <td>ZWE</td>
+      <td>-</td>
+      <td>-</td>
+      <td>2022-09-21</td>
+      <td>257156</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>256939</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>222333</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-17</td>
-      <td>256988</td>
-      <td>49</td>
+      <td>2022-09-22</td>
+      <td>257259</td>
+      <td>103</td>
     </tr>
   </tbody>
 </table>
@@ -919,6 +966,15 @@ memory usage: 57.5+ MB
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal+Recovered&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -954,53 +1010,53 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
+      <td>2022-09-18</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
+      <td>88592</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
+      <td>2022-09-19</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
+      <td>88592</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
+      <td>2022-09-20</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
+      <td>88592</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222991</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>5596</td>
-      <td>82994</td>
-      <td>88590</td>
+      <td>2022-09-21</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
+      <td>88592</td>
     </tr>
     <tr>
-      <th>222333</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-17</td>
-      <td>5598</td>
-      <td>82994</td>
+      <td>2022-09-22</td>
+      <td>5598.0</td>
+      <td>82994.0</td>
       <td>88592</td>
     </tr>
   </tbody>
@@ -1016,6 +1072,15 @@ memory usage: 57.5+ MB
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed*Recovered&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -1051,54 +1116,54 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>256904</td>
-      <td>82994</td>
-      <td>21321490576</td>
+      <td>2022-09-18</td>
+      <td>256996</td>
+      <td>82994.0</td>
+      <td>21329126024</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
+      <td>2022-09-19</td>
+      <td>257090</td>
+      <td>82994.0</td>
+      <td>21336927460</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
+      <td>2022-09-20</td>
+      <td>257156</td>
+      <td>82994.0</td>
+      <td>21342405064</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222991</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>256939</td>
-      <td>82994</td>
-      <td>21324395366</td>
+      <td>2022-09-21</td>
+      <td>257156</td>
+      <td>82994.0</td>
+      <td>21342405064</td>
     </tr>
     <tr>
-      <th>222333</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-17</td>
-      <td>256988</td>
-      <td>82994</td>
-      <td>21328462072</td>
+      <td>2022-09-22</td>
+      <td>257259</td>
+      <td>82994.0</td>
+      <td>21350953446</td>
     </tr>
   </tbody>
 </table>
@@ -1115,6 +1180,17 @@ memory usage: 57.5+ MB
 <span class="n">eng</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Positive_rate_%&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_layer.py:128: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].astype(&#34;string&#34;).fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -1150,54 +1226,54 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>2379907</td>
-      <td>256904</td>
-      <td>10.794708</td>
+      <td>2022-09-18</td>
+      <td>2379907.0</td>
+      <td>256996</td>
+      <td>10.798573</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
+      <td>2022-09-19</td>
+      <td>2379907.0</td>
+      <td>257090</td>
+      <td>10.802523</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
+      <td>2022-09-20</td>
+      <td>2379907.0</td>
+      <td>257156</td>
+      <td>10.805296</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222991</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>2379907</td>
-      <td>256939</td>
-      <td>10.796178</td>
+      <td>2022-09-21</td>
+      <td>2379907.0</td>
+      <td>257156</td>
+      <td>10.805296</td>
     </tr>
     <tr>
-      <th>222333</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-17</td>
-      <td>2379907</td>
-      <td>256988</td>
-      <td>10.798237</td>
+      <td>2022-09-22</td>
+      <td>2379907.0</td>
+      <td>257259</td>
+      <td>10.809624</td>
     </tr>
   </tbody>
 </table>
@@ -1221,6 +1297,15 @@ memory usage: 57.5+ MB
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">layer</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_subset.py:64: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -1270,128 +1355,128 @@ memory usage: 57.5+ MB
   </thead>
   <tbody>
     <tr>
-      <th>222329</th>
+      <th>222988</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-13</td>
-      <td>1</td>
-      <td>256904</td>
-      <td>21321490576</td>
-      <td>16</td>
-      <td>1</td>
+      <td>2022-09-18</td>
+      <td>1.0</td>
+      <td>256996</td>
+      <td>21329126024</td>
+      <td>8</td>
+      <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14182114</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
+      <td>14182022.0</td>
+      <td>3.0</td>
+      <td>2379907.0</td>
+      <td>1.0</td>
+      <td>4730503.0</td>
+      <td>6416614.0</td>
+      <td>12161598.0</td>
+      <td>1014481.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
-      <th>222330</th>
+      <th>222989</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-14</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
-      <td>35</td>
-      <td>1</td>
+      <td>2022-09-19</td>
+      <td>1.0</td>
+      <td>257090</td>
+      <td>21336927460</td>
+      <td>94</td>
+      <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
+      <td>14181928.0</td>
+      <td>3.0</td>
+      <td>2379907.0</td>
+      <td>1.0</td>
+      <td>4730503.0</td>
+      <td>6416614.0</td>
+      <td>12161598.0</td>
+      <td>1014481.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
-      <th>222331</th>
+      <th>222990</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-15</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
+      <td>2022-09-20</td>
+      <td>1.0</td>
+      <td>257156</td>
+      <td>21342405064</td>
+      <td>66</td>
+      <td>1.0</td>
+      <td>Zimbabwe</td>
+      <td>...</td>
+      <td>53.7</td>
+      <td>14181862.0</td>
+      <td>3.0</td>
+      <td>2379907.0</td>
+      <td>1.0</td>
+      <td>4730503.0</td>
+      <td>6416614.0</td>
+      <td>12161598.0</td>
+      <td>1014481.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>222991</th>
+      <td>ZWE</td>
+      <td>-</td>
+      <td>-</td>
+      <td>2022-09-21</td>
+      <td>1.0</td>
+      <td>257156</td>
+      <td>21342405064</td>
       <td>0</td>
-      <td>1</td>
+      <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
+      <td>14181862.0</td>
+      <td>3.0</td>
+      <td>2379907.0</td>
+      <td>1.0</td>
+      <td>4730503.0</td>
+      <td>6416614.0</td>
+      <td>12161598.0</td>
+      <td>1014481.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
-      <th>222332</th>
+      <th>222992</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2022-09-16</td>
-      <td>1</td>
-      <td>256939</td>
-      <td>21324395366</td>
-      <td>0</td>
-      <td>1</td>
+      <td>2022-09-22</td>
+      <td>1.0</td>
+      <td>257259</td>
+      <td>21350953446</td>
+      <td>103</td>
+      <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14182079</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>222333</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2022-09-17</td>
-      <td>1</td>
-      <td>256988</td>
-      <td>21328462072</td>
-      <td>49</td>
-      <td>1</td>
-      <td>Zimbabwe</td>
-      <td>...</td>
-      <td>53.7</td>
-      <td>14182030</td>
-      <td>3</td>
-      <td>2379907</td>
-      <td>1</td>
-      <td>4730503</td>
-      <td>6416614</td>
-      <td>12161598</td>
-      <td>1014481</td>
-      <td>1</td>
+      <td>14181759.0</td>
+      <td>3.0</td>
+      <td>2379907.0</td>
+      <td>1.0</td>
+      <td>4730503.0</td>
+      <td>6416614.0</td>
+      <td>12161598.0</td>
+      <td>1014481.0</td>
+      <td>1.0</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 40 columns</p>
+<p>5 rows × 34 columns</p>
 </div></div>
 </div>
 <p>This dataset has only country-level data and <code class="docutils literal notranslate"><span class="pre">geo</span></code> should be country name. We can select the followings as <code class="docutils literal notranslate"><span class="pre">geo</span></code> argument for EDA at a geospatial layer when we have adequate data.</p>
@@ -1428,11 +1513,20 @@ memory usage: 57.5+ MB
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/covid19-sir/covid19-sir/covsirphy/gis/_subset.py:64: FutureWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  df.loc[:, self._layers] = df[self._layers].fillna(self.NA)
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_21_0.png" src="_images/02_data_engineering_21_0.png" />
+<img alt="_images/02_data_engineering_21_1.png" src="_images/02_data_engineering_21_1.png" />
 </div>
 </div>
 </div>
@@ -1442,14 +1536,39 @@ memory usage: 57.5+ MB
 <div class="section" id="5.1-Subsetting">
 <h3>5.1 Subsetting<a class="headerlink" href="#5.1-Subsetting" title="Permalink to this heading"></a></h3>
 <p>We will create a subset for selected location (eg. country, province/prefecture/state, city). Because the loaded dataset has country-level data, total values in United Kingdom (UK) on dates will be created here as an example.</p>
-<p>Arguments of <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset()</span></code>: * geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level) * start_date (str or None): start date, like 22Jan2020 * end_date (str or None): end date, like 01Feb2020 * variables (list[str] or None): list of variables to add or None (all available columns) * complement (bool): whether perform data complement or not, True as default * **Kwargs: keyword arguments for complement and default
-values * recovery_period (int): expected value of recovery period [days], 17 * interval (int): expected update interval of the number of recovered cases [days], 2 * max_ignored (int): Max number of recovered cases to be ignored [cases], 100 * max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days], 14 * upper_limit_days (int): maximum number of valid partial recovery periods [days], 90 * lower_limit_days (int): minimum
-number of valid partial recovery periods [days], 7 * upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5 * lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</p>
+<p>Arguments of <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset()</span></code>:</p>
+<ul class="simple">
+<li><p>geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)</p></li>
+<li><p>start_date (str or None): start date, like 22Jan2020</p></li>
+<li><p>end_date (str or None): end date, like 01Feb2020</p></li>
+<li><p>variables (list[str] or None): list of variables to add or None (all available columns)</p></li>
+<li><p>complement (bool): whether perform data complement or not, True as default</p></li>
+<li><p>**Kwargs: keyword arguments for complement and default values</p>
+<ul>
+<li><p>recovery_period (int): expected value of recovery period [days], 17</p></li>
+<li><p>interval (int): expected update interval of the number of recovered cases [days], 2</p></li>
+<li><p>max_ignored (int): Max number of recovered cases to be ignored [cases], 100</p></li>
+<li><p>max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days], 14</p></li>
+<li><p>upper_limit_days (int): maximum number of valid partial recovery periods [days], 90</p></li>
+<li><p>lower_limit_days (int): minimum number of valid partial recovery periods [days], 7</p></li>
+<li><p>upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5</p></li>
+<li><p>lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</p></li>
+</ul>
+</li>
+</ul>
 <div class="line-block">
 <div class="line">NOTE:</div>
-<div class="line">We can select the followings as <code class="docutils literal notranslate"><span class="pre">geo</span></code> argument for subsetting when we have adequate data. * When <code class="docutils literal notranslate"><span class="pre">geo=None</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=(None,)</span></code>, returns total values of all country-level data, assuming we have country/province/city as layers here. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,)</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=&quot;Japan&quot;</span></code>, returns country-level data in Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=([&quot;Japan&quot;,</span> <span class="pre">&quot;UK&quot;],)</span></code>, returns country-level data of Japan and UK. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Tokyo&quot;)</span></code>, returns province-level data of Tokyo/Japan. * When
-<code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">[&quot;Tokyo&quot;,</span> <span class="pre">&quot;Kanagawa&quot;])</span></code>, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">&quot;Yokohama&quot;)</span></code>, returns city-level data of Yokohama/Kanagawa/Japan. * When <code class="docutils literal notranslate"><span class="pre">geo=((&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">[&quot;Yokohama&quot;,</span> <span class="pre">&quot;Kawasaki&quot;])</span></code>, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.</div>
+<div class="line">We can select the followings as <code class="docutils literal notranslate"><span class="pre">geo</span></code> argument for subsetting when we have adequate data.</div>
 </div>
+<ul class="simple">
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=None</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=(None,)</span></code>, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,)</span></code> or <code class="docutils literal notranslate"><span class="pre">geo=&quot;Japan&quot;</span></code>, returns country-level data in Japan.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=([&quot;Japan&quot;,</span> <span class="pre">&quot;UK&quot;],)</span></code>, returns country-level data of Japan and UK.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Tokyo&quot;)</span></code>, returns province-level data of Tokyo/Japan.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">[&quot;Tokyo&quot;,</span> <span class="pre">&quot;Kanagawa&quot;])</span></code>, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=(&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">&quot;Yokohama&quot;)</span></code>, returns city-level data of Yokohama/Kanagawa/Japan.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">geo=((&quot;Japan&quot;,</span> <span class="pre">&quot;Kanagawa&quot;,</span> <span class="pre">[&quot;Yokohama&quot;,</span> <span class="pre">&quot;Kawasaki&quot;])</span></code>, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.</p></li>
+</ul>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -1660,35 +1779,35 @@ True
   </thead>
   <tbody>
     <tr>
-      <th>2022-09-13</th>
-      <td>20221686</td>
-      <td>1024930</td>
-      <td>19153962</td>
-      <td>42794</td>
-    </tr>
-    <tr>
-      <th>2022-09-14</th>
-      <td>20300387</td>
-      <td>992294</td>
-      <td>19265108</td>
-      <td>42985</td>
-    </tr>
-    <tr>
-      <th>2022-09-15</th>
-      <td>20399933</td>
-      <td>941199</td>
-      <td>19415557</td>
-      <td>43177</td>
-    </tr>
-    <tr>
-      <th>2022-09-16</th>
-      <td>20488312</td>
-      <td>926698</td>
-      <td>19518267</td>
-      <td>43347</td>
-    </tr>
-    <tr>
       <th>2022-09-17</th>
+      <td>20566116</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+    </tr>
+    <tr>
+      <th>2022-09-18</th>
+      <td>20566116</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+    </tr>
+    <tr>
+      <th>2022-09-19</th>
+      <td>20566116</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+    </tr>
+    <tr>
+      <th>2022-09-20</th>
+      <td>20566116</td>
+      <td>887237</td>
+      <td>19635346</td>
+      <td>43533</td>
+    </tr>
+    <tr>
+      <th>2022-09-21</th>
       <td>20566116</td>
       <td>887237</td>
       <td>19635346</td>
@@ -1776,32 +1895,32 @@ True
   </thead>
   <tbody>
     <tr>
-      <th>2022-09-13</th>
-      <td>74136488</td>
-      <td>20221686</td>
-      <td>27.276293</td>
-    </tr>
-    <tr>
-      <th>2022-09-14</th>
-      <td>74386604</td>
-      <td>20300387</td>
-      <td>27.29038</td>
-    </tr>
-    <tr>
-      <th>2022-09-15</th>
-      <td>74581763</td>
-      <td>20399933</td>
-      <td>27.352441</td>
-    </tr>
-    <tr>
-      <th>2022-09-16</th>
-      <td>74773033</td>
-      <td>20488312</td>
-      <td>27.40067</td>
-    </tr>
-    <tr>
       <th>2022-09-17</th>
-      <td>74962090</td>
+      <td>74962090.0</td>
+      <td>20566116</td>
+      <td>27.435356</td>
+    </tr>
+    <tr>
+      <th>2022-09-18</th>
+      <td>74962090.0</td>
+      <td>20566116</td>
+      <td>27.435356</td>
+    </tr>
+    <tr>
+      <th>2022-09-19</th>
+      <td>74962090.0</td>
+      <td>20566116</td>
+      <td>27.435356</td>
+    </tr>
+    <tr>
+      <th>2022-09-20</th>
+      <td>74962090.0</td>
+      <td>20566116</td>
+      <td>27.435356</td>
+    </tr>
+    <tr>
+      <th>2022-09-21</th>
+      <td>74962090.0</td>
       <td>20566116</td>
       <td>27.435356</td>
     </tr>

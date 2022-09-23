@@ -67,7 +67,7 @@
       "outputs": [],
       "source": [
         "eng = cs.DataEngineer()\n",
-        "eng.download()\n",
+        "eng.download(databases=[\"japan\", \"covid19dh\", \"owid\"])\n",
         "eng.all().info()"
       ]
     },
@@ -371,6 +371,7 @@
         "We will create a subset for selected location (eg. country, province/prefecture/state, city). Because the loaded dataset has country-level data, total values in United Kingdom (UK) on dates will be created here as an example.\n",
         "\n",
         "Arguments of `DataEngineer().subset()`:\n",
+        "\n",
         "* geo (tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)\n",
         "* start_date (str or None): start date, like 22Jan2020\n",
         "* end_date (str or None): end date, like 01Feb2020\n",
@@ -395,7 +396,8 @@
       "source": [
         "NOTE:  \n",
         "We can select the followings as `geo` argument for subsetting when we have adequate data.\n",
-        "* When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/province/city as layers here.\n",
+        "\n",
+        "* When `geo=None` or `geo=(None,)`, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.\n",
         "* When `geo=(\"Japan\",)` or `geo=\"Japan\"`, returns country-level data in Japan.\n",
         "* When `geo=([\"Japan\", \"UK\"],)`, returns country-level data of Japan and UK.\n",
         "* When `geo=(\"Japan\", \"Tokyo\")`, returns province-level data of Tokyo/Japan.\n",
