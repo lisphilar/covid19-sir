@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import geopandas as gpd
 from matplotlib import pyplot as plt
@@ -308,11 +309,18 @@ class GIS(Term):
         df = df.loc[df[self._date].between(start, end)]
         if df.empty and errors == "raise":
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
+        # Calculate total value if geo=None
+        if geo is None or geo[0] is None:
+            variables_agg = list(set(df.columns) - {*self._layers, self._date})
+            df = df.pivot_table(values=variables_agg, index=self._date, columns=self._layers[0], aggfunc="last")
+            df = df.ffill().fillna(0).stack().reset_index()
         # Get representative records for dates
-        df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
+        with contextlib.suppress(IndexError, KeyError):
+            df = df.drop(self._layers[1:], axis=1)
+        df = df.groupby([self._layers[0], self._date], dropna=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
-    @ classmethod
+    @classmethod
     def area_name(cls, geo=None):
         """
         Return area name of the geographic information, like 'Japan', 'Tokyo/Japan', 'Japan_UK', 'the world'.
