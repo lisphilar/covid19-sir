@@ -17,7 +17,7 @@ class TestLinePlot(object):
             lp.plot(data=df, colormap="rainbow")
         with LinePlot(filename=imgfile) as lp:
             lp.plot(data=df, color_dict={Term.C: "blue"})
-        with pytest.raises(ValueError):
+        with pytest.raises(KeyError):
             with LinePlot(filename=imgfile) as lp:
                 lp.plot(data=df, colormap="unknown")
 

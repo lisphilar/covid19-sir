@@ -54,8 +54,8 @@ class ScatterPlot(LinePlot):
         # Set plotting
         try:
             self._ax = data.plot.scatter(x="x", y="y", **color_args, **kwargs)
-        except ValueError as e:
-            raise ValueError(e.args[0]) from None
+        except KeyError as e:
+            raise KeyError(e.args[0]) from None
 
     def line_straight(self, p1=None, p2=None, color="black", linestyle=":"):
         """
