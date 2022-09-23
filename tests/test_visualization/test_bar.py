@@ -18,7 +18,7 @@ class TestBarPlot(object):
             bp.plot(data=df, colormap="rainbow")
         with BarPlot(filename=imgfile) as bp:
             bp.plot(data=df, color_dict={Term.C: "blue"})
-        with pytest.raises(ValueError):
+        with pytest.raises(KeyError):
             with BarPlot(filename=imgfile) as bp:
                 bp.plot(data=df, colormap="unknown")
 
