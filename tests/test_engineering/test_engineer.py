@@ -48,7 +48,7 @@ class TestDataEngineer(object):
 
     def test_with_actual_data(self, imgfile):
         engineer = DataEngineer()
-        engineer.download()
+        engineer.download(databases=["japan", "covid19dh", "owid"])
         all_df = engineer.all()
         layer_df = engineer.layer()
         assert_frame_equal(all_df, layer_df, check_dtype=False, check_categorical=False)
