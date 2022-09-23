@@ -18,6 +18,10 @@ class TestScatterPlot(object):
         with ScatterPlot(filename=imgfile) as sp:
             with pytest.raises(UnExecutedError):
                 sp.line_straight()
+        # Error with colormap
+        with ScatterPlot(filename=imgfile) as sp:
+            with pytest.raises(KeyError):
+                sp.plot(data=df, colormap="unknown")
         # Cannot show a legend
         with ScatterPlot(filename=imgfile) as sp:
             sp.plot(data=df)
@@ -25,10 +29,3 @@ class TestScatterPlot(object):
                 sp.legend()
             with pytest.raises(NotImplementedError):
                 sp.legend_hide()
-
-    @pytest.mark.skip(reason="Refer to https://github.com/lisphilar/covid19-sir/issues/1225")
-    def test_colormap(self, japan_df, imgfile):
-        df = japan_df.rename(columns={"Positive": "x", "Discharged": "y"})
-        with ScatterPlot(filename=imgfile) as sp:
-            with pytest.raises(KeyError):
-                sp.plot(data=df, colormap="unknown")
