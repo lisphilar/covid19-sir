@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import warnings
 import matplotlib
 import pytest
@@ -18,7 +17,6 @@ class TestVisualizeBase(object):
     def test_file(self, imgfile):
         with VisualizeBase(filename=imgfile):
             pass
-        assert Path(imgfile).exists()
 
     def test_setting(self, imgfile):
         with VisualizeBase(filename=imgfile) as vb:

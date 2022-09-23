@@ -7,7 +7,7 @@ from covsirphy import MLEngineer, DataEngineer, Term
 class TestMLEngineer(object):
     def _subset(self):
         data_eng = DataEngineer()
-        data_eng.download()
+        data_eng.download(databases=["japan", "covid19dh", "owid"])
         data_eng.clean()
         data_eng.transform()
         return data_eng.subset(geo="Japan")[0]

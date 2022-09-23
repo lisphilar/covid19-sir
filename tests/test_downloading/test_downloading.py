@@ -18,7 +18,7 @@ class TestDataDownloader(object):
     )
     def test_download(self, country, province):
         dl = DataDownloader()
-        dl.layer(country=country, province=province)
+        dl.layer(country=country, province=province, databases=["japan", "covid19dh", "owid"])
         assert dl.citations()
 
     @pytest.mark.parametrize(
