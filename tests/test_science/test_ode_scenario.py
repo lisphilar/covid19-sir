@@ -10,18 +10,16 @@ def snr():
     return ODEScenario.auto_build(geo="Japan", model=SIRFModel)
 
 
+@pytest.mark.skip(reason="Failed due to unknown reasons")
 class TestODEScenario(object):
-    @pytest.mark.skip(reason="Failed due to unknown reasons")
     def test_with_template_failed(self, snr):
         with pytest.raises(ScenarioNotFoundError):
             snr.build_with_template(name="New", template="Un-registered")
 
-    @pytest.mark.skip(reason="Failed due to unknown reasons")
     def test_auto_build_failed(self):
         with pytest.raises(SubsetNotFoundError):
             ODEScenario.auto_build(geo="Moon", model=SIRFModel)
 
-    @pytest.mark.skip(reason="Failed due to unknown reasons")
     def test_to_dynamics_failed(self, snr):
         with pytest.raises(ScenarioNotFoundError):
             snr.to_dynamics(name="Un-registered")
