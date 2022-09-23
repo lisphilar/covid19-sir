@@ -272,7 +272,7 @@ class GIS(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/province/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
