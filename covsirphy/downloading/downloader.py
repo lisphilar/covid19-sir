@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -44,50 +45,53 @@ class DataDownloader(Term):
             databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).
                 "japan": COVID-19 Dataset in Japan,
                 "covid19dh": COVID-19 Data Hub,
-                "google: COVID-19 Open Data by Google Cloud Platform,
+                "google": COVID-19 Open Data by Google Cloud Platform (deprecated),
                 "owid": Our World In Data,
                 "wpp": World Population Prospects by United nations.
+
+        Note:
+            "google" for @database was deprecated and refer to https://github.com/lisphilar/covid19-sir/issues/1223
 
         Returns:
             pandas.DataFrame:
                 Index
                     reset index
                 Columns
-                    - Date (pandas.Timestamp): observation date
-                    - ISO3 (str): country names
-                    - Province (str): province/state/prefecture names
-                    - City (str): city names
-                    - Country (str): country names (top level administration)
-                    - Province (str): province names (2nd level administration)
-                    - ISO3 (str): ISO3 codes
-                    - Confirmed (pandas.Int64): the number of confirmed cases
-                    - Fatal (pandas.Int64): the number of fatal cases
-                    - Recovered (pandas.Int64): the number of recovered cases
-                    - Population (pandas.Int64): population values
-                    - Tests (pandas.Int64): the number of tests
-                    - Product (pandas.Int64): vaccine product names
-                    - Vaccinations (pandas.Int64): cumulative number of vaccinations
-                    - Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations
-                    - Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose
-                    - Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol
-                    - School_closing
-                    - Workplace_closing
-                    - Cancel_events
-                    - Gatherings_restrictions
-                    - Transport_closing
-                    - Stay_home_restrictions
-                    - Internal_movement_restrictions
-                    - International_movement_restrictions
-                    - Information_campaigns
-                    - Testing_policy
-                    - Contact_tracing
-                    - Stringency_index
-                    - Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
-                    - Mobility_parks: % to baseline in visits (parks etc.)
-                    - Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
-                    - Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
-                    - Mobility_residential: % to baseline in visits (places of residence)
-                    - Mobility_workplaces: % to baseline in visits (places of work)
+                    Date (pandas.Timestamp): observation date
+                    ISO3 (str): country names
+                    Province (str): province/state/prefecture names
+                    City (str): city names
+                    Country (str): country names (top level administration)
+                    Province (str): province names (2nd level administration)
+                    ISO3 (str): ISO3 codes
+                    Confirmed (pandas.Int64): the number of confirmed cases
+                    Fatal (pandas.Int64): the number of fatal cases
+                    Recovered (pandas.Int64): the number of recovered cases
+                    Population (pandas.Int64): population values
+                    Tests (pandas.Int64): the number of tests
+                    Product (pandas.Int64): vaccine product names
+                    Vaccinations (pandas.Int64): cumulative number of vaccinations
+                    Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations
+                    Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose
+                    Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol
+                    School_closing
+                    Workplace_closing
+                    Cancel_events
+                    Gatherings_restrictions
+                    Transport_closing
+                    Stay_home_restrictions
+                    Internal_movement_restrictions
+                    International_movement_restrictions
+                    Information_campaigns
+                    Testing_policy
+                    Contact_tracing
+                    Stringency_index
+                    (deprecated) Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
+                    (deprecated) Mobility_parks: % to baseline in visits (parks etc.)
+                    (deprecated) Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
+                    (deprecated) Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
+                    (deprecated) Mobility_residential: % to baseline in visits (places of residence)
+                    (deprecated) Mobility_workplaces: % to baseline in visits (places of work)
 
         Note:
             When @country is None, country-level data will be returned.
@@ -101,14 +105,21 @@ class DataDownloader(Term):
         db_dict = {
             "japan": _CSJapan,
             "covid19dh": _COVID19dh,
-            "google": _GoogleOpenData,
             "owid": _OWID,
             "wpp": _WPP,
+            # Deprecated
+            "google": _GoogleOpenData,
         }
-        all_databases = ["japan", "covid19dh", "google", "owid"]
+        all_databases = ["japan", "covid19dh", "google", "owid"]  # "google" will be removed at 3.0.0
         selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
         for database in selected:
+            if database == "google":
+                warnings.warn(
+                    "Please use `databases=['japan', 'covid19dh', 'owid']` and refer to https://github.com/lisphilar/covid19-sir/issues/1223",
+                    DeprecationWarning,
+                    stacklevel=2
+                )
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)
             new_df = db.layer(country=country, province=province).convert_dtypes()
