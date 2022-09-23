@@ -57,8 +57,8 @@ class BarPlot(VisualizeBase):
         method_dict = {True: data.plot.bar, False: data.plot.barh}
         try:
             self._ax = method_dict[vertical](**color_args, **kwargs)
-        except ValueError as e:
-            raise ValueError(e.args[0]) from None
+        except KeyError as e:
+            raise KeyError(e.args[0]) from None
         # No rotation of xticks
         self._ax.tick_params(axis="x", rotation=0)
 
