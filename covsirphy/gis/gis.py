@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import contextlib
 from pathlib import Path
 import geopandas as gpd
 from matplotlib import pyplot as plt
@@ -271,7 +272,7 @@ class GIS(Term):
            Note that records with NAs as country names will be always removed.
 
         Note:
-            When `geo=None` or `geo=(None,)`, returns total values of all country-level data, assuming we have country/province/city as layers here.
+            When `geo=None` or `geo=(None,)`, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.
 
         Note:
             When `geo=("Japan",)` or `geo="Japan"`, returns country-level data in Japan.
@@ -305,11 +306,18 @@ class GIS(Term):
         series = df[self._date].copy()
         start = Validator(start_date).date(default=series.min())
         end = Validator(end_date).date(default=series.max())
-        df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
+        df = df.loc[df[self._date].between(start, end)]
         if df.empty and errors == "raise":
             raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
+        # Calculate total value if geo=None
+        if geo is None or geo[0] is None:
+            variables_agg = list(set(df.columns) - {*self._layers, self._date})
+            df = df.pivot_table(values=variables_agg, index=self._date, columns=self._layers[0], aggfunc="last")
+            df = df.ffill().fillna(0).stack().reset_index()
         # Get representative records for dates
-        df = df.groupby([*self._layers, self._date], dropna=True).first().reset_index(level=self._date)
+        with contextlib.suppress(IndexError, KeyError):
+            df = df.drop(self._layers[1:], axis=1)
+        df = df.groupby([self._layers[0], self._date], dropna=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
     @classmethod
@@ -327,7 +335,7 @@ class GIS(Term):
             return "the world"
         names = [
             info if isinstance(info, str) else "_".join(list(info)) for info in ([geo] if isinstance(geo, str) else geo)]
-        return cls.SEP.join(names[::-1])
+        return cls.SEP.join(names[:: -1])
 
     def _parse_geo(self, geo, data):
         """Parse geographic specifier.
