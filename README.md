@@ -11,7 +11,7 @@
 # CovsirPhy introduction
 
 [<strong>Documentation</strong>](https://lisphilar.github.io/covid19-sir/index.html)
-| [<strong>Installation</strong>](https://lisphilar.github.io/covid19-sir/INSTALLATION.html)
+| [<strong>Installation</strong>](https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html)
 | [<strong>Tutorial</strong>](<https://lisphilar.github.io/covid19-sir/01_data_preparation.html>)
 | [<strong>API reference</strong>](https://lisphilar.github.io/covid19-sir/covsirphy.html)
 | [<strong>GitHub</strong>](https://github.com/lisphilar/covid19-sir)
