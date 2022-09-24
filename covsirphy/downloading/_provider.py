@@ -16,7 +16,7 @@ class _DataProvider(Term):
     """Extract datasets and save it locally.
 
     Args:
-        update_interval (int): update interval of downloading dataset
+        update_interval (int or None): update interval of downloading dataset or None (do not update if we have files in local)
         stdout (str or None): stdout when downloading (shown at most one time) or None (no outputs)
     """
 
@@ -75,14 +75,17 @@ class _DataProvider(Term):
             filename (str): filename of the local file
 
         Returns:
-            (bool): whether we need to get the data from remote servers or not
+            bool: whether we need to get the data from remote servers or not
 
         Note:
             If the last updated date is unknown, returns True.
+            If update interval was set as None, return False.
             If @update_interval (of _DataProvider) hours have passed and the remote file was updated, return True.
         """
         if not Path(filename).exists():
             return True
+        if self._update_interval is None:
+            return False
         date_local = self._last_updated_local(filename)
         time_limit = date_local + timedelta(hours=self._update_interval)
         return datetime.now() >= time_limit
