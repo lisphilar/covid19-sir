@@ -4,6 +4,7 @@
 from datetime import timedelta
 from functools import partial
 from multiprocessing import cpu_count, Pool
+import warnings
 import numpy as np
 import pandas as pd
 from p_tqdm import p_umap
@@ -171,10 +172,9 @@ class Dynamics(Term):
             NA can used in the newer phases because filled with that of the older phases.
         """
         if data is not None:
-            all_df = self._df.copy()
             new_df = Validator(data, "data").dataframe(time_index=True)
             new_df.index = pd.to_datetime(new_df.index).round("D")
-            all_df.loc[:] = np.nan
+            all_df = pd.DataFrame(np.nan, index=self._df.index, columns=self._df.columns)
             all_df[self._PH] = 0
             all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIRF].isna().any():
@@ -427,7 +427,7 @@ class Dynamics(Term):
         """
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIRF)
-        all_df.loc[:, parameters] = all_df.loc[:, parameters].astype("Float64")
+        all_df[parameters] = all_df.loc[:, parameters].astype("Float64")
         starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
         ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
         for start, end in zip(starts, ends):
@@ -483,6 +483,7 @@ class Dynamics(Term):
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
+        warnings.filterwarnings("ignore", category=FutureWarning)
         r_df.update(est_df, overwrite=True)
         self.register(data=r_df)
         return est_df

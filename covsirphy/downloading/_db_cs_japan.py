@@ -59,7 +59,7 @@ class _CSJapan(_DataBase):
         cols = [
             "Date", "Location", "Positive", "Tested", "Discharged", "Fatal", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
         df = self._provide(url=self.URL_C, suffix="", columns=cols, date="Date", date_format="%Y-%m-%d")
-        df = df.groupby("Date").sum().reset_index()
+        df = df.groupby("Date").sum(numeric_only=True).reset_index()
         df[self.ISO3] = "JPN"
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA

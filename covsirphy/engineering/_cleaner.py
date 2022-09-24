@@ -73,7 +73,7 @@ class _DataCleaner(Term):
         """Fill NA values with '-' (layers) and the previous values and 0.
         """
         df = self._df.copy()
-        df.loc[:, self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
+        df[self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
         for col in set(df.columns) - set(self._id_cols):
             df[col] = df.groupby(self._layers)[col].ffill().fillna(0)
         self._df = df.copy()

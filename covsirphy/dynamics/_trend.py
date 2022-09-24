@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import warnings
 from datetime import timedelta
 import matplotlib
 from matplotlib import pyplot as plt
@@ -67,6 +67,7 @@ class _TrendAnalyzer(Term):
         r, logS = self._r, self._logS
         sr_df = self._all_df.pivot_table(index=r, values=logS, aggfunc="last")
         sr_df.index.name = None
+        warnings.filterwarnings("ignore", category=UserWarning)
         detector = algo_dict[algo][0](**algo_dict[algo][1], **Validator(kwargs).kwargs(algo_dict[algo][0]))
         results = detector.fit_predict(sr_df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
         logs_df = sr_df.iloc[[result - 1 for result in results]]
