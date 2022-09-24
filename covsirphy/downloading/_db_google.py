@@ -36,9 +36,6 @@ class _GoogleOpenData(_DataBase):
         " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
         " Work in progress, https://goo.gle/covid-19-open-data"
 
-    def __init__(self, directory, update_interval, verbose):
-        super().__init__(directory=directory, update_interval=None, verbose=verbose)
-
     def _country(self):
         """Returns country-level data.
 
@@ -71,7 +68,7 @@ class _GoogleOpenData(_DataBase):
         df[self.CITY] = pd.NA
         return df
 
-    def _province(self, country):  # sourcery skip: class-extract-method
+    def _province(self, country):
         """Returns province-level data.
 
         Args:

@@ -12,7 +12,7 @@ class _DataBase(Term):
 
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
-        update_interval (int or None): update interval of downloading dataset or None (do not update if we have files in local)
+        update_interval (int): update interval of downloading dataset
         verbose (int): level of verbosity when downloading
 
     Note:
