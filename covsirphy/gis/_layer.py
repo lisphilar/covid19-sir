@@ -125,7 +125,7 @@ class _LayerAdjuster(Term):
         # Prepare necessary layers and fill in None with "NA"
         if data_layers is not None and data_layers != self._layers:
             df = self._prepare_layers(df, data_layers=data_layers)
-        df.loc[:, self._layers] = df[self._layers].astype("string").fillna(self.NA)
+        df[self._layers] = df[self._layers].astype("string").fillna(self.NA)
         # Locations
         loc_df = df.loc[:, self._layers]
         loc_df = pd.concat([self._loc_df, loc_df], axis=0, ignore_index=True)
