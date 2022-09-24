@@ -4,6 +4,7 @@
 from datetime import timedelta
 from functools import partial
 from multiprocessing import cpu_count, Pool
+import warnings
 import numpy as np
 import pandas as pd
 from p_tqdm import p_umap
@@ -482,6 +483,7 @@ class Dynamics(Term):
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
+        warnings.filterwarnings("ignore", category=FutureWarning)
         r_df.update(est_df, overwrite=True)
         self.register(data=r_df)
         return est_df
