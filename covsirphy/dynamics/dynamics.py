@@ -174,7 +174,7 @@ class Dynamics(Term):
             all_df = self._df.copy()
             new_df = Validator(data, "data").dataframe(time_index=True)
             new_df.index = pd.to_datetime(new_df.index).round("D")
-            all_df.loc[:] = np.nan
+            all_df[:] = np.nan
             all_df[self._PH] = 0
             all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIRF].isna().any():
