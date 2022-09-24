@@ -10,7 +10,7 @@ CovsirPhy introduction
 
 `Documentation <https://lisphilar.github.io/covid19-sir/index.html>`__
 \|
-`Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__
+`Installation <https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html>`__
 \|
 `Tutorial <https://lisphilar.github.io/covid19-sir/01_data_preparation.html>`__
 \| `API
