@@ -69,6 +69,14 @@ class ODEScenario(Term):
         # Aliases of variable names
         self._variable_alias = Alias.for_variables()
 
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self._location_name == other._location_name and self.describe().equals(other.describe())
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def to_json(self, filename):
         """Write a JSON file which can usable for recreating ODEScenario instance with .from_json()
 
@@ -81,12 +89,12 @@ class ODEScenario(Term):
         info_dict = {
             "location_name": self._location_name,
             "complement": self._complement,
-            "data": self._data.to_json(date_format="iso"),
+            "data": self._data.to_json(date_format="iso", force_ascii=False),
             "scenarios": {
                 name: {
                     self.ODE: detail_dict[self.ODE].name(),
                     self.TAU: detail_dict[self.TAU],
-                    self._PARAM: detail_dict[self._PARAM].to_json(date_format="iso"),
+                    self._PARAM: detail_dict[self._PARAM].to_json(date_format="iso", force_ascii=False),
                 }
                 for (name, detail_dict) in self._snr_alias.all().items()
             },
