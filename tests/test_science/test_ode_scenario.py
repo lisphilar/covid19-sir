@@ -31,5 +31,5 @@ def snr(jsonpath):
 
 
 class TestODEScenario(object):
-    def test_scenario_manipulation(snr):
+    def test_scenario_manipulation(self):
         pass
