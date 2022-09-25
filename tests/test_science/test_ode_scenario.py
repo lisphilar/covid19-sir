@@ -19,14 +19,17 @@ def jsonpath():
 def snr(jsonpath):
     if jsonpath.exists():
         return ODEScenario.from_json(filename=jsonpath)
-    return ODEScenario.auto_build(geo="Japan", model=SIRFModel)
+    instance = ODEScenario.auto_build(geo="Japan", model=SIRFModel)
+    instance.to_json(filename=jsonpath)
+    snr_build = ODEScenario.from_json(filename=jsonpath)
+    assert instance._location_name == snr_build._location_name
+    assert instance.describe().equals(snr_build.describe())
+    assert instance == snr_build
+    snr_build._location_name = "unknown"
+    assert snr != snr_build
+    return instance
 
 
 class TestODEScenario(object):
-    def test_json(self, jsonpath, snr):
-        snr.to_json(filename=jsonpath)
-        snr_build = ODEScenario.from_json(filename=jsonpath)
-        assert snr == snr_build
-        with pytest.raises(AssertionError):
-            snr_build._location_name = "unknown"
-            assert snr == snr_build
+    def test_scenario_manipulation(snr):
+        pass
