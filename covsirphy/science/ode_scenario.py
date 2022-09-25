@@ -4,6 +4,8 @@
 import contextlib
 from copy import deepcopy
 from datetime import timedelta
+import json
+from pathlib import Path
 import re
 import pandas as pd
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
@@ -15,6 +17,10 @@ from covsirphy.gis.gis import GIS
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.engineering.engineer import DataEngineer
 from covsirphy.dynamics.ode import ODEModel
+from covsirphy.dynamics.sir import SIRModel
+from covsirphy.dynamics.sird import SIRDModel
+from covsirphy.dynamics.sirf import SIRFModel
+from covsirphy.dynamics.sewirf import SEWIRFModel
 from covsirphy.dynamics.dynamics import Dynamics
 from covsirphy.science.ml import MLEngineer
 
@@ -44,9 +50,11 @@ class ODEScenario(Term):
 
     def __init__(self, data, location_name, complement=True):
         self._location_name = str(location_name)
+        self._complement = complement
         # Actual records: Date index, S/I/F/R
         df = Validator(data, "data", accept_none=False).dataframe(
             time_index=True, columns=[self.N, self.C, self.F, self.R])
+        self._data = df.copy()
         df.index.name = self.DATE
         df["location"] = self._location_name
         engineer = DataEngineer(layers=["location"])
@@ -60,6 +68,80 @@ class ODEScenario(Term):
         self._snr_alias = Alias(target_class=dict)
         # Aliases of variable names
         self._variable_alias = Alias.for_variables()
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and \
+            self._location_name == other._location_name and \
+            self.describe().equals(other.describe())
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def to_json(self, filename):
+        """Write a JSON file which can usable for recreating ODEScenario instance with .from_json()
+
+        Args:
+            filename (str or Path): JSON filename
+
+        Return:
+            str: filename
+        """
+        info_dict = {
+            "location_name": self._location_name,
+            "complement": self._complement,
+            "data": self._data.to_json(date_format="iso", force_ascii=False),
+            "scenarios": {
+                name: {
+                    self.ODE: detail_dict[self.ODE].name(),
+                    self.TAU: detail_dict[self.TAU],
+                    self._PARAM: detail_dict[self._PARAM].to_json(date_format="iso", force_ascii=False),
+                }
+                for (name, detail_dict) in self._snr_alias.all().items()
+            },
+        }
+        with Path(filename).open("w") as fh:
+            json.dump(info_dict, fh, indent=4)
+        return str(filename)
+
+    @classmethod
+    def from_json(cls, filename):
+        """Create ODEScenario instance with a JSON file.
+
+        Args:
+            filename (str or Path): JSON filename
+
+        Returns:
+            covsirphy.ODEScenario: self
+        """
+        with Path(filename).open("r") as fh:
+            info_dict = json.load(fh)
+        # Validation
+        Validator(info_dict, name="info_dict", accept_none=False).dict(
+            required_keys=["location_name", "complement", "data", "scenarios"], errors="raise")
+        Validator(info_dict["scenarios"], "info_dict['scenarios']", accept_none=False).dict()
+        # Create instance
+        instance = cls(
+            data=pd.read_json(info_dict["data"]),
+            location_name=info_dict["location_name"],
+            complement=info_dict["complement"],
+        )
+        required_keys = [cls.ODE, cls.TAU, cls._PARAM]
+        model_dict = {model.name(): model for model in [SIRModel, SIRDModel, SIRFModel, SEWIRFModel]}
+        for (name, detail_dict) in info_dict["scenarios"].items():
+            Validator(detail_dict, f"info_dict['scenarios']['{name}']").dict(
+                required_keys=required_keys, errors="raise")
+            model_name = detail_dict[cls.ODE]
+            Validator([model_name], name=f"model name of {name} scenario", accept_none=False).sequence(
+                candidates=model_dict.keys(), length=1)
+            instance._snr_alias.update(
+                name=name,
+                target={
+                    cls.ODE: model_dict[model_name],
+                    cls.TAU: Validator(detail_dict[cls.TAU], name="tau", accept_none=False).tau(),
+                    cls._PARAM: pd.read_json(detail_dict[cls._PARAM]),
+                }
+            )
+        return instance
 
     def build_with_dynamics(self, name, dynamics):
         """Build a scenario with covsirphy.Dynamics() instance.
