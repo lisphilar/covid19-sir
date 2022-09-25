@@ -70,9 +70,9 @@ class ODEScenario(Term):
         self._variable_alias = Alias.for_variables()
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self._location_name == other._location_name and self.describe().equals(other.describe())
-        raise NotImplemented
+        if isinstance(other, self.__class__) and \
+            self._location_name == other._location_name and \
+            self.describe().equals(other.describe())
 
     def __ne__(self, other):
         return not self.__eq__(other)
