@@ -21,8 +21,7 @@ plt.rcParams["legend.frameon"] = False
 
 
 def find_args(func_list, **kwargs):
-    """
-    Find values of enabled arguments of the function from the keyword arguments.
+    """Find values of enabled arguments of the function from the keyword arguments.
 
     Args:
         func_list (list[function] or function): target function
@@ -42,8 +41,7 @@ def find_args(func_list, **kwargs):
 
 
 class VisualizeBase(Term):
-    """
-    Base class for visualization.
+    """Base class for visualization.
 
     Args:
         filename (str or None): filename to save the figure or None (display)
@@ -78,8 +76,7 @@ class VisualizeBase(Term):
 
     @property
     def title(self):
-        """
-        str: title of the figure
+        """str: title of the figure
         """
         return self._title
 
@@ -89,8 +86,7 @@ class VisualizeBase(Term):
 
     @property
     def ax(self):
-        """
-        matplotlib.axis: axis
+        """matplotlib.axis: axis
         """
         return self._ax
 
@@ -99,8 +95,7 @@ class VisualizeBase(Term):
         self._ax = Validator(ax, "ax").instance(matplotlib.axes.Axes)
 
     def plot(self):
-        """
-        Method for plotting. This will be defined in child classes.
+        """Method for plotting. This will be defined in child classes.
 
         Raises:
             NotImplementedError: not implemented
@@ -108,9 +103,7 @@ class VisualizeBase(Term):
         raise NotImplementedError
 
     def tick_params(self, **kwargs):
-        """
-        Directly calling matplotlib.pyplot.tick_params,
-        change the appearance of ticks, tick labels and grid lines.
+        """Directly calling matplotlib.pyplot.tick_params, change the appearance of ticks, tick labels and grid lines.
 
         Args:
             kwargs: arguments of matplotlib.pyplot.tick_params
@@ -118,8 +111,7 @@ class VisualizeBase(Term):
         self._ax.tick_params(**kwargs)
 
     def legend(self, bbox_to_anchor=(0.5, -0.2), bbox_loc="lower center", ncol=None, **kwargs):
-        """
-        Set legend.
+        """Set legend.
 
         Args:
             bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot
@@ -135,15 +127,13 @@ class VisualizeBase(Term):
         plt.tight_layout()
 
     def legend_hide(self):
-        """
-        Hide legend.
+        """Hide legend.
         """
         self._ax.legend().set_visible(False)
 
     @staticmethod
     def _plot_colors(variables, colormap=None, color_dict=None):
-        """
-        Create an argument dictionary of colors for Matplotlib.
+        """Create an argument dictionary of colors for Matplotlib.
 
         Args:
             variables (list[str] or pandas.Index): list of variables to show

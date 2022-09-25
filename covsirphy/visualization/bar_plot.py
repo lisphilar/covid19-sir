@@ -9,8 +9,7 @@ from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class BarPlot(VisualizeBase):
-    """
-    Create a bar plot.
+    """Create a bar plot.
 
     Args:
         filename (str or None): filename to save the figure or None (display)
@@ -33,8 +32,7 @@ class BarPlot(VisualizeBase):
         return super().__exit__(*exc_info)
 
     def plot(self, data, vertical=True, colormap=None, color_dict=None, **kwargs):
-        """
-        Create bar plot.
+        """Create bar plot.
 
         Args:
             data (pandas.DataFrame or pandas.Series): data to show
@@ -63,8 +61,7 @@ class BarPlot(VisualizeBase):
         self._ax.tick_params(axis="x", rotation=0)
 
     def x_axis(self, xlabel=None):
-        """
-        Set x axis.
+        """Set x axis.
 
         Args:
             xlabel (str or None): x-label
@@ -73,8 +70,7 @@ class BarPlot(VisualizeBase):
         self._ax.set_xlabel(xlabel)
 
     def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(0, None), math_scale=True, y_integer=False):
-        """
-        Set x axis.
+        """Set x axis.
 
         Args:
             ylabel (str or None): y-label
@@ -105,8 +101,7 @@ class BarPlot(VisualizeBase):
         self._ax.set_ylim(*ylim)
 
     def line(self, v=None, h=None, color="black", linestyle=":"):
-        """
-        Show vertical/horizontal lines.
+        """Show vertical/horizontal lines.
 
         Args:
             v (list[int/float] or None): list of x values of vertical lines or None
@@ -123,8 +118,7 @@ class BarPlot(VisualizeBase):
 
 
 def bar_plot(df, title=None, filename=None, show_legend=True, **kwargs):
-    """
-    Wrapper function: show chronological change of the data.
+    """Wrapper function: show chronological change of the data.
 
     Args:
         data (pandas.DataFrame or pandas.Series): data to show

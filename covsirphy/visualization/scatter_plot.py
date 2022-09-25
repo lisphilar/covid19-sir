@@ -10,8 +10,7 @@ from covsirphy.visualization.line_plot import LinePlot
 
 
 class ScatterPlot(LinePlot):
-    """
-    Create a scatter plot.
+    """Create a scatter plot.
 
     Args:
         filename (str or None): filename to save the figure or None (display)
@@ -34,8 +33,7 @@ class ScatterPlot(LinePlot):
         return super().__exit__(*exc_info)
 
     def plot(self, data, colormap=None, color_dict=None, **kwargs):
-        """
-        Plot chronological change of the data.
+        """Plot chronological change of the data.
 
         Args:
             data (pandas.DataFrame): data to show
@@ -58,8 +56,7 @@ class ScatterPlot(LinePlot):
             raise KeyError(e.args[0]) from None
 
     def line_straight(self, p1=None, p2=None, color="black", linestyle=":"):
-        """
-        Connect the points with a straight line.
+        """Connect the points with a straight line.
 
         Args:
             p1 (tuple(int or float, int or float) or None): (x, y) of the first point or None (min values)
@@ -77,21 +74,18 @@ class ScatterPlot(LinePlot):
         self._ax.plot([x1, x2], [y1, y2], color=color, linestyle=linestyle)
 
     def legend(self, **kwargs):
-        """
-        ScatterPlot.legend() is not implemented.
+        """ScatterPlot.legend() is not implemented.
         """
         raise NotImplementedError
 
     def legend_hide(self):
-        """
-        ScatterPlot.legend_hide() is not implemented.
+        """ScatterPlot.legend_hide() is not implemented.
         """
         raise NotImplementedError
 
 
 def scatter_plot(df, title=None, filename=None, **kwargs):
-    """
-    Wrapper function: show chronological change of the data.
+    """Wrapper function: show chronological change of the data.
 
     Args:
         data (pandas.DataFrame): data to show

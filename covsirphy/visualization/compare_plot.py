@@ -8,8 +8,7 @@ from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class ComparePlot(VisualizeBase):
-    """
-    Compare two groups with specified variables.
+    """Compare two groups with specified variables.
 
     Args:
         filename (str or None): filename to save the figure or None (display)
@@ -32,8 +31,7 @@ class ComparePlot(VisualizeBase):
         return super().__exit__(*exc_info)
 
     def plot(self, data, variables, groups):
-        """
-        Compare two groups with specified variables.
+        """Compare two groups with specified variables.
 
         Args:
             data (pandas.DataFrame): data to show
@@ -71,8 +69,7 @@ class ComparePlot(VisualizeBase):
 
 
 def compare_plot(df, variables, groups, filename=None, **kwargs):
-    """
-    Wrapper function: show chronological change of the data.
+    """Wrapper function: show chronological change of the data.
 
     Args:
         df (pandas.DataFrame): data to show

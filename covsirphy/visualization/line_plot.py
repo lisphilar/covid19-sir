@@ -9,8 +9,7 @@ from covsirphy.visualization.vbase import VisualizeBase, find_args
 
 
 class LinePlot(VisualizeBase):
-    """
-    Create a line plot.
+    """Create a line plot.
 
     Args:
         filename (str or None): filename to save the figure or None (display)
@@ -33,8 +32,7 @@ class LinePlot(VisualizeBase):
         return super().__exit__(*exc_info)
 
     def plot(self, data, colormap=None, color_dict=None, **kwargs):
-        """
-        Plot chronological change of the data.
+        """Plot chronological change of the data.
 
         Args:
             data (pandas.DataFrame or pandas.Series): data to show
@@ -59,8 +57,7 @@ class LinePlot(VisualizeBase):
             raise KeyError(e.args[0]) from None
 
     def x_axis(self, xlabel=None, x_logscale=False, xlim=(None, None)):
-        """
-        Set x axis.
+        """Set x axis.
 
         Args:
             xlabel (str or None): x-label
@@ -80,8 +77,7 @@ class LinePlot(VisualizeBase):
         self._ax.set_xlim(*xlim)
 
     def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(0, None), math_scale=True, y_integer=False):
-        """
-        Set x axis.
+        """Set x axis.
 
         Args:
             ylabel (str or None): y-label
@@ -113,8 +109,7 @@ class LinePlot(VisualizeBase):
 
     @staticmethod
     def _convert_to_list(x):
-        """
-        Convert None to empty list, str/float/int etc. to a list.
+        """Convert None to empty list, str/float/int etc. to a list.
 
         Args:
             x (list/tuple[str/int/float] or None): value(s)
@@ -125,8 +120,7 @@ class LinePlot(VisualizeBase):
         return x if isinstance(x, (list, tuple)) else [] if x is None else [x]
 
     def line(self, v=None, h=None, color="black", linestyle=":"):
-        """
-        Show vertical/horizontal lines.
+        """Show vertical/horizontal lines.
 
         Args:
             v (list/tuple[int/float] or None): list of x values of vertical lines or None
@@ -145,8 +139,7 @@ class LinePlot(VisualizeBase):
 
 
 def line_plot(df, title=None, filename=None, show_legend=True, **kwargs):
-    """
-    Wrapper function: show chronological change of the data.
+    """Wrapper function: show chronological change of the data.
 
     Args:
         data (pandas.DataFrame or pandas.Series): data to show
