@@ -25,4 +25,10 @@ def snr(jsonpath):
 class TestODEScenario(object):
     def test_json(self, jsonpath, snr):
         snr.to_json(filename=jsonpath)
-        assert snr == ODEScenario.from_json(filename=jsonpath)
+        snr_build = ODEScenario.from_json(filename=jsonpath)
+        assert snr == snr_build
+        with pytest.raises(NotImplemented):
+            snr == "a"
+        with pytest.raises(AssertionError):
+            snr_build._location_name = "unknown"
+            assert snr == snr_build
