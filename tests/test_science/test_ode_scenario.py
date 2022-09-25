@@ -3,7 +3,7 @@
 
 from pathlib import Path
 import pytest
-from covsirphy import ODEScenario, SIRFModel
+from covsirphy import ODEScenario, SIRFModel, ScenarioNotFoundError, Term
 
 
 @pytest.fixture(scope="module")
@@ -31,5 +31,19 @@ def snr(jsonpath):
 
 
 class TestODEScenario(object):
-    def test_scenario_manipulation(snr):
-        pass
+    def test_scenario_manipulation(self, snr):
+        snr.build_with_template(name="New1", template="Baseline")
+        with pytest.raises(ScenarioNotFoundError):
+            snr.build_with_template(name="New2", template="Unknown")
+        snr.build_with_template(name="New2", template="Baseline")
+        snr.build_with_template(name="Old", template="Baseline")
+        snr.build_with_template(name="Wow", template="Baseline")
+        snr.delete(pattern="Old", exact=True)
+        snr.delete(pattern="New", exact=False)
+        snr.rename(old="Wow", new="Excellent")
+        assert set(snr.track()[Term.SERIES].unique()) == {"Baseline", "Excellent"}
+        snr.delete(pattern="Excellent", exact=True)
+
+    def test_auto_filed(self, snr):
+        with pytest.raises(ScenarioNotFoundError):
+            ODEScenario.auto_build(geo="Moon", model=SIRFModel)
