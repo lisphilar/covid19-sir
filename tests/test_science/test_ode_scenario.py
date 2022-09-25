@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pandas as pd
 from pathlib import Path
 import pytest
 from covsirphy import ODEScenario, SIRFModel, ScenarioNotFoundError, Term
@@ -44,6 +45,7 @@ class TestODEScenario(object):
         snr.delete(pattern="New", exact=False)
         snr.rename(old="Wow", new="Excellent")
         assert set(snr.track()[Term.SERIES].unique()) == {"Baseline", "Excellent"}
+        assert isinstance(snr.summary(), pd.DataFrame)
         snr.delete(pattern="Excellent", exact=True)
 
     def test_auto_filed(self, snr):
