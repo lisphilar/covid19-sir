@@ -35,6 +35,8 @@ class TestODEScenario(object):
         snr.build_with_template(name="New1", template="Baseline")
         with pytest.raises(ScenarioNotFoundError):
             snr.build_with_template(name="New2", template="Unknown")
+        with pytest.raises(ScenarioNotFoundError):
+            snr.to_dynamics(name="New2")
         snr.build_with_template(name="New2", template="Baseline")
         snr.build_with_template(name="Old", template="Baseline")
         snr.build_with_template(name="Wow", template="Baseline")
