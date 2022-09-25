@@ -4,7 +4,7 @@
 import pandas as pd
 from pathlib import Path
 import pytest
-from covsirphy import ODEScenario, SIRFModel, ScenarioNotFoundError, Term
+from covsirphy import ODEScenario, SIRFModel, ScenarioNotFoundError, SubsetNotFoundError, Term
 
 
 @pytest.fixture(scope="module")
@@ -49,5 +49,5 @@ class TestODEScenario(object):
         snr.delete(pattern="Excellent", exact=True)
 
     def test_auto_filed(self, snr):
-        with pytest.raises(ScenarioNotFoundError):
+        with pytest.raises(SubsetNotFoundError):
             ODEScenario.auto_build(geo="Moon", model=SIRFModel)
