@@ -70,7 +70,7 @@ class ODEScenario(Term):
         self._variable_alias = Alias.for_variables()
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__) and \
+        return isinstance(other, self.__class__) and \
             self._location_name == other._location_name and \
             self.describe().equals(other.describe())
 
