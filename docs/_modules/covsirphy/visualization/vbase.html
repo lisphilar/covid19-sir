@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.1-delta
+                2.27.1-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -129,8 +129,7 @@
 
 
 <div class="viewcode-block" id="find_args"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.find_args">[docs]</a><span class="k">def</span> <span class="nf">find_args</span><span class="p">(</span><span class="n">func_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find values of enabled arguments of the function from the keyword arguments.</span>
+    <span class="sd">&quot;&quot;&quot;Find values of enabled arguments of the function from the keyword arguments.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        func_list (list[function] or function): target function</span>
@@ -150,8 +149,7 @@
 
 
 <div class="viewcode-block" id="VisualizeBase"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase">[docs]</a><span class="k">class</span> <span class="nc">VisualizeBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class for visualization.</span>
+    <span class="sd">&quot;&quot;&quot;Base class for visualization.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename (str or None): filename to save the figure or None (display)</span>
@@ -186,8 +184,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        str: title of the figure</span>
+        <span class="sd">&quot;&quot;&quot;str: title of the figure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
 
@@ -197,8 +194,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        matplotlib.axis: axis</span>
+        <span class="sd">&quot;&quot;&quot;matplotlib.axis: axis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span>
 
@@ -207,8 +203,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">&quot;ax&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">instance</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VisualizeBase.plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method for plotting. This will be defined in child classes.</span>
+        <span class="sd">&quot;&quot;&quot;Method for plotting. This will be defined in child classes.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotImplementedError: not implemented</span>
@@ -216,9 +211,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="VisualizeBase.tick_params"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.tick_params">[docs]</a>    <span class="k">def</span> <span class="nf">tick_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Directly calling matplotlib.pyplot.tick_params,</span>
-<span class="sd">        change the appearance of ticks, tick labels and grid lines.</span>
+        <span class="sd">&quot;&quot;&quot;Directly calling matplotlib.pyplot.tick_params, change the appearance of ticks, tick labels and grid lines.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            kwargs: arguments of matplotlib.pyplot.tick_params</span>
@@ -226,8 +219,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VisualizeBase.legend"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.legend">[docs]</a>    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set legend.</span>
+        <span class="sd">&quot;&quot;&quot;Set legend.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot</span>
@@ -243,15 +235,13 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="VisualizeBase.legend_hide"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.legend_hide">[docs]</a>    <span class="k">def</span> <span class="nf">legend_hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Hide legend.</span>
+        <span class="sd">&quot;&quot;&quot;Hide legend.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_plot_colors</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create an argument dictionary of colors for Matplotlib.</span>
+        <span class="sd">&quot;&quot;&quot;Create an argument dictionary of colors for Matplotlib.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            variables (list[str] or pandas.Index): list of variables to show</span>

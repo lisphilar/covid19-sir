@@ -29,10 +29,10 @@ version = cs.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
     'sphinx_rtd_theme',
     'sphinxcontrib.seqdiag',
     'nbsphinx',
@@ -97,6 +97,6 @@ todo_include_todos = True
 add_module_names = False
 
 # nbsphinx
-# nbsphinx_execute: "always", "auto" or "never" 
+# nbsphinx_execute: "always", "auto" or "never"
 nbsphinx_execute = "always"
 nbsphinx_kernel_name = "python"
