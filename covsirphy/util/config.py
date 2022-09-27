@@ -62,25 +62,6 @@ class _Config(object):
         """
         self._logger.debug(message)
 
-    def exception(self, **kwargs):
-        """Show message for trace.
-
-        Args:
-            **kwarg: keyword arguments of the exception object
-
-        Examples:
-            >>> import covsirphy as cs
-            >>> try:
-                    a = "value"
-                    cs.Validator(a).int()
-                except cs.UnExpectedTypeError:
-                    cs.config.exception(name="a", target=a, expected=int)
-
-        """
-        _exception, *_ = sys.exc_info()
-        self._logger.opt(exception=True).debug(f"{_exception} was raised")
-        self._logger.exception(_exception(**kwargs))
-
 
 config = _Config()
 config.logger(level=2)
