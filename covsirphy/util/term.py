@@ -9,10 +9,12 @@ import warnings
 import country_converter as coco
 import numpy as np
 import pandas as pd
+from covsirphy.util.config import _catch_exception
 from covsirphy.util.error import deprecate
 from covsirphy.util.validator import Validator
 
 
+@_catch_exception
 class Term(object):
     """
     Term definition.

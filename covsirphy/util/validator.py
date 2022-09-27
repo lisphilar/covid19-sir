@@ -6,8 +6,10 @@ import math
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
+from covsirphy.util.config import _catch_exception
 
 
+@_catch_exception
 class Validator(object):
     """Validate objects and arguments.
 
@@ -170,7 +172,7 @@ class Validator(object):
         divisors = [str(i) for i in range(1, 1441) if 1440 % i == 0]
         raise UnExpectedValueError(
             self._name, value, divisors,
-            details="Tau value [min], a divisor of 1440 [min] is a parameter used to convert actual time to time steps (without units)")
+            details="Tau value [min], a divisor of 1440 [min], is a parameter used to convert actual time to time steps (without units)")
 
     def date(self, value_range=(None, None), default=None):
         """Convert a value to a date object.
