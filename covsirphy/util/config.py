@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import inspect
 import sys
+from types import FunctionType
 from loguru import logger as loguru_logger
 
 
@@ -10,10 +12,13 @@ def _catch_exception(cls):
 
     Args:
         cls (object): class object
+
+    Note:
+        Codes are from https://github.com/Delgan/loguru/issues/129#issuecomment-522339975
     """
-    for attr in cls.__dict__:
-        if callable(getattr(cls, attr)):
-            setattr(cls, attr, loguru_logger.catch(getattr(cls, attr)))
+    for name, fn in inspect.getmembers(cls):
+        if isinstance(fn, FunctionType):
+            setattr(cls, name, loguru_logger.catch(fn))
     return cls
 
 
