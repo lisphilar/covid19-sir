@@ -11,6 +11,7 @@ except ImportError:
 from covsirphy.__version__ import __version__
 from covsirphy.__citation__ import __citation__
 # util
+from covsirphy.util.config import config
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate, experimental
 from covsirphy.util.error import ExperimentalWarning
@@ -132,7 +133,7 @@ __all__ = [
     "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
     "Validator", "UnExpectedNoneError", "NotNoneError", "NotEnoughDataError",
     # util
-    "StopWatch", "deprecate", "Term", "Filer", "Evaluator", "Alias",
+    "config", "StopWatch", "deprecate", "Term", "Filer", "Evaluator", "Alias",
     # visualization
     "VisualizeBase", "LinePlot", "line_plot", "BarPlot", "bar_plot",
     "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
