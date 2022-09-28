@@ -1,8 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from inspect import getmembers, ismethod
 import sys
 from loguru import logger as loguru_logger
+
+
+def _catch_exceptions(cls):
+    """Catch exceptions raised by the all methods of the class in logger.
+    Args:
+        cls (object): class object
+
+    Returns:
+        object
+    """
+    for name, fn in getmembers(cls):
+        if isinstance(fn, (classmethod, staticmethod)):
+            setattr(cls, name, type(fn)(loguru_logger.catch(fn)))
+        elif ismethod(fn):
+            setattr(cls, name, loguru_logger.catch(fn))
+    return cls
 
 
 class _Config(object):
