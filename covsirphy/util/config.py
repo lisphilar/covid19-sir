@@ -1,25 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import inspect
 import sys
-from types import FunctionType
 from loguru import logger as loguru_logger
-
-
-def _catch_exception(cls):
-    """Catch exceptions raised by the all methods of the class in logger.
-
-    Args:
-        cls (object): class object
-
-    Note:
-        Codes are from https://github.com/Delgan/loguru/issues/129#issuecomment-522339975
-    """
-    for name, fn in inspect.getmembers(cls):
-        if isinstance(fn, FunctionType):
-            setattr(cls, name, loguru_logger.catch(fn))
-    return cls
 
 
 class _Config(object):

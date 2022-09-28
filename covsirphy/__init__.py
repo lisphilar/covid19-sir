@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+try:
+    import better_exceptions
+    better_exceptions_installed = True
+except ImportError:
+    better_exceptions_installed = False
+# version
 from covsirphy.__version__ import __version__
 from covsirphy.__citation__ import __citation__
 # util
@@ -152,3 +159,8 @@ __all__ = [
     "JHUData", "OxCGRTData", "VaccineData", "PCRData", "JHUDataComplementHandler", "MobilityData",
     "DataLoader", "AutoMLHandler", "JapanData", "CleaningBase", "PopulationPyramidData",
 ]
+
+# Show exceptions in better format if used from command line
+if not hasattr(sys, "ps1") or not better_exceptions_installed:
+    better_exceptions.MAX_LENGTH = None
+    better_exceptions.hook()

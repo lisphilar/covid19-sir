@@ -6,10 +6,8 @@ import math
 import pandas as pd
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
-from covsirphy.util.config import _catch_exception
 
 
-@_catch_exception
 class Validator(object):
     """Validate objects and arguments.
 
