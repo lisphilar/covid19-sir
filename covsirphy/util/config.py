@@ -53,10 +53,17 @@ class _Config(_BaseClass):
         Args:
             level (int): log level (0: ERROR, 1: WARNING, 2: INFO, 3: DEBUG)
         """
+        try:
+            log_level = self._LEVEL_DICT[level]
+        except KeyError:
+            candidates_str = ', '.join([str(k) for k in self._LEVEL_DICT.keys()])
+            self._logger.exception(
+                f"@level must be selected from [{candidates_str}], but {level} was applied.")
+            raise
         self._logger.remove()
         self._logger.add(
             sys.__stdout__,
-            level=self._LEVEL_DICT[level],
+            level=log_level,
             format="{time:YYYY-MM-DD at HH:mm:ss} | <level>{level}</level> | <level>{message}</level>",
         )
 
