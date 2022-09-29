@@ -109,7 +109,7 @@ class _Geometry(Term):
                 {"Xizang": "Tibet", "Inner Mongol": "Inner Mongolia", "S. Sudan": "South Sudan",
                  "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands"})
             gdf.loc[gdf[self.ISO3] == "HKG", "NAME"] = "Hong Kong"
-            gdf.loc[gdf[self.ISO3] == "-99", self.ISO3] = Term.to_iso3(gdf.loc[gdf[self.ISO3] == "-99", "NAME"])
+            gdf.loc[gdf[self.ISO3] == "-99", self.ISO3] = Term._to_iso3(gdf.loc[gdf[self.ISO3] == "-99", "NAME"])
             gdf[self.ISO3] = gdf[self.ISO3].replace({"MAC": "CHN"})
             gdf.to_file(**file_dict)
         return gdf.reindex(columns=[self.ISO3, "NAME", "geometry"])
