@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from covsirphy.util.config import _BaseClass
 
 
-class StopWatch(object):
+class StopWatch(_BaseClass):
     """
     Calculate elapsed time.
     """

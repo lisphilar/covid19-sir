@@ -22,7 +22,24 @@ def _catch_exceptions(cls):
     return cls
 
 
-class _Config(object):
+class _ExceptionCatcher(type):
+    """Basic class for catch exceptions with logger.
+
+    Note:
+        https://stackoverflow.com/a/55490858
+        https://peps.python.org/pep-0487/#subclass-registration
+    """
+
+    def __new__(cls, name, bases, ns):
+        cls = super().__new__(cls, name, bases, ns)
+        return _catch_exceptions(cls)
+
+
+class _BaseClass(metaclass=_ExceptionCatcher):
+    pass
+
+
+class _Config(_BaseClass):
     """Class for configuration of logger.
     """
     _LEVEL_DICT = {0: "ERROR", 1: "WARNING", 2: "INFO", 3: "DEBUG"}

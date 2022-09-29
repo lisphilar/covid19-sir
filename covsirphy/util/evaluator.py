@@ -4,11 +4,12 @@
 import numpy as np
 import pandas as pd
 import sklearn.metrics
+from covsirphy.util.config import _BaseClass
 from covsirphy.util.error import UnExpectedValueError, NAFoundError
 from covsirphy.util.validator import Validator
 
 
-class Evaluator(object):
+class Evaluator(_BaseClass):
     """
     Evaluate residual errors.
 

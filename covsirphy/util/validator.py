@@ -4,11 +4,12 @@
 from inspect import signature
 import math
 import pandas as pd
+from covsirphy.util.config import _BaseClass
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
 
-class Validator(object):
+class Validator(_BaseClass):
     """Validate objects and arguments.
 
     Args:

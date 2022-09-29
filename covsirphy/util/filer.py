@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+from covsirphy.util.config import _BaseClass
 from covsirphy.util.error import deprecate
 
 
-class Filer(object):
+class Filer(_BaseClass):
     """
     Produce filenames and manage files.
 
