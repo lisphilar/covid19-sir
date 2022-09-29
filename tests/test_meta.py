@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pytest
 import covsirphy as cs
 
 
@@ -12,3 +13,8 @@ class TestMeta(object):
     def test_citation(self):
         assert isinstance(cs.__citation__, str)
         assert isinstance(cs.get_citation(), str)
+
+    def test_config(self):
+        cs.config.logger(level=1)
+        with pytest.raises(KeyError):
+            cs.config.logger(level=-1)
