@@ -24,14 +24,10 @@ def _catch_exceptions(cls):
 
 class _ExceptionCatcher(type):
     """Basic class for catch exceptions with logger.
-
-    Note:
-        https://stackoverflow.com/a/55490858
-        https://peps.python.org/pep-0487/#subclass-registration
     """
 
-    def __new__(cls, name, bases, ns):
-        cls = super().__new__(cls, name, bases, ns)
+    def __new__(cls, *args, **kwargs):
+        cls = super().__new__(cls, *args, **kwargs)
         return _catch_exceptions(cls)
 
 
