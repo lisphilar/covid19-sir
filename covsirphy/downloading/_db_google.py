@@ -93,7 +93,7 @@ class _GoogleOpenData(_DataBase):
                     - Mobility_residential: % to baseline in visits (places of residence)
                     - Mobility_workplaces: % to baseline in visits (places of work)
         """
-        iso3 = self._to_iso3(country)[0]
+        iso3 = Term.to_iso3(country)[0]
         index_df = self._index_data()
         # Mobility data
         level_file = self._filer.csv(title=f"{self.TITLE}_{self.PROVINCE}".lower())["path_or_buf"]
@@ -131,7 +131,7 @@ class _GoogleOpenData(_DataBase):
                     - Mobility_residential: % to baseline in visits (places of residence)
                     - Mobility_workplaces: % to baseline in visits (places of work)
         """
-        iso3 = self._to_iso3(country)[0]
+        iso3 = Term.to_iso3(country)[0]
         index_df = self._index_data()
         # Mobility data
         level_file = self._filer.csv(title=f"{self.TITLE}_{self.CITY}".lower())["path_or_buf"]

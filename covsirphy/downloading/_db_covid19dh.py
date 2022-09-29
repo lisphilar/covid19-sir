@@ -95,7 +95,7 @@ class _COVID19dh(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        iso3 = self._to_iso3(country)[0]
+        iso3 = Term.to_iso3(country)[0]
         if iso3 == self.OTHERS:
             df = self._country()
             return df.loc[df[self.ISO3] == iso3]
@@ -128,7 +128,7 @@ class _COVID19dh(_DataBase):
                     - Population (numpy.int64): population values
                     - Tests (numpy.float64): the number of tests
         """
-        iso3 = self._to_iso3(country)[0]
+        iso3 = Term.to_iso3(country)[0]
         url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
             url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")

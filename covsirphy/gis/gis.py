@@ -220,7 +220,7 @@ class GIS(Term):
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
         geometry = _Geometry(
             data=df, layer=focused_layer, directory=directory or Path(__file__).with_name("Natural_Earth"), verbose=self._verbose)
-        iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
+        iso3 = None if focused_layer == self._country else Term.to_iso3(list(df[self._country].unique())[0])
         return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
 
     def choropleth(self, variable, filename, title="Choropleth map", logscale=True, **kwargs):
@@ -369,4 +369,4 @@ class GIS(Term):
         """
         if layer != self._country or geo_info is None or set(geo_info).issubset(data[layer].unique()):
             return geo_info
-        return self._to_iso3(geo_info)
+        return Term.to_iso3(geo_info)
