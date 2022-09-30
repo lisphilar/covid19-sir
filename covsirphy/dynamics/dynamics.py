@@ -302,7 +302,7 @@ class Dynamics(Term):
         df = first_df.join(df.groupby(self._PH).last(), rsuffix="_last")
         df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
         df = df.loc[:, [col for col in df.columns if "_last" not in col]]
-        df.index = [self.num2str(num) for num in df.index]
+        df.index = [Term.num2str(num) for num in df.index]
         df.index.name = self.PHASE
         # Reproduction number
         df[self.RT] = df[self._parameters].apply(
