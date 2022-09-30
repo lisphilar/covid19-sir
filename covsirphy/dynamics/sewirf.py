@@ -46,6 +46,25 @@ class SEWIRFModel(ODEModel):
             "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075, "rho2": 0.167, "rho3": 0.167}
     }
 
+    @classmethod
+    def from_sample(cls, date_range=None, tau=1440):
+        """Initialize model with sample data.
+
+        Args:
+            date_range (tuple(str or None, str or None) or None): start date and end date of simulation
+            tau (int): tau value [min]
+
+        Returns:
+            covsirphy.SEWIRFModel: initialized model
+
+        Note:
+            When @date_range or the first value of @date_range is None, today when executed will be set as start date.
+
+        Note:
+            When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.
+        """
+        return super().from_sample(date_range=date_range, name=cls.__name__)
+
     def __init__(self, date_range, tau, initial_dict, param_dict):
         super().__init__(date_range, tau, initial_dict, param_dict)
         self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))

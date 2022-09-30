@@ -42,6 +42,9 @@ class ODEModel(Term):
         "param_dict": dict.fromkeys(_PARAMETERS)
     }
 
+    def __init__subclass__(cls, **kwargs):
+        return super().__init__subclass__(cls, **kwargs)
+
     def __init__(self, date_range, tau, initial_dict, param_dict):
         start_date, end_date = Validator(date_range, "date_range", accept_none=False).sequence(length=2)
         self._start = Validator(start_date, name="the first value of @date_range", accept_none=False).date()
@@ -122,7 +125,7 @@ class ODEModel(Term):
         return _dict
 
     @classmethod
-    def from_sample(cls, date_range=None, tau=1440):
+    def from_sample(cls, date_range=None, tau=1440, name=None):
         """Initialize model with sample data.
 
         Args:
@@ -142,7 +145,11 @@ class ODEModel(Term):
         start = Validator(start_date, name="the first value of @date_range").date(default=datetime.now())
         end = Validator(
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=start + timedelta(days=180))
-        return cls(date_range=(start, end), tau=tau, **cls._SAMPLE_DICT)
+        try:
+            child = [n for n in cls.__subclasses__() if name == n.__name__][0]
+            return child(date_range=(start, end), tau=tau, **child._SAMPLE_DICT)
+        except IndexError:
+            return cls(date_range=(start, end), tau=tau, **cls._SAMPLE_DICT)
 
     def _discretize(self, t, X):
         """Discretize the ODE.
@@ -175,7 +182,7 @@ class ODEModel(Term):
             dense_output=False
         )
         df = pd.DataFrame(data=sol["y"].T.copy(), columns=self._VARIABLES)
-        df = self._non_dim_to_date(data=df, tau=self._tau, start_date=self._start)
+        df = ODEModel._non_dim_to_date(data=df, tau=self._tau, start_date=self._start)
         return df.round().convert_dtypes()
 
     @staticmethod
