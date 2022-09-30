@@ -125,12 +125,13 @@ class ODEModel(Term):
         return _dict
 
     @classmethod
-    def from_sample(cls, date_range=None, tau=1440, name=None):
+    def from_sample(cls, date_range=None, tau=1440, _name=None):
         """Initialize model with sample data.
 
         Args:
             date_range (tuple(str or None, str or None) or None): start date and end date of simulation
             tau (int): tau value [min]
+            _name (str or None): internal, this must be None for users
 
         Returns:
             covsirphy.ODEModel: initialized model
@@ -146,7 +147,7 @@ class ODEModel(Term):
         end = Validator(
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=start + timedelta(days=180))
         try:
-            child = [n for n in cls.__subclasses__() if name == n.__name__][0]
+            child = [n for n in cls.__subclasses__() if _name == n.__name__][0]
             return child(date_range=(start, end), tau=tau, **child._SAMPLE_DICT)
         except IndexError:
             return cls(date_range=(start, end), tau=tau, **cls._SAMPLE_DICT)
