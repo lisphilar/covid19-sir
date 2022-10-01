@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from covsirphy.util.error import NotNoneError, UnExpectedNoneError
 from covsirphy.util.validator import Validator
 from covsirphy.dynamics.ode import ODEModel
 
@@ -159,6 +160,11 @@ class SIRDModel(ODEModel):
                     - Fatal (int): the number of fatal cases
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
+        if tau is None and start_date is not None:
+            raise NotNoneError("start_date", start_date, details="None is required because tau is None")
+        if tau is not None and start_date is None:
+            raise UnExpectedNoneError(
+                "start_date", details="Not None value is required because tau is not None")
         df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
         return df.loc[:, cls._SIRF].convert_dtypes()
 
