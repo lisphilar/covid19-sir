@@ -272,3 +272,58 @@ class SIRFModel(SIRDModel):
             covsirphy.SIRFModel: initialized model
         """
         return super().from_data_with_optimization(data, tau=1440, metric="RMSLE", digits=None, **kwargs)
+
+    @classmethod
+    def transform(cls, data, tau=None):
+        """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index or pandas.DatetimeIndex (when tau is not None)
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            tau (int or None): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        return super().transform(data=data, tau=tau)
+
+    @classmethod
+    def inverse_transform(cls, data, tau=None, start_date=None):
+        """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    any index
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            tau (int or None): tau value [min]
+            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+        """
+        return super().inverse_transform(data=data, tau=None, start_date=None)
