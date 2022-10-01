@@ -75,7 +75,8 @@ class ODEModel(Term):
     def name(cls):
         """Return name of ODE model.
         """
-        return cls._NAME
+        child = cls._get_called_child()
+        return child._NAME
 
     @classmethod
     def definitions(cls):
@@ -88,11 +89,12 @@ class ODEModel(Term):
                 - "parameters" (list of [str]): non-dimensional parameter names
                 - "dimensional_parameters" (list of [str]): dimensional parameter names
         """
+        child = cls._get_called_child()
         return {
-            "name": cls._NAME,
-            "variables": cls._VARIABLES,
-            "parameters": cls._PARAMETERS,
-            "dimensional_parameters": cls._DAY_PARAMETERS,
+            "name": child._NAME,
+            "variables": child._VARIABLES,
+            "parameters": child._PARAMETERS,
+            "dimensional_parameters": child._DAY_PARAMETERS,
         }
 
     def settings(self, with_estimation=False):

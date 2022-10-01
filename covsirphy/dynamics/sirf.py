@@ -44,6 +44,25 @@ class SIRFModel(SIRDModel):
         self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
 
     @classmethod
+    def name(cls):
+        """Return name of model.
+        """
+        return super().name()
+
+    @classmethod
+    def definitions(cls):
+        """Return definitions of model.
+
+        Returns:
+            dict of {str: object}:
+                - "name" (str): ODE model name
+                - "variables" (list of [str]): variable names
+                - "parameters" (list of [str]): non-dimensional parameter names
+                - "dimensional_parameters" (list of [str]): dimensional parameter names
+        """
+        return super().definitions()
+
+    @classmethod
     def from_sample(cls, date_range=None, tau=1440):
         """Initialize model with sample data.
 
