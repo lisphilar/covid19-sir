@@ -13,9 +13,9 @@ def test_not_implemented():
     with pytest.raises(NotImplementedError):
         model.solve()
     with pytest.raises(NotImplementedError):
-        model.transform(data=pd.DataFrame())
+        ODEModel.transform(data=pd.DataFrame())
     with pytest.raises(NotImplementedError):
-        model.inverse_transform(data=pd.DataFrame)
+        ODEModel.inverse_transform(data=pd.DataFrame)
     with pytest.raises(NotImplementedError):
         model.r0()
     with pytest.raises(NotImplementedError):
