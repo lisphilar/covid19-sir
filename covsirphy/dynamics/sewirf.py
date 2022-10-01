@@ -201,6 +201,29 @@ class SEWIRFModel(ODEModel):
                 f"Kappa, rho_i for i=1,2,3 and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
+    def from_data(cls, data, param_dict, tau=1440, digits=None):
+        """Initialize model with data and ODE parameter values.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            param_dict (dict of {str: float}): non-dimensional parameter values
+            tau (int): tau value [min]
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            covsirphy.SEWIRFModel: initialized model
+        """
+        return super().from_data(data, param_dict, tau=1440, digits=None)
+
+    @classmethod
     def from_data_with_quantile(cls, *args, **kwargs):
         """Initialize model with data, estimating ODE parameters with quantiles.
 

@@ -223,3 +223,73 @@ class SIRModel(ODEModel):
         df[cls._logS] = np.log10(df[cls.S])
         df[cls._r] = df[cls.F] + df[cls.R]
         return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
+
+    @classmethod
+    def from_data(cls, data, param_dict, tau=1440, digits=None):
+        """Initialize model with data and ODE parameter values.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            param_dict (dict of {str: float}): non-dimensional parameter values
+            tau (int): tau value [min]
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            covsirphy.SIRModel: initialized model
+        """
+        return super().from_data(data, param_dict, tau=1440, digits=None)
+
+    @classmethod
+    def from_data_with_quantile(cls, data, tau=1440, q=0.5, digits=None):
+        """Initialize model with data, estimating ODE parameters with quantiles.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            tau (int): tau value [min]
+            q (float): the quantiles to compute, values between (0, 1)
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+
+        Returns:
+            covsirphy.SIRModel: initialized model
+        """
+        return super().from_data_with_quantile(data, tau=1440, q=0.5, digits=None)
+
+    @classmethod
+    def from_data_with_optimization(cls, data, tau=1440, metric="RMSLE", digits=None, **kwargs):
+        """Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()
+
+        Returns:
+            covsirphy.SIRModel: initialized model
+        """
+        return super().from_data_with_optimization(data, tau=1440, metric="RMSLE", digits=None, **kwargs)

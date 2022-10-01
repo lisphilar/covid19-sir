@@ -365,7 +365,8 @@ class ODEModel(Term):
         start, end = data[cls.DATE].min(), data[cls.DATE].max()
         trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
         initial_dict = trans_df.iloc[0].to_dict()
-        return cls(
+        child = cls._get_called_child()
+        return child(
             date_range=(start, end), tau=tau, initial_dict=initial_dict,
             param_dict=param_dict if digits is None else {k: Validator(v, k).float(
                 value_range=(0, 1), digits=digits) for k, v in param_dict.items()}
@@ -395,8 +396,10 @@ class ODEModel(Term):
         Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator(q, "q", accept_none=False).float(value_range=(0, 1))
-        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
-        cls_obj = cls.from_data(data=data, param_dict=cls._param_quantile(data=trans_df, q=q), tau=tau, digits=digits)
+        child = cls._get_called_child()
+        trans_df = child.transform(data=data.set_index(child.DATE), tau=tau)
+        cls_obj = child.from_data(data=data, param_dict=child._param_quantile(
+            data=trans_df, q=q), tau=tau, digits=digits)
         cls_obj._estimation_dict = dict(method="with_quantile", tau=tau, q=q, digits=digits)
         return cls_obj
 
@@ -480,10 +483,11 @@ class ODEModel(Term):
         trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
         param_dict, score, n_trials, runtime = cls._estimate_params(
             data=trans_df, tau=tau, metric=metric, **kwargs_dict)
-        cls_obj = cls.from_data(data=data, param_dict=param_dict, tau=tau, digits=digits)
+        child = cls._get_called_child()
+        cls_obj = child.from_data(data=data, param_dict=param_dict, tau=tau, digits=digits)
         cls_obj._estimation_dict = {
-            "method": "with_optimization", metric: score, cls.TRIALS: n_trials, cls.RUNTIME: runtime,
-            cls.TAU: tau, "digits": digits, **kwargs_dict, "data": data,
+            "method": "with_optimization", metric: score, child.TRIALS: n_trials, child.RUNTIME: runtime,
+            child.TAU: tau, "digits": digits, **kwargs_dict, "data": data,
         }
         return cls_obj
 
