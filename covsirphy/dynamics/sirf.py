@@ -44,24 +44,17 @@ class SIRFModel(SIRDModel):
         self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
 
     @classmethod
-    def from_sample(cls, date_range=None, tau=1440, _name=None):
+    def from_sample(cls, date_range=None, tau=1440):
         """Initialize model with sample data.
 
         Args:
-            date_range (tuple(str or None, str or None) or None): start date and end date of simulation
+            date_range (tuple(str or None, str or None) or None): start and end date, refer to covsirphy.ODEModel.from_sample()
             tau (int): tau value [min]
-            _name (str or None): internal, this must be None for users
 
         Returns:
             covsirphy.SIRFModel: initialized model
-
-        Note:
-            When @date_range or the first value of @date_range is None, today when executed will be set as start date.
-
-        Note:
-            When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.
         """
-        return super().from_sample(date_range=date_range, _name=_name or cls.__name__)
+        return super().from_sample(date_range=date_range, tau=tau)
 
     def _discretize(self, t, X):
         """Discretize the ODE.

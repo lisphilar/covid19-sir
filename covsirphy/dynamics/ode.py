@@ -3,6 +3,7 @@
 
 from datetime import datetime, timedelta
 from functools import partial
+from inspect import currentframe
 import math
 import optuna
 import numpy as np
@@ -125,13 +126,12 @@ class ODEModel(Term):
         return _dict
 
     @classmethod
-    def from_sample(cls, date_range=None, tau=1440, _name=None):
+    def from_sample(cls, date_range=None, tau=1440):
         """Initialize model with sample data.
 
         Args:
-            date_range (tuple(str or None, str or None) or None): start date and end date of simulation
+            date_range (tuple(str or None, str or None) or None): start and end date
             tau (int): tau value [min]
-            _name (str or None): internal, this must be None for users
 
         Returns:
             covsirphy.ODEModel: initialized model
@@ -146,11 +146,27 @@ class ODEModel(Term):
         start = Validator(start_date, name="the first value of @date_range").date(default=datetime.now())
         end = Validator(
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=start + timedelta(days=180))
-        try:
-            child = [n for n in cls.__subclasses__() if _name == n.__name__][0]
-            return child(date_range=(start, end), tau=tau, **child._SAMPLE_DICT)
-        except IndexError:
-            return cls(date_range=(start, end), tau=tau, **cls._SAMPLE_DICT)
+        child = cls._get_called_child()
+        return child(date_range=(start, end), tau=tau, **child._SAMPLE_DICT)
+
+    @classmethod
+    def _get_called_child(cls):
+        """Get the lowest ODEModel object which called this method.
+
+        Returns:
+            covsirphy.ODEModel
+        """
+        child, frame = ODEModel, currentframe()
+        while True:
+            if frame.f_back is None:
+                return child
+            if "__class__" not in frame.f_locals:
+                frame = frame.f_back
+                continue
+            if not issubclass(frame.f_locals["__class__"], ODEModel):
+                return child
+            child = frame.f_locals["__class__"]
+            frame = frame.f_back
 
     def _discretize(self, t, X):
         """Discretize the ODE.
