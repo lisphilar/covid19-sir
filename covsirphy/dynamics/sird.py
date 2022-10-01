@@ -45,14 +45,23 @@ class SIRDModel(ODEModel):
         self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
 
     @classmethod
-    def name(cls):
-        """Return name of model.
+    def name(cls, *args, **kwargs):
+        """Return name of SIR-D model.
+
+        Args:
+            *args, **kwargs: all arguments will be ignored
+
+        Returns:
+            str
         """
         return super().name()
 
     @classmethod
-    def definitions(cls):
-        """Return definitions of model.
+    def definitions(cls, *args, **kwargs):
+        """Return definitions of SIR-D model.
+
+        Args:
+            *args, **kwargs: all arguments will be ignored
 
         Returns:
             dict of {str: object}:

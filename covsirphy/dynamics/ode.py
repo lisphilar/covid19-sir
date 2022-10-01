@@ -72,15 +72,24 @@ class ODEModel(Term):
         return repr(self) == repr(other)
 
     @classmethod
-    def name(cls):
+    def name(cls, *args, **kwargs):
         """Return name of ODE model.
+
+        Args:
+            *args, **kwargs: all arguments will be ignored
+
+        Returns:
+            str
         """
         child = cls._get_called_child()
         return child._NAME
 
     @classmethod
-    def definitions(cls):
+    def definitions(cls, *args, **kwargs):
         """Return definitions of ODE model.
+
+        Args:
+            *args, **kwargs: all arguments will be ignored
 
         Returns:
             dict of {str: object}:
