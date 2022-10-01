@@ -9,7 +9,7 @@ Please use the latest stable version or development version of CovsirPhy.
 - The latest stable version: `pip install --upgrade covsirphy`
 - The latest development version: `pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"`
 
-The details are in [Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html).
+The details are in [Installation guide](https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html).
 
 ## Reporting a vulnerability
 

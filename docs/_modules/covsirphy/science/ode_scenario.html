@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.27.1
+                2.28.0-gamma
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -112,6 +112,8 @@
 <span class="kn">import</span> <span class="nn">contextlib</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">ScenarioNotFoundError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span><span class="p">,</span> <span class="n">UnExpectedTypeError</span><span class="p">,</span> <span class="n">UnExpectedValueRangeError</span>
@@ -123,6 +125,10 @@
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.line_plot</span> <span class="kn">import</span> <span class="n">line_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.engineering.engineer</span> <span class="kn">import</span> <span class="n">DataEngineer</span>
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.ode</span> <span class="kn">import</span> <span class="n">ODEModel</span>
+<span class="kn">from</span> <span class="nn">covsirphy.dynamics.sir</span> <span class="kn">import</span> <span class="n">SIRModel</span>
+<span class="kn">from</span> <span class="nn">covsirphy.dynamics.sird</span> <span class="kn">import</span> <span class="n">SIRDModel</span>
+<span class="kn">from</span> <span class="nn">covsirphy.dynamics.sirf</span> <span class="kn">import</span> <span class="n">SIRFModel</span>
+<span class="kn">from</span> <span class="nn">covsirphy.dynamics.sewirf</span> <span class="kn">import</span> <span class="n">SEWIRFModel</span>
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.dynamics</span> <span class="kn">import</span> <span class="n">Dynamics</span>
 <span class="kn">from</span> <span class="nn">covsirphy.science.ml</span> <span class="kn">import</span> <span class="n">MLEngineer</span>
 
@@ -152,9 +158,11 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">location_name</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_location_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">location_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_complement</span> <span class="o">=</span> <span class="n">complement</span>
         <span class="c1"># Actual records: Date index, S/I/F/R</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span>
             <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location_name</span>
         <span class="n">engineer</span> <span class="o">=</span> <span class="n">DataEngineer</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">])</span>
@@ -168,6 +176,80 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_snr_alias</span> <span class="o">=</span> <span class="n">Alias</span><span class="p">(</span><span class="n">target_class</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
         <span class="c1"># Aliases of variable names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_variable_alias</span> <span class="o">=</span> <span class="n">Alias</span><span class="o">.</span><span class="n">for_variables</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_location_name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_location_name</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ODEScenario.to_json"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write a JSON file which can usable for recreating ODEScenario instance with .from_json()</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str or Path): JSON filename</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            str: filename</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;location_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location_name</span><span class="p">,</span>
+            <span class="s2">&quot;complement&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">date_format</span><span class="o">=</span><span class="s2">&quot;iso&quot;</span><span class="p">,</span> <span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">&quot;scenarios&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">:</span> <span class="n">detail_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">:</span> <span class="n">detail_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_PARAM</span><span class="p">:</span> <span class="n">detail_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PARAM</span><span class="p">]</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">date_format</span><span class="o">=</span><span class="s2">&quot;iso&quot;</span><span class="p">,</span> <span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">detail_dict</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snr_alias</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">info_dict</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ODEScenario.from_json"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create ODEScenario instance with a JSON file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str or Path): JSON filename</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.ODEScenario: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">info_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="c1"># Validation</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">info_dict</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;info_dict&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+            <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;location_name&quot;</span><span class="p">,</span> <span class="s2">&quot;complement&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;scenarios&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
+        <span class="n">Validator</span><span class="p">(</span><span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;scenarios&quot;</span><span class="p">],</span> <span class="s2">&quot;info_dict[&#39;scenarios&#39;]&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="c1"># Create instance</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]),</span>
+            <span class="n">location_name</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;location_name&quot;</span><span class="p">],</span>
+            <span class="n">complement</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;complement&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">ODE</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TAU</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_PARAM</span><span class="p">]</span>
+        <span class="n">model_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="p">():</span> <span class="n">model</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SIRModel</span><span class="p">,</span> <span class="n">SIRDModel</span><span class="p">,</span> <span class="n">SIRFModel</span><span class="p">,</span> <span class="n">SEWIRFModel</span><span class="p">]}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">detail_dict</span><span class="p">)</span> <span class="ow">in</span> <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;scenarios&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">Validator</span><span class="p">(</span><span class="n">detail_dict</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;info_dict[&#39;scenarios&#39;][&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+                <span class="n">required_keys</span><span class="o">=</span><span class="n">required_keys</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">detail_dict</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span>
+            <span class="n">Validator</span><span class="p">([</span><span class="n">model_name</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;model name of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span>
+                <span class="n">candidates</span><span class="o">=</span><span class="n">model_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_snr_alias</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">target</span><span class="o">=</span><span class="p">{</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">ODE</span><span class="p">:</span> <span class="n">model_dict</span><span class="p">[</span><span class="n">model_name</span><span class="p">],</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">TAU</span><span class="p">:</span> <span class="n">Validator</span><span class="p">(</span><span class="n">detail_dict</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">TAU</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">(),</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_PARAM</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">detail_dict</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_PARAM</span><span class="p">]),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
 
 <div class="viewcode-block" id="ODEScenario.build_with_dynamics"><a class="viewcode-back" href="../../../covsirphy.science.html#covsirphy.ODEScenario.build_with_dynamics">[docs]</a>    <span class="k">def</span> <span class="nf">build_with_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dynamics</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build a scenario with covsirphy.Dynamics() instance.</span>
