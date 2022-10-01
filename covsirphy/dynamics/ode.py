@@ -363,9 +363,9 @@ class ODEModel(Term):
         Validator(tau, "tau", accept_none=False).tau()
         Validator(param_dict, "param_dict", accept_none=False).dict(required_keys=cls._PARAMETERS)
         start, end = data[cls.DATE].min(), data[cls.DATE].max()
-        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
-        initial_dict = trans_df.iloc[0].to_dict()
         child = cls._get_called_child()
+        trans_df = child.transform(data=data.set_index(cls.DATE), tau=tau)
+        initial_dict = trans_df.iloc[0].to_dict()
         return child(
             date_range=(start, end), tau=tau, initial_dict=initial_dict,
             param_dict=param_dict if digits is None else {k: Validator(v, k).float(
@@ -480,10 +480,10 @@ class ODEModel(Term):
         Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
         Validator([metric], "metric").sequence(candidates=Evaluator.metrics())
-        trans_df = cls.transform(data=data.set_index(cls.DATE), tau=tau)
+        child = cls._get_called_child()
+        trans_df = child.transform(data=data.set_index(cls.DATE), tau=tau)
         param_dict, score, n_trials, runtime = cls._estimate_params(
             data=trans_df, tau=tau, metric=metric, **kwargs_dict)
-        child = cls._get_called_child()
         cls_obj = child.from_data(data=data, param_dict=param_dict, tau=tau, digits=digits)
         cls_obj._estimation_dict = {
             "method": "with_optimization", metric: score, child.TRIALS: n_trials, child.RUNTIME: runtime,
