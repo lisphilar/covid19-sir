@@ -9,6 +9,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from unidecode import unidecode
+from covsirphy.util.config import config
 from covsirphy.util.term import Term
 
 
@@ -17,7 +18,7 @@ class _DataProvider(Term):
 
     Args:
         update_interval (int or None): update interval of downloading dataset or None (do not update if we have files in local)
-        stdout (str or None): stdout when downloading (shown at most one time) or None (no outputs)
+        stdout: stdout when downloading if the logger level > info
     """
 
     def __init__(self, update_interval, stdout):
@@ -36,17 +37,11 @@ class _DataProvider(Term):
 
         Returns:
             pandas.DataFrame
-
-        Note:
-            If @verbose is 0, no descriptions will be shown.
-            If @verbose is 1 or larger, URL and database name will be shown.
         """
         if not self.download_necessity(filename):
             with contextlib.suppress(ValueError):
                 return self.read_csv(filename, columns, date=date, date_format=date_format)
-        if self._stdout is not None:
-            print(self._stdout)
-            self._stdout = None
+        config.info(self._stdout)
         df = self.read_csv(url, columns, date=date, date_format=date_format)
         df.to_csv(filename, index=False)
         return df

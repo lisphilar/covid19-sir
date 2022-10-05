@@ -3,6 +3,7 @@
 
 import contextlib
 import pandas as pd
+from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -14,22 +15,17 @@ class _LayerAdjuster(Term):
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
         date (str): column name of observation dates
-        verbose (int): level of verbosity of stdout
 
     Raises:
         ValueError: @layers has duplicates
 
     Note:
         Country level data specified with @country will be stored with ISO3 codes.
-
-    Note:
-        If @verbose is 0, no descriptions will be shown.
-        If @verbose is 1 or larger, details of layer adjustment will be shown.
     """
     # Internal term
     _ID = "Location_ID"
 
-    def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
+    def __init__(self, layers=None, country="ISO3", date="Date"):
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
         # Layers of location information
@@ -38,8 +34,6 @@ class _LayerAdjuster(Term):
             raise ValueError(f"@layer has duplicates, {self._layers}")
         # Date column
         self._date = str(date)
-        # Verbosity
-        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
         # Location data
         self._loc_df = pd.DataFrame(columns=[self._ID, *self._layers])
         # All available data
@@ -174,16 +168,16 @@ class _LayerAdjuster(Term):
         for (layer, data_layer) in zip(expected, actual):
             if data_layer is None:
                 df.loc[:, layer] = self.NA
-                self._print_v0(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
+                config.info(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
             elif layer is None:
                 if data_layer == actual[-1]:
                     df.loc[df[data_layer] != self.NA, self._layers] = self.NA
-                    self._print_v0(f"\t[INFO] Records which has actual values at '{data_layer}' layer were disabled.")
+                    config.info(f"\t[INFO] Records which has actual values at '{data_layer}' layer were disabled.")
                 df = df.drop(data_layer, axis=1)
-                self._print_v0(f"\t[INFO] '{data_layer}' layer was removed.")
+                config.info(f"\t[INFO] '{data_layer}' layer was removed.")
             elif layer != data_layer:
                 df.rename(columns={data_layer: layer}, inplace=True)
-                self._print_v0(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
+                config.info(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
         return df.reset_index(drop=True)
 
     def _align_layers(self, data_layers):
@@ -218,12 +212,3 @@ class _LayerAdjuster(Term):
                 expected[i - 1:i + 1] = [e]
                 actual[i - 1:i + 1] = [actual[i]]
         return expected, actual
-
-    def _print_v0(self, sentence):
-        """Stdout the sentence when the verbosity level was set to 1 or higher.
-
-        Args:
-            sentence (str): the sentence to stdout
-        """
-        if self._verbose:
-            print(sentence)

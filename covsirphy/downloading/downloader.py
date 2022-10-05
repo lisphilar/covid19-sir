@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import warnings
+from covsirphy.util.config import config
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -19,22 +20,21 @@ class DataDownloader(Term):
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
         update_interval (int): update interval of downloading dataset
-        verbose (int): level of verbosity when downloading
-
-    Note:
-        If @verbose is 0, no descriptions will be shown.
-        If @verbose is 1 or larger, URL and database name will be shown.
 
     Note:
         Location layers are fixed to ["ISO3", "Province", "City"]
     """
     LAYERS = [Term.ISO3, Term.PROVINCE, Term.CITY]
 
-    def __init__(self, directory="input", update_interval=12, verbose=1):
+    def __init__(self, directory="input", update_interval=12, **kwargs):
         self._directory = directory
         self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
-        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
-        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
+        if "verbose" in kwargs:
+            verbose = kwargs.get("verbose", 2)
+            config.logger(level=verbose)
+            config.warning(
+                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
+        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
 
     def layer(self, country=None, province=None, databases=None):
         """Return the data at the selected layer.
@@ -112,7 +112,7 @@ class DataDownloader(Term):
         }
         all_databases = ["japan", "covid19dh", "google", "owid"]  # "google" will be removed at 3.0.0
         selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
-        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE, verbose=self._verbose)
+        self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
         for database in selected:
             if database == "google":
                 warnings.warn(
@@ -121,7 +121,7 @@ class DataDownloader(Term):
                     stacklevel=2
                 )
             db = db_dict[database](
-                directory=self._directory, update_interval=self._update_interval, verbose=self._verbose)
+                directory=self._directory, update_interval=self._update_interval,)
             new_df = db.layer(country=country, province=province).convert_dtypes()
             if new_df.empty:
                 continue

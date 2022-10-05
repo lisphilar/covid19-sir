@@ -12,6 +12,13 @@ class _Config(object):
 
     def __init__(self):
         self._logger = loguru_logger
+        self._logger_level = 2
+
+    @property
+    def logger_level(self):
+        """int: integer to indicate the logging level
+        """
+        return self._logger_level
 
     def logger(self, level):
         """Update configuration of logger.
@@ -25,6 +32,7 @@ class _Config(object):
             level=self._LEVEL_DICT[level],
             format="{time:YYYY-MM-DD at HH:mm:ss} | <level>{level}</level> | <level>{message}</level>",
         )
+        self._logger_level = level
 
     def warning(self, message):
         """Show warning.

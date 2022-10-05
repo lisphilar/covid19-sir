@@ -3,6 +3,7 @@
 
 from autots import AutoTS
 from autots.evaluator.auto_ts import fake_regressor
+from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -18,14 +19,13 @@ class _AutoTSHandler(Term):
                 observed and the target variables (int or float)
         days (int): days to predict
         seed (int or None): random seed
-        verbose (int): verbosity
         **kwargs: keyword arguments of autots.AutoTS() except for forecast_length (always the same as @days)
 
     Note:
         AutoTS package is developed at https://github.com/winedarksea/AutoTS
     """
 
-    def __init__(self, Y, days, seed, verbose, **kwargs):
+    def __init__(self, Y, days, seed, **kwargs):
         self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False)
         self._days = Validator(days, name="days").int(value_range=(1, None))
         autots_kwargs = {
@@ -40,7 +40,7 @@ class _AutoTSHandler(Term):
             "validation_method": "backwards",
             "random_seed": Validator(seed, name="seed").int(),
             "n_jobs": "auto",
-            "verbose": Validator(verbose, name="verbose").int(),
+            "verbose": config.logger_level,
         }
         autots_kwargs.update(kwargs)
         self._autots = AutoTS(**autots_kwargs)

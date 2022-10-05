@@ -13,11 +13,6 @@ class _DataBase(Term):
     Args:
         directory (str or pathlib.Path): directory to save downloaded datasets
         update_interval (int): update interval of downloading dataset
-        verbose (int): level of verbosity when downloading
-
-    Note:
-        If @verbose is 0, no descriptions will be shown.
-        If @verbose is 1 or larger, URL and database name will be shown.
     """
     # File title without extensions and suffix
     TITLE = ""
@@ -28,11 +23,10 @@ class _DataBase(Term):
     # Citation
     CITATION = ""
 
-    def __init__(self, directory, update_interval, verbose):
+    def __init__(self, directory, update_interval):
         self._filer = Filer(directory=directory)
         self._update_interval = update_interval
-        self._stdout = self.STDOUT if verbose > 0 else None
-        self._provider = _DataProvider(update_interval=self._update_interval, stdout=self._stdout)
+        self._provider = _DataProvider(update_interval=self._update_interval, stdout=self.STDOUT)
 
     def layer(self, country, province):
         """Return the data at the selected layer.

@@ -5,6 +5,7 @@ from pathlib import Path
 import warnings
 import geopandas as gpd
 from unidecode import unidecode
+from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term
@@ -22,14 +23,12 @@ class _Geometry(Term):
                 - the other columns
         layer (str): layer name which has location information
         directory (str): directory to save GeoJSON files
-        verbose (int): level of verbosity of stdout
     """
 
-    def __init__(self, data, layer, directory, verbose):
+    def __init__(self, data, layer, directory):
         self._df = Validator(data, f"{layer}-level data").dataframe(columns=[layer])
         self._layer = layer
         self._filer = Filer(directory=directory)
-        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
 
     def to_geopandas(self, iso3, natural_earth):
         """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.
@@ -99,8 +98,7 @@ class _Geometry(Term):
         if Path(filename).exists():
             gdf = gpd.read_file(filename)
         else:
-            if self._verbose:
-                print("Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/")
+            config.info("Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/")
             url = f"https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/{title}.geojson"
             gdf = gpd.read_file(url)
             gdf.rename(columns={"ISO_A3": self.ISO3, "adm0_a3": self.ISO3, "name": "NAME"}, inplace=True)
