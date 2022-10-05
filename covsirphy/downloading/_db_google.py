@@ -36,8 +36,8 @@ class _GoogleOpenData(_DataBase):
         " COVID-19 Open-Data: curating a fine-grained, global-scale data repository for SARS-CoV-2, " \
         " Work in progress, https://goo.gle/covid-19-open-data"
 
-    def __init__(self, directory, update_interval, verbose):
-        super().__init__(directory=directory, update_interval=None, verbose=verbose)
+    def __init__(self, directory, update_interval):
+        super().__init__(directory=directory, update_interval=None)
 
     def _country(self):
         """Returns country-level data.

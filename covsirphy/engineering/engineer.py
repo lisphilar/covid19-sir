@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from covsirphy.util.config import config
 from covsirphy.util.error import NotIncludedError
 from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
@@ -20,24 +21,23 @@ class DataEngineer(Term):
     Args:
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
-        verbose (int): level of verbosity of stdout
 
         Raises:
             ValueError: @layers has duplicates
 
         Note:
             Country level data specified with @country will be stored with ISO3 codes.
-
-        Note:
-            If @verbose is 0, no descriptions will be shown.
-            If @verbose is 1 or larger, details of layer adjustment will be shown.
     """
 
-    def __init__(self, layers=None, country="ISO3", verbose=1):
+    def __init__(self, layers=None, country="ISO3", **kwargs):
         self._layers = Validator(layers, "layers").sequence(default=[self.ISO3, self.PROVINCE, self.CITY])
         self._country = str(country)
-        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
-        self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE, verbose=verbose)
+        if "verbose" in kwargs:
+            verbose = kwargs.get("verbose", 2)
+            config.logger(level=verbose)
+            config.warning(
+                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
+        self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE)
         self._gis = GIS(**self._gis_kwargs)
         # Aliases
         self._var_alias = Alias.for_variables()
@@ -79,14 +79,10 @@ class DataEngineer(Term):
 
         Returns:
             covsirphy.DataEngineer: self
-
-        Note:
-            When @verbose is not included in **kwargs, covsirphy.DataEngineer(verbose) will be used.
         """
-        default_dict = {"verbose": self._verbose}
         validator = Validator(kwargs, name="keyword arguments")
-        downloader = DataDownloader(**validator.kwargs(DataDownloader, default=default_dict))
-        df = downloader.layer(**validator.kwargs(DataDownloader.layer, default=default_dict))
+        downloader = DataDownloader(**validator.kwargs(DataDownloader))
+        df = downloader.layer(**validator.kwargs(DataDownloader.layer))
         citations = downloader.citations()
         self._gis.register(
             data=df, layers=[self.ISO3, self.PROVINCE, self.CITY], date=self.DATE, variables=None,

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pca import pca
+from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.science._autots import _AutoTSHandler
@@ -13,12 +14,15 @@ class MLEngineer(Term):
 
     Args:
         seed (int or None): random seed
-        verbose (int): verbosity, 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace for PCA.
     """
 
-    def __init__(self, seed=0, verbose=3):
+    def __init__(self, seed=0, **kwargs):
         self._seed = Validator(seed, name="seed").int()
-        self._verbose = Validator(verbose, name="verbose").int()
+        if "verbose" in kwargs:
+            verbose = kwargs.get("verbose", 2)
+            config.logger(level=verbose)
+            config.warning(
+                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
 
     def pca(self, X, n_components=0.95):
         """Perform PCA (principal component analysis) after standardization (Z-score normalization) with pca package.
@@ -67,7 +71,7 @@ class MLEngineer(Term):
             Regarding pca package, please refer to https://github.com/erdogant/pca
         """
         Validator(X, name="X", accept_none=False).dataframe(time_index=True, empty_ok=False)
-        model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=self._verbose)
+        model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=config.logger_level)
         return {**model.fit_transform(X), "model": model}
 
     def forecast(self, Y, days, X=None, **kwargs):
@@ -97,5 +101,5 @@ class MLEngineer(Term):
         Note:
             AutoTS package is developed at https://github.com/winedarksea/AutoTS
         """
-        model = _AutoTSHandler(Y=Y, days=days, seed=self._seed, verbose=self._verbose, **kwargs)
+        model = _AutoTSHandler(Y=Y, days=days, seed=self._seed, **kwargs)
         return model.fit(X=X).predict()

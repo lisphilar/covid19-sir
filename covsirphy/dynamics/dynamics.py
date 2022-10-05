@@ -8,6 +8,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from p_tqdm import p_umap
+from covsirphy.util.config import config
 from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError, UnExpectedValueRangeError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
@@ -474,11 +475,11 @@ class Dynamics(Term):
         est_f = partial(
             self._optimized_params, model=self._model, tau=self._tau, metric=metric, digits=digits, **kwargs)
         phase_dataframes = [all_df[start: end] for start, end in zip(starts, ends)]
-        print(f"\n<{self._model._NAME}: parameter estimation>")
-        print(f"Running optimization with {n_jobs_validated} CPUs...")
+        config.info(f"\n<{self._model._NAME}: parameter estimation>")
+        config.info(f"Running optimization with {n_jobs_validated} CPUs...")
         stopwatch = StopWatch()
         results = p_umap(est_f, phase_dataframes, num_cpus=n_jobs_validated)
-        print(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
+        config.info(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values

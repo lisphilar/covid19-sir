@@ -6,6 +6,7 @@ from pathlib import Path
 import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
+from covsirphy.util.config import config
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -22,20 +23,15 @@ class GIS(Term):
         layers (list[str] or None): list of layers of geographic information or None (["ISO3", "Province", "City"])
         country (str or None): layer name of countries or None (countries are not included in the layers)
         date (str): column name of observation dates
-        verbose (int): level of verbosity of stdout
 
     Raises:
         ValueError: @layers has duplicates
 
     Note:
         Country level data specified with @country will be stored with ISO3 codes.
-
-    Note:
-        If @verbose is 0, no descriptions will be shown.
-        If @verbose is 1 or larger, details of layer adjustment will be shown.
     """
 
-    def __init__(self, layers=None, country="ISO3", date="Date", verbose=1):
+    def __init__(self, layers=None, country="ISO3", date="Date", **kwargs):
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
         # Location data
@@ -43,10 +39,13 @@ class GIS(Term):
         # Date column
         self._date = str(date)
         # Verbosity
-        self._verbose = Validator(verbose, "verbose").int(value_range=(0, None))
+        if "verbose" in kwargs:
+            verbose = kwargs.get("verbose", 2)
+            config.logger(level=verbose)
+            config.warning(
+                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
         # Layer adjuster
-        self._adjuster = _LayerAdjuster(
-            layers=self._layers, country=self._country, date=self._date, verbose=self._verbose)
+        self._adjuster = _LayerAdjuster(layers=self._layers, country=self._country, date=self._date)
         self._un_registered = True
 
     def all(self, variables=None, errors="raise"):
@@ -219,7 +218,7 @@ class GIS(Term):
             df = df.loc[df[self._date] == Validator(on).date()]
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
         geometry = _Geometry(
-            data=df, layer=focused_layer, directory=directory or Path(__file__).with_name("Natural_Earth"), verbose=self._verbose)
+            data=df, layer=focused_layer, directory=directory or Path(__file__).with_name("Natural_Earth"))
         iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
         return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(set(self._layers) - {focused_layer}, axis=1)
 
