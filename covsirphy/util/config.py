@@ -36,14 +36,14 @@ class _Config(object):
         self._logger_level = level
 
     def warning(self, message, category):
-        """Show warning.
+        """Raise warning.
 
         Args:
             message (str): message to show
             category (Warning): category of warning
         """
         self._logger.warning(message)
-        warnings.warn(message, category, stacklevel=2)
+        warnings.warn("deprecated callable was used", category, stacklevel=2)
 
     def info(self, message):
         """Show information.
