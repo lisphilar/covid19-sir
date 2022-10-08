@@ -66,14 +66,31 @@ class _BaseException(Exception):
     Args:
         message (str): main message of error, should be set in child classes
         details (str or None): details of error
+        log (str): description used by logger
     """
 
-    def __init__(self, message, details=None):
+    def __init__(self, message, details=None, log="exception raised"):
+        config.error(log)
         self._message = str(message)
         self._details = "" if details is None else f" {details}."
 
     def __str__(self):
         return f"{self._message}. {self._details}"
+
+
+class _ValidationError(_BaseException):
+    """Basic class of exception raised when validation.
+
+    Args:
+        name (str): name of the target
+        message (str): main message of error, should be set in child classes
+        details (str or None): details of error
+        log (str): description used by logger
+    """
+
+    def __init__(self, name, message, details=None):
+        log = f"validation of {name} failed"
+        super().__init__(message=message, details=details, log=log)
 
 
 class AlreadyCalledError(_BaseException):
@@ -89,7 +106,7 @@ class AlreadyCalledError(_BaseException):
         super().__init__(message=message, details=details)
 
 
-class NotIncludedError(_BaseException):
+class NotIncludedError(_ValidationError):
     """Error when a necessary key was not included in a container.
 
     Args:
@@ -100,10 +117,10 @@ class NotIncludedError(_BaseException):
 
     def __init__(self, key_name, container_name, details=None):
         message = f"'{key_name}' was not included in the '{container_name}'"
-        super().__init__(message=message, details=details)
+        super().__init__(name=key_name, message=message, details=details)
 
 
-class NAFoundError(_BaseException):
+class NAFoundError(_ValidationError):
     """Error when NA values are included un-expectedly.
 
     Args:
@@ -116,10 +133,10 @@ class NAFoundError(_BaseException):
         message = f"'{name}' has NA(s) un-expectedly"
         if value is not None:
             message += f", '{value}'"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class NotEnoughDataError(_BaseException):
+class NotEnoughDataError(_ValidationError):
     """Error when we do not have enough data for analysis.
 
     Args:
@@ -131,10 +148,10 @@ class NotEnoughDataError(_BaseException):
 
     def __init__(self, name, value, required_n, details=None):
         message = f"We need more than {required_n} records, but '{name}' has only {len(value)} records at this time"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class UnExpectedNoneError(_BaseException):
+class UnExpectedNoneError(_ValidationError):
     """Error when a value is None un-expectedly.
 
     Args:
@@ -144,10 +161,10 @@ class UnExpectedNoneError(_BaseException):
 
     def __init__(self, name, details=None):
         message = f"'{name}' is None un-expectedly"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class NotNoneError(_BaseException):
+class NotNoneError(_ValidationError):
     """Error when a value must be None but not None un-expectedly.
 
     Args:
@@ -158,7 +175,7 @@ class NotNoneError(_BaseException):
 
     def __init__(self, name, value, details=None):
         message = f"'{name}' must be None, but has value '{value}'"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
 class UnExecutedError(_BaseException):
@@ -172,7 +189,8 @@ class UnExecutedError(_BaseException):
 
     def __init__(self, name, details=None):
         message = f"Please execute {name} in advance"
-        super().__init__(message=message, details=details)
+        log = f"{name} not executed"
+        super().__init__(message=message, details=details, log=log)
 
 
 class NotRegisteredError(UnExecutedError):
@@ -196,7 +214,7 @@ class NotRegisteredExtraError(UnExecutedError):
     pass
 
 
-class NotSubclassError(_BaseException):
+class NotSubclassError(_ValidationError):
     """Error when an object is not a subclass of the parent class un-expectedly.
 
     Args:
@@ -208,10 +226,10 @@ class NotSubclassError(_BaseException):
 
     def __init__(self, name, target, parent, details=None):
         message = f"'{name}' must be a sub-class of {parent}, but {type(target)} was applied"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class UnExpectedTypeError(_BaseException):
+class UnExpectedTypeError(_ValidationError):
     """Error when an object cannot be converted to an instance un-expectedly.
 
     Args:
@@ -223,10 +241,10 @@ class UnExpectedTypeError(_BaseException):
 
     def __init__(self, name, target, expected, details=None):
         message = f"We could not convert '{name}' to an instance of {expected} because that of {type(target)} was applied"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class EmptyError(_BaseException):
+class EmptyError(_ValidationError):
     """Error when the dataframe is empty un-expectedly.
 
     Args:
@@ -236,10 +254,10 @@ class EmptyError(_BaseException):
 
     def __init__(self, name, details=None):
         message = f"'Empty dataframe/series was applied as {name}' un-expectedly"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class UnExpectedValueRangeError(_BaseException):
+class UnExpectedValueRangeError(_ValidationError):
     """Error when the value is out of value range.
 
     Args:
@@ -256,10 +274,10 @@ class UnExpectedValueRangeError(_BaseException):
         else:
             s = f"must be over or equal to {_min}" if _max is None else f"is not in the expected value range ({_min}, {_max})"
         message = f"'{name}' {s}, but {target} was applied"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class UnExpectedValueError(_BaseException):
+class UnExpectedValueError(_ValidationError):
     """
     Error when unexpected value was applied as the value of an argument.
 
@@ -273,10 +291,10 @@ class UnExpectedValueError(_BaseException):
     def __init__(self, name, value, candidates, details=None):
         c_str = ", ".join(candidates)
         message = f"'{name}' must be selected from [{c_str}], but {value} was applied"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
-class UnExpectedLengthError(_BaseException):
+class UnExpectedLengthError(_ValidationError):
     """
     Error when a sequence has un-expended length.
 
@@ -289,7 +307,7 @@ class UnExpectedLengthError(_BaseException):
 
     def __init__(self, name, value, length, details=None):
         message = f"The length of '{name}' must be {length}, but {len(value)} was applied"
-        super().__init__(message=message, details=details)
+        super().__init__(name=name, message=message, details=details)
 
 
 class SubsetNotFoundError(_BaseException):
@@ -311,7 +329,8 @@ class SubsetNotFoundError(_BaseException):
         self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
         message = f"No records in {self.area}{self.date} were found"
-        super().__init__(message=message, details=details)
+        log = "data subsetting failed"
+        super().__init__(message=message, details=details, log=log)
 
     @staticmethod
     def _area(geo, country, country_alias, province):
@@ -366,8 +385,9 @@ class ScenarioNotFoundError(_BaseException):
     """
 
     def __init__(self, name, details=None):
-        message = f"{name} scenario is not registered."
-        super().__init__(message=message, details=details)
+        message = f"{name} scenario is not registered"
+        log = "scenario selection failed"
+        super().__init__(message=message, details=details, log=log)
 
 
 class PCRIncorrectPreconditionError(_BaseException):

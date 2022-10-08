@@ -35,6 +35,14 @@ class _Config(object):
         )
         self._logger_level = level
 
+    def error(self, message):
+        """Logging raised exception.
+
+        Args:
+            message (str): message to show
+        """
+        self._logger.error(message, exec_info=True)
+
     def warning(self, message, category=None):
         """Raise warning.
 
