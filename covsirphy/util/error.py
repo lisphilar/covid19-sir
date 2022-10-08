@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
-import warnings
+from covsirphy.util.config import config
 
 
 def deprecate(old, new=None, version=None, ref=None):
@@ -23,11 +23,7 @@ def deprecate(old, new=None, version=None, ref=None):
                 comment = f"{old} was deprecated{version_str}{message}"
             else:
                 comment = f"Please use {new} rather than {old}{version_str}{message}"
-            warnings.warn(
-                comment,
-                DeprecationWarning,
-                stacklevel=2
-            )
+            config.warning(message=comment, category=DeprecationWarning)
             return func(*args, **kwargs)
         return wrapper
     return _deprecate
@@ -45,11 +41,7 @@ def experimental(name, version):
         def wrapper(*args, **kwargs):
             comment = f"{name} can be used from {version}, but this is experimental." \
                 "Its name and arguments may be changed later."
-            warnings.warn(
-                comment,
-                ExperimentalWarning,
-                stacklevel=2
-            )
+            config.warning(message=comment, category=ExperimentalWarning)
             return func(*args, **kwargs)
         return wrapper
     return _experimental

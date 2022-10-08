@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import warnings
 from loguru import logger as loguru_logger
 
 
@@ -34,13 +35,15 @@ class _Config(object):
         )
         self._logger_level = level
 
-    def warning(self, message):
+    def warning(self, message, category):
         """Show warning.
 
         Args:
             message (str): message to show
+            category (Warning): category of warning
         """
         self._logger.warning(message)
+        warnings.warn(message, category, stacklevel=2)
 
     def info(self, message):
         """Show information.
