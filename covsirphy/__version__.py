@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.28.0-epsilon"
+__version__ = "2.28.0-zeta"
