@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0-gamma
+                2.28.0-zeta
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -111,6 +111,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotIncludedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.alias</span> <span class="kn">import</span> <span class="n">Alias</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
@@ -128,24 +129,23 @@
 <span class="sd">    Args:</span>
 <span class="sd">        layers (list[str] or None): list of layers of geographic information or None ([&quot;ISO3&quot;, &quot;Province&quot;, &quot;City&quot;])</span>
 <span class="sd">        country (str or None): layer name of countries or None (countries are not included in the layers)</span>
-<span class="sd">        verbose (int): level of verbosity of stdout</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: @layers has duplicates</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Country level data specified with @country will be stored with ISO3 codes.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            If @verbose is 0, no descriptions will be shown.</span>
-<span class="sd">            If @verbose is 1 or larger, details of layer adjustment will be shown.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="s2">&quot;layers&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITY</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;verbose&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Argument verbose was deprecated, please use covsirphy.config.logger(level=</span><span class="si">{</span><span class="n">verbose</span><span class="si">}</span><span class="s2">) instead.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span><span class="p">)</span>
         <span class="c1"># Aliases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span> <span class="o">=</span> <span class="n">Alias</span><span class="o">.</span><span class="n">for_variables</span><span class="p">()</span>
@@ -187,14 +187,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.DataEngineer: self</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            When @verbose is not included in **kwargs, covsirphy.DataEngineer(verbose) will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">default_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">}</span>
         <span class="n">validator</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span>
-        <span class="n">downloader</span> <span class="o">=</span> <span class="n">DataDownloader</span><span class="p">(</span><span class="o">**</span><span class="n">validator</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">DataDownloader</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default_dict</span><span class="p">))</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="o">**</span><span class="n">validator</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">DataDownloader</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default_dict</span><span class="p">))</span>
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">DataDownloader</span><span class="p">(</span><span class="o">**</span><span class="n">validator</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">DataDownloader</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="o">**</span><span class="n">validator</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">DataDownloader</span><span class="o">.</span><span class="n">layer</span><span class="p">))</span>
         <span class="n">citations</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">citations</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITY</span><span class="p">],</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

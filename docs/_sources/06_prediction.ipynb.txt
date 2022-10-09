@@ -119,7 +119,7 @@
         "id": "wSBPHUsk7npk"
       },
       "source": [
-        "Then, run `ODEScenario().predict(days, name, verbose=1, **kwargs)`. We can apply keyword arguments of `autots.AutoTS()` except for `forecast_length` (always the same as `days`)."
+        "Then, run `ODEScenario().predict(days, name, **kwargs)`. We can apply keyword arguments of `autots.AutoTS()` except for `forecast_length` (always the same as `days`)."
       ]
     },
     {
@@ -130,7 +130,7 @@
       },
       "outputs": [],
       "source": [
-        "snr.predict(days=30, name=\"Predicted\", verbose=0);"
+        "snr.predict(days=30, name=\"Predicted\");"
       ]
     },
     {
@@ -206,7 +206,7 @@
       },
       "source": [
         "### 2.1 Principal Component Analysis\n",
-        "To remove multicollinearity of indicators, we use [pca package: a python package to perform Principal Component Analysis and to create insightful plots](https://github.com/erdogant/pca) via our `MLEngineer(seed=0, verbose=1).pca(X, n_components)`.  Standardization (Z-score normalization) and Principal Component Analysis (PCA) will be performed."
+        "To remove multicollinearity of indicators, we use [pca package: a python package to perform Principal Component Analysis and to create insightful plots](https://github.com/erdogant/pca) via our `MLEngineer(seed=0).pca(X, n_components)`.  Standardization (Z-score normalization) and Principal Component Analysis (PCA) will be performed."
       ]
     },
     {
@@ -217,7 +217,7 @@
       },
       "outputs": [],
       "source": [
-        "ml = cs.MLEngineer(verbose=0)\n",
+        "ml = cs.MLEngineer()\n",
         "pca_dict = ml.pca(X=indicator_df, n_components=0.95)\n",
         "pca_df = pca_dict[\"PC\"].copy()\n",
         "pca_df.tail()"
@@ -290,7 +290,7 @@
       },
       "source": [
         "### 2-2. Future values of indicators\n",
-        "Before prediction of ODE parameter values, we need to prepare future values of (PCA-performed) indicators. We can add future values to the `pandas.DataFrame` manually or forecast them with `MLEngineer(seed=0, verbose=0).predict(Y, days=<int>, X=None)` as follows."
+        "Before prediction of ODE parameter values, we need to prepare future values of (PCA-performed) indicators. We can add future values to the `pandas.DataFrame` manually or forecast them with `MLEngineer(seed=0).predict(Y, days=<int>, X=None)` as follows."
       ]
     },
     {
@@ -312,7 +312,7 @@
       },
       "source": [
         "### 2-3. Prediction of ODE parameter values\n",
-        "Now we have Y (estimated ODE parameter values) and X (estimated/forecasted indicator values without multicollinearity), we can predict ODE parameter values of future phases using `ODEScenario().predict(days=<int>, name=<str>, seed=0, verbose=1, X=<pandas.DataFrame>)`. The new scenario is named \"Predicted_with_X\" here."
+        "Now we have Y (estimated ODE parameter values) and X (estimated/forecasted indicator values without multicollinearity), we can predict ODE parameter values of future phases using `ODEScenario().predict(days=<int>, name=<str>, seed=0, X=<pandas.DataFrame>)`. The new scenario is named \"Predicted_with_X\" here."
       ]
     },
     {
@@ -324,7 +324,7 @@
       "outputs": [],
       "source": [
         "snr.build_with_template(name=\"Predicted_with_X\", template=\"Baseline\")\n",
-        "snr.predict(days=30, name=\"Predicted_with_X\", seed=0, verbose=0, X=future_df);"
+        "snr.predict(days=30, name=\"Predicted_with_X\", seed=0, X=future_df);"
       ]
     },
     {

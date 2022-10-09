@@ -44,6 +44,27 @@
     },
     {
       "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "From version 2.28.0, some classes and methods output the following information using [loguru: library which aims to bring enjoyable logging in Python](https://github.com/Delgan/loguru). We can change logging level with `cs.config(level=2)` (as default).\n",
+        "\n",
+        "- `level=0`: errors (exceptions)\n",
+        "- `level=1`: errors, warnings\n",
+        "- `level=2`: errors, warnings, info (start downloading/optimization)\n",
+        "- `level=3`: errors, warnings, info, debug"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "cs.config.logger(level=2)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
       "metadata": {
         "id": "QH0AEUrT0ft1"
       },
@@ -590,7 +611,7 @@
       "source": [
         "# Set layers and specify layer name of country\n",
         "# (which will be converted to ISO3 code for standardization)\n",
-        "eng = cs.DataEngineer(layers=[\"ISO3\", \"City\"], country=[\"ISO3\"], verbose=1)\n",
+        "eng = cs.DataEngineer(layers=[\"ISO3\", \"City\"], country=[\"ISO3\"])\n",
         "# Download and automated registration of population data\n",
         "eng.download(databases=[\"wpp\"])\n",
         "# Specify date range to reduce the memory\n",
