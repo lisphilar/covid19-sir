@@ -10,11 +10,10 @@ from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate, experimental
 from covsirphy.util.error import ExperimentalWarning
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
-from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
-from covsirphy.util.error import NotRegisteredError, NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import UnExpectedReturnValueError, UnExpectedNoneError
-from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError, NotEnoughDataError
-from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
+from covsirphy.util.error import NotRegisteredError
+from covsirphy.util.error import UnExpectedNoneError
+from covsirphy.util.error import NotNoneError, NotEnoughDataError
+from covsirphy.util.error import NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
 from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
 from covsirphy.util.alias import Alias
 from covsirphy.util.filer import Filer
@@ -69,10 +68,8 @@ __all__ = [
     # util-error
     "experimental", "ExperimentalWarning",
     "SubsetNotFoundError", "ScenarioNotFoundError",
-    "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "NotRegisteredError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "UnExpectedReturnValueError", "DBLockedError", "NotDBLockedError",
-    "AlreadyCalledError", "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
+    "NotRegisteredError",
+    "NotIncludedError", "NAFoundError", "UnExecutedError", "UnExpectedTypeError",
     "EmptyError", "UnExpectedValueRangeError", "UnExpectedValueError", "NotSubclassError", "UnExpectedLengthError",
     "Validator", "UnExpectedNoneError", "NotNoneError", "NotEnoughDataError",
     # util
