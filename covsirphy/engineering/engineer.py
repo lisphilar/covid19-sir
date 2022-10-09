@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.config import config
 from covsirphy.util.error import NotIncludedError
 from covsirphy.util.alias import Alias
 from covsirphy.util.validator import Validator
@@ -32,11 +31,6 @@ class DataEngineer(Term):
     def __init__(self, layers=None, country="ISO3", **kwargs):
         self._layers = Validator(layers, "layers").sequence(default=[self.ISO3, self.PROVINCE, self.CITY])
         self._country = str(country)
-        if "verbose" in kwargs:
-            verbose = kwargs.get("verbose", 2)
-            config.logger(level=verbose)
-            config.warning(
-                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
         self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE)
         self._gis = GIS(**self._gis_kwargs)
         # Aliases

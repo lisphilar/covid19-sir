@@ -93,19 +93,6 @@ class _ValidationError(_BaseException):
         super().__init__(message=message, details=details, log=log)
 
 
-class AlreadyCalledError(_BaseException):
-    """Error when a method has already been called and cannot be called any more.
-
-    Args:
-        name (str): the name of the method
-        details (str or None): details of error
-    """
-
-    def __init__(self, name, details=None):
-        message = f"{name} has already been called and cannot be called any more"
-        super().__init__(message=message, details=details)
-
-
 class NotIncludedError(_ValidationError):
     """Error when a necessary key was not included in a container.
 
@@ -196,20 +183,6 @@ class UnExecutedError(_BaseException):
 class NotRegisteredError(UnExecutedError):
     """
     Error when no records have been registered yet.
-    """
-    pass
-
-
-class NotRegisteredMainError(UnExecutedError):
-    """
-    Error when main datasets were not registered.
-    """
-    pass
-
-
-class NotRegisteredExtraError(UnExecutedError):
-    """
-    Error when extra datasets were not registered.
     """
     pass
 
@@ -388,92 +361,3 @@ class ScenarioNotFoundError(_BaseException):
         message = f"{name} scenario is not registered"
         log = "scenario selection failed"
         super().__init__(message=message, details=details, log=log)
-
-
-class PCRIncorrectPreconditionError(_BaseException):
-    """Error when checking preconditions in the PCR data.
-
-    Args:
-        country (str): country name
-        province (str or None): province name
-        details (str or None): details of error
-    """
-
-    def __init__(self, country, province=None, details=None):
-        self.area = self._area(country, province)
-        message = f"The dataset of {self.area} has too many missing values"
-        super().__init__(message=message, details=details)
-
-    @staticmethod
-    def _area(country, province):
-        """
-        Error when PCR preconditions failed with specified arguments.
-
-        Args:
-            country (str): country name
-            province (str or None): province name
-
-        Returns:
-            str: area name
-        """
-        if province == "-":
-            province = None
-        country_str = "" if province else f" in country {country}"
-        province_str = "" if province is None else f" in province {province}"
-        return f"{province_str}{country_str}"
-
-
-class NotInteractiveError(_BaseException):
-    """Error when interactive shell is not used but forced to use it.
-
-    Args:
-        details (str or None): details of error
-    """
-
-    def __init__(self, details=None):
-        message = "Interactive shell is not used."
-        super().__init__(message=message, details=details)
-
-
-class UnExpectedReturnValueError(_BaseException):
-    """Error when unexpected value was returned.
-
-    Args:
-        name (str): argument name
-        value (object): value user applied or None (will not be shown)
-        plural (bool): whether plural or not
-        details (str or None): details of error
-    """
-
-    def __init__(self, name, value, plural=False, details=None):
-        self.value = "" if value is None else f" ({value})"
-        self.s = "s" if plural else ""
-        self.be = "were" if plural else "was"
-        message = f"Un-expected value{self.s}{self.value} {self.be} returned as {name}"
-        super().__init__(message=message, details=details)
-
-
-class DBLockedError(_BaseException):
-    """Error when a database has been locked not as expected.
-
-    Args:
-        name (str): database name
-        details (str or None): details of error
-    """
-
-    def __init__(self, name, details=None):
-        message = f"{name} should NOT be locked, but locked"
-        super().__init__(message=message, details=details)
-
-
-class NotDBLockedError(_BaseException):
-    """Error when a database has NOT been locked not as expected.
-
-    Args:
-        name (str): database name
-        details (str or None): details of error
-    """
-
-    def __init__(self, name, details=None):
-        message = f"{name} should be locked, but NOT locked"
-        super().__init__(message=message, details=details)

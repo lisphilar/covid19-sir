@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
-from covsirphy.util.config import config
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.gis.gis import GIS
 from covsirphy.downloading._db_cs_japan import _CSJapan
 from covsirphy.downloading._db_covid19dh import _COVID19dh
-from covsirphy.downloading._db_google import _GoogleOpenData
 from covsirphy.downloading._db_owid import _OWID
 from covsirphy.downloading._db_wpp import _WPP
 
@@ -29,11 +26,6 @@ class DataDownloader(Term):
     def __init__(self, directory="input", update_interval=12, **kwargs):
         self._directory = directory
         self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
-        if "verbose" in kwargs:
-            verbose = kwargs.get("verbose", 2)
-            config.logger(level=verbose)
-            config.warning(
-                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
 
     def layer(self, country=None, province=None, databases=None):
@@ -45,12 +37,8 @@ class DataDownloader(Term):
             databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).
                 "japan": COVID-19 Dataset in Japan,
                 "covid19dh": COVID-19 Data Hub,
-                "google": COVID-19 Open Data by Google Cloud Platform (deprecated),
                 "owid": Our World In Data,
                 "wpp": World Population Prospects by United nations.
-
-        Note:
-            "google" for @database was deprecated and refer to https://github.com/lisphilar/covid19-sir/issues/1223
 
         Returns:
             pandas.DataFrame:
@@ -86,12 +74,6 @@ class DataDownloader(Term):
                     Testing_policy
                     Contact_tracing
                     Stringency_index
-                    (deprecated) Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)
-                    (deprecated) Mobility_parks: % to baseline in visits (parks etc.)
-                    (deprecated) Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)
-                    (deprecated) Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)
-                    (deprecated) Mobility_residential: % to baseline in visits (places of residence)
-                    (deprecated) Mobility_workplaces: % to baseline in visits (places of work)
 
         Note:
             When @country is None, country-level data will be returned.
@@ -107,19 +89,11 @@ class DataDownloader(Term):
             "covid19dh": _COVID19dh,
             "owid": _OWID,
             "wpp": _WPP,
-            # Deprecated
-            "google": _GoogleOpenData,
         }
-        all_databases = ["japan", "covid19dh", "google", "owid"]  # "google" will be removed at 3.0.0
+        all_databases = ["japan", "covid19dh", "owid"]
         selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
         for database in selected:
-            if database == "google":
-                warnings.warn(
-                    "Please use `databases=['japan', 'covid19dh', 'owid']` and refer to https://github.com/lisphilar/covid19-sir/issues/1223",
-                    DeprecationWarning,
-                    stacklevel=2
-                )
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval,)
             new_df = db.layer(country=country, province=province).convert_dtypes()

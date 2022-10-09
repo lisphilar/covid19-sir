@@ -4,7 +4,6 @@
 from pathlib import Path
 import pandas as pd
 import pytest
-from covsirphy import JapanData
 
 
 @pytest.fixture(scope="function")
@@ -18,8 +17,10 @@ def imgfile():
 
 @pytest.fixture(scope="session")
 def c_df():
+    GITHUB_URL = "https://raw.githubusercontent.com"
+    URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
     path = Path("data", "japan", "covid_jpn_total.csv")
-    filepath = path if path.exists() else JapanData.URL_C
+    filepath = path if path.exists() else URL_C
     df = pd.read_csv(filepath, dayfirst=False).rename(columns={"Date": "date"})
     df = df[["date", "Positive", "Tested", "Discharged", "Fatal"]].groupby("date", as_index=False).sum()
     df.insert(0, "Country", "Japan")
@@ -28,8 +29,10 @@ def c_df():
 
 @pytest.fixture(scope="session")
 def p_df():
+    GITHUB_URL = "https://raw.githubusercontent.com"
+    URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
     path = Path("data", "japan", "covid_jpn_prefecture.csv")
-    filepath = path if path.exists() else JapanData.URL_P
+    filepath = path if path.exists() else URL_P
     df = pd.read_csv(filepath, dayfirst=False).rename(columns={"Date": "date"})
     df.insert(0, "Country", "Japan")
     return df[["Country", "Prefecture", "date", "Positive", "Tested", "Discharged", "Fatal"]]
