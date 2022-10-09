@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.util.validator</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -116,7 +117,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExpectedValueRangeError</span><span class="p">,</span> <span class="n">UnExpectedValueError</span><span class="p">,</span> <span class="n">UnExpectedLengthError</span><span class="p">,</span> <span class="n">UnExpectedNoneError</span>
 
 
-<div class="viewcode-block" id="Validator"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator">[docs]</a><span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator">[docs]</a><span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Validate objects and arguments.</span>
 
 <span class="sd">    Args:</span>
@@ -137,7 +138,7 @@
         <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">accept_none</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExpectedNoneError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Validator.subclass"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.subclass">[docs]</a>    <span class="k">def</span> <span class="nf">subclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.subclass"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.subclass">[docs]</a>    <span class="k">def</span> <span class="nf">subclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a subclass of the parent class.</span>
 
 <span class="sd">        Args:</span>
@@ -153,7 +154,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
         <span class="k">raise</span> <span class="n">NotSubclassError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.instance"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.instance">[docs]</a>    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.instance"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.instance">[docs]</a>    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure that the target is an instance of a specified class.</span>
 
 <span class="sd">        Args:</span>
@@ -169,7 +170,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
         <span class="k">raise</span> <span class="n">UnExpectedTypeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.dataframe"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.dataframe"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a dataframe.</span>
 
 <span class="sd">        Args:</span>
@@ -202,7 +203,7 @@
                     <span class="n">details</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The dataframe has </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2"> as columns&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Validator.float"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.float">[docs]</a>    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.float"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.float">[docs]</a>    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to a float value.</span>
 
 <span class="sd">        Args:</span>
@@ -229,7 +230,7 @@
             <span class="k">return</span> <span class="n">value</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">digits</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span></div>
 
-<div class="viewcode-block" id="Validator.int"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.int">[docs]</a>    <span class="k">def</span> <span class="nf">int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">round_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.int"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.int">[docs]</a>    <span class="k">def</span> <span class="nf">int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">round_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to an integer.</span>
 
 <span class="sd">        Args:</span>
@@ -257,7 +258,7 @@
             <span class="k">raise</span> <span class="n">UnExpectedValueRangeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value_range</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Validator.tau"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.tau">[docs]</a>    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.tau"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.tau">[docs]</a>    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Validate the value can be used as tau value [min].</span>
 
 <span class="sd">        Args:</span>
@@ -280,7 +281,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">divisors</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Tau value [min], a divisor of 1440 [min], is a parameter used to convert actual time to time steps (without units)&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.date"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.date"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to a date object.</span>
 
 <span class="sd">        Args:</span>
@@ -308,7 +309,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">value_range</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Validator.sequence"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.sequence">[docs]</a>    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.sequence"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.sequence">[docs]</a>    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a sequence (list, tuple) to a list.</span>
 
 <span class="sd">        Args:</span>
@@ -349,7 +350,7 @@
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Validator.dict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.dict">[docs]</a>    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.dict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dict">[docs]</a>    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a dictionary.</span>
 
 <span class="sd">        Args:</span>
@@ -380,7 +381,7 @@
                 <span class="k">raise</span> <span class="n">NAFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value of key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> in dictionary </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_dict</span></div>
 
-<div class="viewcode-block" id="Validator.kwargs"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Validator.kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">functions</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.kwargs"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">functions</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Find keyword arguments of the functions.</span>
 
 <span class="sd">        Args:</span>

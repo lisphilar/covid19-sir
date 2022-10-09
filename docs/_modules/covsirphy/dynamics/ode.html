@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.dynamics.ode</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -123,7 +124,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="ODEModel"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel">[docs]</a><span class="k">class</span> <span class="nc">ODEModel</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel">[docs]</a><span class="k">class</span> <span class="nc">ODEModel</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Basic class of ordinary differential equation (ODE) model.</span>
 
 <span class="sd">    Args:</span>
@@ -175,13 +176,13 @@
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ODEModel.name"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.name">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.name"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.name">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return name of ODE model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_NAME</span></div>
 
-<div class="viewcode-block" id="ODEModel.definitions"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.definitions">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.definitions"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.definitions">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return definitions of ODE model.</span>
 
@@ -199,7 +200,7 @@
             <span class="s2">&quot;dimensional_parameters&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DAY_PARAMETERS</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="ODEModel.settings"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_estimation</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.settings"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_estimation</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return settings.</span>
 
 <span class="sd">        Args:</span>
@@ -229,7 +230,7 @@
             <span class="n">_dict</span><span class="p">[</span><span class="s2">&quot;estimation_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_dict</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;not_performed&quot;</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">_dict</span></div>
 
-<div class="viewcode-block" id="ODEModel.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with sample data.</span>
 
@@ -264,7 +265,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ODEModel.solve"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.solve"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Solve an initial value problem.</span>
 
 <span class="sd">        Return:</span>
@@ -344,7 +345,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">x</span><span class="p">)))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ODEModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.</span>
 
@@ -372,7 +373,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.</span>
 
@@ -400,7 +401,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
 
 <span class="sd">        Returns:</span>
@@ -411,7 +412,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
 
 <span class="sd">        Returns:</span>
@@ -422,7 +423,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.from_data">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data and ODE parameter values.</span>
 
@@ -455,7 +456,7 @@
                 <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">digits</span><span class="o">=</span><span class="n">digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ODEModel.from_data_with_quantile"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.from_data_with_quantile">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.from_data_with_quantile"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_quantile">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_data_with_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data, estimating ODE parameters with quantiles.</span>
 
@@ -515,7 +516,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">),</span> <span class="n">upper</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ODEModel.from_data_with_optimization"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.from_data_with_optimization">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.from_data_with_optimization"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_optimization">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_data_with_optimization</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.</span>
 
@@ -702,7 +703,7 @@
             <span class="n">a</span> <span class="o">*</span> <span class="n">allowance0</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">allowance1</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">max_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">sim_max_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">ok_list</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ODEModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.ODEModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ODEModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
 

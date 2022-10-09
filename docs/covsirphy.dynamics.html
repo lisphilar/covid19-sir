@@ -47,7 +47,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -158,7 +158,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel"><em>covsirphy.ODEModel</em></a>) – definition of ODE model</p></li>
+<li><p><strong>model</strong> (<em>covsirphy.ODEModel</em>) – definition of ODE model</p></li>
 <li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – start date and end date of dynamics to analyze</p></li>
 <li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
 <li><p><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p></li>
@@ -180,7 +180,7 @@ covsirphy.VisualizeBase(), matplotlib.legend.Legend()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.NotEnoughDataError" title="covsirphy.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – we have not enough records, the length of the records must be equal to or over min_size * 2</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – we have not enough records, the length of the records must be equal to or over min_size * 2</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p>pandas.Timestamp: date of change points
@@ -229,7 +229,7 @@ Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal�
 <dd class="field-even"><p>self</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Dynamics" title="covsirphy.Dynamics">covsirphy.Dynamics</a></p>
+<dd class="field-odd"><p>covsirphy.Dynamics</p>
 </dd>
 </dl>
 </dd></dl>
@@ -249,8 +249,8 @@ Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal�
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExpectedNoneError" title="covsirphy.UnExpectedNoneError"><strong>UnExpectedNoneError</strong></a> – tau value is un-set</p></li>
-<li><p><a class="reference internal" href="covsirphy.html#covsirphy.NotEnoughDataError" title="covsirphy.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedNoneError" title="covsirphy.util.error.UnExpectedNoneError"><strong>UnExpectedNoneError</strong></a> – tau value is un-set</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -285,7 +285,7 @@ Runtime (str): runtime of optimization, like 0 min 10 sec</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.NotEnoughDataError" title="covsirphy.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p>float: tau value with best metric score
@@ -357,7 +357,7 @@ Recovered (int): the number of recovered cases
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -381,7 +381,7 @@ Recovered (int): the number of recovered cases
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -396,7 +396,7 @@ Recovered (int): the number of recovered cases
 <dd><p>model class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 </dd></dl>
@@ -529,7 +529,7 @@ Fatal (int): the number of fatal cases
 <dd class="field-even"><p>self</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Dynamics" title="covsirphy.Dynamics">covsirphy.Dynamics</a></p>
+<dd class="field-odd"><p>covsirphy.Dynamics</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -552,8 +552,8 @@ Fatal (int): the number of fatal cases
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExpectedNoneError" title="covsirphy.UnExpectedNoneError"><strong>UnExpectedNoneError</strong></a> – tau value is un-set</p></li>
-<li><p><a class="reference internal" href="covsirphy.html#covsirphy.NAFoundError" title="covsirphy.NAFoundError"><strong>NAFoundError</strong></a> – ODE parameter values on the start dates of phases are un-set</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedNoneError" title="covsirphy.util.error.UnExpectedNoneError"><strong>UnExpectedNoneError</strong></a> – tau value is un-set</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NAFoundError" title="covsirphy.util.error.NAFoundError"><strong>NAFoundError</strong></a> – ODE parameter values on the start dates of phases are un-set</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -737,7 +737,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 </dd></dl>
@@ -781,7 +781,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 </dd></dl>
@@ -815,7 +815,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 </dd></dl>
@@ -835,7 +835,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dd class="field-even"><p>initialized model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ODEModel" title="covsirphy.ODEModel">covsirphy.ODEModel</a></p>
+<dd class="field-odd"><p>covsirphy.ODEModel</p>
 </dd>
 </dl>
 <div class="admonition note">

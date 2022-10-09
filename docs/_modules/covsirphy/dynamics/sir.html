@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.dynamics.sir</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -114,7 +115,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.ode</span> <span class="kn">import</span> <span class="n">ODEModel</span>
 
 
-<div class="viewcode-block" id="SIRModel"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel">[docs]</a><span class="k">class</span> <span class="nc">SIRModel</span><span class="p">(</span><span class="n">ODEModel</span><span class="p">):</span>
+<div class="viewcode-block" id="SIRModel"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel">[docs]</a><span class="k">class</span> <span class="nc">SIRModel</span><span class="p">(</span><span class="n">ODEModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class of SIR model.</span>
 
 <span class="sd">    Args:</span>
@@ -166,7 +167,7 @@
         <span class="n">didt</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">dsdt</span> <span class="o">-</span> <span class="n">drdt</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dsdt</span><span class="p">,</span> <span class="n">didt</span><span class="p">,</span> <span class="n">drdt</span><span class="p">])</span>
 
-<div class="viewcode-block" id="SIRModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIRModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.</span>
 
@@ -195,7 +196,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_VARIABLES</span><span class="p">]</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SIRModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIRModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.</span>
 
@@ -226,7 +227,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">]</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SIRModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SIRModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
 
 <span class="sd">        Raises:</span>
@@ -241,7 +242,7 @@
             <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Sigma must be over 0 to calculate reproduction number with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
-<div class="viewcode-block" id="SIRModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SIRModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
 
 <span class="sd">        Raises:</span>
@@ -291,7 +292,7 @@
             <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_clip</span><span class="p">(</span><span class="n">sigma_series</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">}</span>
 
-<div class="viewcode-block" id="SIRModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.SIRModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIRModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
 

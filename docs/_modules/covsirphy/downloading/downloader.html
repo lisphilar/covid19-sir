@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.downloading.downloader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -109,20 +110,17 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.gis.gis</span> <span class="kn">import</span> <span class="n">GIS</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_cs_japan</span> <span class="kn">import</span> <span class="n">_CSJapan</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_google</span> <span class="kn">import</span> <span class="n">_GoogleOpenData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
 <span class="kn">from</span> <span class="nn">covsirphy.downloading._db_wpp</span> <span class="kn">import</span> <span class="n">_WPP</span>
 
 
-<div class="viewcode-block" id="DataDownloader"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.DataDownloader">[docs]</a><span class="k">class</span> <span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="DataDownloader"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader">[docs]</a><span class="k">class</span> <span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to download datasets from the recommended data servers.</span>
 
 <span class="sd">    Args:</span>
@@ -137,14 +135,9 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="n">directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">update_interval</span><span class="p">,</span> <span class="s2">&quot;update_interval&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="k">if</span> <span class="s2">&quot;verbose&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Argument verbose was deprecated, please use covsirphy.config.logger(level=</span><span class="si">{</span><span class="n">verbose</span><span class="si">}</span><span class="s2">) instead.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAYERS</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DataDownloader.layer"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.DataDownloader.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataDownloader.layer"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the data at the selected layer.</span>
 
 <span class="sd">        Args:</span>
@@ -153,12 +146,8 @@
 <span class="sd">            databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).</span>
 <span class="sd">                &quot;japan&quot;: COVID-19 Dataset in Japan,</span>
 <span class="sd">                &quot;covid19dh&quot;: COVID-19 Data Hub,</span>
-<span class="sd">                &quot;google&quot;: COVID-19 Open Data by Google Cloud Platform (deprecated),</span>
 <span class="sd">                &quot;owid&quot;: Our World In Data,</span>
 <span class="sd">                &quot;wpp&quot;: World Population Prospects by United nations.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            &quot;google&quot; for @database was deprecated and refer to https://github.com/lisphilar/covid19-sir/issues/1223</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
@@ -194,12 +183,6 @@
 <span class="sd">                    Testing_policy</span>
 <span class="sd">                    Contact_tracing</span>
 <span class="sd">                    Stringency_index</span>
-<span class="sd">                    (deprecated) Mobility_grocery_and_pharmacy: % to baseline in visits (grocery markets, pharmacies etc.)</span>
-<span class="sd">                    (deprecated) Mobility_parks: % to baseline in visits (parks etc.)</span>
-<span class="sd">                    (deprecated) Mobility_transit_stations: % to baseline in visits (public transport hubs etc.)</span>
-<span class="sd">                    (deprecated) Mobility_retail_and_recreation: % to baseline in visits (restaurant, museums etc.)</span>
-<span class="sd">                    (deprecated) Mobility_residential: % to baseline in visits (places of residence)</span>
-<span class="sd">                    (deprecated) Mobility_workplaces: % to baseline in visits (places of work)</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            When @country is None, country-level data will be returned.</span>
@@ -215,19 +198,11 @@
             <span class="s2">&quot;covid19dh&quot;</span><span class="p">:</span> <span class="n">_COVID19dh</span><span class="p">,</span>
             <span class="s2">&quot;owid&quot;</span><span class="p">:</span> <span class="n">_OWID</span><span class="p">,</span>
             <span class="s2">&quot;wpp&quot;</span><span class="p">:</span> <span class="n">_WPP</span><span class="p">,</span>
-            <span class="c1"># Deprecated</span>
-            <span class="s2">&quot;google&quot;</span><span class="p">:</span> <span class="n">_GoogleOpenData</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">all_databases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">,</span> <span class="s2">&quot;covid19dh&quot;</span><span class="p">,</span> <span class="s2">&quot;google&quot;</span><span class="p">,</span> <span class="s2">&quot;owid&quot;</span><span class="p">]</span>  <span class="c1"># &quot;google&quot; will be removed at 3.0.0</span>
+        <span class="n">all_databases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;japan&quot;</span><span class="p">,</span> <span class="s2">&quot;covid19dh&quot;</span><span class="p">,</span> <span class="s2">&quot;owid&quot;</span><span class="p">]</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">databases</span><span class="p">,</span> <span class="s2">&quot;databases&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">all_databases</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">db_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAYERS</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;google&quot;</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;Please use `databases=[&#39;japan&#39;, &#39;covid19dh&#39;, &#39;owid&#39;]` and refer to https://github.com/lisphilar/covid19-sir/issues/1223&quot;</span><span class="p">,</span>
-                    <span class="ne">DeprecationWarning</span><span class="p">,</span>
-                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-                <span class="p">)</span>
             <span class="n">db</span> <span class="o">=</span> <span class="n">db_dict</span><span class="p">[</span><span class="n">database</span><span class="p">](</span>
                 <span class="n">directory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_directory</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span><span class="p">,)</span>
             <span class="n">new_df</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
@@ -240,7 +215,7 @@
         <span class="k">except</span> <span class="n">NotRegisteredError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
-<div class="viewcode-block" id="DataDownloader.citations"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.DataDownloader.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataDownloader.citations"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return citation list of the data sources.</span>
 

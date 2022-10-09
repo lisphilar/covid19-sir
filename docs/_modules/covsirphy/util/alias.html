@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.util.alias</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -113,7 +114,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="Alias"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias">[docs]</a><span class="k">class</span> <span class="nc">Alias</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="Alias"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias">[docs]</a><span class="k">class</span> <span class="nc">Alias</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remember and parse aliases, just like defaultdict.</span>
 
 <span class="sd">    Args:</span>
@@ -124,7 +125,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_class</span> <span class="o">=</span> <span class="n">target_class</span> <span class="ow">or</span> <span class="nb">object</span>
 
-<div class="viewcode-block" id="Alias.for_variables"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias.for_variables">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Alias.for_variables"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias.for_variables">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_variables</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize covsirphy.Alias with preset of variable aliases.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -139,7 +140,7 @@
         <span class="p">[</span><span class="n">class_obj</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">class_obj</span></div>
 
-<div class="viewcode-block" id="Alias.update"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<div class="viewcode-block" id="Alias.update"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update target of the alias.</span>
 
 <span class="sd">        Args:</span>
@@ -153,7 +154,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">instance</span><span class="p">(</span><span class="n">expected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_class</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Alias.find"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Alias.find"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Find the target of the alias.</span>
 
 <span class="sd">        Args:</span>
@@ -168,7 +169,7 @@
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span></div>
 
-<div class="viewcode-block" id="Alias.all"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Alias.all"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List up all targets of aliases.</span>
 
 <span class="sd">        Returns:</span>
@@ -176,7 +177,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span></div>
 
-<div class="viewcode-block" id="Alias.delete"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Alias.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="Alias.delete"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.alias.Alias.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Delete alias.</span>
 
 <span class="sd">        Args:</span>

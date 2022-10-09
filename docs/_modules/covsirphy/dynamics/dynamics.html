@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.dynamics.dynamics</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -128,7 +129,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics._simulator</span> <span class="kn">import</span> <span class="n">_Simulator</span>
 
 
-<div class="viewcode-block" id="Dynamics"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics">[docs]</a><span class="k">class</span> <span class="nc">Dynamics</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics">[docs]</a><span class="k">class</span> <span class="nc">Dynamics</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to hand phase-dependent SIR-derived ODE models.</span>
 
 <span class="sd">    Args:</span>
@@ -195,7 +196,7 @@
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Dynamics.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Dynamics.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with sample data of one-phase ODE model.</span>
 
@@ -220,7 +221,7 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
-<div class="viewcode-block" id="Dynamics.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.from_data">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Dynamics.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_data">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data.</span>
 
@@ -249,7 +250,7 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
-<div class="viewcode-block" id="Dynamics.register"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.register"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Register data to get initial values and ODE parameter values (if available).</span>
 
 <span class="sd">        Args:</span>
@@ -325,7 +326,7 @@
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">point</span><span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Dynamics.segment"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.segment">[docs]</a>    <span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.segment"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.segment">[docs]</a>    <span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform time-series segmentation with points manually selected or found with S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
@@ -344,7 +345,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.detect"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-normal&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.detect"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-normal&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.</span>
 
 <span class="sd">        Args:</span>
@@ -391,7 +392,7 @@
             <span class="n">analyzer</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span><span class="o">=</span><span class="n">fit_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span></div>
 
-<div class="viewcode-block" id="Dynamics.summary"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.summary"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Summarize phase information.</span>
 
 <span class="sd">        Returns:</span>
@@ -430,7 +431,7 @@
         <span class="n">others</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">fixed_cols</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">fixed_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dynamics.track"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.track"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Track reproduction number, parameter value and dimensional parameter values.</span>
 
 <span class="sd">        Returns:</span>
@@ -447,7 +448,7 @@
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.simulate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.simulate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform simulation with phase-dependent ODE model.</span>
 
 <span class="sd">        Args:</span>
@@ -475,7 +476,7 @@
         <span class="n">simulator</span> <span class="o">=</span> <span class="n">_Simulator</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="n">model_specific</span><span class="o">=</span><span class="n">model_specific</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.estimate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params().</span>
 
 <span class="sd">        Args:</span>
@@ -488,7 +489,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">estimate_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Dynamics.estimate_tau"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.estimate_tau">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate_tau"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_tau">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the best tau value for the registered data, estimating ODE parameters with quantiles.</span>
 
 <span class="sd">        Args:</span>
@@ -548,7 +549,7 @@
         <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">all_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">sim_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dynamics.estimate_params"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate_params"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set ODE parameter values optimized for the registered data with hyperparameter optimization using Optuna.</span>
 
 <span class="sd">        Args:</span>
@@ -630,7 +631,7 @@
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">est_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">est_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="Dynamics.parse_phases"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.parse_phases">[docs]</a>    <span class="k">def</span> <span class="nf">parse_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.parse_phases"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_phases">[docs]</a>    <span class="k">def</span> <span class="nf">parse_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return minimum date and maximum date of the phases.</span>
 
 <span class="sd">        Args:</span>
@@ -650,7 +651,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">all_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">phase_numbers</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dynamics.parse_days"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.parse_days">[docs]</a>    <span class="k">def</span> <span class="nf">parse_days</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.parse_days"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_days">[docs]</a>    <span class="k">def</span> <span class="nf">parse_days</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return min(ref, ref + days) and max(ref, ref + days).</span>
 
 <span class="sd">        Args:</span>
@@ -668,7 +669,7 @@
         <span class="n">max_date</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ref_date</span><span class="p">,</span> <span class="n">ref_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days_n</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.evaluate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.evaluate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compare the simulated results and actual records, and evaluate the differences.</span>
 
 <span class="sd">        Args:</span>
@@ -691,7 +692,7 @@
             <span class="n">compare_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;actual&quot;</span><span class="p">,</span> <span class="s2">&quot;simulated&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">actual_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.start_dates"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.Dynamics.start_dates">[docs]</a>    <span class="k">def</span> <span class="nf">start_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.start_dates"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.start_dates">[docs]</a>    <span class="k">def</span> <span class="nf">start_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the start dates of phases.</span>
 
 <span class="sd">        Returns:</span>
