@@ -2,14 +2,12 @@ name: Quality Check
 
 on:
   push:
-    paths:
-      - ".github/workflows/**"
-      - "./covsirphy"
-      - "./pyproject.toml"
     branches:
-      - master
+      master
   pull_request:
     types: [edited, synchronize, opened, reopened]
+    branches:
+      master
   workflow_dispatch:
 
 jobs:
@@ -28,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.10"]
 
     steps:
       - name: check out repository
@@ -112,10 +110,12 @@ jobs:
   codeql:
     name: discover vulnerabilities with CodeQL
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
