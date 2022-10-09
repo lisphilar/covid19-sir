@@ -69,14 +69,6 @@ class ODEScenario(Term):
         # Aliases of variable names
         self._variable_alias = Alias.for_variables()
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and \
-            self._location_name == other._location_name and \
-            self.describe().equals(other.describe())
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
     def to_json(self, filename):
         """Write a JSON file which can usable for recreating ODEScenario instance with .from_json()
 
