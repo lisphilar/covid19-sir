@@ -5,7 +5,7 @@ from datetime import datetime
 import pytest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from covsirphy import Validator, ModelBase, SIR, SIRF
+from covsirphy import Validator, ODEModel, SIRModel, SIRFModel
 from covsirphy import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
@@ -17,10 +17,10 @@ class TestValidator(object):
             Validator(None, "target", accept_none=False)
 
     def test_subclass(self):
-        v = Validator(SIRF, name="model")
+        v = Validator(SIRFModel, name="model")
         with pytest.raises(NotSubclassError):
-            v.subclass(SIR)
-        assert v.subclass(ModelBase) == SIRF
+            v.subclass(SIRModel)
+        assert v.subclass(ODEModel) == SIRFModel
 
     def test_instance(self):
         v = Validator("covsirphy")
@@ -110,7 +110,7 @@ class TestValidator(object):
         assert Validator({1: 2}).dict(default={3: 5, 6: 8}, required_keys=[3, 4]) == {1: 2, 3: 5, 6: 8, 4: None}
 
     def test_kwargs(self):
-        kwargs = {"target": SIR, "unnecessary_key": True}
+        kwargs = {"target": SIRModel, "unnecessary_key": True}
         v = Validator(kwargs)
         result_dict = v.kwargs(functions=Validator, default={"name": "target name"})
         assert isinstance(Validator(**result_dict), Validator)
