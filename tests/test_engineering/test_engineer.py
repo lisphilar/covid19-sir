@@ -13,7 +13,7 @@ class TestDataEngineer(object):
         dynamics = Dynamics.from_sample(model=SIRFModel)
         data = dynamics.simulate().reset_index()
         data.insert(0, "Model", SIRFModel.name())
-        engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
+        engineer = DataEngineer(layers=["Model"], country=None)
         engineer.register(data, citations="Simulated data")
         assert set(engineer.all().columns) == {"Model", Term.DATE, Term.S, Term.CI, Term.F, Term.R}
         assert engineer.citations() == ["Simulated data"]
@@ -25,7 +25,7 @@ class TestDataEngineer(object):
         dynamics = Dynamics.from_sample(model=SIRFModel)
         data = dynamics.simulate().reset_index()
         data.insert(0, "Model", SIRFModel.name())
-        engineer = DataEngineer(layers=["Model"], country=None, verbose=1)
+        engineer = DataEngineer(layers=["Model"], country=None)
         engineer.register(data, citations="Simulated data")
         engineer.inverse_transform()
         # Diff
@@ -70,7 +70,7 @@ class TestDataEngineer(object):
             engineer.variables_alias(alias="unknown")
 
     def test_resample_with_date_range(self):
-        eng = DataEngineer(layers=["Country"], country=["Country"], verbose=1)
+        eng = DataEngineer(layers=["Country"], country=["Country"])
         eng.download(databases=["wpp"])
         eng.clean(kinds=["resample"], date_range=("01Jan2022", "19Sep2022"))
         df = eng.all()

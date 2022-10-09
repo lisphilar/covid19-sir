@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import warnings
 from loguru import logger as loguru_logger
 
 
@@ -34,13 +35,23 @@ class _Config(object):
         )
         self._logger_level = level
 
-    def warning(self, message):
-        """Show warning.
+    def error(self, message):
+        """Logging raised exception.
 
         Args:
             message (str): message to show
         """
+        self._logger.error(message, exec_info=True)
+
+    def warning(self, message, category=None):
+        """Raise warning.
+
+        Args:
+            message (str): message to show
+            category (Warning or None): category of warning or None (DeprecationWarning)
+        """
         self._logger.warning(message)
+        warnings.warn("deprecated callable was used", category, stacklevel=2)
 
     def info(self, message):
         """Show information.
