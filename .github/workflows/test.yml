@@ -112,10 +112,12 @@ jobs:
   codeql:
     name: discover vulnerabilities with CodeQL
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
