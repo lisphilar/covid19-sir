@@ -20,7 +20,7 @@ from covsirphy.util.alias import Alias
 from covsirphy.util.filer import Filer
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
-from covsirphy.util.term import Term, Word
+from covsirphy.util.term import Term
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.visualization.line_plot import LinePlot, line_plot

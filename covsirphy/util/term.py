@@ -361,9 +361,3 @@ class Term(object):
             Refer to https://github.com/konstantinstadler/country_converter
         """
         return coco.CountryConverter().data
-
-
-class Word(Term):
-    @deprecate(old="Word()", new="Term()")
-    def __init__(self):
-        super().__init__()
