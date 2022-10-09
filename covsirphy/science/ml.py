@@ -18,11 +18,6 @@ class MLEngineer(Term):
 
     def __init__(self, seed=0, **kwargs):
         self._seed = Validator(seed, name="seed").int()
-        if "verbose" in kwargs:
-            verbose = kwargs.get("verbose", 2)
-            config.logger(level=verbose)
-            config.warning(
-                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
 
     def pca(self, X, n_components=0.95):
         """Perform PCA (principal component analysis) after standardization (Z-score normalization) with pca package.

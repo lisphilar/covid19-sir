@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import warnings
-from covsirphy.util.config import config
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -29,11 +28,6 @@ class DataDownloader(Term):
     def __init__(self, directory="input", update_interval=12, **kwargs):
         self._directory = directory
         self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
-        if "verbose" in kwargs:
-            verbose = kwargs.get("verbose", 2)
-            config.logger(level=verbose)
-            config.warning(
-                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
 
     def layer(self, country=None, province=None, databases=None):

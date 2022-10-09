@@ -6,7 +6,6 @@ from pathlib import Path
 import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
-from covsirphy.util.config import config
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -38,12 +37,6 @@ class GIS(Term):
         self._layers = Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence()
         # Date column
         self._date = str(date)
-        # Verbosity
-        if "verbose" in kwargs:
-            verbose = kwargs.get("verbose", 2)
-            config.logger(level=verbose)
-            config.warning(
-                f"Argument verbose was deprecated, please use covsirphy.config.logger(level={verbose}) instead.")
         # Layer adjuster
         self._adjuster = _LayerAdjuster(layers=self._layers, country=self._country, date=self._date)
         self._un_registered = True
