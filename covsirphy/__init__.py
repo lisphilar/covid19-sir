@@ -17,7 +17,6 @@ from covsirphy.util.error import DBLockedError, NotDBLockedError, NotNoneError, 
 from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundError, UnExecutedError, UnExpectedTypeError
 from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
 from covsirphy.util.alias import Alias
-from covsirphy.util.filer import save_dataframe
 from covsirphy.util.filer import Filer
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator

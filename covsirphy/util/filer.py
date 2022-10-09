@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from covsirphy.util.error import deprecate
 
 
 class Filer(object):
@@ -149,16 +148,3 @@ class Filer(object):
         """
         filename = self._register(title=title, ext="csv")
         return {"path_or_buf": filename, **kwargs}
-
-
-@deprecate("covsirphy.save_dataframe", version="2.17.0-eta")
-def save_dataframe(df, filename, index=True):
-    """
-    Save dataframe as a CSV file.
-
-    Args:
-        df (pd.DataFrame): the dataframe
-        filename (str or None): CSV filename
-        index (bool): if True, include index column.
-    """
-    df.to_csv(filename, index=index)
