@@ -18,7 +18,6 @@ from covsirphy.util.error import AlreadyCalledError, NotIncludedError, NAFoundEr
 from covsirphy.util.error import EmptyError, UnExpectedValueRangeError, UnExpectedValueError, NotSubclassError, UnExpectedLengthError
 from covsirphy.util.alias import Alias
 from covsirphy.util.filer import save_dataframe
-from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.validator import Validator
