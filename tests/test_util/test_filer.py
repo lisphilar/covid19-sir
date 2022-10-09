@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
-import pandas as pd
 import pytest
-from covsirphy import save_dataframe, Filer
+from covsirphy import Filer
 
 
 class TestFiler(object):
@@ -27,6 +25,3 @@ class TestFiler(object):
         assert len(filer.files(ext="json")) == 1
         assert len(filer.files(ext="geojson")) == 1
         assert len(filer.files(ext="csv")) == 1
-        # Save CSV file
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        save_dataframe(pd.DataFrame(), filename=None, index=False)
