@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import contextlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path

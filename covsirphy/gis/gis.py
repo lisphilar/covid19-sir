@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import contextlib
 from pathlib import Path
 import geopandas as gpd

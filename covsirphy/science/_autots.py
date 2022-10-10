@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from autots import AutoTS
 from autots.evaluator.auto_ts import fake_regressor
 from covsirphy.util.config import config

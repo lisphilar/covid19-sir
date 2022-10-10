@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.downloading._db import _DataBase

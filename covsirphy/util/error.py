@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from copy import deepcopy
 from covsirphy.util.config import config
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import sys
 import warnings
 from loguru import logger as loguru_logger

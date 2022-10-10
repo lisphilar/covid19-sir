@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
