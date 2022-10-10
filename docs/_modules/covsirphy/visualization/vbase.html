@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev0
+                3.0.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -107,10 +107,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.visualization.vbase</h1><div class="highlight"><pre>
-<span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span></span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
@@ -144,7 +141,7 @@
     <span class="n">enabled_nest</span> <span class="o">=</span> <span class="p">[</span>
         <span class="nb">list</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span>
     <span class="p">]</span>
-    <span class="n">enabled_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">enabled_nest</span><span class="p">,</span> <span class="nb">list</span><span class="p">()))</span>
+    <span class="n">enabled_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">enabled_nest</span><span class="p">,</span> <span class="p">[]))</span>
     <span class="n">enabled_set</span> <span class="o">=</span> <span class="n">enabled_set</span> <span class="o">-</span> <span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;cls&quot;</span><span class="p">}</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">enabled_set</span><span class="p">}</span></div>
 
