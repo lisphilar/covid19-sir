@@ -46,7 +46,6 @@ class _ChoroplethMap(VisualizeBase):
         # Color bar
         divider = make_axes_locatable(self._ax)
         cax = divider.append_axes("bottom", size="5%", pad=0.1)
-        # Arguments of plotting with GeoPandas
         plot_kwargs = {
             "legend": True,
             "cmap": "coolwarm",
@@ -56,9 +55,9 @@ class _ChoroplethMap(VisualizeBase):
                 "color": "lightgrey",
                 "edgecolor": "white",
                 "hatch": "///",
-            }
-        }
-        plot_kwargs.update(kwargs)
+            },
+        } | kwargs
+
         plot_kwargs["legend_kwds"] = {"orientation": "horizontal"}
         # Convert to log10 scale
         if logscale:
