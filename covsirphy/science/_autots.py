@@ -39,8 +39,8 @@ class _AutoTSHandler(Term):
             "random_seed": Validator(seed, name="seed").int(),
             "n_jobs": "auto",
             "verbose": config.logger_level,
+            **kwargs,
         }
-        autots_kwargs.update(kwargs)
         self._autots = AutoTS(**autots_kwargs)
         self._regressor_forecast = None
 
