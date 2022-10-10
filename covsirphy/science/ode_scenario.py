@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import contextlib
 from copy import deepcopy
 from datetime import timedelta

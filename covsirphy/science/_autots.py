@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
+import warnings
 from autots import AutoTS
 from autots.evaluator.auto_ts import fake_regressor
 from covsirphy.util.config import config
@@ -41,8 +39,8 @@ class _AutoTSHandler(Term):
             "random_seed": Validator(seed, name="seed").int(),
             "n_jobs": "auto",
             "verbose": config.logger_level,
+            **kwargs,
         }
-        autots_kwargs.update(kwargs)
         self._autots = AutoTS(**autots_kwargs)
         self._regressor_forecast = None
 
@@ -68,6 +66,7 @@ class _AutoTSHandler(Term):
                 aggfunc=self._autots.aggfunc,
                 verbose=self._autots.verbose,
             )
+        warnings.filterwarnings("ignore", category=FutureWarning)
         self._autots.fit(self._Y, future_regressor=None if X is None else regressor_train)
         return self
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta
 from functools import partial
 import math

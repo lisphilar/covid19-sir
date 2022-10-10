@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from covsirphy.util.validator import Validator
 from covsirphy.dynamics.ode import ODEModel

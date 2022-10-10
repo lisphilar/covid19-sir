@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from covsirphy.__version__ import __version__
 
 __citation__ = "Hirokazu Takaya and CovsirPhy Development Team (2020-2022), " \

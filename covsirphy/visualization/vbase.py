@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from inspect import signature
 import sys
 import matplotlib
@@ -35,7 +32,7 @@ def find_args(func_list, **kwargs):
     enabled_nest = [
         list(signature(func).parameters.keys()) for func in func_list
     ]
-    enabled_set = set(sum(enabled_nest, list()))
+    enabled_set = set(sum(enabled_nest, []))
     enabled_set = enabled_set - {"self", "cls"}
     return {k: v for (k, v) in kwargs.items() if k in enabled_set}
 

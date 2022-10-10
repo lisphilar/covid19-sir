@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from pca import pca
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from matplotlib import pyplot as plt
 import pandas as pd
 from covsirphy.util.error import UnExecutedError

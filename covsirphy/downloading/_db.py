@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 
 from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term
