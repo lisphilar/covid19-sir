@@ -1,3 +1,4 @@
+import warnings
 from autots import AutoTS
 from autots.evaluator.auto_ts import fake_regressor
 from covsirphy.util.config import config
@@ -65,6 +66,7 @@ class _AutoTSHandler(Term):
                 aggfunc=self._autots.aggfunc,
                 verbose=self._autots.verbose,
             )
+        warnings.filterwarnings("ignore", category=FutureWarning)
         self._autots.fit(self._Y, future_regressor=None if X is None else regressor_train)
         return self
 
