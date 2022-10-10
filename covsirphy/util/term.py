@@ -162,8 +162,11 @@ class Term(object):
         logging.basicConfig(level=logging.CRITICAL)
         warnings.simplefilter("ignore", FutureWarning)
         names = [name] if (isinstance(name, str) or name is None) else name
-        code_dict = {"UK": "GBR", None: cls.NA * 3, }
-        code_dict.update({elem: coco.convert(elem, to="ISO3", not_found=elem) for elem in set(names) - set(code_dict)})
+        excepted_dict = {"UK": "GBR", None: cls.NA * 3}
+        code_dict = {
+            elem: excepted_dict[elem] if elem in excepted_dict else coco.convert(elem, to="ISO3", not_found=elem)
+            for elem in set(names)
+        }
         return [code_dict[elem] for elem in names]
 
     def _country_information(self):
