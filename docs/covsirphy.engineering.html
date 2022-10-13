@@ -1,0 +1,754 @@
+<!-- Refer to https://stackoverflow.com/a/50495306 -->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy.engineering package &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="covsirphy.gis package" href="covsirphy.gis.html" />
+    <link rel="prev" title="covsirphy.dynamics package" href="covsirphy.dynamics.html" />
+<script type="text/javascript">
+    window.onload = function () {
+        string = document.body.innerHTML;
+        string = string.replace(/ package/g, '').replace(/ module/g, '');
+        document.body.innerHTML = string;
+    }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html">
+            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                3.0.0.dev2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_prediction.html">ODE parameter prediction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API references</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.engineering package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.engineering.engineer">covsirphy.engineering.engineer module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html">covsirphy.gis package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html">covsirphy.science package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contribution guideline</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="covsirphy.html">covsirphy package</a> &raquo;</li>
+      <li>covsirphy.engineering package</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="module-covsirphy.engineering">
+<span id="covsirphy-engineering-package"></span><h1>covsirphy.engineering package<a class="headerlink" href="#module-covsirphy.engineering" title="Permalink to this heading"></a></h1>
+<div class="section" id="module-covsirphy.engineering.engineer">
+<span id="covsirphy-engineering-engineer-module"></span><h2>covsirphy.engineering.engineer module<a class="headerlink" href="#module-covsirphy.engineering.engineer" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataEngineer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ISO3'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">Term</span></code></a></p>
+<p>Class for data engineering including loading, cleaning, transforming, complementing, EDA (explanatory data analysis).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layers</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of layers of geographic information or None ([“ISO3”, “Province”, “City”])</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – layer name of countries or None (countries are not included in the layers)</p></li>
+<li><p><strong>Raises</strong> – ValueError: &#64;layers has duplicates</p></li>
+<li><p><strong>Note</strong> – Country level data specified with &#64;country will be stored with ISO3 codes.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.add" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> (<em>str</em>) – columns to add</p></li>
+<li><p><strong>new</strong> (<em>str</em>) – column name of addition or None (f”{X1}+{X2}+{X3}…”)</p></li>
+<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.all">
+<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.all" title="Permalink to this definition"></a></dt>
+<dd><p>Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered yet</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Column</dt><dd><p>columns defined by &#64;layers of _DataEngineer()
+(pandas.Timestamp): observation dates defined by &#64;date of _DataEngineer()
+the other columns</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.assign">
+<span class="sig-name descname"><span class="pre">assign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.assign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.assign" title="Permalink to this definition"></a></dt>
+<dd><p>Assign a new column with pandas.DataFrame.assign().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – dict of {str: callable or pandas.Series}</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Refer to documentation of pandas.DataFrame.assign(), <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html">https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html</a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.choropleth">
+<span class="sig-name descname"><span class="pre">choropleth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Choropleth</span> <span class="pre">map'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'choropleth.jpg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_earth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.choropleth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.choropleth" title="Permalink to this definition"></a></dt>
+<dd><p>Create choropleth map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name to show</p></li>
+<li><p><strong>on</strong> (<em>str</em><em> or </em><em>None</em>) – the date, like 22Jan2020, or None (the last date of each location)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the map</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>logscale</strong> (<em>bool</em>) – whether convert the value to log10 scale values or not</p></li>
+<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>None</em>) – directory to save GeoJSON file of “Natural Earth” GitHub repository or None (the directory of GIS class script)</p></li>
+<li><p><strong>natural_earth</strong> (<em>str</em><em> or </em><em>None</em>) – title of GeoJSON file(without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of the following classes and methods.
+- matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
+- pandas.DataFrame.plot()</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.layer().</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>GeoJSON files are listed in <a class="reference external" href="https://github.com/nvkelso/natural-earth-vector/tree/master/geojson">https://github.com/nvkelso/natural-earth-vector/tree/master/geojson</a>
+<a class="reference external" href="https://www.naturalearthdata.com/">https://www.naturalearthdata.com/</a>
+<a class="reference external" href="https://github.com/nvkelso/natural-earth-vector">https://github.com/nvkelso/natural-earth-vector</a>
+Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.citations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.citations" title="Permalink to this definition"></a></dt>
+<dd><p>Return citation list of the secondary data sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>citation list</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kinds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.clean" title="Permalink to this definition"></a></dt>
+<dd><p>Clean all registered data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kinds</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – kinds of data cleaning with order or None (all available kinds as follows)
+- “convert_date”: Convert dtype of date column to pandas.Timestamp.
+- “resample”: Resample records with dates.
+- “fillna”: Fill NA values with ‘-‘ (layers) and the previous values and 0.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of data cleaning refer to note</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For “convert_date”, keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not” can be used.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For “resample”, <cite>date_range=&lt;tuple of (str or None, str or None) or None&gt;)</cite> can be applied as keyword arguments to set the range.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.diff">
+<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_diff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.diff" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate daily new cases with “f(x&gt;0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column</strong> (<em>str</em>) – column name of the cumulative numbers</p></li>
+<li><p><strong>suffix</strong> (<em>str</em>) – suffix if the column (new column name will be ‘{column}{suffix}’)</p></li>
+<li><p><strong>freq</strong> (<em>str</em>) – offset aliases of shifting dates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding &#64;freq, refer to <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the alias of values</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.div">
+<span class="sig-name descname"><span class="pre">div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numerator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denominator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.div" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numerator</strong> (<em>str</em>) – numerator column</p></li>
+<li><p><strong>denominator</strong> (<em>str</em>) – denominator column</p></li>
+<li><p><strong>new</strong> (<em>str</em><em> or </em><em>None</em>) – column name of floating division or None (f”{numerator}_per_({denominator.replace(‘ ‘, ‘_’)})”)</p></li>
+<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Positive rate could be calculated with Confirmed / Tested, <cite>.div(numerator=”Confirmed”, denominator=”Tested”, new=”Positive_rate”)</cite></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.download">
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download datasets from the recommended data servers using covsirphy.DataDownloader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.inverse_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Perform inverse transformation, calculating total population and confirmed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Population = Susceptible + Confirmed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Confirmed = Infected + Fatal + Recovered.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.layer">
+<span class="sig-name descname"><span class="pre">layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.layer" title="Permalink to this definition"></a></dt>
+<dd><p>Return the data at the selected layer in the date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – &#64; geo has un - expected types</p></li>
+<li><p><strong>ValueError</strong> – the length of &#64; geo is larger than the length of layers</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered at the layer yet</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>(str): columns defined by covsirphy.GIS(layers)</p></li>
+<li><p>Date(pandas.Timestamp): observation dates</p></li>
+<li><p>columns defined by &#64; variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that records with NAs as country names will be always removed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.layer().</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.mul">
+<span class="sig-name descname"><span class="pre">mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.mul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.mul" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 <a href="#id1"><span class="problematic" id="id2">*</span></a>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> (<em>str</em>) – columns to multiply</p></li>
+<li><p><strong>new</strong> (<em>str</em>) – column name of multiplication or None (f”{X1}*{X2}*{X3}…”)</p></li>
+<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.recovery_period">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recovery_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.recovery_period"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.recovery_period" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate mode value of recovery period of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>data for calculation
+Index</p>
+<blockquote>
+<div><p>Date(pandas.Timestamp): observation dates</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><p>Confirmed(int): the number of confirmed cases, optional
+Fatal(int): the number of fatal cases, optional
+Recovered(int): the number of recovered cases, optional
+the other columns will be ignored</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mode value of recovery period[days]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.register" title="Permalink to this definition"></a></dt>
+<dd><p>Register new data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>new data
+Index</p>
+<blockquote>
+<div><p>reset index</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><p>columns defined by covsirphy.DataEngineer(layer)
+Date (pandas.DataFrame): observation dates
+Population (int): total population, optional
+Tests (int): column of the number of tests, optional
+Confirmed (int): the number of confirmed cases, optional
+Fatal (int): the number of fatal cases, optional
+Recovered (int): the number of recovered cases, optional
+the other columns will be also registered</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>citations</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – citations of the dataset or None ([“my own dataset”])</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.sub">
+<span class="sig-name descname"><span class="pre">sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minuend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtrahend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.sub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.sub" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minuend</strong> (<em>str</em>) – numerator column</p></li>
+<li><p><strong>subtrahend</strong> (<em>str</em>) – subtrahend column</p></li>
+<li><p><strong>new</strong> (<em>str</em>) – column name of subtraction or None (f”{minuend}-{subtrahend}”)</p></li>
+<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.subset">
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complement</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.subset" title="Permalink to this definition"></a></dt>
+<dd><p>Return subset of the location and date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to filter or None (total at the top level)</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>complement</strong> (<em>bool</em>) – whether perform data complement or not, True as default</p></li>
+<li><p><strong>**Kwargs</strong> – keyword arguments for complement and default values
+recovery_period(int): expected value of recovery period[days], 17
+interval(int): expected update interval of the number of recovered cases[days], 2
+max_ignored(int): Max number of recovered cases to be ignored[cases], 100
+max_ending_unupdated(int): Max number of days to apply full complement, where max recovered cases are not updated[days], 14
+upper_limit_days(int): maximum number of valid partial recovery periods[days], 90
+lower_limit_days(int): minimum number of valid partial recovery periods[days], 7
+upper_percentage(float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5
+lower_percentage(float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>Date(pandas.DataFrame): observation dates</p>
+</dd>
+<dt>Columns</dt><dd><p>Population(int): total population
+Tests(int): column of the number of tests
+Confirmed(int): the number of confirmed cases
+Fatal(int): the number of fatal cases
+Recovered(int): the number of recovered cases
+the other columns registered</p>
+</dd>
+</dl>
+</dd>
+<dt>str: status code: will be selected from</dt><dd><ul class="simple">
+<li><p>’’ (not complemented)</p></li>
+<li><p>’monotonic increasing complemented confirmed data’</p></li>
+<li><p>’monotonic increasing complemented fatal data’</p></li>
+<li><p>’monotonic increasing complemented recovered data’</p></li>
+<li><p>’fully complemented recovered data’</p></li>
+<li><p>’partially complemented recovered data’</p></li>
+</ul>
+</dd>
+<dt>dict[str, bool]: status for each complement type, keys are</dt><dd><ul class="simple">
+<li><p>Monotonic_confirmed</p></li>
+<li><p>Monotonic_fatal</p></li>
+<li><p>Monotonic_recovered</p></li>
+<li><p>Full_recovered</p></li>
+<li><p>Partial_recovered</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, str, dict)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding &#64; geo argument, please refer to covsirphy.GIS.subset().</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Re - calculation of Susceptible and Infected will be done automatically.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.subset_alias">
+<span class="sig-name descname"><span class="pre">subset_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.subset_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.subset_alias" title="Permalink to this definition"></a></dt>
+<dd><p>Set / get / list - up alias name(s) of subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
+<li><p><strong>update</strong> (<em>bool</em>) – force updating the alias when &#64; alias is not None</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.DataEngineer().subset()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>tuple(pandas.DataFrame, str, dict): when &#64; alias is not None, the subset of the alias</p></li>
+<li><p>dict[str, tuple(pandas.DataFrame, str, dict)]: when &#64; alias is None, dictionary of aliases and subsets</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the alias name was a new one, subset will be registered with covsirphy.DataEngineer.subset(<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs).</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Transform all registered data, calculating the number of susceptible and infected cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>covsirphy.DataEngineer</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Susceptible = Population - Confirmed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Infected = Confirmed - Fatal - Recovered.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.engineering.engineer.DataEngineer.variables_alias">
+<span class="sig-name descname"><span class="pre">variables_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/engineering/engineer.html#DataEngineer.variables_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.engineering.engineer.DataEngineer.variables_alias" title="Permalink to this definition"></a></dt>
+<dd><p>Set / get / list - up alias name(s) of variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to register with the alias</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotIncludedError" title="covsirphy.util.error.NotIncludedError"><strong>NotIncludedError</strong></a> – the alias is not None and un - registered</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>list[str]: when &#64; alias is not None, the variables of the alias</p></li>
+<li><p>dict[str, list[str]]: when &#64; alias is None, dictionary of aliases and variables</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[str] or dict[str, list[str]]</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64; variables is not None, alias will be registered / updated.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some aliases are preset. We can check them with covsirphy.DataEngineer().variables_alias().</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="covsirphy.dynamics.html" class="btn btn-neutral float-left" title="covsirphy.dynamics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="covsirphy.gis.html" class="btn btn-neutral float-right" title="covsirphy.gis package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020-2022, Hirokazu Takaya and CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

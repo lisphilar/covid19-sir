@@ -45,7 +45,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.0
+                3.0.0.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,6 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../covsirphy.html">covsirphy</a> &raquo;</li>
       <li>covsirphy.gis.gis</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -106,15 +107,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.gis.gis</h1><div class="highlight"><pre>
-<span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="kn">import</span> <span class="nn">contextlib</span>
+<span></span><span class="kn">import</span> <span class="nn">contextlib</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
@@ -124,7 +121,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.gis._choropleth</span> <span class="kn">import</span> <span class="n">_ChoroplethMap</span>
 
 
-<div class="viewcode-block" id="GIS"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS">[docs]</a><span class="k">class</span> <span class="nc">GIS</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS">[docs]</a><span class="k">class</span> <span class="nc">GIS</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class of geographic information system to handle geo-spatial time-series data.</span>
 
 <span class="sd">    Args:</span>
@@ -146,17 +143,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">layers</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITY</span><span class="p">],</span> <span class="s2">&quot;layers&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">()</span>
         <span class="c1"># Date column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
-        <span class="c1"># Verbosity</span>
-        <span class="k">if</span> <span class="s2">&quot;verbose&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Argument verbose was deprecated, please use covsirphy.config.logger(level=</span><span class="si">{</span><span class="n">verbose</span><span class="si">}</span><span class="s2">) instead.&quot;</span><span class="p">)</span>
         <span class="c1"># Layer adjuster</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span> <span class="o">=</span> <span class="n">_LayerAdjuster</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="GIS.all"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.all"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return all available data.</span>
 
 <span class="sd">        Args:</span>
@@ -180,7 +171,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="GIS.citations"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.citations"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return citation list of the secondary data sources.</span>
 
@@ -192,7 +183,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjuster</span><span class="o">.</span><span class="n">citations</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GIS.register"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.register"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Register new data.</span>
 
 <span class="sd">        Args:</span>
@@ -222,7 +213,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_un_registered</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="GIS.layer"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.layer"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the data at the selected layer in the date range.</span>
 
 <span class="sd">        Args:</span>
@@ -286,7 +277,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="GIS.to_geopandas"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.to_geopandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_geopandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.to_geopandas"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.to_geopandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_geopandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add geometry information with GeoJSON file of &quot;Natural Earth&quot; GitHub repository to data.</span>
 
 <span class="sd">        Args:</span>
@@ -330,7 +321,7 @@
         <span class="n">iso3</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">focused_layer</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">to_geopandas</span><span class="p">(</span><span class="n">iso3</span><span class="o">=</span><span class="n">iso3</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="n">natural_earth</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">focused_layer</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GIS.choropleth"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.choropleth">[docs]</a>    <span class="k">def</span> <span class="nf">choropleth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map&quot;</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.choropleth"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.choropleth">[docs]</a>    <span class="k">def</span> <span class="nf">choropleth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map&quot;</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create choropleth map.</span>
 
 <span class="sd">        Args:</span>
@@ -351,7 +342,7 @@
             <span class="n">cm</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
             <span class="n">cm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gdf</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="n">logscale</span><span class="p">,</span> <span class="o">**</span><span class="n">v</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="GIS.subset"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GIS.subset"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return subset of the location and date range.</span>
 
 <span class="sd">        Args:</span>
@@ -427,7 +418,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="GIS.area_name"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.GIS.area_name">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GIS.area_name"><a class="viewcode-back" href="../../../covsirphy.gis.html#covsirphy.gis.gis.GIS.area_name">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">area_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return area name of the geographic information, like &#39;Japan&#39;, &#39;Tokyo/Japan&#39;, &#39;Japan_UK&#39;, &#39;the world&#39;.</span>

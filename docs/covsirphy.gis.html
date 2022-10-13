@@ -1,0 +1,520 @@
+<!-- Refer to https://stackoverflow.com/a/50495306 -->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>covsirphy.gis package &mdash; CovsirPhy  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="covsirphy.science package" href="covsirphy.science.html" />
+    <link rel="prev" title="covsirphy.engineering package" href="covsirphy.engineering.html" />
+<script type="text/javascript">
+    window.onload = function () {
+        string = document.body.innerHTML;
+        string = string.replace(/ package/g, '').replace(/ module/g, '');
+        document.body.innerHTML = string;
+    }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html">
+            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                3.0.0.dev2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown/INSTALLATION.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_data_preparation.html">Data preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_data_engineering.html">Data engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_ode.html">SIR-derived ODE models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_phase_dependent.html">Phase-dependent SIR models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_scenario_analysis.html">Scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_prediction.html">ODE parameter prediction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API references</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html">covsirphy.engineering package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.gis package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.gis.gis">covsirphy.gis.gis module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html">covsirphy.science package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contribution guideline</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="covsirphy.html">covsirphy package</a> &raquo;</li>
+      <li>covsirphy.gis package</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="module-covsirphy.gis">
+<span id="covsirphy-gis-package"></span><h1>covsirphy.gis package<a class="headerlink" href="#module-covsirphy.gis" title="Permalink to this heading"></a></h1>
+<div class="section" id="module-covsirphy.gis.gis">
+<span id="covsirphy-gis-gis-module"></span><h2>covsirphy.gis.gis module<a class="headerlink" href="#module-covsirphy.gis.gis" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ISO3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Date'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">Term</span></code></a></p>
+<p>Class of geographic information system to handle geo-spatial time-series data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layers</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of layers of geographic information or None ([“ISO3”, “Province”, “City”])</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – layer name of countries or None (countries are not included in the layers)</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – column name of observation dates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – &#64;layers has duplicates</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Country level data specified with &#64;country will be stored with ISO3 codes.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.all">
+<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.all" title="Permalink to this definition"></a></dt>
+<dd><p>Return all available data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to collect or None (all available variables)</p></li>
+<li><p><strong>errors</strong> (<em>str</em>) – ‘raise’ or ‘coerce’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered yet</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>(pandas.Category): columns defined by covsirphy.GIS(layers)</p></li>
+<li><p>(pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</p></li>
+<li><p>columns defined by &#64;variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.area_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">area_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.area_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.area_name" title="Permalink to this definition"></a></dt>
+<dd><p>Return area name of the geographic information, like ‘Japan’, ‘Tokyo/Japan’, ‘Japan_UK’, ‘the world’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>area name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.choropleth">
+<span class="sig-name descname"><span class="pre">choropleth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Choropleth</span> <span class="pre">map'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.choropleth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.choropleth" title="Permalink to this definition"></a></dt>
+<dd><p>Create choropleth map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<em>str</em>) – variable name to show</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the map</p></li>
+<li><p><strong>logscale</strong> (<em>bool</em>) – whether convert the value to log10 scale values or not</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the following classes and methods.
+- covsirphy.GIS.to_geopandas() except for &#64;variables,
+- matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
+- pandas.DataFrame.plot()</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.citations">
+<span class="sig-name descname"><span class="pre">citations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.citations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.citations" title="Permalink to this definition"></a></dt>
+<dd><p>Return citation list of the secondary data sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to collect or None (all available variables)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>citation list</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.layer">
+<span class="sig-name descname"><span class="pre">layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.layer" title="Permalink to this definition"></a></dt>
+<dd><p>Return the data at the selected layer in the date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>errors</strong> (<em>str</em>) – whether raise errors or not, ‘raise’ or ‘coerce’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – &#64;geo has un-expected types</p></li>
+<li><p><strong>ValueError</strong> – the length of &#64;geo is larger than the length of layers</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered at the layer yet</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>(str): columns defined by covsirphy.GIS(layers)</p></li>
+<li><p>(pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</p></li>
+<li><p>columns defined by &#64;variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that records with NAs as country names will be always removed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=None</cite> or <cite>geo=(None,)</cite>, returns country-level data, assuming we have country/province/city as layers here.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”,)</cite> or <cite>geo=”Japan”</cite>, returns province-level data in Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=([“Japan”, “UK”],)</cite>, returns province-level data in Japan and UK.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”, “Kanagawa”)</cite>, returns city-level data in Kanagawa/Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”, [“Tokyo”, “Kanagawa”])</cite>, returns city-level data in Tokyo/Japan and Kanagawa/Japan.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Date'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_iso3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.register" title="Permalink to this definition"></a></dt>
+<dd><p>Register new data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>new data
+Index</p>
+<blockquote>
+<div><p>reset index</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><ul>
+<li><p>columns defined by &#64;layers</p></li>
+<li><p>column defined by &#64;date</p></li>
+<li><p>columns defined by &#64;variables</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>layers</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – layers of the data or None (as the same as covsirphy.GIS(layer))</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – column name of observation dates of the data</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>citations</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – citations of the dataset or None ([“my own dataset”])</p></li>
+<li><p><strong>convert_iso3</strong> (<em>bool</em>) – whether convert country names to ISO3 codes or not</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – &#64;data_layers has duplicates</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>covsirphy.GIS</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.subset">
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.subset" title="Permalink to this definition"></a></dt>
+<dd><p>Return subset of the location and date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to filter or None (total at the top level)</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>errors</strong> (<em>str</em>) – whether raise errors or not, ‘raise’ or ‘coerce’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – &#64;geo has un-expected types</p></li>
+<li><p><strong>ValueError</strong> – the length of &#64;geo is larger than the length of layers</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered yet</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.SubsetNotFoundError" title="covsirphy.util.error.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the country and &#64;errors is ‘raise’</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>(pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</p></li>
+<li><p>columns defined by &#64;variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that records with NAs as country names will be always removed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=None</cite> or <cite>geo=(None,)</cite>, returns global scale records (total values of all country-level data), assuming we have country/province/city as layers here.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”,)</cite> or <cite>geo=”Japan”</cite>, returns country-level data in Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=([“Japan”, “UK”],)</cite>, returns country-level data of Japan and UK.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”, “Tokyo”)</cite>, returns province-level data of Tokyo/Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”, [“Tokyo”, “Kanagawa”])</cite>, returns total values of province-level data of Tokyo/Japan and Kanagawa/Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=(“Japan”, “Kanagawa”, “Yokohama”)</cite>, returns city-level data of Yokohama/Kanagawa/Japan.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>geo=((“Japan”, “Kanagawa”, [“Yokohama”, “Kawasaki”])</cite>, returns total values of city-level data of Yokohama/Kanagawa/Japan and Kawasaki/Kanagawa/Japan.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.gis.gis.GIS.to_geopandas">
+<span class="sig-name descname"><span class="pre">to_geopandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_earth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/gis/gis.html#GIS.to_geopandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.gis.gis.GIS.to_geopandas" title="Permalink to this definition"></a></dt>
+<dd><p>Add geometry information with GeoJSON file of “Natural Earth” GitHub repository to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>on</strong> (<em>str</em><em> or </em><em>None</em>) – the date, like 22Jan2020, or None (the last date of each location)</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>directory</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em>) – top directory name(s) to save GeoJSON files or None (directory of this this script)</p></li>
+<li><p><strong>natural_earth</strong> (<em>str</em><em> or </em><em>None</em>) – title of GeoJSON file (without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – country layer is not included in the dataset</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><ul class="simple">
+<li><p>reset index</p></li>
+</ul>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>(str): layer focused on with &#64;gis and GIS.layer()</p></li>
+<li><p>(pandas.Timestamp): observation dates, column defined by covsirphy.GIS(date)</p></li>
+<li><p>geometry: geometric information</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding &#64;geo argument, please refer to covsirphy.GIS.layer().</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>GeoJSON files are listed in <a class="reference external" href="https://github.com/nvkelso/natural-earth-vector/tree/master/geojson">https://github.com/nvkelso/natural-earth-vector/tree/master/geojson</a>
+<a class="reference external" href="https://www.naturalearthdata.com/">https://www.naturalearthdata.com/</a>
+<a class="reference external" href="https://github.com/nvkelso/natural-earth-vector">https://github.com/nvkelso/natural-earth-vector</a>
+Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="covsirphy.engineering.html" class="btn btn-neutral float-left" title="covsirphy.engineering package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="covsirphy.science.html" class="btn btn-neutral float-right" title="covsirphy.science package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020-2022, Hirokazu Takaya and CovsirPhy Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
