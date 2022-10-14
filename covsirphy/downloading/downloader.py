@@ -1,3 +1,6 @@
+from __future__ import annotations
+from pathlib import Path
+import pandas as pd
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -12,33 +15,33 @@ class DataDownloader(Term):
     """Class to download datasets from the recommended data servers.
 
     Args:
-        directory (str or pathlib.Path): directory to save downloaded datasets
-        update_interval (int): update interval of downloading dataset
+        directory: directory to save downloaded datasets
+        update_interval: update interval of downloading dataset
 
     Note:
         Location layers are fixed to ["ISO3", "Province", "City"]
     """
     LAYERS = [Term.ISO3, Term.PROVINCE, Term.CITY]
 
-    def __init__(self, directory="input", update_interval=12, **kwargs):
+    def __init__(self, directory: str or Path = "input", update_interval: int = 12, **kwargs) -> None:
         self._directory = directory
         self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
 
-    def layer(self, country=None, province=None, databases=None):
+    def layer(self, country: str | None = None, province: str | None = None, databases: list[str] | None = None) -> pd.DataFrame:
         """Return the data at the selected layer.
 
         Args:
-            country (str or None): country name or None
-            province (str or None): province/state/prefecture name or None
-            databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).
+            country: country name or None
+            province: province/state/prefecture name or None
+            databases: databases to use or None (japan, covid19dh, owid).
                 "japan": COVID-19 Dataset in Japan,
                 "covid19dh": COVID-19 Data Hub,
                 "owid": Our World In Data,
                 "wpp": World Population Prospects by United nations.
 
         Returns:
-            pandas.DataFrame:
+            dataframe:
                 Index
                     reset index
                 Columns
@@ -103,14 +106,14 @@ class DataDownloader(Term):
         except NotRegisteredError:
             raise SubsetNotFoundError(geo=(country, province)) from None
 
-    def citations(self, variables=None):
+    def citations(self, variables: list[str] | None = None) -> list[str]:
         """
         Return citation list of the data sources.
 
         Args:
-            variables (list[str] or None): list of variables to collect or None (all available variables)
+            variables: list of variables to collect or None (all available variables)
 
         Returns:
-            list[str]: citation list
+            citations
         """
         return self._gis.citations(variables=variables)
