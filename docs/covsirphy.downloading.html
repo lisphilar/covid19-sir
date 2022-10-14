@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -74,8 +75,13 @@
 <p class="caption" role="heading"><span class="caption-text">API references</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_citation"><code class="docutils literal notranslate"><span class="pre">get_citation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.downloading package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.downloading.downloader">covsirphy.downloading.downloader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.downloading.downloader">covsirphy.downloading.downloader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.downloading.downloader.DataDownloader"><code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
@@ -155,14 +161,14 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – directory to save downloaded datasets</p></li>
-<li><p><strong>update_interval</strong> (<em>int</em>) – update interval of downloading dataset</p></li>
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – directory to save downloaded datasets</p></li>
+<li><p><strong>update_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – update interval of downloading dataset</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Location layers are fixed to [“ISO3”, “Province”, “City”]</p>
+<p>Location layers are fixed to [‘ISO3’, ‘Province’, ‘City’].</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.downloading.downloader.DataDownloader.LAYERS">
@@ -175,13 +181,13 @@
 <dd><p>Return citation list of the data sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to collect or None (all available variables)</p>
+<dd class="field-odd"><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – list of variables to collect or None (all available variables)</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>citation list</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>]</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[str]</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>citations</p>
 </dd>
 </dl>
 </dd></dl>
@@ -193,67 +199,67 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None</p></li>
-<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province/state/prefecture name or None</p></li>
-<li><p><strong>databases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – databases to use or None (japan, covid19dh, google, owid).
-“japan”: COVID-19 Dataset in Japan,
-“covid19dh”: COVID-19 Data Hub,
-“owid”: Our World In Data,
-“wpp”: World Population Prospects by United nations.</p></li>
+<li><p><strong>country</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – country name or None</p></li>
+<li><p><strong>province</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – province/state/prefecture name or None</p></li>
+<li><p><strong>databases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – <p>databases to use or None (japan, covid19dh, owid).
+Candidates are as follows.</p>
+<ul>
+<li><p>”japan”: COVID-19 Dataset in Japan,</p></li>
+<li><p>”covid19dh”: COVID-19 Data Hub,</p></li>
+<li><p>”owid”: Our World In Data,</p></li>
+<li><p>”wpp”: World Population Prospects by United nations.</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
 </dd>
-<dt>Columns</dt><dd><p>Date (pandas.Timestamp): observation date
-ISO3 (str): country names
-Province (str): province/state/prefecture names
-City (str): city names
-Country (str): country names (top level administration)
-Province (str): province names (2nd level administration)
-ISO3 (str): ISO3 codes
-Confirmed (pandas.Int64): the number of confirmed cases
-Fatal (pandas.Int64): the number of fatal cases
-Recovered (pandas.Int64): the number of recovered cases
-Population (pandas.Int64): population values
-Tests (pandas.Int64): the number of tests
-Product (pandas.Int64): vaccine product names
-Vaccinations (pandas.Int64): cumulative number of vaccinations
-Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations
-Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose
-Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol
-School_closing
-Workplace_closing
-Cancel_events
-Gatherings_restrictions
-Transport_closing
-Stay_home_restrictions
-Internal_movement_restrictions
-International_movement_restrictions
-Information_campaigns
-Testing_policy
-Contact_tracing
-Stringency_index</p>
-</dd>
-</dl>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A dataframe with reset index and the following columns.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Date (pandas.Timestamp): observation date</p></li>
+<li><p>ISO3 (str): country names</p></li>
+<li><p>Province (str): province/state/prefecture names</p></li>
+<li><p>City (str): city names</p></li>
+<li><p>Country (str): country names (the top level administration)</p></li>
+<li><p>Province (str): province names (the 2nd level administration)</p></li>
+<li><p>ISO3 (str): ISO3 codes</p></li>
+<li><p>Confirmed (pandas.Int64): the number of confirmed cases</p></li>
+<li><p>Fatal (pandas.Int64): the number of fatal cases</p></li>
+<li><p>Recovered (pandas.Int64): the number of recovered cases</p></li>
+<li><p>Population (pandas.Int64): population values</p></li>
+<li><p>Tests (pandas.Int64): the number of tests</p></li>
+<li><p>Product (pandas.Int64): vaccine product names</p></li>
+<li><p>Vaccinations (pandas.Int64): cumulative number of vaccinations</p></li>
+<li><p>Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations</p></li>
+<li><p>Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol</p></li>
+<li><p>School_closing</p></li>
+<li><p>Workplace_closing</p></li>
+<li><p>Cancel_events</p></li>
+<li><p>Gatherings_restrictions</p></li>
+<li><p>Transport_closing</p></li>
+<li><p>Stay_home_restrictions</p></li>
+<li><p>Internal_movement_restrictions</p></li>
+<li><p>International_movement_restrictions</p></li>
+<li><p>Information_campaigns</p></li>
+<li><p>Testing_policy</p></li>
+<li><p>Contact_tracing</p></li>
+<li><p>Stringency_index</p></li>
+</ul>
+</div></blockquote>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When &#64;country is None, country-level data will be returned.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When &#64;country is a string and &#64;province is None, province-level data in the country will be returned.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When &#64;country and &#64;province are strings, city-level data in the province will be returned.</p>
+<ul class="simple">
+<li><p>When &#64;country is None, country-level data will be returned.</p></li>
+<li><p>When &#64;country is a string and &#64;province is None, province-level data in the country will be returned.</p></li>
+<li><p>When &#64;country and &#64;province are strings, city-level data in the province will be returned.</p></li>
+</ul>
 </div>
 </dd></dl>
 

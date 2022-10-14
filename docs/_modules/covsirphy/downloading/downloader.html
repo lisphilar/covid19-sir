@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -107,7 +108,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.downloading.downloader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.gis.gis</span> <span class="kn">import</span> <span class="n">GIS</span>
@@ -121,74 +125,70 @@
     <span class="sd">&quot;&quot;&quot;Class to download datasets from the recommended data servers.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        directory (str or pathlib.Path): directory to save downloaded datasets</span>
-<span class="sd">        update_interval (int): update interval of downloading dataset</span>
+<span class="sd">        directory: directory to save downloaded datasets</span>
+<span class="sd">        update_interval: update interval of downloading dataset</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        Location layers are fixed to [&quot;ISO3&quot;, &quot;Province&quot;, &quot;City&quot;]</span>
+<span class="sd">        Location layers are fixed to [&#39;ISO3&#39;, &#39;Province&#39;, &#39;City&#39;].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LAYERS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Term</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">CITY</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="ow">or</span> <span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="n">directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">update_interval</span><span class="p">,</span> <span class="s2">&quot;update_interval&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAYERS</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DataDownloader.layer"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataDownloader.layer"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the data at the selected layer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            country (str or None): country name or None</span>
-<span class="sd">            province (str or None): province/state/prefecture name or None</span>
-<span class="sd">            databases (list[str] or None): databases to use or None (japan, covid19dh, google, owid).</span>
-<span class="sd">                &quot;japan&quot;: COVID-19 Dataset in Japan,</span>
-<span class="sd">                &quot;covid19dh&quot;: COVID-19 Data Hub,</span>
-<span class="sd">                &quot;owid&quot;: Our World In Data,</span>
-<span class="sd">                &quot;wpp&quot;: World Population Prospects by United nations.</span>
+<span class="sd">            country: country name or None</span>
+<span class="sd">            province: province/state/prefecture name or None</span>
+<span class="sd">            databases: databases to use or None (japan, covid19dh, owid).</span>
+<span class="sd">                Candidates are as follows.</span>
+
+<span class="sd">                - &quot;japan&quot;: COVID-19 Dataset in Japan,</span>
+<span class="sd">                - &quot;covid19dh&quot;: COVID-19 Data Hub,</span>
+<span class="sd">                - &quot;owid&quot;: Our World In Data,</span>
+<span class="sd">                - &quot;wpp&quot;: World Population Prospects by United nations.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    Date (pandas.Timestamp): observation date</span>
-<span class="sd">                    ISO3 (str): country names</span>
-<span class="sd">                    Province (str): province/state/prefecture names</span>
-<span class="sd">                    City (str): city names</span>
-<span class="sd">                    Country (str): country names (top level administration)</span>
-<span class="sd">                    Province (str): province names (2nd level administration)</span>
-<span class="sd">                    ISO3 (str): ISO3 codes</span>
-<span class="sd">                    Confirmed (pandas.Int64): the number of confirmed cases</span>
-<span class="sd">                    Fatal (pandas.Int64): the number of fatal cases</span>
-<span class="sd">                    Recovered (pandas.Int64): the number of recovered cases</span>
-<span class="sd">                    Population (pandas.Int64): population values</span>
-<span class="sd">                    Tests (pandas.Int64): the number of tests</span>
-<span class="sd">                    Product (pandas.Int64): vaccine product names</span>
-<span class="sd">                    Vaccinations (pandas.Int64): cumulative number of vaccinations</span>
-<span class="sd">                    Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations</span>
-<span class="sd">                    Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose</span>
-<span class="sd">                    Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol</span>
-<span class="sd">                    School_closing</span>
-<span class="sd">                    Workplace_closing</span>
-<span class="sd">                    Cancel_events</span>
-<span class="sd">                    Gatherings_restrictions</span>
-<span class="sd">                    Transport_closing</span>
-<span class="sd">                    Stay_home_restrictions</span>
-<span class="sd">                    Internal_movement_restrictions</span>
-<span class="sd">                    International_movement_restrictions</span>
-<span class="sd">                    Information_campaigns</span>
-<span class="sd">                    Testing_policy</span>
-<span class="sd">                    Contact_tracing</span>
-<span class="sd">                    Stringency_index</span>
+<span class="sd">            A dataframe with reset index and the following columns.</span>
+
+<span class="sd">                - Date (pandas.Timestamp): observation date</span>
+<span class="sd">                - ISO3 (str): country names</span>
+<span class="sd">                - Province (str): province/state/prefecture names</span>
+<span class="sd">                - City (str): city names</span>
+<span class="sd">                - Country (str): country names (the top level administration)</span>
+<span class="sd">                - Province (str): province names (the 2nd level administration)</span>
+<span class="sd">                - ISO3 (str): ISO3 codes</span>
+<span class="sd">                - Confirmed (pandas.Int64): the number of confirmed cases</span>
+<span class="sd">                - Fatal (pandas.Int64): the number of fatal cases</span>
+<span class="sd">                - Recovered (pandas.Int64): the number of recovered cases</span>
+<span class="sd">                - Population (pandas.Int64): population values</span>
+<span class="sd">                - Tests (pandas.Int64): the number of tests</span>
+<span class="sd">                - Product (pandas.Int64): vaccine product names</span>
+<span class="sd">                - Vaccinations (pandas.Int64): cumulative number of vaccinations</span>
+<span class="sd">                - Vaccinations_boosters (pandas.Int64): cumulative number of booster vaccinations</span>
+<span class="sd">                - Vaccinated_once (pandas.Int64): cumulative number of people who received at least one vaccine dose</span>
+<span class="sd">                - Vaccinated_full (pandas.Int64): cumulative number of people who received all doses prescribed by the protocol</span>
+<span class="sd">                - School_closing</span>
+<span class="sd">                - Workplace_closing</span>
+<span class="sd">                - Cancel_events</span>
+<span class="sd">                - Gatherings_restrictions</span>
+<span class="sd">                - Transport_closing</span>
+<span class="sd">                - Stay_home_restrictions</span>
+<span class="sd">                - Internal_movement_restrictions</span>
+<span class="sd">                - International_movement_restrictions</span>
+<span class="sd">                - Information_campaigns</span>
+<span class="sd">                - Testing_policy</span>
+<span class="sd">                - Contact_tracing</span>
+<span class="sd">                - Stringency_index</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            When @country is None, country-level data will be returned.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            When @country is a string and @province is None, province-level data in the country will be returned.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            When @country and @province are strings, city-level data in the province will be returned.</span>
+<span class="sd">            - When @country is None, country-level data will be returned.</span>
+<span class="sd">            - When @country is a string and @province is None, province-level data in the country will be returned.</span>
+<span class="sd">            - When @country and @province are strings, city-level data in the province will be returned.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">db_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;japan&quot;</span><span class="p">:</span> <span class="n">_CSJapan</span><span class="p">,</span>
@@ -212,15 +212,15 @@
         <span class="k">except</span> <span class="n">NotRegisteredError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
-<div class="viewcode-block" id="DataDownloader.citations"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataDownloader.citations"><a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return citation list of the data sources.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or None): list of variables to collect or None (all available variables)</span>
+<span class="sd">            variables: list of variables to collect or None (all available variables)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list[str]: citation list</span>
+<span class="sd">            citations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">citations</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span></div></div>
 </pre></div>

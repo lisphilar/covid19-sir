@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -74,10 +75,15 @@
 <p class="caption" role="heading"><span class="caption-text">API references</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_citation"><code class="docutils literal notranslate"><span class="pre">get_citation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.engineering package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.engineering.engineer">covsirphy.engineering.engineer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.engineering.engineer">covsirphy.engineering.engineer module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.engineering.engineer.DataEngineer"><code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html">covsirphy.gis package</a></li>
@@ -155,8 +161,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>layers</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of layers of geographic information or None ([“ISO3”, “Province”, “City”])</p></li>
-<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – layer name of countries or None (countries are not included in the layers)</p></li>
+<li><p><strong>layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – list of layers of geographic information or None ([“ISO3”, “Province”, “City”])</p></li>
+<li><p><strong>country</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – layer name of countries or None (countries are not included in the layers)</p></li>
 <li><p><strong>Raises</strong> – ValueError: &#64;layers has duplicates</p></li>
 <li><p><strong>Note</strong> – Country level data specified with &#64;country will be stored with ISO3 codes.</p></li>
 </ul>
@@ -169,16 +175,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>columns</strong> (<em>str</em>) – columns to add</p></li>
-<li><p><strong>new</strong> (<em>str</em>) – column name of addition or None (f”{X1}+{X2}+{X3}…”)</p></li>
-<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – columns to add</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – column name of addition or None (f”{X1}+{X2}+{X3}…”)</p></li>
+<li><p><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – value to fill in NAs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -189,13 +192,14 @@
 <dd><p>Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
+<dd class="field-odd"><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered yet</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Column</dt><dd><p>columns defined by &#64;layers of _DataEngineer()
@@ -204,9 +208,6 @@ the other columns</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -233,14 +234,14 @@ the other columns</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
-<li><p><strong>variable</strong> (<em>str</em>) – variable name to show</p></li>
-<li><p><strong>on</strong> (<em>str</em><em> or </em><em>None</em>) – the date, like 22Jan2020, or None (the last date of each location)</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – title of the map</p></li>
-<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
-<li><p><strong>logscale</strong> (<em>bool</em>) – whether convert the value to log10 scale values or not</p></li>
-<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>None</em>) – directory to save GeoJSON file of “Natural Earth” GitHub repository or None (the directory of GIS class script)</p></li>
-<li><p><strong>natural_earth</strong> (<em>str</em><em> or </em><em>None</em>) – title of GeoJSON file(without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
+<li><p><strong>geo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – variable name to show</p></li>
+<li><p><strong>on</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – the date, like 22Jan2020, or None (the last date of each location)</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the map</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>logscale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether convert the value to log10 scale values or not</p></li>
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – directory to save GeoJSON file of “Natural Earth” GitHub repository or None (the directory of GIS class script)</p></li>
+<li><p><strong>natural_earth</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – title of GeoJSON file(without extension) of “Natural Earth” GitHub repository or None (automatically determined)</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of the following classes and methods.
 - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and
 - pandas.DataFrame.plot()</p></li>
@@ -266,13 +267,10 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dd><p>Return citation list of the secondary data sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
+<dd class="field-odd"><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – list of variables to collect or alias or None (all available variables)</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>citation list</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[str]</p>
+<dd class="field-even"><p><em>list[str]</em> – citation list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -284,7 +282,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kinds</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – kinds of data cleaning with order or None (all available kinds as follows)
+<li><p><strong>kinds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – kinds of data cleaning with order or None (all available kinds as follows)
 - “convert_date”: Convert dtype of date column to pandas.Timestamp.
 - “resample”: Resample records with dates.
 - “fillna”: Fill NA values with ‘-‘ (layers) and the previous values and 0.</p></li>
@@ -292,10 +290,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -315,16 +310,13 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>column</strong> (<em>str</em>) – column name of the cumulative numbers</p></li>
-<li><p><strong>suffix</strong> (<em>str</em>) – suffix if the column (new column name will be ‘{column}{suffix}’)</p></li>
-<li><p><strong>freq</strong> (<em>str</em>) – offset aliases of shifting dates</p></li>
+<li><p><strong>column</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – column name of the cumulative numbers</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – suffix if the column (new column name will be ‘{column}{suffix}’)</p></li>
+<li><p><strong>freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – offset aliases of shifting dates</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -344,17 +336,14 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>numerator</strong> (<em>str</em>) – numerator column</p></li>
-<li><p><strong>denominator</strong> (<em>str</em>) – denominator column</p></li>
-<li><p><strong>new</strong> (<em>str</em><em> or </em><em>None</em>) – column name of floating division or None (f”{numerator}_per_({denominator.replace(‘ ‘, ‘_’)})”)</p></li>
-<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+<li><p><strong>numerator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – numerator column</p></li>
+<li><p><strong>denominator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – denominator column</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – column name of floating division or None (f”{numerator}_per_({denominator.replace(‘ ‘, ‘_’)})”)</p></li>
+<li><p><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – value to fill in NAs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -372,10 +361,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -386,10 +372,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dd><p>Perform inverse transformation, calculating total population and confirmed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.DataEngineer</p>
+<dd class="field-odd"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -409,21 +392,22 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>geo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – location names to specify the layer or None (the top level)</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – &#64; geo has un - expected types</p></li>
-<li><p><strong>ValueError</strong> – the length of &#64; geo is larger than the length of layers</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.10)"><strong>TypeError</strong></a> – &#64; geo has un - expected types</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – the length of &#64; geo is larger than the length of layers</p></li>
 <li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError" title="covsirphy.util.error.NotRegisteredError"><strong>NotRegisteredError</strong></a> – No records have been registered at the layer yet</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -434,9 +418,6 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -456,16 +437,13 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>columns</strong> (<em>str</em>) – columns to multiply</p></li>
-<li><p><strong>new</strong> (<em>str</em>) – column name of multiplication or None (f”{X1}*{X2}*{X3}…”)</p></li>
-<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – columns to multiply</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – column name of multiplication or None (f”{X1}*{X2}*{X3}…”)</p></li>
+<li><p><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – value to fill in NAs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -476,7 +454,7 @@ Natural Earth (Free vector and raster map data at naturalearthdata.com, Public D
 <dd><p>Calculate mode value of recovery period of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>data for calculation
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <p>data for calculation
 Index</p>
 <blockquote>
 <div><p>Date(pandas.Timestamp): observation dates</p>
@@ -491,10 +469,7 @@ the other columns will be ignored</p>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mode value of recovery period[days]</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-even"><p><em>int</em> – mode value of recovery period[days]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -506,7 +481,7 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>new data
+<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <p>new data
 Index</p>
 <blockquote>
 <div><p>reset index</p>
@@ -523,15 +498,12 @@ the other columns will be also registered</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>citations</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em><em> or </em><em>None</em>) – citations of the dataset or None ([“my own dataset”])</p></li>
+<li><p><strong>citations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – citations of the dataset or None ([“my own dataset”])</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not”</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -543,17 +515,14 @@ the other columns will be also registered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>minuend</strong> (<em>str</em>) – numerator column</p></li>
-<li><p><strong>subtrahend</strong> (<em>str</em>) – subtrahend column</p></li>
-<li><p><strong>new</strong> (<em>str</em>) – column name of subtraction or None (f”{minuend}-{subtrahend}”)</p></li>
-<li><p><strong>fill_value</strong> (<em>float</em>) – value to fill in NAs</p></li>
+<li><p><strong>minuend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – numerator column</p></li>
+<li><p><strong>subtrahend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – subtrahend column</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – column name of subtraction or None (f”{minuend}-{subtrahend}”)</p></li>
+<li><p><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – value to fill in NAs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.DataEngineer</p>
+<dd class="field-even"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -565,11 +534,11 @@ the other columns will be also registered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to filter or None (total at the top level)</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
-<li><p><strong>complement</strong> (<em>bool</em>) – whether perform data complement or not, True as default</p></li>
+<li><p><strong>geo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – location names to filter or None (total at the top level)</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – list of variables to add or None (all available columns)</p></li>
+<li><p><strong>complement</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether perform data complement or not, True as default</p></li>
 <li><p><strong>**Kwargs</strong> – keyword arguments for complement and default values
 recovery_period(int): expected value of recovery period[days], 17
 interval(int): expected update interval of the number of recovered cases[days], 2
@@ -582,7 +551,8 @@ lower_percentage(float): fraction of partial recovery periods with value less th
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dd class="field-even"><p><p><em>tuple(pandas.DataFrame, str, dict)</em> –</p>
+<dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Date(pandas.DataFrame): observation dates</p>
 </dd>
@@ -615,9 +585,6 @@ the other columns registered</p>
 </dl>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(pandas.DataFrame, str, dict)</p>
-</dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -636,20 +603,14 @@ the other columns registered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
-<li><p><strong>update</strong> (<em>bool</em>) – force updating the alias when &#64; alias is not None</p></li>
+<li><p><strong>alias</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
+<li><p><strong>update</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – force updating the alias when &#64; alias is not None</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.DataEngineer().subset()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>tuple(pandas.DataFrame, str, dict): when &#64; alias is not None, the subset of the alias</p></li>
-<li><p>dict[str, tuple(pandas.DataFrame, str, dict)]: when &#64; alias is None, dictionary of aliases and subsets</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]</p>
+<dd class="field-even"><p><em>tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]</em> –     - tuple(pandas.DataFrame, str, dict): when &#64; alias is not None, the subset of the alias
+- dict[str, tuple(pandas.DataFrame, str, dict)]: when &#64; alias is None, dictionary of aliases and subsets</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -664,10 +625,7 @@ the other columns registered</p>
 <dd><p>Transform all registered data, calculating the number of susceptible and infected cases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.DataEngineer</p>
+<dd class="field-odd"><p><em>covsirphy.DataEngineer</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -687,22 +645,16 @@ the other columns registered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alias</strong> (<em>str</em><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
-<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to register with the alias</p></li>
+<li><p><strong>alias</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – alias name or None (list - up alias names)</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>]</em>) – variables to register with the alias</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotIncludedError" title="covsirphy.util.error.NotIncludedError"><strong>NotIncludedError</strong></a> – the alias is not None and un - registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>list[str]: when &#64; alias is not None, the variables of the alias</p></li>
-<li><p>dict[str, list[str]]: when &#64; alias is None, dictionary of aliases and variables</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[str] or dict[str, list[str]]</p>
+<dd class="field-odd"><p><em>list[str] or dict[str, list[str]]</em> –     - list[str]: when &#64; alias is not None, the variables of the alias
+- dict[str, list[str]]: when &#64; alias is None, dictionary of aliases and variables</p>
 </dd>
 </dl>
 <div class="admonition note">

@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -74,20 +75,60 @@
 <p class="caption" role="heading"><span class="caption-text">API references</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_citation"><code class="docutils literal notranslate"><span class="pre">get_citation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html">covsirphy.engineering package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html">covsirphy.gis package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html">covsirphy.science package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.util package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.alias">covsirphy.util.alias module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.alias">covsirphy.util.alias module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.alias.Alias"><code class="docutils literal notranslate"><span class="pre">Alias</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.config">covsirphy.util.config module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.error">covsirphy.util.error module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.evaluator">covsirphy.util.evaluator module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.filer">covsirphy.util.filer module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.term">covsirphy.util.term module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.validator">covsirphy.util.validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.error">covsirphy.util.error module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.EmptyError"><code class="docutils literal notranslate"><span class="pre">EmptyError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.ExperimentalWarning"><code class="docutils literal notranslate"><span class="pre">ExperimentalWarning</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NAFoundError"><code class="docutils literal notranslate"><span class="pre">NAFoundError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NotEnoughDataError"><code class="docutils literal notranslate"><span class="pre">NotEnoughDataError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NotIncludedError"><code class="docutils literal notranslate"><span class="pre">NotIncludedError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NotNoneError"><code class="docutils literal notranslate"><span class="pre">NotNoneError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NotRegisteredError"><code class="docutils literal notranslate"><span class="pre">NotRegisteredError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.NotSubclassError"><code class="docutils literal notranslate"><span class="pre">NotSubclassError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.ScenarioNotFoundError"><code class="docutils literal notranslate"><span class="pre">ScenarioNotFoundError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.SubsetNotFoundError"><code class="docutils literal notranslate"><span class="pre">SubsetNotFoundError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExecutedError"><code class="docutils literal notranslate"><span class="pre">UnExecutedError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExpectedLengthError"><code class="docutils literal notranslate"><span class="pre">UnExpectedLengthError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExpectedNoneError"><code class="docutils literal notranslate"><span class="pre">UnExpectedNoneError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExpectedTypeError"><code class="docutils literal notranslate"><span class="pre">UnExpectedTypeError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExpectedValueError"><code class="docutils literal notranslate"><span class="pre">UnExpectedValueError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.UnExpectedValueRangeError"><code class="docutils literal notranslate"><span class="pre">UnExpectedValueRangeError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.deprecate"><code class="docutils literal notranslate"><span class="pre">deprecate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.error.experimental"><code class="docutils literal notranslate"><span class="pre">experimental()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.evaluator">covsirphy.util.evaluator module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.evaluator.Evaluator"><code class="docutils literal notranslate"><span class="pre">Evaluator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.filer">covsirphy.util.filer module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.filer.Filer"><code class="docutils literal notranslate"><span class="pre">Filer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.stopwatch.StopWatch"><code class="docutils literal notranslate"><span class="pre">StopWatch</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.term">covsirphy.util.term module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.term.Term"><code class="docutils literal notranslate"><span class="pre">Term</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.util.validator">covsirphy.util.validator module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.util.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
@@ -161,7 +202,7 @@
 <p>Remember and parse aliases, just like defaultdict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>target_class</strong> (<em>object</em>) – class of targets or None (all objects)</p>
+<dd class="field-odd"><p><strong>target_class</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – class of targets or None (all objects)</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -170,10 +211,7 @@
 <dd><p>List up all targets of aliases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>object}</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict of {str</p>
+<dd class="field-odd"><p><em>dict of {str</em> – object}</p>
 </dd>
 </dl>
 </dd></dl>
@@ -184,16 +222,13 @@
 <dd><p>Delete alias.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – alias name</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias name</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>KeyError</strong> – the alias has not been registered as an alias</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.10)"><strong>KeyError</strong></a> – the alias has not been registered as an alias</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.Alias</p>
+<dd class="field-odd"><p><em>covsirphy.Alias</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -205,15 +240,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – alias name</p></li>
-<li><p><strong>default</strong> (<em>object</em>) – default value when not found</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias name</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – default value when not found</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>target or default value</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>object</p>
+<dd class="field-even"><p><em>object</em> – target or default value</p>
 </dd>
 </dl>
 </dd></dl>
@@ -231,15 +263,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – alias name</p></li>
-<li><p><strong>targets</strong> (<em>object</em>) – target to link with the name</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias name</p></li>
+<li><p><strong>targets</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – target to link with the name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.Alias</p>
+<dd class="field-even"><p><em>covsirphy.Alias</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -260,8 +289,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -270,7 +299,7 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="covsirphy.util.error.ExperimentalWarning">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExperimentalWarning</span></span><a class="reference internal" href="_modules/covsirphy/util/error.html#ExperimentalWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.error.ExperimentalWarning" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Warning" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></a></p>
 <p>Class to explain the method/function is experimental and its name,
 features and arguments may changed later.</p>
 </dd></dl>
@@ -283,9 +312,9 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>value</strong> (<em>str</em><em> or </em><em>None</em>) – value of the target</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – value of the target</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -299,10 +328,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>value</strong> (<em>str</em>) – value of the target</p></li>
-<li><p><strong>required_n</strong> (<em>int</em>) – required number of records</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – value of the target</p></li>
+<li><p><strong>required_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – required number of records</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -316,9 +345,9 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key_name</strong> (<em>str</em>) – key name</p></li>
-<li><p><strong>container_name</strong> (<em>str</em>) – name of the container</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>key_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – key name</p></li>
+<li><p><strong>container_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the container</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -332,9 +361,9 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>value</strong> (<em>str</em>) – value of the target</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – value of the target</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -355,10 +384,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>target</strong> (<em>object</em>) – target object</p></li>
-<li><p><strong>parent</strong> (<em>object</em>) – expected parent class</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – target object</p></li>
+<li><p><strong>parent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – expected parent class</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -372,8 +401,8 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -387,14 +416,14 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – location names to filter or None</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>country_alias</strong> (<em>str</em><em> or </em><em>None</em>) – country name used in the dataset</p></li>
-<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – specified date, like 22Jan2020</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>geo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – location names to filter or None</p></li>
+<li><p><strong>country</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – country name</p></li>
+<li><p><strong>country_alias</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – country name used in the dataset</p></li>
+<li><p><strong>province</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – specified date, like 22Jan2020</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -408,8 +437,8 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – method name to run in advance</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – method name to run in advance</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -423,10 +452,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – argument name</p></li>
-<li><p><strong>value</strong> (<em>object</em>) – value user applied</p></li>
-<li><p><strong>length</strong> (<em>int</em>) – length of the sequence</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – argument name</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – value user applied</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – length of the sequence</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -440,8 +469,8 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -455,10 +484,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>target</strong> (<em>object</em>) – target object</p></li>
-<li><p><strong>expected</strong> (<em>object</em>) – expected type</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – target object</p></li>
+<li><p><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – expected type</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -472,10 +501,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – argument name</p></li>
-<li><p><strong>value</strong> (<em>object</em>) – value user applied</p></li>
-<li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>object</em><em>]</em>) – candidates of the argument</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – argument name</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – value user applied</p></li>
+<li><p><strong>candidates</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>]</em>) – candidates of the argument</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -489,10 +518,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the target</p></li>
-<li><p><strong>target</strong> (<em>object</em>) – target object</p></li>
-<li><p><strong>value_range</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>None</em><em>, </em><em>int</em><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
-<li><p><strong>details</strong> (<em>str</em><em> or </em><em>None</em>) – details of error</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target</p></li>
+<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – target object</p></li>
+<li><p><strong>value_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
+<li><p><strong>details</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – details of error</p></li>
 </ul>
 </dd>
 </dl>
@@ -505,10 +534,10 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>old</strong> (<em>str</em>) – description of the old method/function</p></li>
-<li><p><strong>new</strong> (<em>str</em><em> or </em><em>None</em>) – description of the new method/function</p></li>
-<li><p><strong>version</strong> (<em>str</em><em> or </em><em>None</em>) – version number, like 2.7.3-alpha</p></li>
-<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – reference URL of the new method/function</p></li>
+<li><p><strong>old</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – description of the old method/function</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – description of the new method/function</p></li>
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – version number, like 2.7.3-alpha</p></li>
+<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – reference URL of the new method/function</p></li>
 </ul>
 </dd>
 </dl>
@@ -521,8 +550,8 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – description of the method/function</p></li>
-<li><p><strong>version</strong> (<em>str</em>) – version number, like 2.7.3-alpha</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – description of the method/function</p></li>
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – version number, like 2.7.3-alpha</p></li>
 </ul>
 </dd>
 </dl>
@@ -534,15 +563,15 @@ features and arguments may changed later.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.util.evaluator.Evaluator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Evaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inner'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Evaluate residual errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>y_true</strong> (<em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – correct target values</p></li>
-<li><p><strong>y_pred</strong> (<em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – estimated target values</p></li>
-<li><p><strong>how</strong> (<em>str</em>) – “all” (use all records) or “inner” (intersection will be used)</p></li>
-<li><p><strong>on</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – column names to join on or None (join on index)</p></li>
+<li><p><strong>y_true</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.0)"><em>pandas.Series</em></a>) – correct target values</p></li>
+<li><p><strong>y_pred</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.0)"><em>pandas.Series</em></a>) – estimated target values</p></li>
+<li><p><strong>how</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – “all” (use all records) or “inner” (intersection will be used)</p></li>
+<li><p><strong>on</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – column names to join on or None (join on index)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -561,15 +590,12 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>candidate_dict</strong> (<em>dict</em><em>[</em><em>object</em><em>, </em><em>float</em><em>]</em>) – scores of candidates</p></li>
+<li><p><strong>candidate_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em>) – scores of candidates</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of Evaluator.smaller_is_better()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the best one and its score</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(object, float)</p>
+<dd class="field-even"><p><em>tuple(object, float)</em> – the best one and its score</p>
 </dd>
 </dl>
 </dd></dl>
@@ -580,10 +606,7 @@ features and arguments may changed later.</p>
 <dd><p>Return the list of metric names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of metric names</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[str]</p>
+<dd class="field-odd"><p><em>list[str]</em> – list of metric names</p>
 </dd>
 </dl>
 </dd></dl>
@@ -595,21 +618,18 @@ features and arguments may changed later.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> (<em>str</em><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
-<li><p><strong>metrics</strong> (<em>str</em>) – alias of &#64;metric</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
+<li><p><strong>metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias of &#64;metric</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#covsirphy.util.error.UnExpectedValueError" title="covsirphy.util.error.UnExpectedValueError"><strong>UnExpectedValueError</strong></a> – un-expected metric was applied</p></li>
-<li><p><strong>ValueError</strong> – ME was selected as metric when the targets have multiple columns</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – ME was selected as metric when the targets have multiple columns</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>score with the metric</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>float</p>
+<dd class="field-odd"><p><em>float</em> – score with the metric</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -636,15 +656,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> (<em>str</em><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
-<li><p><strong>metrics</strong> (<em>str</em>) – alias of &#64;metric</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
+<li><p><strong>metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias of &#64;metric</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>whether smaller value is better or not</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
+<dd class="field-even"><p><em>bool</em> – whether smaller value is better or not</p>
 </dd>
 </dl>
 </dd></dl>
@@ -657,15 +674,15 @@ R2: the coefficient of determination</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.util.filer.Filer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Filer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Produce filenames and manage files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>directory</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em>) – top directory name(s)</p></li>
-<li><p><strong>prefix</strong> (<em>str</em><em> or </em><em>None</em>) – prefix of the filenames or None (no prefix)</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em> or </em><em>None</em>) – suffix of the filenames or None (no suffix)</p></li>
-<li><p><strong>numbering</strong> (<em>str</em><em> or </em><em>None</em>) – “001”, “01”, “1” or None (no numbering)</p></li>
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – top directory name(s)</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – prefix of the filenames or None (no prefix)</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – suffix of the filenames or None (no suffix)</p></li>
+<li><p><strong>numbering</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – “001”, “01”, “1” or None (no numbering)</p></li>
 </ul>
 </dd>
 </dl>
@@ -691,15 +708,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the filename, like ‘records’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>absolute filename (key: ‘path_or_buf’) and kwargs</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict[str, str]</p>
+<dd class="field-even"><p><em>dict[str, str]</em> – absolute filename (key: ‘path_or_buf’) and kwargs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -710,13 +724,10 @@ R2: the coefficient of determination</p>
 <dd><p>List-up filenames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ext</strong> (<em>str</em><em> or </em><em>None</em>) – file extension or None (all)</p>
+<dd class="field-odd"><p><strong>ext</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – file extension or None (all)</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of files</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[str]</p>
+<dd class="field-even"><p><em>list[str]</em> – list of files</p>
 </dd>
 </dl>
 </dd></dl>
@@ -728,15 +739,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the filename, like ‘records’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict[str, str]</p>
+<dd class="field-even"><p><em>dict[str, str]</em> – absolute filename (key: ‘filename’) and kwargs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -748,15 +756,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the filename, like ‘records’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict[str, str]</p>
+<dd class="field-even"><p><em>dict[str, str]</em> – absolute filename (key: ‘filename’) and kwargs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -768,15 +773,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the filename, like ‘records’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict[str, str]</p>
+<dd class="field-even"><p><em>dict[str, str]</em> – absolute filename (key: ‘filename’) and kwargs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -788,15 +790,12 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – title of the filename, like ‘records’</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict[str, str]</p>
+<dd class="field-even"><p><em>dict[str, str]</em> – absolute filename (key: ‘filename’) and kwargs</p>
 </dd>
 </dl>
 </dd></dl>
@@ -809,7 +808,7 @@ R2: the coefficient of determination</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.util.stopwatch.StopWatch">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StopWatch</span></span><a class="reference internal" href="_modules/covsirphy/util/stopwatch.html#StopWatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.stopwatch.StopWatch" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Calculate elapsed time.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.util.stopwatch.StopWatch.show">
@@ -817,13 +816,10 @@ R2: the coefficient of determination</p>
 <dd><p>Show the elapsed time as string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time_sec</strong> (<em>int</em>) – time [sec]</p>
+<dd class="field-odd"><p><strong>time_sec</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – time [sec]</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>eg. ‘1 min 30 sec’</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-even"><p><em>str</em> – eg. ‘1 min 30 sec’</p>
 </dd>
 </dl>
 </dd></dl>
@@ -834,10 +830,7 @@ R2: the coefficient of determination</p>
 <dd><p>Stop.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>elapsed time [sec]</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
+<dd class="field-odd"><p><em>int</em> – elapsed time [sec]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -848,10 +841,7 @@ R2: the coefficient of determination</p>
 <dd><p>Stop and show time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>eg. ‘1 min 30 sec’</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
+<dd class="field-odd"><p><em>str</em> – eg. ‘1 min 30 sec’</p>
 </dd>
 </dl>
 </dd></dl>
@@ -864,7 +854,7 @@ R2: the coefficient of determination</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.util.term.Term">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Term</span></span><a class="reference internal" href="_modules/covsirphy/util/term.html#Term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.term.Term" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Term definition.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.util.term.Term.A">
@@ -1202,7 +1192,7 @@ R2: the coefficient of determination</p>
 <dd><p>Convert numbers to 1st, 2nd etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>num</strong> (<em>int</em>) – number</p>
+<dd class="field-odd"><p><strong>num</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>str</p>
@@ -1217,8 +1207,8 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>string</strong> (<em>str</em>) – like 1st, 2nd, 3rd,…</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of the string</p></li>
+<li><p><strong>string</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – like 1st, 2nd, 3rd,…</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the string</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1235,14 +1225,14 @@ R2: the coefficient of determination</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="covsirphy.util.validator.Validator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accept_none</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/validator.html#Validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.validator.Validator" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Validate objects and arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<em>object</em>) – target object to validate</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of the target shown in error code</p></li>
-<li><p><strong>accept_none</strong> (<em>str</em>) – whether accept None as the target value or not</p></li>
+<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – target object to validate</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the target shown in error code</p></li>
+<li><p><strong>accept_none</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – whether accept None as the target value or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1260,9 +1250,9 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time_index</strong> (<em>bool</em>) – if True, the dataframe must has DatetimeIndex</p></li>
-<li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – the columns the dataframe must have</p></li>
-<li><p><strong>empty_ok</strong> (<em>bool</em>) – whether give permission to empty dataframe or not</p></li>
+<li><p><strong>time_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if True, the dataframe must has DatetimeIndex</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – the columns the dataframe must have</p></li>
+<li><p><strong>empty_ok</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether give permission to empty dataframe or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1273,10 +1263,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the target itself</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
+<dd class="field-odd"><p><em>pandas.DataFrame</em> – the target itself</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1288,8 +1275,8 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value_range</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>None</em><em>, </em><em>int</em><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
-<li><p><strong>default</strong> (<em>pandas.Timestamp</em><em> or </em><em>None</em>) – default value when the target is None</p></li>
+<li><p><strong>value_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – default value when the target is None</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1299,10 +1286,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>converted date or None (when both of the target and &#64;default are None)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.Timestamp or None</p>
+<dd class="field-odd"><p><em>pandas.Timestamp or None</em> – converted date or None (when both of the target and &#64;default are None)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1314,9 +1298,9 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>default</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – default values, when the target is None or key is not included in the target</p></li>
-<li><p><strong>required_keys</strong> (<em>list</em>) – keys which must be included</p></li>
-<li><p><strong>errors</strong> (<em>str</em>) – “coerce” or “raise”</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>] or </em><em>None</em>) – default values, when the target is None or key is not included in the target</p></li>
+<li><p><strong>required_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – keys which must be included</p></li>
+<li><p><strong>errors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – “coerce” or “raise”</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1326,10 +1310,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the target is self with default values and required keys</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict[str, object]</p>
+<dd class="field-odd"><p><em>dict[str, object]</em> – the target is self with default values and required keys</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1349,9 +1330,9 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value_range</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>None</em><em>, </em><em>int</em><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
-<li><p><strong>default</strong> (<em>float</em><em> or </em><em>None</em>) – default value when the target is None</p></li>
-<li><p><strong>digits</strong> (<em>int</em><em> or </em><em>None</em>) – effective digits or None (skip rounding)</p></li>
+<li><p><strong>value_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><em>None</em>) – default value when the target is None</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits or None (skip rounding)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1361,10 +1342,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>converted float value or None (when both of the target and &#64;default are None)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>float or None</p>
+<dd class="field-odd"><p><em>float or None</em> – converted float value or None (when both of the target and &#64;default are None)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1375,16 +1353,13 @@ R2: the coefficient of determination</p>
 <dd><p>Ensure that the target is an instance of a specified class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>expected</strong> (<em>object</em>) – expected class or sequence of expected classes</p>
+<dd class="field-odd"><p><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – expected class or sequence of expected classes</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="#covsirphy.util.error.UnExpectedTypeError" title="covsirphy.util.error.UnExpectedTypeError"><strong>UnExpectedTypeError</strong></a> – the target is not an instance of the class</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the target itself</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>object</p>
+<dd class="field-odd"><p><em>object</em> – the target itself</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1396,9 +1371,9 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value_range</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>None</em><em>, </em><em>int</em><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
-<li><p><strong>default</strong> (<em>int</em><em> or </em><em>None</em>) – default value when the target is None</p></li>
-<li><p><strong>round_ok</strong> (<em>bool</em>) – whether ignore round-off error</p></li>
+<li><p><strong>value_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em><em>)</em>) – value range, None means un-specified</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – default value when the target is None</p></li>
+<li><p><strong>round_ok</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether ignore round-off error</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1408,10 +1383,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>converted float value or None (when both of the target and &#64;default are None)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int or None</p>
+<dd class="field-odd"><p><em>int or None</em> – converted float value or None (when both of the target and &#64;default are None)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1423,18 +1395,15 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>functions</strong> (<em>list</em><em>[</em><em>function</em><em>] or </em><em>function</em>) – target functions</p></li>
-<li><p><strong>default</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – default values, when the target is None or key is not included in the target</p></li>
+<li><p><strong>functions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><em>function</em><em>] or </em><em>function</em>) – target functions</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>] or </em><em>None</em>) – default values, when the target is None or key is not included in the target</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="#covsirphy.util.error.UnExpectedTypeError" title="covsirphy.util.error.UnExpectedTypeError"><strong>UnExpectedTypeError</strong></a> – the target is not a dictionary</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>keyword arguments of the functions</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict[str, object]</p>
+<dd class="field-odd"><p><em>dict[str, object]</em> – keyword arguments of the functions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1446,11 +1415,11 @@ R2: the coefficient of determination</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>default</strong> (<em>list</em><em>[</em><em>object</em><em>] or </em><em>None</em>) – default value when the target is None</p></li>
-<li><p><strong>flatten</strong> (<em>bool</em>) – whether flatten the sequence or not</p></li>
-<li><p><strong>unique</strong> (<em>bool</em>) – whether remove duplicated values or not, the first value will remain</p></li>
-<li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>object</em><em>] or </em><em>tuple</em><em>(</em><em>object</em><em>) or </em><em>iter</em><em> or </em><em>None</em>) – list of candidates or None (no limitations)</p></li>
-<li><p><strong>length</strong> (<em>int</em><em> or </em><em>None</em>) – length of the sequence or None (no limitations)</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>] or </em><em>None</em>) – default value when the target is None</p></li>
+<li><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether flatten the sequence or not</p></li>
+<li><p><strong>unique</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether remove duplicated values or not, the first value will remain</p></li>
+<li><p><strong>candidates</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>) or </em><em>iter</em><em> or </em><em>None</em>) – list of candidates or None (no limitations)</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – length of the sequence or None (no limitations)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1461,10 +1430,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>converted list or None (when both of the target and &#64;default are None)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[object] or None</p>
+<dd class="field-odd"><p><em>list[object] or None</em> – converted list or None (when both of the target and &#64;default are None)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1475,16 +1441,13 @@ R2: the coefficient of determination</p>
 <dd><p>Ensure the target is a subclass of the parent class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parent</strong> (<em>object</em>) – parent class or sequence of parent classes</p>
+<dd class="field-odd"><p><strong>parent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a>) – parent class or sequence of parent classes</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="#covsirphy.util.error.NotSubclassError" title="covsirphy.util.error.NotSubclassError"><strong>NotSubclassError</strong></a> – the target is not the subclass</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the target itself</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>object</p>
+<dd class="field-odd"><p><em>object</em> – the target itself</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1495,7 +1458,7 @@ R2: the coefficient of determination</p>
 <dd><p>Validate the value can be used as tau value [min].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>default</strong> (<em>int</em><em> or </em><em>None</em>) – default value when the target is None</p>
+<dd class="field-odd"><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – default value when the target is None</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
@@ -1504,10 +1467,7 @@ R2: the coefficient of determination</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>converted float value or None (when both of the target and &#64;default are None)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int or None</p>
+<dd class="field-odd"><p><em>int or None</em> – converted float value or None (when both of the target and &#64;default are None)</p>
 </dd>
 </dl>
 </dd></dl>

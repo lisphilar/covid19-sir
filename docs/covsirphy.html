@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -74,6 +75,8 @@
 <p class="caption" role="heading"><span class="caption-text">API references</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">covsirphy package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#covsirphy.get_citation"><code class="docutils literal notranslate"><span class="pre">get_citation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#covsirphy.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html">covsirphy.engineering package</a></li>
@@ -166,48 +169,400 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html#module-covsirphy.downloading.downloader">covsirphy.downloading.downloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html#module-covsirphy.downloading.downloader">covsirphy.downloading.downloader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader"><code class="docutils literal notranslate"><span class="pre">DataDownloader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.LAYERS"><code class="docutils literal notranslate"><span class="pre">DataDownloader.LAYERS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.citations"><code class="docutils literal notranslate"><span class="pre">DataDownloader.citations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.layer"><code class="docutils literal notranslate"><span class="pre">DataDownloader.layer()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.dynamics">covsirphy.dynamics.dynamics module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.ode">covsirphy.dynamics.ode module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sewirf">covsirphy.dynamics.sewirf module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sir">covsirphy.dynamics.sir module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sird">covsirphy.dynamics.sird module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sirf">covsirphy.dynamics.sirf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.dynamics">covsirphy.dynamics.dynamics module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics"><code class="docutils literal notranslate"><span class="pre">Dynamics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.detect"><code class="docutils literal notranslate"><span class="pre">Dynamics.detect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate"><code class="docutils literal notranslate"><span class="pre">Dynamics.estimate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_params"><code class="docutils literal notranslate"><span class="pre">Dynamics.estimate_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_tau"><code class="docutils literal notranslate"><span class="pre">Dynamics.estimate_tau()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.evaluate"><code class="docutils literal notranslate"><span class="pre">Dynamics.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_data"><code class="docutils literal notranslate"><span class="pre">Dynamics.from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_sample"><code class="docutils literal notranslate"><span class="pre">Dynamics.from_sample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.model"><code class="docutils literal notranslate"><span class="pre">Dynamics.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.model_name"><code class="docutils literal notranslate"><span class="pre">Dynamics.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.name"><code class="docutils literal notranslate"><span class="pre">Dynamics.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_days"><code class="docutils literal notranslate"><span class="pre">Dynamics.parse_days()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_phases"><code class="docutils literal notranslate"><span class="pre">Dynamics.parse_phases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.register"><code class="docutils literal notranslate"><span class="pre">Dynamics.register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.segment"><code class="docutils literal notranslate"><span class="pre">Dynamics.segment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.simulate"><code class="docutils literal notranslate"><span class="pre">Dynamics.simulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.start_dates"><code class="docutils literal notranslate"><span class="pre">Dynamics.start_dates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.summary"><code class="docutils literal notranslate"><span class="pre">Dynamics.summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.tau"><code class="docutils literal notranslate"><span class="pre">Dynamics.tau</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.track"><code class="docutils literal notranslate"><span class="pre">Dynamics.track()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.ode">covsirphy.dynamics.ode module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel"><code class="docutils literal notranslate"><span class="pre">ODEModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.definitions"><code class="docutils literal notranslate"><span class="pre">ODEModel.definitions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.dimensional_parameters"><code class="docutils literal notranslate"><span class="pre">ODEModel.dimensional_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data"><code class="docutils literal notranslate"><span class="pre">ODEModel.from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_optimization"><code class="docutils literal notranslate"><span class="pre">ODEModel.from_data_with_optimization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_quantile"><code class="docutils literal notranslate"><span class="pre">ODEModel.from_data_with_quantile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_sample"><code class="docutils literal notranslate"><span class="pre">ODEModel.from_sample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.inverse_transform"><code class="docutils literal notranslate"><span class="pre">ODEModel.inverse_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.name"><code class="docutils literal notranslate"><span class="pre">ODEModel.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.r0"><code class="docutils literal notranslate"><span class="pre">ODEModel.r0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.settings"><code class="docutils literal notranslate"><span class="pre">ODEModel.settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.solve"><code class="docutils literal notranslate"><span class="pre">ODEModel.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.sr"><code class="docutils literal notranslate"><span class="pre">ODEModel.sr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.transform"><code class="docutils literal notranslate"><span class="pre">ODEModel.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sewirf">covsirphy.dynamics.sewirf module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.dimensional_parameters"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.dimensional_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.from_data_with_optimization"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.from_data_with_optimization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.from_data_with_quantile"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.from_data_with_quantile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.inverse_transform"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.inverse_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.r0"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.r0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.sr"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.sr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sewirf.SEWIRFModel.transform"><code class="docutils literal notranslate"><span class="pre">SEWIRFModel.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sir">covsirphy.dynamics.sir module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel"><code class="docutils literal notranslate"><span class="pre">SIRModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.dimensional_parameters"><code class="docutils literal notranslate"><span class="pre">SIRModel.dimensional_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.inverse_transform"><code class="docutils literal notranslate"><span class="pre">SIRModel.inverse_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.r0"><code class="docutils literal notranslate"><span class="pre">SIRModel.r0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.sr"><code class="docutils literal notranslate"><span class="pre">SIRModel.sr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sir.SIRModel.transform"><code class="docutils literal notranslate"><span class="pre">SIRModel.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sird">covsirphy.dynamics.sird module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel"><code class="docutils literal notranslate"><span class="pre">SIRDModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.dimensional_parameters"><code class="docutils literal notranslate"><span class="pre">SIRDModel.dimensional_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.inverse_transform"><code class="docutils literal notranslate"><span class="pre">SIRDModel.inverse_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.r0"><code class="docutils literal notranslate"><span class="pre">SIRDModel.r0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.sr"><code class="docutils literal notranslate"><span class="pre">SIRDModel.sr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.transform"><code class="docutils literal notranslate"><span class="pre">SIRDModel.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html#module-covsirphy.dynamics.sirf">covsirphy.dynamics.sirf module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel"><code class="docutils literal notranslate"><span class="pre">SIRFModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.dimensional_parameters"><code class="docutils literal notranslate"><span class="pre">SIRFModel.dimensional_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.r0"><code class="docutils literal notranslate"><span class="pre">SIRFModel.r0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.sr"><code class="docutils literal notranslate"><span class="pre">SIRFModel.sr()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.engineering.html">covsirphy.engineering package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html#module-covsirphy.engineering.engineer">covsirphy.engineering.engineer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html#module-covsirphy.engineering.engineer">covsirphy.engineering.engineer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer"><code class="docutils literal notranslate"><span class="pre">DataEngineer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.add"><code class="docutils literal notranslate"><span class="pre">DataEngineer.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.all"><code class="docutils literal notranslate"><span class="pre">DataEngineer.all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.assign"><code class="docutils literal notranslate"><span class="pre">DataEngineer.assign()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.choropleth"><code class="docutils literal notranslate"><span class="pre">DataEngineer.choropleth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.citations"><code class="docutils literal notranslate"><span class="pre">DataEngineer.citations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.clean"><code class="docutils literal notranslate"><span class="pre">DataEngineer.clean()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.diff"><code class="docutils literal notranslate"><span class="pre">DataEngineer.diff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.div"><code class="docutils literal notranslate"><span class="pre">DataEngineer.div()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.download"><code class="docutils literal notranslate"><span class="pre">DataEngineer.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.inverse_transform"><code class="docutils literal notranslate"><span class="pre">DataEngineer.inverse_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.layer"><code class="docutils literal notranslate"><span class="pre">DataEngineer.layer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.mul"><code class="docutils literal notranslate"><span class="pre">DataEngineer.mul()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.recovery_period"><code class="docutils literal notranslate"><span class="pre">DataEngineer.recovery_period()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.register"><code class="docutils literal notranslate"><span class="pre">DataEngineer.register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.sub"><code class="docutils literal notranslate"><span class="pre">DataEngineer.sub()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset"><code class="docutils literal notranslate"><span class="pre">DataEngineer.subset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset_alias"><code class="docutils literal notranslate"><span class="pre">DataEngineer.subset_alias()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.transform"><code class="docutils literal notranslate"><span class="pre">DataEngineer.transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.variables_alias"><code class="docutils literal notranslate"><span class="pre">DataEngineer.variables_alias()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.gis.html">covsirphy.gis package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html#module-covsirphy.gis.gis">covsirphy.gis.gis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html#module-covsirphy.gis.gis">covsirphy.gis.gis module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS"><code class="docutils literal notranslate"><span class="pre">GIS</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.all"><code class="docutils literal notranslate"><span class="pre">GIS.all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.area_name"><code class="docutils literal notranslate"><span class="pre">GIS.area_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.choropleth"><code class="docutils literal notranslate"><span class="pre">GIS.choropleth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.citations"><code class="docutils literal notranslate"><span class="pre">GIS.citations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.layer"><code class="docutils literal notranslate"><span class="pre">GIS.layer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.register"><code class="docutils literal notranslate"><span class="pre">GIS.register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.subset"><code class="docutils literal notranslate"><span class="pre">GIS.subset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.gis.html#covsirphy.gis.gis.GIS.to_geopandas"><code class="docutils literal notranslate"><span class="pre">GIS.to_geopandas()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.science.html">covsirphy.science package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ml">covsirphy.science.ml module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ml">covsirphy.science.ml module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ml.MLEngineer"><code class="docutils literal notranslate"><span class="pre">MLEngineer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ml.MLEngineer.forecast"><code class="docutils literal notranslate"><span class="pre">MLEngineer.forecast()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ml.MLEngineer.pca"><code class="docutils literal notranslate"><span class="pre">MLEngineer.pca()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.science.html#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario"><code class="docutils literal notranslate"><span class="pre">ODEScenario</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.append"><code class="docutils literal notranslate"><span class="pre">ODEScenario.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.auto_build"><code class="docutils literal notranslate"><span class="pre">ODEScenario.auto_build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.build_with_dynamics"><code class="docutils literal notranslate"><span class="pre">ODEScenario.build_with_dynamics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.build_with_model"><code class="docutils literal notranslate"><span class="pre">ODEScenario.build_with_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.build_with_template"><code class="docutils literal notranslate"><span class="pre">ODEScenario.build_with_template()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.compare_cases"><code class="docutils literal notranslate"><span class="pre">ODEScenario.compare_cases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.compare_param"><code class="docutils literal notranslate"><span class="pre">ODEScenario.compare_param()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.delete"><code class="docutils literal notranslate"><span class="pre">ODEScenario.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.describe"><code class="docutils literal notranslate"><span class="pre">ODEScenario.describe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.from_json"><code class="docutils literal notranslate"><span class="pre">ODEScenario.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.predict"><code class="docutils literal notranslate"><span class="pre">ODEScenario.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.rename"><code class="docutils literal notranslate"><span class="pre">ODEScenario.rename()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.represent"><code class="docutils literal notranslate"><span class="pre">ODEScenario.represent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.simulate"><code class="docutils literal notranslate"><span class="pre">ODEScenario.simulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.summary"><code class="docutils literal notranslate"><span class="pre">ODEScenario.summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.to_dynamics"><code class="docutils literal notranslate"><span class="pre">ODEScenario.to_dynamics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.to_json"><code class="docutils literal notranslate"><span class="pre">ODEScenario.to_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.science.html#covsirphy.science.ode_scenario.ODEScenario.track"><code class="docutils literal notranslate"><span class="pre">ODEScenario.track()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.alias">covsirphy.util.alias module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.alias">covsirphy.util.alias module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias"><code class="docutils literal notranslate"><span class="pre">Alias</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias.all"><code class="docutils literal notranslate"><span class="pre">Alias.all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias.delete"><code class="docutils literal notranslate"><span class="pre">Alias.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias.find"><code class="docutils literal notranslate"><span class="pre">Alias.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias.for_variables"><code class="docutils literal notranslate"><span class="pre">Alias.for_variables()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.alias.Alias.update"><code class="docutils literal notranslate"><span class="pre">Alias.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.config">covsirphy.util.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.error">covsirphy.util.error module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.evaluator">covsirphy.util.evaluator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.filer">covsirphy.util.filer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.term">covsirphy.util.term module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.validator">covsirphy.util.validator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.error">covsirphy.util.error module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.EmptyError"><code class="docutils literal notranslate"><span class="pre">EmptyError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.ExperimentalWarning"><code class="docutils literal notranslate"><span class="pre">ExperimentalWarning</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NAFoundError"><code class="docutils literal notranslate"><span class="pre">NAFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError"><code class="docutils literal notranslate"><span class="pre">NotEnoughDataError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotIncludedError"><code class="docutils literal notranslate"><span class="pre">NotIncludedError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotNoneError"><code class="docutils literal notranslate"><span class="pre">NotNoneError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotRegisteredError"><code class="docutils literal notranslate"><span class="pre">NotRegisteredError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotSubclassError"><code class="docutils literal notranslate"><span class="pre">NotSubclassError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.ScenarioNotFoundError"><code class="docutils literal notranslate"><span class="pre">ScenarioNotFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.SubsetNotFoundError"><code class="docutils literal notranslate"><span class="pre">SubsetNotFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExecutedError"><code class="docutils literal notranslate"><span class="pre">UnExecutedError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedLengthError"><code class="docutils literal notranslate"><span class="pre">UnExpectedLengthError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedNoneError"><code class="docutils literal notranslate"><span class="pre">UnExpectedNoneError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedTypeError"><code class="docutils literal notranslate"><span class="pre">UnExpectedTypeError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedValueError"><code class="docutils literal notranslate"><span class="pre">UnExpectedValueError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExpectedValueRangeError"><code class="docutils literal notranslate"><span class="pre">UnExpectedValueRangeError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.deprecate"><code class="docutils literal notranslate"><span class="pre">deprecate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.experimental"><code class="docutils literal notranslate"><span class="pre">experimental()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.evaluator">covsirphy.util.evaluator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.evaluator.Evaluator"><code class="docutils literal notranslate"><span class="pre">Evaluator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.evaluator.Evaluator.best_one"><code class="docutils literal notranslate"><span class="pre">Evaluator.best_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.evaluator.Evaluator.metrics"><code class="docutils literal notranslate"><span class="pre">Evaluator.metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.evaluator.Evaluator.score"><code class="docutils literal notranslate"><span class="pre">Evaluator.score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.evaluator.Evaluator.smaller_is_better"><code class="docutils literal notranslate"><span class="pre">Evaluator.smaller_is_better()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.filer">covsirphy.util.filer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer"><code class="docutils literal notranslate"><span class="pre">Filer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.csv"><code class="docutils literal notranslate"><span class="pre">Filer.csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.files"><code class="docutils literal notranslate"><span class="pre">Filer.files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.geojson"><code class="docutils literal notranslate"><span class="pre">Filer.geojson()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.jpg"><code class="docutils literal notranslate"><span class="pre">Filer.jpg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.json"><code class="docutils literal notranslate"><span class="pre">Filer.json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.filer.Filer.png"><code class="docutils literal notranslate"><span class="pre">Filer.png()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.stopwatch.StopWatch"><code class="docutils literal notranslate"><span class="pre">StopWatch</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.stopwatch.StopWatch.show"><code class="docutils literal notranslate"><span class="pre">StopWatch.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.stopwatch.StopWatch.stop"><code class="docutils literal notranslate"><span class="pre">StopWatch.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.stopwatch.StopWatch.stop_show"><code class="docutils literal notranslate"><span class="pre">StopWatch.stop_show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.term">covsirphy.util.term module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term"><code class="docutils literal notranslate"><span class="pre">Term</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.A"><code class="docutils literal notranslate"><span class="pre">Term.A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.ACTUAL"><code class="docutils literal notranslate"><span class="pre">Term.ACTUAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.AREA_ABBR_COLS"><code class="docutils literal notranslate"><span class="pre">Term.AREA_ABBR_COLS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.AREA_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.AREA_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.C"><code class="docutils literal notranslate"><span class="pre">Term.C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.CI"><code class="docutils literal notranslate"><span class="pre">Term.CI</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.CITY"><code class="docutils literal notranslate"><span class="pre">Term.CITY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.COUNTRY"><code class="docutils literal notranslate"><span class="pre">Term.COUNTRY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.DATE"><code class="docutils literal notranslate"><span class="pre">Term.DATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.DATE_FORMAT"><code class="docutils literal notranslate"><span class="pre">Term.DATE_FORMAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.DATE_FORMAT_DESC"><code class="docutils literal notranslate"><span class="pre">Term.DATE_FORMAT_DESC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.DSIFR_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.DSIFR_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.E"><code class="docutils literal notranslate"><span class="pre">Term.E</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.END"><code class="docutils literal notranslate"><span class="pre">Term.END</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.F"><code class="docutils literal notranslate"><span class="pre">Term.F</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.FIG_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.FIG_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.FITTED"><code class="docutils literal notranslate"><span class="pre">Term.FITTED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.FR"><code class="docutils literal notranslate"><span class="pre">Term.FR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.FUTURE"><code class="docutils literal notranslate"><span class="pre">Term.FUTURE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.ID"><code class="docutils literal notranslate"><span class="pre">Term.ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.INITIAL"><code class="docutils literal notranslate"><span class="pre">Term.INITIAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.ISO3"><code class="docutils literal notranslate"><span class="pre">Term.ISO3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.MAIN"><code class="docutils literal notranslate"><span class="pre">Term.MAIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.MODERATE"><code class="docutils literal notranslate"><span class="pre">Term.MODERATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.MONO_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.MONO_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.N"><code class="docutils literal notranslate"><span class="pre">Term.N</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.NA"><code class="docutils literal notranslate"><span class="pre">Term.NA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.NLOC_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.NLOC_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.ODE"><code class="docutils literal notranslate"><span class="pre">Term.ODE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.OTHERS"><code class="docutils literal notranslate"><span class="pre">Term.OTHERS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.P"><code class="docutils literal notranslate"><span class="pre">Term.P</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.PARAM_DICT"><code class="docutils literal notranslate"><span class="pre">Term.PARAM_DICT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.PAST"><code class="docutils literal notranslate"><span class="pre">Term.PAST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.PHASE"><code class="docutils literal notranslate"><span class="pre">Term.PHASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.PRODUCT"><code class="docutils literal notranslate"><span class="pre">Term.PRODUCT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.PROVINCE"><code class="docutils literal notranslate"><span class="pre">Term.PROVINCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.R"><code class="docutils literal notranslate"><span class="pre">Term.R</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.RATE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.RATE_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.RT"><code class="docutils literal notranslate"><span class="pre">Term.RT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.RT_FULL"><code class="docutils literal notranslate"><span class="pre">Term.RT_FULL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.RUNTIME"><code class="docutils literal notranslate"><span class="pre">Term.RUNTIME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.S"><code class="docutils literal notranslate"><span class="pre">Term.S</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.SEP"><code class="docutils literal notranslate"><span class="pre">Term.SEP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.SERIES"><code class="docutils literal notranslate"><span class="pre">Term.SERIES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.SEVERE"><code class="docutils literal notranslate"><span class="pre">Term.SEVERE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.START"><code class="docutils literal notranslate"><span class="pre">Term.START</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.STEP_N"><code class="docutils literal notranslate"><span class="pre">Term.STEP_N</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.STR_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.STR_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.SUB_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.SUB_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.SUFFIX_DICT"><code class="docutils literal notranslate"><span class="pre">Term.SUFFIX_DICT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.T"><code class="docutils literal notranslate"><span class="pre">Term.T</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TAU"><code class="docutils literal notranslate"><span class="pre">Term.TAU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TENSE"><code class="docutils literal notranslate"><span class="pre">Term.TENSE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TESTS"><code class="docutils literal notranslate"><span class="pre">Term.TESTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TESTS_DIFF"><code class="docutils literal notranslate"><span class="pre">Term.TESTS_DIFF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TRIALS"><code class="docutils literal notranslate"><span class="pre">Term.TRIALS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.TS"><code class="docutils literal notranslate"><span class="pre">Term.TS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.V"><code class="docutils literal notranslate"><span class="pre">Term.V</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.VAC"><code class="docutils literal notranslate"><span class="pre">Term.VAC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.VAC_BOOSTERS"><code class="docutils literal notranslate"><span class="pre">Term.VAC_BOOSTERS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.VALUE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Term.VALUE_COLUMNS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.V_FULL"><code class="docutils literal notranslate"><span class="pre">Term.V_FULL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.V_ONCE"><code class="docutils literal notranslate"><span class="pre">Term.V_ONCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.W"><code class="docutils literal notranslate"><span class="pre">Term.W</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.Y0_DICT"><code class="docutils literal notranslate"><span class="pre">Term.Y0_DICT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.num2str"><code class="docutils literal notranslate"><span class="pre">Term.num2str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term.str2num"><code class="docutils literal notranslate"><span class="pre">Term.str2num()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.validator">covsirphy.util.validator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.dataframe"><code class="docutils literal notranslate"><span class="pre">Validator.dataframe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.date"><code class="docutils literal notranslate"><span class="pre">Validator.date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.dict"><code class="docutils literal notranslate"><span class="pre">Validator.dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.float"><code class="docutils literal notranslate"><span class="pre">Validator.float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.instance"><code class="docutils literal notranslate"><span class="pre">Validator.instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.int"><code class="docutils literal notranslate"><span class="pre">Validator.int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.kwargs"><code class="docutils literal notranslate"><span class="pre">Validator.kwargs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.sequence"><code class="docutils literal notranslate"><span class="pre">Validator.sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.subclass"><code class="docutils literal notranslate"><span class="pre">Validator.subclass()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.util.html#covsirphy.util.validator.Validator.tau"><code class="docutils literal notranslate"><span class="pre">Validator.tau()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.bar_plot">covsirphy.visualization.bar_plot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.compare_plot">covsirphy.visualization.compare_plot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.line_plot">covsirphy.visualization.line_plot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.scatter_plot">covsirphy.visualization.scatter_plot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.vbase">covsirphy.visualization.vbase module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.bar_plot">covsirphy.visualization.bar_plot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.BarPlot"><code class="docutils literal notranslate"><span class="pre">BarPlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.BarPlot.line"><code class="docutils literal notranslate"><span class="pre">BarPlot.line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.BarPlot.plot"><code class="docutils literal notranslate"><span class="pre">BarPlot.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.BarPlot.x_axis"><code class="docutils literal notranslate"><span class="pre">BarPlot.x_axis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.BarPlot.y_axis"><code class="docutils literal notranslate"><span class="pre">BarPlot.y_axis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.bar_plot.bar_plot"><code class="docutils literal notranslate"><span class="pre">bar_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.compare_plot">covsirphy.visualization.compare_plot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.compare_plot.ComparePlot"><code class="docutils literal notranslate"><span class="pre">ComparePlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.compare_plot.ComparePlot.plot"><code class="docutils literal notranslate"><span class="pre">ComparePlot.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.compare_plot.compare_plot"><code class="docutils literal notranslate"><span class="pre">compare_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.line_plot">covsirphy.visualization.line_plot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot"><code class="docutils literal notranslate"><span class="pre">LinePlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot.line"><code class="docutils literal notranslate"><span class="pre">LinePlot.line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot.plot"><code class="docutils literal notranslate"><span class="pre">LinePlot.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot.x_axis"><code class="docutils literal notranslate"><span class="pre">LinePlot.x_axis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot.y_axis"><code class="docutils literal notranslate"><span class="pre">LinePlot.y_axis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.line_plot"><code class="docutils literal notranslate"><span class="pre">line_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.scatter_plot">covsirphy.visualization.scatter_plot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot"><code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.legend"><code class="docutils literal notranslate"><span class="pre">ScatterPlot.legend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.legend_hide"><code class="docutils literal notranslate"><span class="pre">ScatterPlot.legend_hide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.line_straight"><code class="docutils literal notranslate"><span class="pre">ScatterPlot.line_straight()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.plot"><code class="docutils literal notranslate"><span class="pre">ScatterPlot.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.scatter_plot.scatter_plot"><code class="docutils literal notranslate"><span class="pre">scatter_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.vbase">covsirphy.visualization.vbase module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase"><code class="docutils literal notranslate"><span class="pre">VisualizeBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.ax"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.ax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.legend"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.legend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.legend_hide"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.legend_hide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.plot"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.tick_params"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.tick_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.VisualizeBase.title"><code class="docutils literal notranslate"><span class="pre">VisualizeBase.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.vbase.find_args"><code class="docutils literal notranslate"><span class="pre">find_args()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

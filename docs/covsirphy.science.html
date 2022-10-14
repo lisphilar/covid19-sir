@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev2
+                3.0.0.dev3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -74,13 +75,21 @@
 <p class="caption" role="heading"><span class="caption-text">API references</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_citation"><code class="docutils literal notranslate"><span class="pre">get_citation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.html#covsirphy.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.downloading.html">covsirphy.downloading package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.dynamics.html">covsirphy.dynamics package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.engineering.html">covsirphy.engineering package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.gis.html">covsirphy.gis package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.science package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.science.ml">covsirphy.science.ml module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.science.ml">covsirphy.science.ml module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.science.ml.MLEngineer"><code class="docutils literal notranslate"><span class="pre">MLEngineer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.science.ode_scenario">covsirphy.science.ode_scenario module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#covsirphy.science.ode_scenario.ODEScenario"><code class="docutils literal notranslate"><span class="pre">ODEScenario</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
@@ -155,7 +164,7 @@
 <p>Class for machine learning and preprocessing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed</p>
+<dd class="field-odd"><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – random seed</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -165,14 +174,14 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Y</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<li><p><strong>Y</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
 <dt>Index</dt><dd><p>pandas.Timestamp: Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>observed and the target variables (int or float)</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>X</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <p>indicators for regression or None (no indicators)
+<li><p><strong>X</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><em>None</em>) – <p>indicators for regression or None (no indicators)
 Index</p>
 <blockquote>
 <div><p>pandas.Timestamp: Observation date</p>
@@ -182,21 +191,19 @@ Index</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>days</strong> (<em>int</em>) – days to predict</p></li>
+<li><p><strong>days</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – days to predict</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as &#64;days)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>pandas.Timestamp: Observation date, from the next date of Y.index to the ast predicted date</p>
 </dd>
 <dt>Columns</dt><dd><p>observed and the target variables (int or float)</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -212,18 +219,19 @@ Index</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<li><p><strong>X</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><em>None</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>pandas.Timestamp: Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>(int or float): observed values of the training vectors</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>n_components</strong> (<em>float</em><em> or </em><em>int</em>) – _the number of principal components or percentage of variance to cover at least</p></li>
+<li><p><strong>n_components</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – _the number of principal components or percentage of variance to cover at least</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
+<dd class="field-even"><p><p><em>dict of {str</em> –</p>
+<dl>
 <dt>object}: as the same as pca.pca().fit_transform()</dt><dd><p>{“loadings”: pandas.DataFrame}: structured dataframe containing loadings for PCs
 {“PC”: pandas.DataFrame}: reduced dimensionality space, the Principal Components (PCs)</p>
 <blockquote>
@@ -269,9 +277,6 @@ y_score_spe (float)</p>
 </dl>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict of {str</p>
-</dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -292,7 +297,7 @@ y_score_spe (float)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>actual data of the number of cases
+<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <p>actual data of the number of cases
 Index</p>
 <blockquote>
 <div><p>Date (pandas.Timestamp): observation dates</p>
@@ -308,8 +313,8 @@ the other columns will be ignored</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>location_name</strong> (<em>str</em>) – name to identify the location to show in figure titles</p></li>
-<li><p><strong>complement</strong> (<em>bool</em>) – perform data complement with covsirphy.DataEngineer().subset(complement=True) or not</p></li>
+<li><p><strong>location_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name to identify the location to show in figure titles</p></li>
+<li><p><strong>complement</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – perform data complement with covsirphy.DataEngineer().subset(complement=True) or not</p></li>
 </ul>
 </dd>
 </dl>
@@ -324,8 +329,8 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>] </em><em>None</em>) – scenario name(s) or None (all scenarios)</p></li>
-<li><p><strong>end</strong> (<em>pandas.Timestamp</em><em> or </em><em>int</em><em> or </em><em>None</em>) – end date or the number days of new phase or None (the max date of all scenarios and actual data)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] </em><em>None</em>) – scenario name(s) or None (all scenarios)</p></li>
+<li><p><strong>end</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – end date or the number days of new phase or None (the max date of all scenarios and actual data)</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of ODE parameter values (default: values of the last phase)</p></li>
 </ul>
 </dd>
@@ -336,10 +341,7 @@ the other columns will be ignored</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.ODEScenario</p>
+<dd class="field-odd"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -351,19 +353,16 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geo</strong> (<em>tuple</em><em>(</em><em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>(</em><em>str</em><em>) or </em><em>str</em><em>) or </em><em>str</em><em> or </em><em>None</em>) – country, province, city</p></li>
+<li><p><strong>geo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – country, province, city</p></li>
 <li><p><strong>model</strong> (<em>covsirphy.ODEModel</em>) – definition of ODE model</p></li>
-<li><p><strong>complement</strong> (<em>bool</em>) – whether perform complement or not</p></li>
+<li><p><strong>complement</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether perform complement or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.SubsetNotFoundError" title="covsirphy.util.error.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – actual data of the location was not included in the recommended dataset</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>created instance</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.ODEScenario</p>
+<dd class="field-odd"><p><em>covsirphy.ODEScenario</em> – created instance</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -395,15 +394,12 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name</p></li>
 <li><p><strong>dynamics</strong> (<em>covsirphy.Dynamics</em>) – covsirphy.Dynamics() instance which has ODE model, tau value and ODE parameter values</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.ODEScenario</p>
+<dd class="field-even"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -415,17 +411,14 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name</p></li>
 <li><p><strong>model</strong> (<em>covsirphy.ODEModel</em>) – definition of ODE model</p></li>
-<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>) or </em><em>None</em>) – start date and end date of dynamics to analyze</p></li>
-<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>) or </em><em>None</em>) – start date and end date of dynamics to analyze</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.ODEScenario</p>
+<dd class="field-even"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -437,18 +430,15 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – new scenario name</p></li>
-<li><p><strong>template</strong> (<em>str</em>) – template name</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – new scenario name</p></li>
+<li><p><strong>template</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – template name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.SubsetNotFoundError" title="covsirphy.util.error.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – scenario with the name is un-registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.ODEScenario</p>
+<dd class="field-odd"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -460,15 +450,16 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>variable</strong> (<em>str</em>) – variable name or alias</p></li>
-<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – start date and end date to analyze</p></li>
-<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
-<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – variable name or alias</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date to analyze</p></li>
+<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
+<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether display figure of the result or not</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): dates</p>
 </dd>
 <dt>Columns</dt><dd><p>Actual (numpy.int64): actual records
@@ -476,9 +467,6 @@ the other columns will be ignored</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -490,24 +478,22 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>param</strong> (<em>str</em>) – one of ODE parameters, “Rt”, dimensional parameters</p></li>
-<li><p><strong>date_range</strong> (<em>tuple of</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – start date and end date to analyze</p></li>
-<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
-<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>param</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – one of ODE parameters, “Rt”, dimensional parameters</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date to analyze</p></li>
+<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – name of reference scenario to specify phases and dates or None (the first scenario)</p></li>
+<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether display figure of the result or not</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp)</p>
 </dd>
 <dt>Columns</dt><dd><p>{scenario name} (str): values of the scenario</p>
 </dd>
 </dl>
 </p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -519,15 +505,12 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pattern</strong> (<em>str</em>) – scenario name or pattern to search</p></li>
-<li><p><strong>exact</strong> (<em>bool</em>) – if False, use regular expressions</p></li>
+<li><p><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name or pattern to search</p></li>
+<li><p><strong>exact</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if False, use regular expressions</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.ODEScenario</p>
+<dd class="field-even"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -538,7 +521,8 @@ the other columns will be ignored</p>
 <dd><p>Describe representative values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>str: scenario name</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -552,9 +536,6 @@ the other columns will be ignored</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -564,13 +545,10 @@ the other columns will be ignored</p>
 <dd><p>Create ODEScenario instance with a JSON file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em><em> or </em><em>Path</em>) – JSON filename</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>Path</em>) – JSON filename</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.ODEScenario</p>
+<dd class="field-even"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -582,9 +560,9 @@ the other columns will be ignored</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>days</strong> (<em>int</em>) – days to predict</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
-<li><p><strong>X</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <p>information for regression or None (no information)
+<li><p><strong>days</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – days to predict</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name</p></li>
+<li><p><strong>X</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><em>None</em>) – <p>information for regression or None (no information)
 Index</p>
 <blockquote>
 <div><p>pandas.Timestamp: Observation date</p>
@@ -594,16 +572,13 @@ Index</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed</p></li>
-<li><p><strong>verbose</strong> (<em>int</em>) – verbosity</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – random seed</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – verbosity</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of autots.AutoTS() except for verbose, forecast_length (always the same as &#64;days)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.ODEScenario</p>
+<dd class="field-even"><p><em>covsirphy.ODEScenario</em> – self</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -623,15 +598,12 @@ Index</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>old</strong> (<em>str</em>) – old name</p></li>
-<li><p><strong>new</strong> (<em>str</em>) – new name</p></li>
+<li><p><strong>old</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – old name</p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – new name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.Scenario</p>
+<dd class="field-even"><p><em>covsirphy.Scenario</em> – self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -643,21 +615,18 @@ Index</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>q</strong> (<em>list</em><em>[</em><em>float</em><em>] or </em><em>float</em>) – quantiles</p></li>
-<li><p><strong>variable</strong> (<em>str</em>) – reference variable, Confirmed, Infected, Fatal or Recovered</p></li>
-<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – reference date or None (the last end date in the all scenarios)</p></li>
-<li><p><strong>included</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – included scenarios or None (all included)</p></li>
-<li><p><strong>excluded</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – excluded scenarios or None (no scenarios not excluded)</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – quantiles</p></li>
+<li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – reference variable, Confirmed, Infected, Fatal or Recovered</p></li>
+<li><p><strong>date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – reference date or None (the last end date in the all scenarios)</p></li>
+<li><p><strong>included</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – included scenarios or None (all included)</p></li>
+<li><p><strong>excluded</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – excluded scenarios or None (no scenarios not excluded)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – the end dates of the last phase is not aligned</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – the end dates of the last phase is not aligned</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the nearest scenarios which has the values at the given quantiles</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[float] or float</p>
+<dd class="field-odd"><p><em>list[float] or float</em> – the nearest scenarios which has the values at the given quantiles</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -673,14 +642,15 @@ Index</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – scenario name registered or None (actual data)</p></li>
-<li><p><strong>variables</strong> (<em>list of</em><em> [</em><em>str</em><em>] or </em><em>None</em>) – variables/alias to return or None ([“Confirmed”, “Fatal”, “Recovered”])</p></li>
-<li><p><strong>display</strong> (<em>bool</em>) – whether display figure of the result or not</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – scenario name registered or None (actual data)</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em> of </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – variables/alias to return or None ([“Confirmed”, “Fatal”, “Recovered”])</p></li>
+<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether display figure of the result or not</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.line_plot() except for &#64;df</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dd class="field-even"><p><p><em>pandas.DataFrame or pandas.Series</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): dates</p>
 </dd>
 <dt>Columns</dt><dd><p>Population (int): total population (if selected with &#64;variables)
@@ -693,9 +663,6 @@ Infected (int): the number of currently infected cases (if selected with &#64;va
 </dl>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame or pandas.Series</p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -705,7 +672,8 @@ Infected (int): the number of currently infected cases (if selected with &#64;va
 <dd><p>Summarize phase information of all scenarios.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
+<dl class="simple">
 <dt>Index</dt><dd><p>Scenario (str): scenario names
 Phase (str): phase names, 0th, 1st,…</p>
 </dd>
@@ -720,9 +688,6 @@ tau (int): tau value [min]
 </dl>
 </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -732,16 +697,13 @@ tau (int): tau value [min]
 <dd><p>Create covsirphy.Dynamics instance of the scenario.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – scenario name</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – scenario name</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.SubsetNotFoundError" title="covsirphy.util.error.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – scenario with the name is un-registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>instance which has ODE model, tau value and ODE parameter values</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.Dynamics</p>
+<dd class="field-odd"><p><em>covsirphy.Dynamics</em> – instance which has ODE model, tau value and ODE parameter values</p>
 </dd>
 </dl>
 </dd></dl>
@@ -752,13 +714,10 @@ tau (int): tau value [min]
 <dd><p>Write a JSON file which can usable for recreating ODEScenario instance with .from_json()</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em><em> or </em><em>Path</em>) – JSON filename</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>Path</em>) – JSON filename</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>filename</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-even"><p><em>str</em> – filename</p>
 </dd>
 </dl>
 </dd></dl>
