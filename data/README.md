@@ -22,14 +22,14 @@ The detailed explanation of the build process is discussed in [Steps to build th
 `covid_jpn_total.csv`  
 Cumulative number of cases:
 
-- PCR-tested / PCR-tested and positive
+- PCR-tested (to 26Sep2022) / PCR-tested and positive
 - with symptoms (to 08May2020) / without symptoms (to 08May2020) / unknown (to 08May2020)
-- discharged
+- discharged (to 26Sep2022)
 - fatal
 
 The number of cases:
 
-- requiring hospitalization (from 09May2020)
+- requiring hospitalization (from 09May2020 to 26Sep2022)
 - hospitalized with mild symptoms (to 08May2020)  / severe symptoms / unknown (to 08May2020)
 - requiring hospitalization, but waiting in hotels or at home (to 08May2020)
 
