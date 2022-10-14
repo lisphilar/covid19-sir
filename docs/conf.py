@@ -9,7 +9,6 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
@@ -31,6 +30,8 @@ version = cs.__version__
 extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinx_autodoc_typehints',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
@@ -85,6 +86,15 @@ html_static_path = ['_static']
 
 
 # -- Extension configuration -------------------------------------------------
+
+napoleon_use_param = True
+napoleon_use_rtype = False
+napoleon_use_ivar = True
+
+intersphinx_mapping = {
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "python": ("https://docs.python.org/3/", None),
+}
 
 # -- Options for todo extension ----------------------------------------------
 
