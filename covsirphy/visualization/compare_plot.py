@@ -1,5 +1,7 @@
+from __future__ import annotations
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+from typing_extensions import Self
 from covsirphy.util.validator import Validator
 from covsirphy.visualization.vbase import VisualizeBase, find_args
 
@@ -21,7 +23,7 @@ class ComparePlot(VisualizeBase):
         self._variables = []
         self._ax = None
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return super().__enter__()
 
     def __exit__(self, *exc_info):

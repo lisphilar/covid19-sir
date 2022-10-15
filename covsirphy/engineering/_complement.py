@@ -1,3 +1,4 @@
+from __future__ import annotations
 import functools
 import warnings
 import numpy as np
@@ -46,15 +47,16 @@ class _ComplementHandler(Term):
     def __init__(self, recovery_period, interval, max_ignored, max_ending_unupdated,
                  upper_limit_days, lower_limit_days, upper_percentage, lower_percentage):
         # Arguments for complement
-        self.recovery_period = Validator(recovery_period, "recovery_period").int(value_range=(1, None))
-        self.interval = Validator(interval, "interval").int(value_range=(0, None))
-        self.max_ignored = Validator(max_ignored, "max_ignored").int(value_range=(1, None))
-        self.max_ending_unupdated = Validator(max_ending_unupdated, "max_ending_unupdated").int(value_range=(0, None))
-        self.upper_limit_days = Validator(upper_limit_days, "upper_limit_days").int(value_range=(0, None))
-        self.lower_limit_days = Validator(lower_limit_days, "lower_limit_days").int(value_range=(0, None))
-        self.upper_percentage = Validator(upper_percentage, "upper_percentage").float(value_range=(0, 100))
-        self.lower_percentage = Validator(lower_percentage, "lower_percentage").float(value_range=(0, 100))
-        self.complement_dict = None
+        self.recovery_period: int = Validator(recovery_period, "recovery_period").int(value_range=(1, None))
+        self.interval: int = Validator(interval, "interval").int(value_range=(0, None))
+        self.max_ignored: int = Validator(max_ignored, "max_ignored").int(value_range=(1, None))
+        self.max_ending_unupdated: int = Validator(
+            max_ending_unupdated, "max_ending_unupdated").int(value_range=(0, None))
+        self.upper_limit_days: int = Validator(upper_limit_days, "upper_limit_days").int(value_range=(0, None))
+        self.lower_limit_days: int = Validator(lower_limit_days, "lower_limit_days").int(value_range=(0, None))
+        self.upper_percentage: float = Validator(upper_percentage, "upper_percentage").float(value_range=(0, 100))
+        self.lower_percentage: float = Validator(lower_percentage, "lower_percentage").float(value_range=(0, 100))
+        self.complement_dict: dict[str, bool] = {}
 
     def _protocol(self):
         """

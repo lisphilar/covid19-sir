@@ -1,9 +1,11 @@
+from __future__ import annotations
 from inspect import signature
 import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 from matplotlib import pyplot as plt
+from typing_extensions import Self
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -49,11 +51,12 @@ class VisualizeBase(Term):
     def __init__(self, filename=None, bbox_inches="tight", **kwargs):
         self._filename = filename
         self._savefig_dict = {"bbox_inches": bbox_inches, **kwargs}
+        self._variables = []
         # Properties
         self._title = ""
         _, self._ax = plt.subplots(1, 1)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *exc_info):
