@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev3
+                3.0.0.dev4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,7 +108,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.dynamics.sirf</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.dynamics.sird</span> <span class="kn">import</span> <span class="n">SIRDModel</span>
@@ -118,14 +119,16 @@
     <span class="sd">&quot;&quot;&quot;Class of SIR-F model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        date_range (tuple of (str, str)): start date and end date of simulation</span>
-<span class="sd">        tau (int): tau value [min]</span>
-<span class="sd">        initial_dict (dict of {str: int}): initial values</span>
+<span class="sd">        date_range: start date and end date of simulation</span>
+<span class="sd">        tau: tau value [min]</span>
+<span class="sd">        initial_dict: initial values</span>
+
 <span class="sd">            - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">            - Infected (int): the number of infected cases</span>
 <span class="sd">            - Fatal (int): the number of fatal cases</span>
 <span class="sd">            - Recovered (int): the number of recovered cases</span>
-<span class="sd">        param_dict (dict of {str: float}): non-dimensional parameter values</span>
+<span class="sd">        param_dict: non-dimensional parameter values</span>
+
 <span class="sd">            - theta: direct fatality probability of un-categorized confirmed cases</span>
 <span class="sd">            - kappa: non-dimensional mortality rate of infected cases</span>
 <span class="sd">            - rho: non-dimensional effective contact rate</span>
@@ -146,16 +149,16 @@
         <span class="s2">&quot;param_dict&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;theta&quot;</span><span class="p">:</span> <span class="mf">0.002</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">:</span> <span class="mf">0.005</span><span class="p">,</span> <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="mf">0.075</span><span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">initial_dict</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">initial_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">initial_dict</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_theta</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_dict</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">],</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_discretize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_discretize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Discretize the ODE.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            t (int): discrete time-steps</span>
-<span class="sd">            X (numpy.array): the current values of the model</span>
+<span class="sd">            t: discrete time-steps</span>
+<span class="sd">            X: the current values of the model</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            numpy.array: the next values of the model</span>
@@ -168,14 +171,14 @@
         <span class="n">didt</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">dsdt</span> <span class="o">-</span> <span class="n">drdt</span> <span class="o">-</span> <span class="n">dfdt</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dsdt</span><span class="p">,</span> <span class="n">didt</span><span class="p">,</span> <span class="n">drdt</span><span class="p">,</span> <span class="n">dfdt</span><span class="p">])</span>
 
-<div class="viewcode-block" id="SIRFModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SIRFModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ZeroDivisionError: sigma + kappa value was over 0</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: reproduction number of the ODE model and parameters</span>
+<span class="sd">            reproduction number of the ODE model and parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_theta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
@@ -183,14 +186,14 @@
             <span class="k">raise</span> <span class="ne">ZeroDivisionError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Sigma + kappa must be over 0 to calculate reproduction number with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
-<div class="viewcode-block" id="SIRFModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SIRFModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ZeroDivisionError: either kappa or rho or sigma value was over 0</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: int or float}: dictionary of dimensional parameter values</span>
+<span class="sd">            dictionary of dimensional parameter values</span>
 <span class="sd">                - &quot;alpha1 [-]&quot; (float): direct fatality probability of un-categorized confirmed cases</span>
 <span class="sd">                - &quot;1/alpha2 [day]&quot; (int): mortality period of infected cases</span>
 <span class="sd">                - &quot;1/beta [day]&quot; (int): infection period</span>
@@ -208,18 +211,19 @@
                 <span class="sa">f</span><span class="s2">&quot;Kappa, rho and sigma must be over 0 to calculate dimensional parameters with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_param_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_param_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;With combinations (X, dX/dt) for X=S, I, R, F, calculate quantile values of ODE parameters.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.SIRFModel.transform(data=data, tau=tau)</span>
-<span class="sd">            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)</span>
+<span class="sd">            data: transformed data with covsirphy.SIRFModel.transform(data=data, tau=tau)</span>
+<span class="sd">            q: the quantile(s) to compute, value(s) between (0, 1)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: float or pandas.Series}: parameter values at the quantile(s)</span>
+<span class="sd">            parameter values at the quantile(s)</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            We can get approximate parameter values with difference equations as follows.</span>
+
 <span class="sd">                - theta -&gt; +0 (i.e. around 0 and not negative)</span>
 <span class="sd">                - kappa -&gt; (dF/dt) / I when theta -&gt; +0</span>
 <span class="sd">                - rho = - n * (dS/dt) / S / I</span>
@@ -243,11 +247,11 @@
         <span class="p">}</span>
 
 <div class="viewcode-block" id="SIRFModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sirf.SIRFModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pd.Timestamp): Observation date</span>
 <span class="sd">                Columns</span>
@@ -257,12 +261,11 @@
 <span class="sd">                    Fatal (int): the number of fatal cases</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.Timestamp): date</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    log10(S) (np.float64): common logarithm of Susceptible</span>
-<span class="sd">                    R (np.int64): Recovered</span>
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.Timestamp): date</span>
+<span class="sd">            Columns</span>
+<span class="sd">                log10(S) (np.float64): common logarithm of Susceptible</span>
+<span class="sd">                R (np.int64): Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_r</span><span class="p">})</span>

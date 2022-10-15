@@ -48,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev3
+                3.0.0.dev4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -181,10 +181,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>covsirphy.ODEModel</em>) – definition of ODE model</p></li>
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of dynamics to analyze</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="#covsirphy.dynamics.ode.ODEModel" title="covsirphy.dynamics.ode.ODEModel"><em>ODEModel</em></a>) – definition of ODE model</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>] </em><em>| </em><em>None</em>) – start date and end date of dynamics to analyze</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min] or None (set later with data)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p></li>
 </ul>
 </dd>
 </dl>
@@ -195,9 +195,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>algo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – detection algorithms and models</p></li>
-<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – minimum value of phase length [days], be equal to or over 3</p></li>
-<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether display figure of log10(S) - R plane or not</p></li>
+<li><p><strong>algo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – detection algorithms and models</p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – minimum value of phase length [days], be equal to or over 3</p></li>
+<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether display figure of log10(S) - R plane or not</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp) except for “model”,
 covsirphy.VisualizeBase(), matplotlib.legend.Legend()</p></li>
 </ul>
@@ -205,9 +205,12 @@ covsirphy.VisualizeBase(), matplotlib.legend.Legend()</p></li>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – we have not enough records, the length of the records must be equal to or over min_size * 2</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>tuple of (pandas.Timestamp, pandas.DataFrame)</em> –     pandas.Timestamp: date of change points
-pandas.Dataframe:</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timestamp</span></code></a>, <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><em>- pandas.Timestamp</em> – date of change points
+- pandas.Dataframe:</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index</dt><dd><p>R (int): actual R (R of the ODE model) values</p>
@@ -224,16 +227,20 @@ Fitted (float): log10(S) values fitted with y = a * R + b
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Python library <cite>ruptures</cite> will be used for off-line change point detection.
-Refer to documentation of <cite>ruptures</cite> library, <a class="reference external" href="https://centre-borelli.github.io/ruptures-docs/">https://centre-borelli.github.io/ruptures-docs/</a>
-Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal”, “BottomUp-rbf”, “BottomUp-normal”.</p>
+<ul class="simple">
+<li><p>Python library <cite>ruptures</cite> will be used for off-line change point detection.</p></li>
+<li><p>Refer to documentation of <cite>ruptures</cite> library, <a class="reference external" href="https://centre-borelli.github.io/ruptures-docs/">https://centre-borelli.github.io/ruptures-docs/</a></p></li>
+<li><p>Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal”, “BottomUp-rbf”, “BottomUp-normal”.</p></li>
+</ul>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>S-R trend analysis is original to Covsirphy, <a class="reference external" href="https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook">https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook</a>
-“Phase” means a sequential dates in which the parameters of SIR-derived models are fixed.
-“Change points” means the dates when trend was changed.
-“Change points” is the same as the start dates of phases except for the 0th phase.</p>
+<ul class="simple">
+<li><p>S-R trend analysis is original to Covsirphy, <a class="reference external" href="https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook">https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook</a></p></li>
+<li><p>“Phase” means a sequential dates in which the parameters of SIR-derived models are fixed.</p></li>
+<li><p>“Change points” means the dates when trend was changed.</p></li>
+<li><p>“Change points” is the same as the start dates of phases except for the 0th phase.</p></li>
+</ul>
 </div>
 </dd></dl>
 
@@ -245,8 +252,11 @@ Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal�
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments of covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params()</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.Dynamics</em> – self</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Updated Dynamics object with estimated ODE parameter values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -259,8 +269,8 @@ Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal�
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – metric name for scoring when optimizing ODE parameter values of phases</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – the number of parallel jobs or None (CPU count)</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – the number of parallel jobs or None (CPU count)</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()</p></li>
 </ul>
 </dd>
@@ -270,9 +280,11 @@ Candidates of &#64;algo are “Pelt-rbf”, “Binseg-rbf”, “Binseg-normal�
 <li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): dates</p>
 </dd>
 <dt>Columns</dt><dd><p>(numpy.float64): ODE parameter values defined with model.PARAMETERS
@@ -295,16 +307,19 @@ Runtime (str): runtime of optimization, like 0 min 10 sec</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – metric name for scoring when selecting best tau value</p></li>
 <li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – the quantiles to compute, values between (0, 1)</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – the number of parallel jobs or None (CPU count)</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – the number of parallel jobs or None (CPU count)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NotEnoughDataError" title="covsirphy.util.error.NotEnoughDataError"><strong>NotEnoughDataError</strong></a> – less than three non-NA records are registered</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>tuple of (float, pandas.DataFrame)</em> –     float: tau value with best metric score
-pandas.DataFrame: metric scores of tau candidates</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a>, pd.DataFrame]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><em>- float</em> – tau value with best metric score
+- pandas.DataFrame: metric scores of tau candidates</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index</dt><dd><p>tau (int): candidate of tau values</p>
@@ -325,14 +340,17 @@ pandas.DataFrame: metric scores of tau candidates</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em><em>) or </em><em>None</em>) – range of dates to evaluate or None (the first and the last date)</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em><em>] </em><em>| </em><em>None</em>) – range of dates to evaluate or None (the first and the last date)</p></li>
 <li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – metric to evaluate the difference</p></li>
 <li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether display figure of comparison or not</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of covsirphy.compare_plot()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>float</em> – evaluation score</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>evaluation score</p>
 </dd>
 </dl>
 </dd></dl>
@@ -344,7 +362,7 @@ pandas.DataFrame: metric scores of tau candidates</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <p>new data to overwrite the current information
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <p>new data to overwrite the current information
 Index</p>
 <blockquote>
 <div><p>Date (pandas.Timestamp): Observation dates</p>
@@ -358,12 +376,15 @@ Recovered (int): the number of recovered cases
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min] or None (un-set)</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min] or None (un-set)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -379,12 +400,16 @@ Recovered (int): the number of recovered cases
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em><em>) or </em><em>None</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="#covsirphy.dynamics.ode.ODEModel" title="covsirphy.dynamics.ode.ODEModel"><em>ODEModel</em></a>) – definition of ODE model</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>] </em><em>| </em><em>None</em>) – start date and end date of simulation</p></li>
+<li><p><strong>[</strong><strong>min</strong><strong>]</strong> (<em>tau value</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -395,33 +420,33 @@ Recovered (int): the number of recovered cases
 
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.dynamics.dynamics.Dynamics.model">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.model" title="Permalink to this definition"></a></dt>
-<dd><p>model class</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#covsirphy.dynamics.ode.ODEModel" title="covsirphy.dynamics.ode.ODEModel"><span class="pre">ODEModel</span></a></em><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.model" title="Permalink to this definition"></a></dt>
+<dd><p>Return model class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>covsirphy.ODEModel</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.dynamics.ode.ODEModel" title="covsirphy.dynamics.ode.ODEModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ODEModel</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.dynamics.dynamics.Dynamics.model_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_name</span></span><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.model_name" title="Permalink to this definition"></a></dt>
-<dd><p>name of ODE model</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.model_name" title="Permalink to this definition"></a></dt>
+<dd><p>Return name of ODE model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.dynamics.dynamics.Dynamics.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.name" title="Permalink to this definition"></a></dt>
-<dd><p>name of dynamics to show in figures (e.g. “baseline”) or None (un-set)</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></em><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.name" title="Permalink to this definition"></a></dt>
+<dd><p>Return name of dynamics to show in figures (e.g. “baseline”) or None (un-set).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -434,8 +459,14 @@ Recovered (int): the number of recovered cases
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>days</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the number of days</p></li>
-<li><p><strong>ref</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – reference date or “first” (the first date of records) or “last” (the last date)</p></li>
+<li><p><strong>ref</strong> (<em>pd.Timestamp</em><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – reference date or “first” (the first date of records) or “last”/None (the last date)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[pd.Timestamp, pd.Timestamp]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>minimum date and maximum date of the selected dates</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -450,10 +481,13 @@ Recovered (int): the number of recovered cases
 <dd><p>Return minimum date and maximum date of the phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>phases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em> of </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>]</em><em>, or </em><em>None</em>) – phases (0th, 1st, 2nd,… last) or None (all phases)</p>
+<dd class="field-odd"><p><strong>phases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – phases (0th, 1st, 2nd,… last) or None (all phases)</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>tuple of (pandas.Timestamp)</em> – minimum date and maximum date of the phases</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[pd.Timestamp, pd.Timestamp]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>minimum date and maximum date of the phases</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -468,7 +502,7 @@ Recovered (int): the number of recovered cases
 <dd><p>Register data to get initial values and ODE parameter values (if available).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a><em> or </em><em>None</em>) – <p>new data to overwrite the current information or None (no new records)
+<dd class="field-odd"><p><strong>data</strong> (<em>pd.DataFrame</em><em> | </em><em>None</em>) – <p>new data to overwrite the current information or None (no new records)
 Index</p>
 <blockquote>
 <div><p>Date (pandas.Timestamp): Observation dates</p>
@@ -483,10 +517,12 @@ Fatal (int): the number of fatal cases
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><em>dataframe of the current information</em> –</p>
 <dl class="simple">
-<dt>the current information</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): Observation dates</p>
 </dd>
 <dt>Columns</dt><dd><p>Susceptible (int): the number of susceptible cases
@@ -494,8 +530,6 @@ Infected (int): the number of currently infected cases
 Recovered (int): the number of recovered cases
 Fatal (int): the number of fatal cases
 (numpy.float64): ODE parameter values defined with model.PARAMETERS</p>
-</dd>
-</dl>
 </dd>
 </dl>
 </p>
@@ -518,13 +552,16 @@ Fatal (int): the number of fatal cases
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] or </em><em>None</em>) – dates of change points or None (will be found with S-R trend analysis via .detect() method)</p></li>
+<li><p><strong>points</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – dates of change points or None (will be found with S-R trend analysis via .detect() method)</p></li>
 <li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether remove all phases before segmentation or not</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of covsirphy.Dynamics.detect()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.Dynamics</em> – self</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Updated Dynamics object</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -551,9 +588,12 @@ Fatal (int): the number of fatal cases
 <li><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.NAFoundError" title="covsirphy.util.error.NAFoundError"><strong>NAFoundError</strong></a> – ODE parameter values on the start dates of phases are un-set</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dataframe of time-series simulated data.</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): dates</p>
 </dd>
 <dt>Columns</dt><dd><p>if &#64;model_specific is False:
@@ -562,6 +602,8 @@ Infected (int): the number of currently infected cases
 Recovered (int): the number of recovered cases
 Fatal (int): the number of fatal cases
 if &#64;model_specific is True, variables defined by model.VARIABLES of covsirphy.Dynamics(model)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -574,8 +616,11 @@ if &#64;model_specific is True, variables defined by model.VARIABLES of covsirph
 <span class="sig-name descname"><span class="pre">start_dates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/dynamics.html#Dynamics.start_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.start_dates" title="Permalink to this definition"></a></dt>
 <dd><p>Return the start dates of phases.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>list of [str]</em> – start dates</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>start dates</p>
 </dd>
 </dl>
 </dd></dl>
@@ -585,9 +630,12 @@ if &#64;model_specific is True, variables defined by model.VARIABLES of covsirph
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/dynamics.html#Dynamics.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.summary" title="Permalink to this definition"></a></dt>
 <dd><p>Summarize phase information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Summarized information.</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Phase (str): phase names, 0th, 1st,…</p>
 </dd>
 <dt>Columns</dt><dd><p>Start (pandas.Timestamp): start date of the phase
@@ -597,6 +645,8 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 (int or float): dimensional parameters, including 1/beta [days] (if tau and parameters are available)</p>
 </dd>
 </dl>
+</dd>
+</dl>
 </p>
 </dd>
 </dl>
@@ -604,11 +654,11 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 
 <dl class="py property">
 <dt class="sig sig-object py" id="covsirphy.dynamics.dynamics.Dynamics.tau">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tau</span></span><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.tau" title="Permalink to this definition"></a></dt>
-<dd><p>tau value [min] or None (un-set)</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tau</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></em><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.tau" title="Permalink to this definition"></a></dt>
+<dd><p>Return tau value [min] or None (un-set).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a> or None</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -618,9 +668,12 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/dynamics.html#Dynamics.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.dynamics.Dynamics.track" title="Permalink to this definition"></a></dt>
 <dd><p>Track reproduction number, parameter value and dimensional parameter values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Dataframe of time-series data of the values.</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): dates</p>
 </dd>
 <dt>Columns</dt><dd><p>Rt (float): phase-dependent reproduction number (if parameters are available)
@@ -648,10 +701,10 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – int}): initial values</p></li>
-<li><p><strong>{str</strong> – float}): non-dimensional parameter values</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – start date and end date of simulation</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – tau value [min]</p></li>
+<li><p><strong>initial_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – initial values</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – non-dimensional parameter values</p></li>
 </ul>
 </dd>
 </dl>
@@ -660,18 +713,14 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">definitions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/ode.html#ODEModel.definitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.ode.ODEModel.definitions" title="Permalink to this definition"></a></dt>
 <dd><p>Return definitions of ODE model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>dict of {str</em> –</p>
-<dl class="simple">
-<dt>object}:</dt><dd><ul class="simple">
-<li><p>”name” (str): ODE model name</p></li>
-<li><p>”variables” (list of [str]): variable names</p></li>
-<li><p>”parameters” (list of [str]): non-dimensional parameter names</p></li>
-<li><p>”dimensional_parameters” (list of [str]): dimensional parameter names</p></li>
-</ul>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
-</dl>
-</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>- “name” (str)</em> – ODE model name
+- “variables” (list of [str]): variable names
+- “parameters” (list of [str]): non-dimensional parameter names
+- “dimensional_parameters” (list of [str]): dimensional parameter names</p>
 </dd>
 </dl>
 </dd></dl>
@@ -681,8 +730,11 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <span class="sig-name descname"><span class="pre">dimensional_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/ode.html#ODEModel.dimensional_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.ode.ODEModel.dimensional_parameters" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate dimensional parameter values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>dict of {str</em> – int or float}: dictionary of dimensional parameter values</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of dimensional parameter values</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -698,7 +750,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -711,13 +763,16 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 </dd>
 </dl>
 </p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – float}): non-dimensional parameter values</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em>) – non-dimensional parameter values</p></li>
 <li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -729,7 +784,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -744,7 +799,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 </p></li>
 <li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
 <li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – metric to minimize, refer to covsirphy.Evaluator.score()</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments of optimization
 - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval, (0.1, 0.9) as default
 - timeout (int): timeout of optimization, 180 as default
@@ -757,8 +812,11 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 - constant_liar (bool): whether use constant liar to reduce search effort or not, False as default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -770,7 +828,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -785,11 +843,14 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 </p></li>
 <li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
 <li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – the quantiles to compute, values between (0, 1)</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – effective digits of ODE parameter values or None (skip rounding)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -801,21 +862,23 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em><em>) or </em><em>None</em>) – start date and end date of simulation</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em><em>] </em><em>| </em><em>None</em>) – start date and end date of simulation</p></li>
 <li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>covsirphy.ODEModel</em> – initialized model</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Self</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>initialized model</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When &#64;date_range or the first value of &#64;date_range is None, today when executed will be set as start date.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When &#64;date_range or the second value of &#64;date_range is None, 180 days after start date will be used as end date.</p>
+<ul class="simple">
+<li><p>When &#64;date_range or the first value of &#64;date_range is None, today when executed will be set as start date.</p></li>
+<li><p>When &#64;date_range or the second value of &#64;date_range is None, 180 days after start date will be used as end date.</p></li>
+</ul>
 </div>
 </dd></dl>
 
@@ -826,20 +889,22 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>any index</p>
 </dd>
 <dt>Columns</dt><dd><p>model-specific variables</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
-<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>NoReturn</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.DatetimeIndex) or as-is &#64;data (when either &#64;tau or &#64;start_date are None)</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -863,6 +928,11 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dt class="sig sig-object py" id="covsirphy.dynamics.ode.ODEModel.name">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/ode.html#ODEModel.name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.ode.ODEModel.name" title="Permalink to this definition"></a></dt>
 <dd><p>Return name of ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -870,8 +940,11 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <span class="sig-name descname"><span class="pre">r0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/ode.html#ODEModel.r0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.ode.ODEModel.r0" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate basic reproduction number.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>reproduction number of the ODE model and parameters</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -888,16 +961,17 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>with_estimation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – whether includes information regarding ODE parameter estimation or not</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>dict of {str</em> –</p>
-<dl class="simple">
-<dt>object}:</dt><dd><ul class="simple">
-<li><p>date_range (tuple of (str, str)): start date and end date of simulation</p></li>
-<li><p>tau (int): tau value [min]</p></li>
-<li><p>initial_dict (dict of {str: int}): initial values</p></li>
-<li><p>param_dict (dict of {str: float}): non-dimensional parameter values</p></li>
-<li><dl class="simple">
-<dt>estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when &#64;with_estimation is True</dt><dd><ul>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><em>- date_range (tuple of (str, str))</em> – start date and end date of simulation
+- tau (int): tau value [min]
+- initial_dict (dict of {str: int}): initial values
+- param_dict (dict of {str: float}): non-dimensional parameter values
+- estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when &#64;with_estimation is True</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>method (str): method of estimation, “with_quantile” or “with_optimization” or “not_performed”</p></li>
 <li><p>{metrics} (int): score of hyperparameter optimization, if available</p></li>
 <li><p>Trials (int) : the number of trials of hyperparameter optimization, if available</p></li>
@@ -905,12 +979,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <li><p>keyword arguments set with covsirphy.ODEModel.with_optimization(), if available</p></li>
 <li><p>keyword arguments set with covsirphy.ODEModel.with_quantile(), if available</p></li>
 </ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
+</div></blockquote>
 </p>
 </dd>
 </dl>
@@ -921,10 +990,12 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/dynamics/ode.html#ODEModel.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.dynamics.ode.ODEModel.solve" title="Permalink to this definition"></a></dt>
 <dd><p>Solve an initial value problem.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
-<dt>analytical solution</dt><dd><dl class="simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dataframe of analytical solutions.</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): dates from start date to end date</p>
 </dd>
 <dt>Columns</dt><dd><p>(pandas.Int64): model-specific dimensional variables of the model</p>
@@ -943,7 +1014,7 @@ Rt (float): phase-dependent reproduction number (if parameters are available)
 <dd><p>Return log10(S) and R of model-specific variables for S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>) – <dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>Susceptible (int): the number of susceptible cases
@@ -954,9 +1025,11 @@ Fatal (int): the number of fatal cases</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): date</p>
 </dd>
 <dt>Columns</dt><dd><p>log10(S) (np.float64): common logarithm of S of the ODE model
@@ -966,6 +1039,10 @@ R (np.int64): R of the model</p>
 </p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method must be defined by child classes.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -975,7 +1052,7 @@ R (np.int64): R of the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index or pandas.DatetimeIndex (when tau is not None)</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -987,12 +1064,14 @@ R (np.int64): R of the model</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>NoReturn</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>as the same as index of &#64;data when &#64;tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</p>
 </dd>
 <dt>Columns</dt><dd><p>model-specific variables</p>
@@ -1020,22 +1099,28 @@ R (np.int64): R of the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – int}): initial values
-- Susceptible (int): the number of susceptible cases
-- Exposed (int): the number of cases who are exposed and in latent period without infectivity
-- Waiting (int): the number of cases who are waiting for confirmation diagnosis with infectivity
-- Infected (int): the number of infected cases
-- Fatal (int): the number of fatal cases
-- Recovered (int): the number of recovered cases</p></li>
-<li><p><strong>{str</strong> – float}): non-dimensional parameter values
-- theta: direct fatality probability of un-categorized confirmed cases
-- kappa: non-dimensional mortality rate
-- rho1: non-dimensional exposure rate (the number of encounter with the virus in a minute)
-- rho2: non-dimensional inverse value of latent period
-- rho3: non-dimensional inverse value of waiting time for confirmation
-- sigma: non-dimensional recovery rate</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – start date and end date of simulation</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – tau value [min]</p></li>
+<li><p><strong>initial_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – <p>initial values</p>
+<ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Exposed (int): the number of cases who are exposed and in latent period without infectivity</p></li>
+<li><p>Waiting (int): the number of cases who are waiting for confirmation diagnosis with infectivity</p></li>
+<li><p>Infected (int): the number of infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>non-dimensional parameter values</p>
+<ul>
+<li><p>theta: direct fatality probability of un-categorized confirmed cases</p></li>
+<li><p>kappa: non-dimensional mortality rate</p></li>
+<li><p>rho1: non-dimensional exposure rate (the number of encounter with the virus in a minute)</p></li>
+<li><p>rho2: non-dimensional inverse value of latent period</p></li>
+<li><p>rho3: non-dimensional inverse value of waiting time for confirmation</p></li>
+<li><p>sigma: non-dimensional recovery rate</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -1047,10 +1132,12 @@ R (np.int64): R of the model</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – either kappa or rho_i for i=1,2,3 or sigma value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>dict of {str</em> –</p>
-<dl class="simple">
-<dt>int}: dictionary of dimensional parameter values</dt><dd><ul class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary of dimensional parameter values</dt><dd><ul class="simple">
 <li><p>”alpha1 [-]” (float): direct fatality probability of un-categorized confirmed cases</p></li>
 <li><p>”1/alpha2 [day]” (int): mortality period of infected cases</p></li>
 <li><p>”1/beta1 [day]” (int): period for susceptible people to encounter with the virus</p></li>
@@ -1073,6 +1160,9 @@ R (np.int64): R of the model</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.10)"><strong>NotImplementedError</strong></a> – this model cannot be used for parameter estimation because Exposed/Waiting data is un-available</p>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1084,6 +1174,9 @@ R (np.int64): R of the model</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.10)"><strong>NotImplementedError</strong></a> – this model cannot be used for parameter estimation because Exposed/Waiting data is un-available</p>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1094,7 +1187,7 @@ R (np.int64): R of the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>any index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1108,13 +1201,15 @@ R (np.int64): R of the model</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
-<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.DatetimeIndex) or as-is &#64;data (when either &#64;tau or &#64;start_date are None the index &#64;data is date)</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1138,8 +1233,11 @@ R (np.int64): R of the model</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – rho2 or sigma + kappa value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>reproduction number of the ODE model and parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1150,7 +1248,7 @@ R (np.int64): R of the model</p>
 <dd><p>Return log10(S) and R of model-specific variables for S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>) – <dl class="simple">
 <dt>Index</dt><dd><ul class="simple">
 <li><p>Date (pd.Timestamp): Observation date</p></li>
 </ul>
@@ -1165,9 +1263,11 @@ R (np.int64): R of the model</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): date</p>
 </dd>
 <dt>Columns</dt><dd><p>log10(S) (np.float64): common logarithm of Susceptible
@@ -1186,7 +1286,7 @@ R (np.int64): Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index or pandas.DatetimeIndex (when tau is not None)</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1198,12 +1298,14 @@ R (np.int64): Recovered</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>as the same as index if &#64;data when &#64;tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1234,15 +1336,21 @@ R (np.int64): Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – int}): initial values
-- Susceptible (int): the number of susceptible cases
-- Infected (int): the number of infected cases
-- Fatal or Recovered (int): the number of fatal or recovered cases</p></li>
-<li><p><strong>{str</strong> – float}): non-dimensional parameter values
-- rho: non-dimensional effective contact rate
-- sigma: non-dimensional recovery plus mortality rate</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – start date and end date of simulation</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – tau value [min]</p></li>
+<li><p><strong>initial_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – <p>initial values</p>
+<ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of infected cases</p></li>
+<li><p>Fatal or Recovered (int): the number of fatal or recovered cases</p></li>
+</ul>
+</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>non-dimensional parameter values</p>
+<ul>
+<li><p>rho: non-dimensional effective contact rate</p></li>
+<li><p>sigma: non-dimensional recovery plus mortality rate</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -1254,10 +1362,12 @@ R (np.int64): Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – either rho or sigma value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>dict of {str</em> –</p>
-<dl class="simple">
-<dt>int}: dictionary of dimensional parameter values</dt><dd><ul class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary of dimensional parameter values</dt><dd><ul class="simple">
 <li><p>”1/beta [day]” (int): infection period</p></li>
 <li><p>”1/gamma [day]” (int): recovery period</p></li>
 </ul>
@@ -1275,7 +1385,7 @@ R (np.int64): Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>any index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1286,13 +1396,15 @@ R (np.int64): Recovered</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
-<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.DatetimeIndex) or as-is &#64;data (when either &#64;tau or &#64;start_date are None the index &#64;data is date)</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1316,8 +1428,11 @@ R (np.int64): Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – Sigma value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>reproduction number of the ODE model and parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1328,7 +1443,7 @@ R (np.int64): Recovered</p>
 <dd><p>Return log10(S) and R of model-specific variables for S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>) – <dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>Susceptible (int): the number of susceptible cases
@@ -1339,9 +1454,11 @@ Fatal (int): the number of fatal cases</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): date</p>
 </dd>
 <dt>Columns</dt><dd><p>log10(S) (np.float64): common logarithm of Susceptible
@@ -1360,7 +1477,7 @@ R (np.int64): Fatal or Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index or pandas.DatetimeIndex (when tau is not None)</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1372,12 +1489,14 @@ R (np.int64): Fatal or Recovered</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>as the same as index if &#64;data when &#64;tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1405,17 +1524,23 @@ R (np.int64): Fatal or Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – int}): initial values
-- Susceptible (int): the number of susceptible cases
-- Infected (int): the number of infected cases
-- Fatal (int): the number of fatal cases
-- Recovered (int): the number of recovered cases</p></li>
-<li><p><strong>{str</strong> – float}): non-dimensional parameter values
-- kappa: non-dimensional mortality rate
-- rho: non-dimensional effective contact rate
-- sigma: non-dimensional recovery rate</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – start date and end date of simulation</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – tau value [min]</p></li>
+<li><p><strong>initial_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – <p>initial values</p>
+<ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>non-dimensional parameter values</p>
+<ul>
+<li><p>kappa: non-dimensional mortality rate</p></li>
+<li><p>rho: non-dimensional effective contact rate</p></li>
+<li><p>sigma: non-dimensional recovery rate</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -1427,8 +1552,11 @@ R (np.int64): Fatal or Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – either kappa or rho or sigma value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>dict of {str</em> –</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><em>dict of {str</em> –</p>
 <dl class="simple">
 <dt>int}: dictionary of dimensional parameter values</dt><dd><ul class="simple">
 <li><p>”1/alpha2 [day]” (int): mortality period</p></li>
@@ -1449,7 +1577,7 @@ R (np.int64): Fatal or Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>any index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1461,13 +1589,15 @@ R (np.int64): Fatal or Recovered</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
-<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v1.5.0)"><em>pandas.Timestamp</em></a><em> or </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>pd.Timestamp</em><em> | </em><em>None</em>) – start date of records ie. TIME(0)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.DatetimeIndex) or as-is &#64;data (when either &#64;tau or &#64;start_date are None the index &#64;data is date)</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1491,8 +1621,11 @@ R (np.int64): Fatal or Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – sigma + kappa value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1503,7 +1636,7 @@ R (np.int64): Fatal or Recovered</p>
 <dd><p>Return log10(S) and R of model-specific variables for S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>) – <dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>Susceptible (int): the number of susceptible cases
@@ -1514,9 +1647,11 @@ Fatal (int): the number of fatal cases</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): date</p>
 </dd>
 <dt>Columns</dt><dd><p>log10(S) (np.float64): common logarithm of Susceptible
@@ -1535,7 +1670,7 @@ R (np.int64): Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index or pandas.DatetimeIndex (when tau is not None)</p>
 </dd>
 <dt>Columns</dt><dd><ul>
@@ -1550,9 +1685,11 @@ R (np.int64): Recovered</p>
 <li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>None</em>) – tau value [min]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>as the same as index if &#64;data when &#64;tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -1581,18 +1718,24 @@ R (np.int64): Recovered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>)</em>) – start date and end date of simulation</p></li>
-<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – tau value [min]</p></li>
-<li><p><strong>{str</strong> (<em>param_dict</em><em> (</em><em>dict of</em>) – int}): initial values
-- Susceptible (int): the number of susceptible cases
-- Infected (int): the number of infected cases
-- Fatal (int): the number of fatal cases
-- Recovered (int): the number of recovered cases</p></li>
-<li><p><strong>{str</strong> – float}): non-dimensional parameter values
-- theta: direct fatality probability of un-categorized confirmed cases
-- kappa: non-dimensional mortality rate of infected cases
-- rho: non-dimensional effective contact rate
-- sigma: non-dimensional recovery rate</p></li>
+<li><p><strong>date_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – start date and end date of simulation</p></li>
+<li><p><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – tau value [min]</p></li>
+<li><p><strong>initial_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – <p>initial values</p>
+<ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</p></li>
+<li><p><strong>param_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>non-dimensional parameter values</p>
+<ul>
+<li><p>theta: direct fatality probability of un-categorized confirmed cases</p></li>
+<li><p>kappa: non-dimensional mortality rate of infected cases</p></li>
+<li><p>rho: non-dimensional effective contact rate</p></li>
+<li><p>sigma: non-dimensional recovery rate</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -1608,10 +1751,12 @@ R (np.int64): Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – either kappa or rho or sigma value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>dict of {str</em> –</p>
-<dl class="simple">
-<dt>int or float}: dictionary of dimensional parameter values</dt><dd><ul class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary of dimensional parameter values</dt><dd><ul class="simple">
 <li><p>”alpha1 [-]” (float): direct fatality probability of un-categorized confirmed cases</p></li>
 <li><p>”1/alpha2 [day]” (int): mortality period of infected cases</p></li>
 <li><p>”1/beta [day]” (int): infection period</p></li>
@@ -1632,8 +1777,11 @@ R (np.int64): Recovered</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ZeroDivisionError" title="(in Python v3.10)"><strong>ZeroDivisionError</strong></a> – sigma + kappa value was over 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>float</em> – reproduction number of the ODE model and parameters</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>reproduction number of the ODE model and parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1644,7 +1792,7 @@ R (np.int64): Recovered</p>
 <dd><p>Return log10(S) and R of model-specific variables for S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – <dl class="simple">
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>) – <dl class="simple">
 <dt>Index</dt><dd><p>Date (pd.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><p>Susceptible (int): the number of susceptible cases
@@ -1655,9 +1803,11 @@ Fatal (int): the number of fatal cases</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>pandas.DataFrame</em> –</p>
-<dl class="simple">
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>Index</dt><dd><p>Date (pandas.Timestamp): date</p>
 </dd>
 <dt>Columns</dt><dd><p>log10(S) (np.float64): common logarithm of Susceptible

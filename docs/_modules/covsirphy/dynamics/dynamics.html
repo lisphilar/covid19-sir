@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev3
+                3.0.0.dev4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,13 +108,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.dynamics.dynamics</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">Pool</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">p_tqdm</span> <span class="kn">import</span> <span class="n">p_umap</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">EmptyError</span><span class="p">,</span> <span class="n">NotEnoughDataError</span><span class="p">,</span> <span class="n">UnExpectedNoneError</span><span class="p">,</span> <span class="n">UnExpectedValueRangeError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
@@ -131,13 +133,13 @@
     <span class="sd">&quot;&quot;&quot;Class to hand phase-dependent SIR-derived ODE models.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (covsirphy.ODEModel): definition of ODE model</span>
-<span class="sd">        date_range (tuple of (str, str)): start date and end date of dynamics to analyze</span>
-<span class="sd">        tau (int or None): tau value [min] or None (set later with data)</span>
-<span class="sd">        name (str or None): name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set)</span>
+<span class="sd">        model: definition of ODE model</span>
+<span class="sd">        date_range: start date and end date of dynamics to analyze</span>
+<span class="sd">        tau: tau value [min] or None (set later with data)</span>
+<span class="sd">        name: name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">date_range</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ODEModel</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">subclass</span><span class="p">(</span><span class="n">ODEModel</span><span class="p">)</span>
         <span class="n">first_date</span><span class="p">,</span> <span class="n">last_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="s2">&quot;date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_first</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the first value of @date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
@@ -151,59 +153,60 @@
             <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">),</span>
             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;covsirphy.ODEModel: model class</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ODEModel</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return model class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;str: name of ODE model</span>
+    <span class="k">def</span> <span class="nf">model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return name of ODE model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_NAME</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;int or None: tau value [min] or None (un-set)</span>
+    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return tau value [min] or None (un-set).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span>
 
     <span class="nd">@tau</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
 
     <span class="nd">@tau</span><span class="o">.</span><span class="n">deleter</span>
-    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;str: name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set)</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">instance</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">deleter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Dynamics.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ODEModel</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with sample data of one-phase ODE model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date_range (tuple(str or None, str or None) or None): start date and end date of simulation</span>
-<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            model: definition of ODE model</span>
+<span class="sd">            date_range: start date and end date of simulation</span>
+<span class="sd">            tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Regarding @date_range, refer to covsirphy.ODEModel.from_sample().</span>
@@ -220,11 +223,11 @@
         <span class="k">return</span> <span class="n">instance</span></div>
 
 <div class="viewcode-block" id="Dynamics.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.from_data">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ODEModel</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): new data to overwrite the current information</span>
+<span class="sd">            data: new data to overwrite the current information</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pandas.Timestamp): Observation dates</span>
 <span class="sd">                Columns</span>
@@ -233,11 +236,11 @@
 <span class="sd">                    Fatal (int): the number of fatal cases</span>
 <span class="sd">                    Recovered (int): the number of recovered cases</span>
 <span class="sd">                    (numpy.float64): ODE parameter values defined with the ODE model (optional)</span>
-<span class="sd">            tau (int or None): tau value [min] or None (un-set)</span>
-<span class="sd">            name (str or None): name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set)</span>
+<span class="sd">            tau: tau value [min] or None (un-set)</span>
+<span class="sd">            name: name of dynamics to show in figures (e.g. &quot;baseline&quot;) or None (un-set)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Regarding @date_range, refer to covsirphy.ODEModel.from_sample().</span>
@@ -248,11 +251,11 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
-<div class="viewcode-block" id="Dynamics.register"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.register"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Register data to get initial values and ODE parameter values (if available).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame or None): new data to overwrite the current information or None (no new records)</span>
+<span class="sd">            data: new data to overwrite the current information or None (no new records)</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pandas.Timestamp): Observation dates</span>
 <span class="sd">                Columns</span>
@@ -263,7 +266,7 @@
 <span class="sd">                    (numpy.float64): ODE parameter values defined with the model</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: the current information</span>
+<span class="sd">            dataframe of the current information:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pandas.Timestamp): Observation dates</span>
 <span class="sd">                Columns</span>
@@ -298,15 +301,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">param_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">]]</span></div>
 
-    <span class="k">def</span> <span class="nf">_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform time-series segmentation with points.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            points (list[str]): dates of change points</span>
-<span class="sd">            overwrite (bool): whether remove all phases before segmentation or not</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.Dynamics: self</span>
+<span class="sd">            points: dates of change points</span>
+<span class="sd">            overwrite: whether remove all phases before segmentation or not</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            @points can include the first date, but not required.</span>
@@ -324,16 +324,16 @@
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">point</span><span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Dynamics.segment"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.segment">[docs]</a>    <span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.segment"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.segment">[docs]</a>    <span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform time-series segmentation with points manually selected or found with S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .detect() method)</span>
-<span class="sd">            overwrite (bool): whether remove all phases before segmentation or not</span>
+<span class="sd">            points: dates of change points or None (will be found with S-R trend analysis via .detect() method)</span>
+<span class="sd">            overwrite: whether remove all phases before segmentation or not</span>
 <span class="sd">            **kwargs: keyword arguments of covsirphy.Dynamics.detect()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.Dynamics: self</span>
+<span class="sd">            Updated Dynamics object</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            @points can include the first date, but not required.</span>
@@ -341,15 +341,16 @@
 <span class="sd">        Note:</span>
 <span class="sd">            @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Dynamics.detect"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Binseg-normal&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.detect"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Binseg-normal&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">display</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            algo (str): detection algorithms and models</span>
-<span class="sd">            min_size (int): minimum value of phase length [days], be equal to or over 3</span>
-<span class="sd">            display (bool): whether display figure of log10(S) - R plane or not</span>
+<span class="sd">            algo: detection algorithms and models</span>
+<span class="sd">            min_size: minimum value of phase length [days], be equal to or over 3</span>
+<span class="sd">            display: whether display figure of log10(S) - R plane or not</span>
 <span class="sd">            **kwargs: keyword arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp) except for &quot;model&quot;,</span>
 <span class="sd">                covsirphy.VisualizeBase(), matplotlib.legend.Legend()</span>
 
@@ -357,27 +358,26 @@
 <span class="sd">            NotEnoughDataError: we have not enough records, the length of the records must be equal to or over min_size * 2</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of (pandas.Timestamp, pandas.DataFrame):</span>
-<span class="sd">                pandas.Timestamp: date of change points</span>
-<span class="sd">                pandas.Dataframe:</span>
-<span class="sd">                    Index</span>
-<span class="sd">                        R (int): actual R (R of the ODE model) values</span>
-<span class="sd">                    Columns</span>
-<span class="sd">                        Actual (float): actual log10(S) (common logarithm of S of the ODE model) values</span>
-<span class="sd">                        Fitted (float): log10(S) values fitted with y = a * R + b</span>
-<span class="sd">                        0th (float): log10(S) values fitted with y = a * R + b and 0th phase data</span>
-<span class="sd">                        1st, 2nd... (float): fitted values of 1st, 2nd phases</span>
+<span class="sd">            - pandas.Timestamp: date of change points</span>
+<span class="sd">            - pandas.Dataframe:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    R (int): actual R (R of the ODE model) values</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Actual (float): actual log10(S) (common logarithm of S of the ODE model) values</span>
+<span class="sd">                    Fitted (float): log10(S) values fitted with y = a * R + b</span>
+<span class="sd">                    0th (float): log10(S) values fitted with y = a * R + b and 0th phase data</span>
+<span class="sd">                    1st, 2nd... (float): fitted values of 1st, 2nd phases</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Python library `ruptures` will be used for off-line change point detection.</span>
-<span class="sd">            Refer to documentation of `ruptures` library, https://centre-borelli.github.io/ruptures-docs/</span>
-<span class="sd">            Candidates of @algo are &quot;Pelt-rbf&quot;, &quot;Binseg-rbf&quot;, &quot;Binseg-normal&quot;, &quot;BottomUp-rbf&quot;, &quot;BottomUp-normal&quot;.</span>
+<span class="sd">            - Python library `ruptures` will be used for off-line change point detection.</span>
+<span class="sd">            - Refer to documentation of `ruptures` library, https://centre-borelli.github.io/ruptures-docs/</span>
+<span class="sd">            - Candidates of @algo are &quot;Pelt-rbf&quot;, &quot;Binseg-rbf&quot;, &quot;Binseg-normal&quot;, &quot;BottomUp-rbf&quot;, &quot;BottomUp-normal&quot;.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            S-R trend analysis is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook</span>
-<span class="sd">            &quot;Phase&quot; means a sequential dates in which the parameters of SIR-derived models are fixed.</span>
-<span class="sd">            &quot;Change points&quot; means the dates when trend was changed.</span>
-<span class="sd">            &quot;Change points&quot; is the same as the start dates of phases except for the 0th phase.</span>
+<span class="sd">            - S-R trend analysis is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook</span>
+<span class="sd">            - &quot;Phase&quot; means a sequential dates in which the parameters of SIR-derived models are fixed.</span>
+<span class="sd">            - &quot;Change points&quot; means the dates when trend was changed.</span>
+<span class="sd">            - &quot;Change points&quot; is the same as the start dates of phases except for the 0th phase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">min_size</span><span class="p">,</span> <span class="s2">&quot;min_size&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)</span>
@@ -390,11 +390,11 @@
             <span class="n">analyzer</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span><span class="o">=</span><span class="n">fit_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">points</span><span class="p">,</span> <span class="n">fit_df</span></div>
 
-<div class="viewcode-block" id="Dynamics.summary"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.summary"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Summarize phase information.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">            Summarized information.</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Phase (str): phase names, 0th, 1st,...</span>
 <span class="sd">                Columns</span>
@@ -411,7 +411,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="si">}</span><span class="s2">_last&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">})</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;_last&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]]</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span>  <span class="c1"># type: ignore</span>
         <span class="c1"># Reproduction number</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">)</span><span class="o">.</span><span class="n">r0</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -429,11 +429,11 @@
         <span class="n">others</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">fixed_cols</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">fixed_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dynamics.track"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.track"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Track reproduction number, parameter value and dimensional parameter values.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
+<span class="sd">            Dataframe of time-series data of the values.</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pandas.Timestamp): dates</span>
 <span class="sd">                Columns</span>
@@ -446,7 +446,7 @@
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.simulate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_specific</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.simulate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_specific</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform simulation with phase-dependent ODE model.</span>
 
 <span class="sd">        Args:</span>
@@ -457,7 +457,7 @@
 <span class="sd">            NAFoundError: ODE parameter values on the start dates of phases are un-set</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">            dataframe of time-series simulated data.</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pd.Timestamp): dates</span>
 <span class="sd">                Columns</span>
@@ -474,39 +474,38 @@
         <span class="n">simulator</span> <span class="o">=</span> <span class="n">_Simulator</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="n">model_specific</span><span class="o">=</span><span class="n">model_specific</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.estimate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Run covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params().</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            **kwargs: keyword arguments of covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.Dynamics: self</span>
+<span class="sd">            Updated Dynamics object with estimated ODE parameter values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">estimate_tau</span><span class="p">(</span><span class="o">**</span><span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate_tau</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">estimate_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Dynamics.estimate_tau"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_tau">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate_tau"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_tau">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Set the best tau value for the registered data, estimating ODE parameters with quantiles.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            metric (str): metric name for scoring when selecting best tau value</span>
-<span class="sd">            q (float): the quantiles to compute, values between (0, 1)</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
-<span class="sd">            n_jobs (int or None): the number of parallel jobs or None (CPU count)</span>
+<span class="sd">            metric: metric name for scoring when selecting best tau value</span>
+<span class="sd">            q: the quantiles to compute, values between (0, 1)</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            n_jobs: the number of parallel jobs or None (CPU count)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotEnoughDataError: less than three non-NA records are registered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of (float, pandas.DataFrame):</span>
-<span class="sd">                float: tau value with best metric score</span>
-<span class="sd">                pandas.DataFrame: metric scores of tau candidates</span>
-<span class="sd">                    Index</span>
-<span class="sd">                        tau (int): candidate of tau values</span>
-<span class="sd">                    Columns</span>
-<span class="sd">                        {metric}: score of estimation with metric</span>
+<span class="sd">            - float: tau value with best metric score</span>
+<span class="sd">            - pandas.DataFrame: metric scores of tau candidates</span>
+<span class="sd">                Index</span>
+<span class="sd">                    tau (int): candidate of tau values</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    {metric}: score of estimation with metric</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_df</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
@@ -521,17 +520,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">comp_f</span><span class="p">(</span><span class="n">score_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">score_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span></div>
 
-    <span class="k">def</span> <span class="nf">_score_with_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_score_with_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the metric score with tau.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            metric (str): metric name for scoring when selecting best tau value</span>
-<span class="sd">            q (float): the quantiles to compute, values between (0, 1)</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            metric: metric name for scoring when selecting best tau value</span>
+<span class="sd">            q: the quantiles to compute, values between (0, 1)</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: score to minimize</span>
+<span class="sd">            metric score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_PARAMETERS</span><span class="p">[:]</span>
         <span class="n">all_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">)</span>
@@ -547,13 +546,13 @@
         <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">all_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">sim_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dynamics.estimate_params"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.estimate_params"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.estimate_params">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set ODE parameter values optimized for the registered data with hyperparameter optimization using Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            metric (str): metric name for scoring when optimizing ODE parameter values of phases</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
-<span class="sd">            n_jobs (int or None): the number of parallel jobs or None (CPU count)</span>
+<span class="sd">            metric: metric name for scoring when optimizing ODE parameter values of phases</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            n_jobs: the number of parallel jobs or None (CPU count)</span>
 <span class="sd">            **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()</span>
 
 <span class="sd">        Raises:</span>
@@ -561,14 +560,13 @@
 <span class="sd">            NotEnoughDataError: less than three non-NA records are registered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.Timestamp): dates</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    (numpy.float64): ODE parameter values defined with model.PARAMETERS</span>
-<span class="sd">                    {metric}: score with the estimated parameter values</span>
-<span class="sd">                    Trials (int): the number of trials</span>
-<span class="sd">                    Runtime (str): runtime of optimization, like 0 min 10 sec</span>
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.Timestamp): dates</span>
+<span class="sd">            Columns</span>
+<span class="sd">                (numpy.float64): ODE parameter values defined with model.PARAMETERS</span>
+<span class="sd">                {metric}: score with the estimated parameter values</span>
+<span class="sd">                Trials (int): the number of trials</span>
+<span class="sd">                Runtime (str): runtime of optimization, like 0 min 10 sec</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExpectedNoneError</span><span class="p">(</span>
@@ -596,27 +594,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">r_df</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est_df</span></div>
 
-    <span class="k">def</span> <span class="nf">_optimized_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase_df</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_optimized_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ODEModel</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return ODE parameter values optimized with the registered data, estimating ODE parameters hyperparameter optimization using Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            metric (str): metric name for scoring when optimizing ODE parameter values of phases</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
-<span class="sd">            n_jobs (int or None): the number of parallel jobs or None (CPU count)</span>
+<span class="sd">            phase_df: records of a phase</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.Timestamp): observation dates</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    variables of the model</span>
+<span class="sd">            model: definition of ODE model</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            metric: metric name for scoring when optimizing ODE parameter values of phases</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            n_jobs: the number of parallel jobs or None (CPU count)</span>
 <span class="sd">            **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedNoneError: tau value is un-set</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.Timestamp): dates</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    (numpy.float64): ODE parameter values defined with model.PARAMETERS</span>
-<span class="sd">                    {metric}: score with the estimated parameter values</span>
-<span class="sd">                    Trials (int): the number of trials</span>
-<span class="sd">                    Runtime (str): runtime of optimization, like 0 min 10 sec</span>
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.Timestamp): dates</span>
+<span class="sd">            Columns</span>
+<span class="sd">                (numpy.float64): ODE parameter values defined with model.PARAMETERS</span>
+<span class="sd">                {metric}: score with the estimated parameter values</span>
+<span class="sd">                Trials (int): the number of trials</span>
+<span class="sd">                Runtime (str): runtime of optimization, like 0 min 10 sec</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">phase_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># ODE parameter optimization</span>
@@ -629,14 +633,14 @@
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">est_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">est_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="Dynamics.parse_phases"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_phases">[docs]</a>    <span class="k">def</span> <span class="nf">parse_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.parse_phases"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_phases">[docs]</a>    <span class="k">def</span> <span class="nf">parse_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return minimum date and maximum date of the phases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phases (list of [str], or None): phases (0th, 1st, 2nd,... last) or None (all phases)</span>
+<span class="sd">            phases: phases (0th, 1st, 2nd,... last) or None (all phases)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of (pandas.Timestamp): minimum date and maximum date of the phases</span>
+<span class="sd">            minimum date and maximum date of the phases</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            &quot;last&quot; can be used to specify the last phase.</span>
@@ -649,38 +653,42 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">all_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">phase_numbers</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dynamics.parse_days"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_days">[docs]</a>    <span class="k">def</span> <span class="nf">parse_days</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.parse_days"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.parse_days">[docs]</a>    <span class="k">def</span> <span class="nf">parse_days</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;last&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return min(ref, ref + days) and max(ref, ref + days).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            days (int): the number of days</span>
-<span class="sd">            ref (pandas.Timestamp or None): reference date or &quot;first&quot; (the first date of records) or &quot;last&quot; (the last date)</span>
+<span class="sd">            days: the number of days</span>
+<span class="sd">            ref: reference date or &quot;first&quot; (the first date of records) or &quot;last&quot;/None (the last date)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            minimum date and maximum date of the selected dates</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Note that the days clipped with the first and the last dates of records.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">days_n</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
         <span class="n">ref_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">}</span>
-        <span class="n">ref_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">ref_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">ref</span><span class="p">),</span> <span class="s2">&quot;ref&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span>
+        <span class="n">ref_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">ref_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">ref</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span>
             <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">)</span>
         <span class="n">min_date</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ref_date</span><span class="p">,</span> <span class="n">ref_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days_n</span><span class="p">))</span>
         <span class="n">max_date</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ref_date</span><span class="p">,</span> <span class="n">ref_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days_n</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.evaluate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.evaluate"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">display</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compare the simulated results and actual records, and evaluate the differences.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date_range (tuple of (str or pandas.Timestamp or None) or None): range of dates to evaluate or None (the first and the last date)</span>
-<span class="sd">            metric (str): metric to evaluate the difference</span>
-<span class="sd">            display (bool): whether display figure of comparison or not</span>
+<span class="sd">            date_range: range of dates to evaluate or None (the first and the last date)</span>
+<span class="sd">            metric: metric to evaluate the difference</span>
+<span class="sd">            display: whether display figure of comparison or not</span>
 <span class="sd">            kwargs: keyword arguments of covsirphy.compare_plot()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: evaluation score</span>
+<span class="sd">            evaluation score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="s2">&quot;date_range&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date_range&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="s2">&quot;date_range[0]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">)</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="s2">&quot;date_range[1]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">)</span>
         <span class="n">actual_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">,</span> <span class="n">variables</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -690,11 +698,11 @@
             <span class="n">compare_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;actual&quot;</span><span class="p">,</span> <span class="s2">&quot;simulated&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">actual_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dynamics.start_dates"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.start_dates">[docs]</a>    <span class="k">def</span> <span class="nf">start_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dynamics.start_dates"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.dynamics.Dynamics.start_dates">[docs]</a>    <span class="k">def</span> <span class="nf">start_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return the start dates of phases.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list of [str]: start dates</span>
+<span class="sd">            start dates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_PH</span><span class="p">]</span><span class="o">.</span><span class="n">factorize</span><span class="p">()</span>

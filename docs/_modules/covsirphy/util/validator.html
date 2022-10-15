@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev3
+                3.0.0.dev4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,9 +108,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.util.validator</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NAFoundError</span><span class="p">,</span> <span class="n">NotIncludedError</span><span class="p">,</span> <span class="n">NotSubclassError</span><span class="p">,</span> <span class="n">UnExpectedTypeError</span><span class="p">,</span> <span class="n">EmptyError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExpectedValueRangeError</span><span class="p">,</span> <span class="n">UnExpectedValueError</span><span class="p">,</span> <span class="n">UnExpectedLengthError</span><span class="p">,</span> <span class="n">UnExpectedNoneError</span>
 
@@ -130,45 +133,45 @@
 <span class="sd">        When @accept_none is True and @target is None, default values will be returned with instance methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="o">=</span> <span class="n">target</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">accept_none</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExpectedNoneError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Validator.subclass"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.subclass">[docs]</a>    <span class="k">def</span> <span class="nf">subclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.subclass"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.subclass">[docs]</a>    <span class="k">def</span> <span class="nf">subclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a subclass of the parent class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            parent (object): parent class or sequence of parent classes</span>
+<span class="sd">            parent: parent class or sequence of parent classes</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotSubclassError: the target is not the subclass</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            object: the target itself</span>
+<span class="sd">            the target itself</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
         <span class="k">raise</span> <span class="n">NotSubclassError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.instance"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.instance">[docs]</a>    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.instance"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.instance">[docs]</a>    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Ensure that the target is an instance of a specified class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            expected (object): expected class or sequence of expected classes</span>
+<span class="sd">            expected: expected class or sequence of expected classes</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedTypeError: the target is not an instance of the class</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            object: the target itself</span>
+<span class="sd">            the target itself</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
         <span class="k">raise</span> <span class="n">UnExpectedTypeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.dataframe"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.dataframe"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">empty_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a dataframe.</span>
 
 <span class="sd">        Args:</span>
@@ -201,23 +204,24 @@
                     <span class="n">details</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The dataframe has </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2"> as columns&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Validator.float"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.float">[docs]</a>    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.float"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.float">[docs]</a>    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to a float value.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value_range (tuple(int or None, int or None)): value range, None means un-specified</span>
-<span class="sd">            default (float or None): default value when the target is None</span>
-<span class="sd">            digits (int or None): effective digits or None (skip rounding)</span>
+<span class="sd">            value_range: value range, None means un-specified</span>
+<span class="sd">            default: default value when the target is None</span>
+<span class="sd">            digits: effective digits or None (skip rounding)</span>
 
 <span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedNoneError: the default value is None when the target is None</span>
 <span class="sd">            UnExpectedTypeError: the target cannot be converted to a float value</span>
 <span class="sd">            UnExpectedValueRangeError: the value is out of value range</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float or None: converted float value or None (when both of the target and @default are None)</span>
+<span class="sd">            converted float value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">digits</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="n">digits</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -228,23 +232,24 @@
             <span class="k">return</span> <span class="n">value</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">digits</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span></div>
 
-<div class="viewcode-block" id="Validator.int"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.int">[docs]</a>    <span class="k">def</span> <span class="nf">int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">round_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.int"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.int">[docs]</a>    <span class="k">def</span> <span class="nf">int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">round_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to an integer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value_range (tuple(int or None, int or None)): value range, None means un-specified</span>
-<span class="sd">            default (int or None): default value when the target is None</span>
-<span class="sd">            round_ok (bool): whether ignore round-off error</span>
+<span class="sd">            value_range: value range, None means un-specified</span>
+<span class="sd">            default: default value when the target is None</span>
+<span class="sd">            round_ok: whether ignore round-off error</span>
 
 <span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedNoneError: the default value is None when the target is None</span>
 <span class="sd">            UnExpectedTypeError: the target cannot be converted to an integer or round-off error exists when @round_ok is False</span>
 <span class="sd">            UnExpectedValueRangeError: the value is out of value range</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            int or None: converted float value or None (when both of the target and @default are None)</span>
+<span class="sd">            converted float value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">,</span> <span class="n">round_ok</span><span class="o">=</span><span class="n">round_ok</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">,</span> <span class="n">round_ok</span><span class="o">=</span><span class="n">round_ok</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
@@ -256,18 +261,18 @@
             <span class="k">raise</span> <span class="n">UnExpectedValueRangeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value_range</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Validator.tau"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.tau">[docs]</a>    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.tau"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.tau">[docs]</a>    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Validate the value can be used as tau value [min].</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            default (int or None): default value when the target is None</span>
+<span class="sd">            default: default value when the target is None</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedTypeError: the target cannot be converted to an integer</span>
 <span class="sd">            UnExpectedValueRangeError: the value is out of value range</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            int or None: converted float value or None (when both of the target and @default are None)</span>
+<span class="sd">            converted float value or None (when both of the target and @default are None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
@@ -279,22 +284,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">divisors</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Tau value [min], a divisor of 1440 [min], is a parameter used to convert actual time to time steps (without units)&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Validator.date"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.date"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert a value to a date object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value_range (tuple(int or None, int or None)): value range, None means un-specified</span>
-<span class="sd">            default (pandas.Timestamp or None): default value when the target is None</span>
+<span class="sd">            value_range: value range, None means un-specified</span>
+<span class="sd">            default: default value when the target is None</span>
 
 <span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedNoneError: the default value is None when the target is None</span>
 <span class="sd">            UnExpectedTypeError: the target cannot be converted to a date object</span>
 <span class="sd">            UnExpectedValueRangeError: the value is out of value range</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.Timestamp or None: converted date or None (when both of the target and @default are None)</span>
+<span class="sd">            converted date</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="n">value_range</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -307,15 +313,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">value_range</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Validator.sequence"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.sequence">[docs]</a>    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.sequence"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.sequence">[docs]</a>    <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">candidates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Convert a sequence (list, tuple) to a list.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            default (list[object] or None): default value when the target is None</span>
-<span class="sd">            flatten (bool): whether flatten the sequence or not</span>
-<span class="sd">            unique (bool): whether remove duplicated values or not, the first value will remain</span>
-<span class="sd">            candidates (list[object] or tuple(object) or iter or None): list of candidates or None (no limitations)</span>
-<span class="sd">            length (int or None): length of the sequence or None (no limitations)</span>
+<span class="sd">            default: default value when the target is None</span>
+<span class="sd">            flatten: whether flatten the sequence or not</span>
+<span class="sd">            unique: whether remove duplicated values or not, the first value will remain</span>
+<span class="sd">            candidates: list of candidates or None (no limitations)</span>
+<span class="sd">            length: length of the sequence or None (no limitations)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedTypeError: the target cannot be converted to a list or failed in flattening</span>
@@ -323,10 +329,10 @@
 <span class="sd">            UnExpectedLengthError: the number of elements is not the same as @length</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list[object] or None: converted list or None (when both of the target and @default are None)</span>
+<span class="sd">            converted list or empty list (when both of the target and @default are None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="n">flatten</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="n">unique</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Validator</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="n">flatten</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="n">unique</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">UnExpectedTypeError</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;A tuple can be used, but it will be converted to a list&quot;</span><span class="p">)</span>
@@ -348,20 +354,20 @@
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Validator.dict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dict">[docs]</a>    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.dict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.dict">[docs]</a>    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">required_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coerce&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Ensure the target is a dictionary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            default (dict[str, object] or None): default values, when the target is None or key is not included in the target</span>
-<span class="sd">            required_keys (list): keys which must be included</span>
-<span class="sd">            errors (str): &quot;coerce&quot; or &quot;raise&quot;</span>
+<span class="sd">            default: default values, when the target is None or key is not included in the target</span>
+<span class="sd">            required_keys: keys which must be included</span>
+<span class="sd">            errors: &quot;coerce&quot; or &quot;raise&quot;</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedTypeError: the target is not a dictionary</span>
 <span class="sd">            NAFoundError: values of the required keys are not specified when @errors=&quot;raise&quot;</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict[str, object]: the target is self with default values and required keys</span>
+<span class="sd">            the target is self with default values and required keys</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            All keys of @default will be included and the target will overwrite it.</span>
@@ -379,18 +385,18 @@
                 <span class="k">raise</span> <span class="n">NAFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value of key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> in dictionary </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_dict</span></div>
 
-<div class="viewcode-block" id="Validator.kwargs"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">functions</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Validator.kwargs"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.validator.Validator.kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Find keyword arguments of the functions.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            functions (list[function] or function): target functions</span>
-<span class="sd">            default (dict[str, object] or None): default values, when the target is None or key is not included in the target</span>
+<span class="sd">            functions: target functions</span>
+<span class="sd">            default: default values, when the target is None or key is not included in the target</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            UnExpectedTypeError: the target is not a dictionary</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict[str, object]: keyword arguments of the functions</span>
+<span class="sd">            dict: keyword arguments of the functions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">required_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
         <span class="n">keywords_nest</span> <span class="o">=</span> <span class="p">[</span>

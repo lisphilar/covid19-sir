@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev3
+                3.0.0.dev4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,13 +108,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.dynamics.ode</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">optuna</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">NoReturn</span><span class="p">,</span> <span class="n">Self</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExpectedNoneError</span><span class="p">,</span> <span class="n">NotNoneError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
@@ -126,70 +128,70 @@
     <span class="sd">&quot;&quot;&quot;Basic class of ordinary differential equation (ODE) model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        date_range (tuple of (str, str)): start date and end date of simulation</span>
-<span class="sd">        tau (int): tau value [min]</span>
-<span class="sd">        initial_dict (dict of {str: int}): initial values</span>
-<span class="sd">        param_dict (dict of {str: float}): non-dimensional parameter values</span>
+<span class="sd">        date_range: start date and end date of simulation</span>
+<span class="sd">        tau: tau value [min]</span>
+<span class="sd">        initial_dict: initial values</span>
+<span class="sd">        param_dict: non-dimensional parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_logS</span> <span class="o">=</span> <span class="s2">&quot;log10(S)&quot;</span>
-    <span class="n">_r</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
+    <span class="n">_logS</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;log10(S)&quot;</span>
+    <span class="n">_r</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
     <span class="c1"># Name of ODE model</span>
-    <span class="n">_NAME</span> <span class="o">=</span> <span class="s2">&quot;ODE Model&quot;</span>
+    <span class="n">_NAME</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ODE Model&quot;</span>
     <span class="c1"># Variables</span>
-    <span class="n">_VARIABLES</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_VARIABLES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Non-dimensional parameters</span>
-    <span class="n">_PARAMETERS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_PARAMETERS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Dimensional parameters</span>
-    <span class="n">_DAY_PARAMETERS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_DAY_PARAMETERS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Variables that increases monotonically</span>
-    <span class="n">_VARS_INCREASE</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_VARS_INCREASE</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Sample data</span>
-    <span class="n">_SAMPLE_DICT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">_SAMPLE_DICT</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;initial_dict&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">_VARIABLES</span><span class="p">),</span>
         <span class="s2">&quot;param_dict&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">_PARAMETERS</span><span class="p">)</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">initial_dict</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">initial_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="s2">&quot;date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the first value of @date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_end</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span>
+            <span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the first value of @date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span>
             <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the second date of @date_range&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_dict</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">initial_dict</span><span class="p">,</span> <span class="s2">&quot;initial_dict&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">initial_dict</span><span class="p">,</span> <span class="s2">&quot;initial_dict&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
             <span class="n">required_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_VARIABLES</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_param_dict</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="s2">&quot;param_dict&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="s2">&quot;param_dict&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
             <span class="n">required_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_PARAMETERS</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
         <span class="c1"># Total population</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">initial_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">initial_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="c1"># Information regarding ODE parameter estimation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_NAME</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ODEModel.name"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.name">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return name of ODE model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_NAME</span></div>
 
 <div class="viewcode-block" id="ODEModel.definitions"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.definitions">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return definitions of ODE model.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: object}:</span>
-<span class="sd">                - &quot;name&quot; (str): ODE model name</span>
-<span class="sd">                - &quot;variables&quot; (list of [str]): variable names</span>
-<span class="sd">                - &quot;parameters&quot; (list of [str]): non-dimensional parameter names</span>
-<span class="sd">                - &quot;dimensional_parameters&quot; (list of [str]): dimensional parameter names</span>
+<span class="sd">            - &quot;name&quot; (str): ODE model name</span>
+<span class="sd">            - &quot;variables&quot; (list of [str]): variable names</span>
+<span class="sd">            - &quot;parameters&quot; (list of [str]): non-dimensional parameter names</span>
+<span class="sd">            - &quot;dimensional_parameters&quot; (list of [str]): dimensional parameter names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_NAME</span><span class="p">,</span>
@@ -198,25 +200,24 @@
             <span class="s2">&quot;dimensional_parameters&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DAY_PARAMETERS</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="ODEModel.settings"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_estimation</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.settings"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_estimation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return settings.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            with_estimation (bool): whether includes information regarding ODE parameter estimation or not</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: object}:</span>
-<span class="sd">                - date_range (tuple of (str, str)): start date and end date of simulation</span>
-<span class="sd">                - tau (int): tau value [min]</span>
-<span class="sd">                - initial_dict (dict of {str: int}): initial values</span>
-<span class="sd">                - param_dict (dict of {str: float}): non-dimensional parameter values</span>
-<span class="sd">                - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True</span>
-<span class="sd">                    - method (str): method of estimation, &quot;with_quantile&quot; or &quot;with_optimization&quot; or &quot;not_performed&quot;</span>
-<span class="sd">                    - {metrics} (int): score of hyperparameter optimization, if available</span>
-<span class="sd">                    - Trials (int) : the number of trials of hyperparameter optimization, if available</span>
-<span class="sd">                    - Runtime (str): runtime of hyperparameter optimization, if available</span>
-<span class="sd">                    - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available</span>
-<span class="sd">                    - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available</span>
+<span class="sd">            - date_range (tuple of (str, str)): start date and end date of simulation</span>
+<span class="sd">            - tau (int): tau value [min]</span>
+<span class="sd">            - initial_dict (dict of {str: int}): initial values</span>
+<span class="sd">            - param_dict (dict of {str: float}): non-dimensional parameter values</span>
+<span class="sd">            - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True</span>
+<span class="sd">                - method (str): method of estimation, &quot;with_quantile&quot; or &quot;with_optimization&quot; or &quot;not_performed&quot;</span>
+<span class="sd">                - {metrics} (int): score of hyperparameter optimization, if available</span>
+<span class="sd">                - Trials (int) : the number of trials of hyperparameter optimization, if available</span>
+<span class="sd">                - Runtime (str): runtime of hyperparameter optimization, if available</span>
+<span class="sd">                - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available</span>
+<span class="sd">                - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;date_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)),</span>
@@ -229,21 +230,19 @@
         <span class="k">return</span> <span class="n">_dict</span></div>
 
 <div class="viewcode-block" id="ODEModel.from_sample"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_sample">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with sample data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date_range (tuple(str or None, str or None) or None): start date and end date of simulation</span>
-<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            date_range: start date and end date of simulation</span>
+<span class="sd">            tau: tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            When @date_range or the first value of @date_range is None, today when executed will be set as start date.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.</span>
+<span class="sd">            - When @date_range or the first value of @date_range is None, today when executed will be set as start date.</span>
+<span class="sd">            - When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">date_range</span><span class="p">,</span> <span class="s2">&quot;date_range&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the first value of @date_range&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
@@ -251,23 +250,23 @@
             <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the second date of @date_range&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">180</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">_SAMPLE_DICT</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_discretize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_discretize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Discretize the ODE.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            t (int): discrete time-steps</span>
-<span class="sd">            X (numpy.array): the current values of the model</span>
+<span class="sd">            t: discrete time-steps</span>
+<span class="sd">            X: the current values of the model</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            numpy.array: the next values of the model</span>
+<span class="sd">            the next values of the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ODEModel.solve"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.solve"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Solve an initial value problem.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            pandas.DataFrame: analytical solution</span>
+<span class="sd">            dataframe of analytical solutions.</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pandas.Timestamp): dates from start date to end date</span>
 <span class="sd">                Columns</span>
@@ -286,15 +285,15 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_date_to_non_dim</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_date_to_non_dim</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert date information (TIME) to time(x) = (TIME(x) - TIME(0)) / tau</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            series (pandas.DatetimeIndex): date information</span>
-<span class="sd">            tau (int or None): tau value [min]</span>
+<span class="sd">            series: date information</span>
+<span class="sd">            tau: tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name</span>
+<span class="sd">            as-is @series when tau is None else converted time information without series name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="s2">&quot;index of data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">instance</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -304,17 +303,17 @@
         <span class="k">return</span> <span class="n">converted</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;Int64&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_non_dim_to_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_non_dim_to_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">TimeStamp</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert non-dimensional date information (time) to TIME(x) = TIME(0) + tau * time(x) and resample with dates.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    non-dimensional date information pandas.DatetimeIndex</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    any columns</span>
-<span class="sd">            tau (int or None): tau value [min]</span>
-<span class="sd">            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            start_date: start date of records ie. TIME(0)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotNoneError: @tau is None, but start_date is not None</span>
@@ -326,7 +325,6 @@
 <span class="sd">                    Date (pandas.DatetimeIndex) or as-is @data (when @tau is None)</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    any columns of @data</span>
-<span class="sd">            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The first values on date will be selected when resampling.</span>
@@ -344,11 +342,11 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ODEModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index or pandas.DatetimeIndex (when tau is not None)</span>
 <span class="sd">                Columns</span>
@@ -356,15 +354,13 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            tau (int or None): tau value [min]</span>
-
+<span class="sd">            tau: tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    as the same as index of @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    model-specific variables</span>
+<span class="sd">            Index</span>
+<span class="sd">                as the same as index of @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau</span>
+<span class="sd">            Columns</span>
+<span class="sd">                model-specific variables</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            This method must be defined by child classes.</span>
@@ -372,49 +368,48 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="ODEModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    any index</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    model-specific variables</span>
-<span class="sd">            tau (int or None): tau value [min]</span>
-<span class="sd">            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            start_date: start date of records ie. TIME(0)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None)</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None)</span>
+<span class="sd">            Columns</span>
+<span class="sd">                - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                - Infected (int): the number of currently infected cases</span>
+<span class="sd">                - Fatal (int): the number of fatal cases</span>
+<span class="sd">                - Recovered (int): the number of recovered cases</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            This method must be defined by child classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: reproduction number of the ODE model and parameters</span>
+<span class="sd">            reproduction number of the ODE model and parameters</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            This method must be defined by child classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ODEModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ODEModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: int or float}: dictionary of dimensional parameter values</span>
+<span class="sd">            dictionary of dimensional parameter values</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            This method must be defined by child classes.</span>
@@ -422,11 +417,11 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="ODEModel.from_data"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data and ODE parameter values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
@@ -435,12 +430,12 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">            param_dict (dict of {str: float}): non-dimensional parameter values</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            param_dict: non-dimensional parameter values</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
@@ -455,11 +450,11 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ODEModel.from_data_with_quantile"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_quantile">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_data_with_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_data_with_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data, estimating ODE parameters with quantiles.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
@@ -468,12 +463,12 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            q (float): the quantiles to compute, values between (0, 1)</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            q: the quantiles to compute, values between (0, 1)</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">],</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tau</span><span class="p">()</span>
@@ -484,15 +479,15 @@
         <span class="k">return</span> <span class="n">cls_obj</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_param_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_param_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;With combinations (X, dX/dt) for variables, calculate quantile values of ODE parameters.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
-<span class="sd">            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)</span>
+<span class="sd">            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
+<span class="sd">            q: the quantile(s) to compute, value(s) between (0, 1)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict of {str: float or pandas.Series}: parameter values at the quantile(s)</span>
+<span class="sd">            parameter values at the quantile(s)</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            This method must be defined by child classes.</span>
@@ -500,26 +495,26 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_clip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_clip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trim values at input threshold.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            values (float or array-like): values to trim</span>
-<span class="sd">            lower (float): minimum threshold</span>
-<span class="sd">            upper (float): maximum threshold</span>
+<span class="sd">            values: values to trim</span>
+<span class="sd">            lower: minimum threshold</span>
+<span class="sd">            upper: maximum threshold</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float or pandas.Series: clipped array</span>
+<span class="sd">            clipped array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">),</span> <span class="n">upper</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ODEModel.from_data_with_optimization"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.from_data_with_optimization">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_data_with_optimization</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_data_with_optimization</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1440</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
@@ -528,9 +523,9 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()</span>
-<span class="sd">            digits (int or None): effective digits of ODE parameter values or None (skip rounding)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            metric: metric to minimize, refer to covsirphy.Evaluator.score()</span>
+<span class="sd">            digits: effective digits of ODE parameter values or None (skip rounding)</span>
 <span class="sd">            **kwargs: keyword arguments of optimization</span>
 <span class="sd">                - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval, (0.1, 0.9) as default</span>
 <span class="sd">                - timeout (int): timeout of optimization, 180 as default</span>
@@ -543,7 +538,7 @@
 <span class="sd">                - constant_liar (bool): whether use constant liar to reduce search effort or not, False as default</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.ODEModel: initialized model</span>
+<span class="sd">            initialized model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs_default</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;quantiles&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span>
@@ -571,13 +566,13 @@
         <span class="k">return</span> <span class="n">cls_obj</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_estimate_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_estimate_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Estimate ODE parameter values with hyperparameter optimization.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()</span>
+<span class="sd">            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            metric: metric to minimize, refer to covsirphy.Evaluator.score()</span>
 <span class="sd">            **kwargs: keyword arguments of optimization and must includes</span>
 <span class="sd">                - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval</span>
 <span class="sd">                - timeout (int): timeout of optimization</span>
@@ -590,13 +585,12 @@
 <span class="sd">                - constant_liar (bool): whether use constant liar to reduce search effort or not</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of (dict of {str: float}, str, int):</span>
-<span class="sd">                - dict of {str: float}: dictionary of parameter values</span>
-<span class="sd">                - float: score with metrics</span>
-<span class="sd">                - str: runtime of hyperparameter optimization</span>
-<span class="sd">                - int: the number of trials of hyperparameter optimization</span>
+<span class="sd">            - dict of {str: float}: dictionary of parameter values</span>
+<span class="sd">            - float: score with metrics</span>
+<span class="sd">            - str: runtime of hyperparameter optimization</span>
+<span class="sd">            - int: the number of trials of hyperparameter optimization</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+        <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="c1"># Create study of optimization</span>
         <span class="n">pruner_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;hyperband&quot;</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">HyperbandPruner</span><span class="p">,</span>
@@ -636,18 +630,18 @@
         <span class="k">return</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">scores</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">),</span> <span class="n">stopwatch</span><span class="o">.</span><span class="n">stop_show</span><span class="p">()</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_optuna_objective</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">value_range_dict</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_optuna_objective</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">Trial</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value_range_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Objective function to minimize (evaluation score of the difference of actual data and solved data) by Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            trial (optuna.trial): a trial of the study</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            value_range_dict (dict of {str: pandas.Series}): dictionary of value range of ODE parameters</span>
-<span class="sd">            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()</span>
+<span class="sd">            trial: a trial of the study</span>
+<span class="sd">            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            value_range_dict: dictionary of value range of ODE parameters</span>
+<span class="sd">            metric: metric to minimize, refer to covsirphy.Evaluator.score()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: score to minimize</span>
+<span class="sd">            score to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">value_range_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -658,17 +652,17 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_optuna_score</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_optuna_score</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_optuna_score</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Score function to minimize (i.e. evaluation score of the difference of actual data and solved data).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict (dict of {str: float}): non-dimensional parameter values</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()</span>
+<span class="sd">            param_dict: non-dimensional parameter values</span>
+<span class="sd">            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            metric: metric to minimize, refer to covsirphy.Evaluator.score()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: score to minimize or positive infinity (when negative values are included in simulated values)</span>
+<span class="sd">            score to minimize or positive infinity (when negative values are included in simulated values)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_non_dim_to_date</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -677,18 +671,18 @@
         <span class="k">return</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_optuna_is_in_allowance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">allowance</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_optuna_is_in_allowance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">allowance</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return whether all max values of estimated values are in allowance or not.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict (dict of {str: float}): non-dimensional parameter values</span>
-<span class="sd">            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
-<span class="sd">            tau (int): tau value [min]</span>
-<span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
+<span class="sd">            param_dict: non-dimensional parameter values</span>
+<span class="sd">            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)</span>
+<span class="sd">            tau: tau value [min]</span>
+<span class="sd">            allowance: the allowance of the predicted value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            bool: True when all max values of predicted values are in allowance</span>
+<span class="sd">            True when all max values of predicted values are in allowance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;01Jan2022&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">max_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_VARIABLES</span><span class="p">}</span>
@@ -702,11 +696,11 @@
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">ok_list</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ODEModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.ode.ODEModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">            data:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    Date (pd.Timestamp): Observation date</span>
 <span class="sd">                Columns</span>
@@ -716,12 +710,14 @@
 <span class="sd">                    Fatal (int): the number of fatal cases</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.Timestamp): date</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    log10(S) (np.float64): common logarithm of S of the ODE model</span>
-<span class="sd">                    R (np.int64): R of the model</span>
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.Timestamp): date</span>
+<span class="sd">            Columns</span>
+<span class="sd">                log10(S) (np.float64): common logarithm of S of the ODE model</span>
+<span class="sd">                R (np.int64): R of the model</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            This method must be defined by child classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 </pre></div>
