@@ -2,7 +2,8 @@ from __future__ import annotations
 from inspect import signature
 import math
 import pandas as pd
-from typing_extensions import Any, Callable, Iterable
+from typing import Callable
+from typing_extensions import Any, Iterable
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
