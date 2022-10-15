@@ -1,5 +1,7 @@
+from __future__ import annotations
 from matplotlib import pyplot as plt
 import pandas as pd
+from typing_extensions import Self
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.validator import Validator
 from covsirphy.visualization.vbase import find_args
@@ -23,7 +25,7 @@ class ScatterPlot(LinePlot):
         self._ax = None
         self._data = pd.DataFrame(columns=["x", "y"])
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return super().__enter__()
 
     def __exit__(self, *exc_info):

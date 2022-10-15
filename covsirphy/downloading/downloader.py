@@ -21,7 +21,7 @@ class DataDownloader(Term):
     Note:
         Location layers are fixed to ['ISO3', 'Province', 'City'].
     """
-    LAYERS = [Term.ISO3, Term.PROVINCE, Term.CITY]
+    LAYERS: list[str] = [Term.ISO3, Term.PROVINCE, Term.CITY]
 
     def __init__(self, directory: str or Path = "input", update_interval: int = 12, **kwargs) -> None:
         self._directory = directory

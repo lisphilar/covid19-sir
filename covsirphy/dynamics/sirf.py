@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 import pandas as pd
 from covsirphy.util.validator import Validator
@@ -8,14 +9,16 @@ class SIRFModel(SIRDModel):
     """Class of SIR-F model.
 
     Args:
-        date_range (tuple of (str, str)): start date and end date of simulation
-        tau (int): tau value [min]
-        initial_dict (dict of {str: int}): initial values
+        date_range: start date and end date of simulation
+        tau: tau value [min]
+        initial_dict: initial values
+
             - Susceptible (int): the number of susceptible cases
             - Infected (int): the number of infected cases
             - Fatal (int): the number of fatal cases
             - Recovered (int): the number of recovered cases
-        param_dict (dict of {str: float}): non-dimensional parameter values
+        param_dict: non-dimensional parameter values
+
             - theta: direct fatality probability of un-categorized confirmed cases
             - kappa: non-dimensional mortality rate of infected cases
             - rho: non-dimensional effective contact rate
@@ -36,16 +39,16 @@ class SIRFModel(SIRDModel):
         "param_dict": {"theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075}
     }
 
-    def __init__(self, date_range, tau, initial_dict, param_dict):
+    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
         self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
 
-    def _discretize(self, t, X):
+    def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
 
         Args:
-            t (int): discrete time-steps
-            X (numpy.array): the current values of the model
+            t: discrete time-steps
+            X: the current values of the model
 
         Returns:
             numpy.array: the next values of the model
@@ -58,14 +61,14 @@ class SIRFModel(SIRDModel):
         didt = 0 - dsdt - drdt - dfdt
         return np.array([dsdt, didt, drdt, dfdt])
 
-    def r0(self):
+    def r0(self) -> float:
         """Calculate basic reproduction number.
 
         Raises:
             ZeroDivisionError: sigma + kappa value was over 0
 
         Returns:
-            float: reproduction number of the ODE model and parameters
+            reproduction number of the ODE model and parameters
         """
         try:
             return round(self._rho * (1 - self._theta) / (self._sigma + self._kappa), 2)
@@ -73,14 +76,14 @@ class SIRFModel(SIRDModel):
             raise ZeroDivisionError(
                 f"Sigma + kappa must be over 0 to calculate reproduction number with {self._NAME}.") from None
 
-    def dimensional_parameters(self):
+    def dimensional_parameters(self) -> dict[str, float | int]:
         """Calculate dimensional parameter values.
 
         Raises:
             ZeroDivisionError: either kappa or rho or sigma value was over 0
 
         Returns:
-            dict of {str: int or float}: dictionary of dimensional parameter values
+            dictionary of dimensional parameter values
                 - "alpha1 [-]" (float): direct fatality probability of un-categorized confirmed cases
                 - "1/alpha2 [day]" (int): mortality period of infected cases
                 - "1/beta [day]" (int): infection period
@@ -98,18 +101,19 @@ class SIRFModel(SIRDModel):
                 f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
-    def _param_quantile(cls, data, q=0.5):
+    def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> dict[str, float | pd.Series]:
         """With combinations (X, dX/dt) for X=S, I, R, F, calculate quantile values of ODE parameters.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.SIRFModel.transform(data=data, tau=tau)
-            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
+            data: transformed data with covsirphy.SIRFModel.transform(data=data, tau=tau)
+            q: the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
-            dict of {str: float or pandas.Series}: parameter values at the quantile(s)
+            parameter values at the quantile(s)
 
         Note:
             We can get approximate parameter values with difference equations as follows.
+
                 - theta -> +0 (i.e. around 0 and not negative)
                 - kappa -> (dF/dt) / I when theta -> +0
                 - rho = - n * (dS/dt) / S / I
@@ -133,11 +137,11 @@ class SIRFModel(SIRDModel):
         }
 
     @classmethod
-    def sr(cls, data):
+    def sr(cls, data: pd.DataFrame) -> pd.DataFrame:
         """Return log10(S) and R of model-specific variables for S-R trend analysis.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     Date (pd.Timestamp): Observation date
                 Columns
@@ -147,12 +151,11 @@ class SIRFModel(SIRDModel):
                     Fatal (int): the number of fatal cases
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): date
-                Columns
-                    log10(S) (np.float64): common logarithm of Susceptible
-                    R (np.int64): Recovered
+            Index
+                Date (pandas.Timestamp): date
+            Columns
+                log10(S) (np.float64): common logarithm of Susceptible
+                R (np.int64): Recovered
         """
         Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})

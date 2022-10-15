@@ -1,6 +1,9 @@
+from __future__ import annotations
 from inspect import signature
 import math
 import pandas as pd
+from typing import Callable, Iterable
+from typing_extensions import Any
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
 
@@ -20,45 +23,45 @@ class Validator(object):
         When @accept_none is True and @target is None, default values will be returned with instance methods.
     """
 
-    def __init__(self, target, name="target", accept_none=True):
+    def __init__(self, target: Any, name: str = "target", accept_none: bool = True) -> None:
         self._target = target
-        self._name = str(name)
+        self._name = name
         if target is None and not accept_none:
             raise UnExpectedNoneError(self._name)
 
-    def subclass(self, parent):
+    def subclass(self, parent: Any) -> Any:
         """Ensure the target is a subclass of the parent class.
 
         Args:
-            parent (object): parent class or sequence of parent classes
+            parent: parent class or sequence of parent classes
 
         Raises:
             NotSubclassError: the target is not the subclass
 
         Returns:
-            object: the target itself
+            the target itself
         """
         if issubclass(self._target, parent):
             return self._target
         raise NotSubclassError(self._name, self._target, parent)
 
-    def instance(self, expected):
+    def instance(self, expected: Any) -> Any:
         """Ensure that the target is an instance of a specified class.
 
         Args:
-            expected (object): expected class or sequence of expected classes
+            expected: expected class or sequence of expected classes
 
         Raises:
             UnExpectedTypeError: the target is not an instance of the class
 
         Returns:
-            object: the target itself
+            the target itself
         """
         if isinstance(self._target, expected):
             return self._target
         raise UnExpectedTypeError(self._name, self._target, expected)
 
-    def dataframe(self, time_index=False, columns=None, empty_ok=True):
+    def dataframe(self, time_index: bool = False, columns: list[str] | None = None, empty_ok: bool = True) -> pd.DataFrame:
         """Ensure the target is a dataframe.
 
         Args:
@@ -91,23 +94,24 @@ class Validator(object):
                     details=f"The dataframe has {', '.join(df.columns.tolist())} as columns")
         return df
 
-    def float(self, value_range=(0, None), default=None, digits=None):
+    def float(self, value_range: tuple[int | None, int | None] = (0, None), default: float | None = None, digits: int | None = None) -> float:
         """Convert a value to a float value.
 
         Args:
-            value_range (tuple(int or None, int or None)): value range, None means un-specified
-            default (float or None): default value when the target is None
-            digits (int or None): effective digits or None (skip rounding)
+            value_range: value range, None means un-specified
+            default: default value when the target is None
+            digits: effective digits or None (skip rounding)
 
         Raises:
+            UnExpectedNoneError: the default value is None when the target is None
             UnExpectedTypeError: the target cannot be converted to a float value
             UnExpectedValueRangeError: the value is out of value range
 
         Returns:
-            float or None: converted float value or None (when both of the target and @default are None)
+            converted float value
         """
         if self._target is None:
-            return None if default is None else Validator(default, "default").float(value_range=value_range, digits=digits)
+            return Validator(default, "default", accept_none=False).float(value_range=value_range, digits=digits)
         try:
             value = float(self._target)
         except ValueError:
@@ -118,23 +122,24 @@ class Validator(object):
             return value
         return round(value, digits - 1 - math.floor(math.log10(abs(value))))
 
-    def int(self, value_range=(0, None), default=None, round_ok=False):
+    def int(self, value_range: tuple[int | None, int | None] = (0, None), default: int | None = None, round_ok: bool = False) -> int:
         """Convert a value to an integer.
 
         Args:
-            value_range (tuple(int or None, int or None)): value range, None means un-specified
-            default (int or None): default value when the target is None
-            round_ok (bool): whether ignore round-off error
+            value_range: value range, None means un-specified
+            default: default value when the target is None
+            round_ok: whether ignore round-off error
 
         Raises:
+            UnExpectedNoneError: the default value is None when the target is None
             UnExpectedTypeError: the target cannot be converted to an integer or round-off error exists when @round_ok is False
             UnExpectedValueRangeError: the value is out of value range
 
         Returns:
-            int or None: converted float value or None (when both of the target and @default are None)
+            converted float value
         """
         if self._target is None:
-            return None if default is None else Validator(default, name="default").int(value_range=value_range, round_ok=round_ok)
+            return Validator(default, name="default", accept_none=False).int(value_range=value_range, round_ok=round_ok)
         try:
             value = int(self._target)
         except (ValueError, TypeError):
@@ -146,18 +151,18 @@ class Validator(object):
             raise UnExpectedValueRangeError(self._name, value, value_range)
         return value
 
-    def tau(self, default=None):
+    def tau(self, default: int | None = None) -> int | None:
         """Validate the value can be used as tau value [min].
 
         Args:
-            default (int or None): default value when the target is None
+            default: default value when the target is None
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to an integer
             UnExpectedValueRangeError: the value is out of value range
 
         Returns:
-            int or None: converted float value or None (when both of the target and @default are None)
+            converted float value or None (when both of the target and @default are None)
         """
         if self._target is None:
             return None if default is None else Validator(default, name="default").tau()
@@ -169,22 +174,23 @@ class Validator(object):
             self._name, value, divisors,
             details="Tau value [min], a divisor of 1440 [min], is a parameter used to convert actual time to time steps (without units)")
 
-    def date(self, value_range=(None, None), default=None):
+    def date(self, value_range: tuple[pd.Timestamp | None, pd.Timestamp | None] = (None, None), default: pd.Timestamp | None = None) -> pd.Timestamp:
         """Convert a value to a date object.
 
         Args:
-            value_range (tuple(int or None, int or None)): value range, None means un-specified
-            default (pandas.Timestamp or None): default value when the target is None
+            value_range: value range, None means un-specified
+            default: default value when the target is None
 
         Raises:
+            UnExpectedNoneError: the default value is None when the target is None
             UnExpectedTypeError: the target cannot be converted to a date object
             UnExpectedValueRangeError: the value is out of value range
 
         Returns:
-            pandas.Timestamp or None: converted date or None (when both of the target and @default are None)
+            converted date
         """
         if self._target is None:
-            return None if default is None else Validator(default, name="default").date(value_range=value_range)
+            return Validator(default, name="default", accept_none=False).date(value_range=value_range)
         if isinstance(self._target, pd.Timestamp):
             value = self._target.replace(hour=0, minute=0, second=0, microsecond=0)
         else:
@@ -197,15 +203,15 @@ class Validator(object):
                 self._name, value.strftime("%Y-%m-%d"), [None if value is None else value.strftime("%Y-%m-%d") for value in value_range])
         return value
 
-    def sequence(self, default=None, flatten=False, unique=False, candidates=None, length=None):
+    def sequence(self, default: Iterable[Any] | None = None, flatten: bool = False, unique: bool = False, candidates: Iterable[Any] | None = None, length: int | None = None) -> list[Any]:
         """Convert a sequence (list, tuple) to a list.
 
         Args:
-            default (list[object] or None): default value when the target is None
-            flatten (bool): whether flatten the sequence or not
-            unique (bool): whether remove duplicated values or not, the first value will remain
-            candidates (list[object] or tuple(object) or iter or None): list of candidates or None (no limitations)
-            length (int or None): length of the sequence or None (no limitations)
+            default: default value when the target is None
+            flatten: whether flatten the sequence or not
+            unique: whether remove duplicated values or not, the first value will remain
+            candidates: list of candidates or None (no limitations)
+            length: length of the sequence or None (no limitations)
 
         Raises:
             UnExpectedTypeError: the target cannot be converted to a list or failed in flattening
@@ -213,10 +219,10 @@ class Validator(object):
             UnExpectedLengthError: the number of elements is not the same as @length
 
         Returns:
-            list[object] or None: converted list or None (when both of the target and @default are None)
+            converted list or empty list (when both of the target and @default are None)
         """
         if self._target is None:
-            return None if default is None else Validator(default, name="default").sequence(flatten=flatten, unique=unique, candidates=candidates)
+            return [] if default is None else Validator(default, name="default", accept_none=False).sequence(flatten=flatten, unique=unique, candidates=candidates)
         if not isinstance(self._target, (list, tuple)):
             raise UnExpectedTypeError(
                 self._name, self._target, list, details="A tuple can be used, but it will be converted to a list")
@@ -238,20 +244,20 @@ class Validator(object):
         for value in (set(targets) - set(candidates)):
             raise UnExpectedValueError(self._name, value, [str(c) for c in candidates])
 
-    def dict(self, default=None, required_keys=None, errors="coerce"):
+    def dict(self, default: dict[str, Any] | None = None, required_keys: list[Any] | None = None, errors: str = "coerce") -> dict[str, Any]:
         """Ensure the target is a dictionary.
 
         Args:
-            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
-            required_keys (list): keys which must be included
-            errors (str): "coerce" or "raise"
+            default: default values, when the target is None or key is not included in the target
+            required_keys: keys which must be included
+            errors: "coerce" or "raise"
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
             NAFoundError: values of the required keys are not specified when @errors="raise"
 
         Returns:
-            dict[str, object]: the target is self with default values and required keys
+            the target is self with default values and required keys
 
         Note:
             All keys of @default will be included and the target will overwrite it.
@@ -269,18 +275,18 @@ class Validator(object):
                 raise NAFoundError(f"The value of key {key} in dictionary {self._name}")
         return _dict
 
-    def kwargs(self, functions, default=None):
+    def kwargs(self, functions: list[Callable] | Callable, default: dict[str, Any] | None = None) -> dict[str, Any]:
         """Find keyword arguments of the functions.
 
         Args:
-            functions (list[function] or function): target functions
-            default (dict[str, object] or None): default values, when the target is None or key is not included in the target
+            functions: target functions
+            default: default values, when the target is None or key is not included in the target
 
         Raises:
             UnExpectedTypeError: the target is not a dictionary
 
         Returns:
-            dict[str, object]: keyword arguments of the functions
+            dict: keyword arguments of the functions
         """
         _dict = self.dict(default=default, required_keys=None, errors="coerce")
         keywords_nest = [
