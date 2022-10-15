@@ -92,8 +92,10 @@ napoleon_use_rtype = False
 napoleon_use_ivar = True
 
 intersphinx_mapping = {
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "python": ("https://docs.python.org/3/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    'matplotlib': ('http://matplotlib.org/stable', None),
 }
 
 # -- Options for todo extension ----------------------------------------------
