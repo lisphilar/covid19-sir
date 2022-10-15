@@ -1,4 +1,6 @@
+from __future__ import annotations
 import numpy as np
+import pandas as pd
 from covsirphy.util.validator import Validator
 from covsirphy.dynamics.ode import ODEModel
 
@@ -7,14 +9,16 @@ class SIRDModel(ODEModel):
     """Class of SIR-D model.
 
     Args:
-        date_range (tuple of (str, str)): start date and end date of simulation
-        tau (int): tau value [min]
-        initial_dict (dict of {str: int}): initial values
+        date_range: start date and end date of simulation
+        tau: tau value [min]
+        initial_dict: initial values
+
             - Susceptible (int): the number of susceptible cases
             - Infected (int): the number of infected cases
             - Fatal (int): the number of fatal cases
             - Recovered (int): the number of recovered cases
-        param_dict (dict of {str: float}): non-dimensional parameter values
+        param_dict: non-dimensional parameter values
+
             - kappa: non-dimensional mortality rate
             - rho: non-dimensional effective contact rate
             - sigma: non-dimensional recovery rate
@@ -35,18 +39,18 @@ class SIRDModel(ODEModel):
         "param_dict": {"kappa": 0.005, "rho": 0.2, "sigma": 0.075}
     }
 
-    def __init__(self, date_range, tau, initial_dict, param_dict):
+    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
         self._kappa = Validator(self._param_dict["kappa"], "kappa", accept_none=False).float(value_range=(0, 1))
         self._rho = Validator(self._param_dict["rho"], "rho", accept_none=False).float(value_range=(0, 1))
         self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
 
-    def _discretize(self, t, X):
+    def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
 
         Args:
-            t (int): discrete time-steps
-            X (numpy.array): the current values of the model
+            t: discrete time-steps
+            X: the current values of the model
 
         Returns:
             numpy.array: the next values of the model
@@ -60,11 +64,11 @@ class SIRDModel(ODEModel):
         return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
-    def transform(cls, data, tau=None):
+    def transform(cls, data: pd.DataFrame, tau: int | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index or pandas.DatetimeIndex (when tau is not None)
                 Columns
@@ -75,25 +79,24 @@ class SIRDModel(ODEModel):
             tau (int or None): tau value [min]
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
+            Index
+                as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
+            Columns
+                - Susceptible (int): the number of susceptible cases
+                - Infected (int): the number of infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
         """
         df = Validator(data, "data").dataframe(columns=cls._SIRF)
         df.index = cls._date_to_non_dim(df.index, tau=tau)
         return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @classmethod
-    def inverse_transform(cls, data, tau=None, start_date=None):
+    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None, start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     any index
                 Columns
@@ -101,24 +104,23 @@ class SIRDModel(ODEModel):
                     - Infected (int): the number of infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
-            tau (int or None): tau value [min]
-            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+            tau: tau value [min]
+            start_date: start date of records ie. TIME(0)
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+            Index
+                Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
+            Columns
+                - Susceptible (int): the number of susceptible cases
+                - Infected (int): the number of currently infected cases
+                - Recovered (int): the number of recovered cases
+                - Fatal (int): the number of fatal cases
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
         df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
         return df.loc[:, cls._SIRF].convert_dtypes()
 
-    def r0(self):
+    def r0(self) -> float:
         """Calculate basic reproduction number.
 
         Raises:
@@ -133,7 +135,7 @@ class SIRDModel(ODEModel):
             raise ZeroDivisionError(
                 f"Sigma + kappa must be over 0 to calculate reproduction number with {self._NAME}.") from None
 
-    def dimensional_parameters(self):
+    def dimensional_parameters(self) -> dict[str, int]:
         """Calculate dimensional parameter values.
 
         Raises:
@@ -156,18 +158,19 @@ class SIRDModel(ODEModel):
                 f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
-    def _param_quantile(cls, data, q=0.5):
+    def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> dict[str, float | pd.Series]:
         """With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.SIRDModel.transform(data=data, tau=tau)
-            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
+            data: transformed data with covsirphy.SIRDModel.transform(data=data, tau=tau)
+            q: the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
-            dict of {str: float or pandas.Series}: parameter values at the quantile(s)
+            parameter values at the quantile(s)
 
         Note:
             We can get approximate parameter values with difference equations as follows.
+
                 - kappa = (dF/dt) / I
                 - rho = - n * (dS/dt) / S / I
                 - sigma = (dR/dt) / I
@@ -189,11 +192,11 @@ class SIRDModel(ODEModel):
         }
 
     @classmethod
-    def sr(cls, data):
+    def sr(cls, data: pd.DataFrame) -> pd.DataFrame:
         """Return log10(S) and R of model-specific variables for S-R trend analysis.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     Date (pd.Timestamp): Observation date
                 Columns
@@ -203,12 +206,11 @@ class SIRDModel(ODEModel):
                     Fatal (int): the number of fatal cases
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): date
-                Columns
-                    log10(S) (np.float64): common logarithm of Susceptible
-                    R (np.int64): Recovered
+            Index
+                Date (pandas.Timestamp): date
+            Columns
+                log10(S) (np.float64): common logarithm of Susceptible
+                R (np.int64): Recovered
         """
         Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})

@@ -1,4 +1,7 @@
+from __future__ import annotations
 import numpy as np
+import pandas as pd
+from typing_extensions import NoReturn
 from covsirphy.util.validator import Validator
 from covsirphy.dynamics.ode import ODEModel
 
@@ -7,16 +10,18 @@ class SEWIRFModel(ODEModel):
     """Class of SEWIR-F model.
 
     Args:
-        date_range (tuple of (str, str)): start date and end date of simulation
-        tau (int): tau value [min]
-        initial_dict (dict of {str: int}): initial values
+        date_range: start date and end date of simulation
+        tau: tau value [min]
+        initial_dict: initial values
+
             - Susceptible (int): the number of susceptible cases
             - Exposed (int): the number of cases who are exposed and in latent period without infectivity
             - Waiting (int): the number of cases who are waiting for confirmation diagnosis with infectivity
             - Infected (int): the number of infected cases
             - Fatal (int): the number of fatal cases
             - Recovered (int): the number of recovered cases
-        param_dict (dict of {str: float}): non-dimensional parameter values
+        param_dict: non-dimensional parameter values
+
             - theta: direct fatality probability of un-categorized confirmed cases
             - kappa: non-dimensional mortality rate
             - rho1: non-dimensional exposure rate (the number of encounter with the virus in a minute)
@@ -43,7 +48,7 @@ class SEWIRFModel(ODEModel):
             "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075, "rho2": 0.167, "rho3": 0.167}
     }
 
-    def __init__(self, date_range, tau, initial_dict, param_dict):
+    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
         self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
         self._kappa = Validator(self._param_dict["kappa"], "kappa", accept_none=False).float(value_range=(0, 1))
@@ -52,12 +57,12 @@ class SEWIRFModel(ODEModel):
         self._rho3 = Validator(self._param_dict["rho3"], "rho3", accept_none=False).float(value_range=(0, 1))
         self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
 
-    def _discretize(self, t, X):
+    def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
 
         Args:
-            t (int): discrete time-steps
-            X (numpy.array): the current values of the model
+            t: discrete time-steps
+            X: the current values of the model
 
         Returns:
             numpy.array: the next values of the model
@@ -74,11 +79,11 @@ class SEWIRFModel(ODEModel):
         return np.array([dsdt, didt, drdt, dfdt, dedt, dwdt])
 
     @ classmethod
-    def transform(cls, data, tau=None):
+    def transform(cls, data: pd.DataFrame, tau: int | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index or pandas.DatetimeIndex (when tau is not None)
                 Columns
@@ -86,19 +91,18 @@ class SEWIRFModel(ODEModel):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int or None): tau value [min]
+            tau: tau value [min]
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Exposed (int): the number of cases who are exposed and in latent period without infectivity
-                    - Waiting (int): the number of cases who are waiting for confirmation diagnosis with infectivity
-                    - Infected (int): the number of infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+            Index
+                as the same as index if @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
+            Columns
+                - Susceptible (int): the number of susceptible cases
+                - Exposed (int): the number of cases who are exposed and in latent period without infectivity
+                - Waiting (int): the number of cases who are waiting for confirmation diagnosis with infectivity
+                - Infected (int): the number of infected cases
+                - Recovered (int): the number of recovered cases
+                - Fatal (int): the number of fatal cases
         """
         df = Validator(data, "data").dataframe(columns=cls._SIRF)
         df.index = cls._date_to_non_dim(df.index, tau=tau)
@@ -107,11 +111,11 @@ class SEWIRFModel(ODEModel):
         return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @ classmethod
-    def inverse_transform(cls, data, tau=None, start_date=None):
+    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None, start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     any index
                 Columns
@@ -121,32 +125,31 @@ class SEWIRFModel(ODEModel):
                     - Infected (int): the number of infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
-            tau (int or None): tau value [min]
-            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+            tau: tau value [min]
+            start_date: start date of records ie. TIME(0)
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Recovered (int): the number of recovered cases
-                    - Fatal (int): the number of fatal cases
+            Index
+                Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None the index @data is date)
+            Columns
+                - Susceptible (int): the number of susceptible cases
+                - Infected (int): the number of currently infected cases
+                - Recovered (int): the number of recovered cases
+                - Fatal (int): the number of fatal cases
         """
         df = Validator(data, "data").dataframe(columns=cls._VARIABLES)
         df = cls._non_dim_to_date(data=df, tau=tau, start_date=start_date)
         df[cls.S] = df[cls.S] + df[cls.E] + df[cls.W]
         return df.loc[:, cls._SIRF].convert_dtypes()
 
-    def r0(self):
+    def r0(self) -> float:
         """Calculate basic reproduction number.
 
         Raises:
             ZeroDivisionError: rho2 or sigma + kappa value was over 0
 
         Returns:
-            float: reproduction number of the ODE model and parameters
+            reproduction number of the ODE model and parameters
         """
         try:
             rho = self._rho1 / self._rho2 * self._rho3
@@ -156,14 +159,14 @@ class SEWIRFModel(ODEModel):
                 f"Both of 'rho2' and 'sigma + kappa' must be over 0 to calculate reproduction number with {self._NAME}.") from None
         return round(rt, 2)
 
-    def dimensional_parameters(self):
+    def dimensional_parameters(self) -> dict[str, float | int]:
         """Calculate dimensional parameter values.
 
         Raises:
             ZeroDivisionError: either kappa or rho_i for i=1,2,3 or sigma value was over 0
 
         Returns:
-            dict of {str: int}: dictionary of dimensional parameter values
+            dictionary of dimensional parameter values
                 - "alpha1 [-]" (float): direct fatality probability of un-categorized confirmed cases
                 - "1/alpha2 [day]" (int): mortality period of infected cases
                 - "1/beta1 [day]" (int): period for susceptible people to encounter with the virus
@@ -185,7 +188,7 @@ class SEWIRFModel(ODEModel):
                 f"Kappa, rho_i for i=1,2,3 and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
-    def from_data_with_quantile(cls, *args, **kwargs):
+    def from_data_with_quantile(cls, *args, **kwargs) -> NoReturn:
         """Initialize model with data, estimating ODE parameters with quantiles.
 
         Raises:
@@ -197,7 +200,7 @@ class SEWIRFModel(ODEModel):
         )
 
     @classmethod
-    def from_data_with_optimization(cls, *args, **kwargs):
+    def from_data_with_optimization(cls, *args, **kwargs) -> NoReturn:
         """Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.
 
         Raises:
@@ -209,11 +212,11 @@ class SEWIRFModel(ODEModel):
         )
 
     @classmethod
-    def sr(cls, data):
+    def sr(cls, data: pd.DataFrame) -> pd.DataFrame:
         """Return log10(S) and R of model-specific variables for S-R trend analysis.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     - Date (pd.Timestamp): Observation date
                 Columns
@@ -223,12 +226,11 @@ class SEWIRFModel(ODEModel):
                     - Fatal (int): the number of fatal cases
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): date
-                Columns
-                    log10(S) (np.float64): common logarithm of Susceptible
-                    R (np.int64): Recovered
+            Index
+                Date (pandas.Timestamp): date
+            Columns
+                log10(S) (np.float64): common logarithm of Susceptible
+                R (np.int64): Recovered
         """
         Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})

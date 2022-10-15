@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime, timedelta
 from functools import partial
 import math
@@ -5,6 +6,7 @@ import optuna
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
+from typing_extensions import Any, NoReturn, Self
 from covsirphy.util.error import UnExpectedNoneError, NotNoneError
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.evaluator import Evaluator
@@ -16,70 +18,70 @@ class ODEModel(Term):
     """Basic class of ordinary differential equation (ODE) model.
 
     Args:
-        date_range (tuple of (str, str)): start date and end date of simulation
-        tau (int): tau value [min]
-        initial_dict (dict of {str: int}): initial values
-        param_dict (dict of {str: float}): non-dimensional parameter values
+        date_range: start date and end date of simulation
+        tau: tau value [min]
+        initial_dict: initial values
+        param_dict: non-dimensional parameter values
     """
-    _logS = "log10(S)"
-    _r = "R"
+    _logS: str = "log10(S)"
+    _r: str = "R"
     # Name of ODE model
-    _NAME = "ODE Model"
+    _NAME: str = "ODE Model"
     # Variables
-    _VARIABLES = []
+    _VARIABLES: list[str] = []
     # Non-dimensional parameters
-    _PARAMETERS = []
+    _PARAMETERS: list[str] = []
     # Dimensional parameters
-    _DAY_PARAMETERS = []
+    _DAY_PARAMETERS: list[str] = []
     # Variables that increases monotonically
-    _VARS_INCREASE = []
+    _VARS_INCREASE: list[str] = []
     # Sample data
-    _SAMPLE_DICT = {
+    _SAMPLE_DICT: dict[str, dict[str, Any]] = {
         "initial_dict": dict.fromkeys(_VARIABLES),
         "param_dict": dict.fromkeys(_PARAMETERS)
     }
 
-    def __init__(self, date_range, tau, initial_dict, param_dict):
+    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         start_date, end_date = Validator(date_range, "date_range", accept_none=False).sequence(length=2)
-        self._start = Validator(start_date, name="the first value of @date_range", accept_none=False).date()
-        self._end = Validator(
+        self._start: pd.Timestamp = Validator(
+            start_date, name="the first value of @date_range", accept_none=False).date()
+        self._end: pd.Timestamp = Validator(
             end_date, name="the second date of @date_range", accept_none=False).date(value_range=(self._start, None))
-        self._tau = Validator(tau, "tau", accept_none=False).tau()
-        self._initial_dict = Validator(initial_dict, "initial_dict", accept_none=False).dict(
+        self._tau: int = Validator(tau, "tau", accept_none=False).tau()  # type: ignore
+        self._initial_dict: dict[str, int] = Validator(initial_dict, "initial_dict", accept_none=False).dict(
             required_keys=self._VARIABLES, errors="raise")
-        self._param_dict = Validator(param_dict, "param_dict", accept_none=False).dict(
+        self._param_dict: dict[str, float] = Validator(param_dict, "param_dict", accept_none=False).dict(
             required_keys=self._PARAMETERS, errors="raise")
         # Total population
-        self._population = sum(initial_dict.values())
+        self._population: int = sum(initial_dict.values())
         # Information regarding ODE parameter estimation
-        self._estimation_dict = None
+        self._estimation_dict: dict[str, Any] | None = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._NAME
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         _dict = self.settings()
         return f"{type(self).__name__}({', '.join([f'{k}={v}' for k, v in _dict.items()])})"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return repr(self) == repr(other)
 
     @classmethod
-    def name(cls):
+    def name(cls) -> str:
         """Return name of ODE model.
         """
         return cls._NAME
 
     @classmethod
-    def definitions(cls):
+    def definitions(cls) -> dict[str, Any]:
         """Return definitions of ODE model.
 
         Returns:
-            dict of {str: object}:
-                - "name" (str): ODE model name
-                - "variables" (list of [str]): variable names
-                - "parameters" (list of [str]): non-dimensional parameter names
-                - "dimensional_parameters" (list of [str]): dimensional parameter names
+            - "name" (str): ODE model name
+            - "variables" (list of [str]): variable names
+            - "parameters" (list of [str]): non-dimensional parameter names
+            - "dimensional_parameters" (list of [str]): dimensional parameter names
         """
         return {
             "name": cls._NAME,
@@ -88,25 +90,24 @@ class ODEModel(Term):
             "dimensional_parameters": cls._DAY_PARAMETERS,
         }
 
-    def settings(self, with_estimation=False):
+    def settings(self, with_estimation: bool = False) -> dict[str, Any]:
         """Return settings.
 
         Args:
             with_estimation (bool): whether includes information regarding ODE parameter estimation or not
 
         Returns:
-            dict of {str: object}:
-                - date_range (tuple of (str, str)): start date and end date of simulation
-                - tau (int): tau value [min]
-                - initial_dict (dict of {str: int}): initial values
-                - param_dict (dict of {str: float}): non-dimensional parameter values
-                - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True
-                    - method (str): method of estimation, "with_quantile" or "with_optimization" or "not_performed"
-                    - {metrics} (int): score of hyperparameter optimization, if available
-                    - Trials (int) : the number of trials of hyperparameter optimization, if available
-                    - Runtime (str): runtime of hyperparameter optimization, if available
-                    - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available
-                    - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available
+            - date_range (tuple of (str, str)): start date and end date of simulation
+            - tau (int): tau value [min]
+            - initial_dict (dict of {str: int}): initial values
+            - param_dict (dict of {str: float}): non-dimensional parameter values
+            - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True
+                - method (str): method of estimation, "with_quantile" or "with_optimization" or "not_performed"
+                - {metrics} (int): score of hyperparameter optimization, if available
+                - Trials (int) : the number of trials of hyperparameter optimization, if available
+                - Runtime (str): runtime of hyperparameter optimization, if available
+                - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available
+                - keyword arguments set with covsirphy.ODEModel.with_quantile(), if available
         """
         _dict = {
             "date_range": (self._start.strftime(self.DATE_FORMAT), self._end.strftime(self.DATE_FORMAT)),
@@ -119,21 +120,19 @@ class ODEModel(Term):
         return _dict
 
     @classmethod
-    def from_sample(cls, date_range=None, tau=1440):
+    def from_sample(cls, date_range: tuple[str | None, str | None] | None = None, tau: int = 1440) -> Self:
         """Initialize model with sample data.
 
         Args:
-            date_range (tuple(str or None, str or None) or None): start date and end date of simulation
-            tau (int): tau value [min]
+            date_range: start date and end date of simulation
+            tau: tau value [min]
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
 
         Note:
-            When @date_range or the first value of @date_range is None, today when executed will be set as start date.
-
-        Note:
-            When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.
+            - When @date_range or the first value of @date_range is None, today when executed will be set as start date.
+            - When @date_range or the second value of @date_range is None, 180 days after start date will be used as end date.
         """
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
         start = Validator(start_date, name="the first value of @date_range").date(default=datetime.now())
@@ -141,23 +140,23 @@ class ODEModel(Term):
             end_date, name="the second date of @date_range").date(value_range=(start, None), default=start + timedelta(days=180))
         return cls(date_range=(start, end), tau=tau, **cls._SAMPLE_DICT)
 
-    def _discretize(self, t, X):
+    def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
 
         Args:
-            t (int): discrete time-steps
-            X (numpy.array): the current values of the model
+            t: discrete time-steps
+            X: the current values of the model
 
         Returns:
-            numpy.array: the next values of the model
+            the next values of the model
         """
         raise NotImplementedError
 
-    def solve(self):
+    def solve(self) -> pd.DataFrame:
         """Solve an initial value problem.
 
         Return:
-            pandas.DataFrame: analytical solution
+            dataframe of analytical solutions.
                 Index
                     Date (pandas.Timestamp): dates from start date to end date
                 Columns
@@ -176,15 +175,15 @@ class ODEModel(Term):
         return df.round().convert_dtypes()
 
     @staticmethod
-    def _date_to_non_dim(series, tau):
+    def _date_to_non_dim(series: pd.DatetimeIndex, tau: int | None) -> pd.DatetimeIndex:
         """Convert date information (TIME) to time(x) = (TIME(x) - TIME(0)) / tau
 
         Args:
-            series (pandas.DatetimeIndex): date information
-            tau (int or None): tau value [min]
+            series: date information
+            tau: tau value [min]
 
         Returns:
-            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name
+            as-is @series when tau is None else converted time information without series name
         """
         Validator(series, "index of data").instance(pd.DatetimeIndex)
         if tau is None:
@@ -194,17 +193,17 @@ class ODEModel(Term):
         return converted.rename(None).astype("Int64")
 
     @classmethod
-    def _non_dim_to_date(cls, data, tau, start_date):
+    def _non_dim_to_date(cls, data: pd.DataFrame, tau: int, start_date: str | pd.TimeStamp | None) -> pd.DataFrame:
         """Convert non-dimensional date information (time) to TIME(x) = TIME(0) + tau * time(x) and resample with dates.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     non-dimensional date information pandas.DatetimeIndex
                 Columns
                     any columns
-            tau (int or None): tau value [min]
-            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+            tau: tau value [min]
+            start_date: start date of records ie. TIME(0)
 
         Raises:
             NotNoneError: @tau is None, but start_date is not None
@@ -216,7 +215,6 @@ class ODEModel(Term):
                     Date (pandas.DatetimeIndex) or as-is @data (when @tau is None)
                 Columns
                     any columns of @data
-            pandas.DatetimeIndex: as-is @series when tau is None else converted time information without series name
 
         Note:
             The first values on date will be selected when resampling.
@@ -234,11 +232,11 @@ class ODEModel(Term):
         return df.set_index(cls.DATE).resample("D").first()
 
     @classmethod
-    def transform(cls, data, tau=None):
+    def transform(cls, data: pd.DataFrame, tau: int | None = None) -> NoReturn:
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index or pandas.DatetimeIndex (when tau is not None)
                 Columns
@@ -246,15 +244,13 @@ class ODEModel(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int or None): tau value [min]
-
+            tau: tau value [min]
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    as the same as index of @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
-                Columns
-                    model-specific variables
+            Index
+                as the same as index of @data when @tau is None else converted to time(x) = (TIME(x) - TIME(0)) / tau
+            Columns
+                model-specific variables
 
         Note:
             This method must be defined by child classes.
@@ -262,49 +258,48 @@ class ODEModel(Term):
         raise NotImplementedError
 
     @classmethod
-    def inverse_transform(cls, data, tau=None, start_date=None):
+    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None, start_date: str | pd.Timestamp | None = None) -> NoReturn:
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     any index
                 Columns
                     model-specific variables
-            tau (int or None): tau value [min]
-            start_date (str or pandas.Timestamp or None): start date of records ie. TIME(0)
+            tau: tau value [min]
+            start_date: start date of records ie. TIME(0)
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None)
-                Columns
-                    - Susceptible (int): the number of susceptible cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
+            Index
+                Date (pandas.DatetimeIndex) or as-is @data (when either @tau or @start_date are None)
+            Columns
+                - Susceptible (int): the number of susceptible cases
+                - Infected (int): the number of currently infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
 
         Note:
             This method must be defined by child classes.
         """
         raise NotImplementedError
 
-    def r0(self):
+    def r0(self) -> NoReturn:
         """Calculate basic reproduction number.
 
         Returns:
-            float: reproduction number of the ODE model and parameters
+            reproduction number of the ODE model and parameters
 
         Note:
             This method must be defined by child classes.
         """
         raise NotImplementedError
 
-    def dimensional_parameters(self):
+    def dimensional_parameters(self) -> NoReturn:
         """Calculate dimensional parameter values.
 
         Returns:
-            dict of {str: int or float}: dictionary of dimensional parameter values
+            dictionary of dimensional parameter values
 
         Note:
             This method must be defined by child classes.
@@ -312,11 +307,11 @@ class ODEModel(Term):
         raise NotImplementedError
 
     @classmethod
-    def from_data(cls, data, param_dict, tau=1440, digits=None):
+    def from_data(cls, data: pd.DataFrame, param_dict: dict[str, float], tau: int = 1440, digits: int | None = None) -> Self:
         """Initialize model with data and ODE parameter values.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index
                 Columns
@@ -325,12 +320,12 @@ class ODEModel(Term):
                     - Infected (int): the number of currently infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
-            param_dict (dict of {str: float}): non-dimensional parameter values
-            tau (int): tau value [min]
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            param_dict: non-dimensional parameter values
+            tau: tau value [min]
+            digits: effective digits of ODE parameter values or None (skip rounding)
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
         """
         Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
@@ -345,11 +340,11 @@ class ODEModel(Term):
         )
 
     @classmethod
-    def from_data_with_quantile(cls, data, tau=1440, q=0.5, digits=None):
+    def from_data_with_quantile(cls, data: pd.DataFrame, tau: int = 1440, q: float = 0.5, digits: int | None = None) -> Self:
         """Initialize model with data, estimating ODE parameters with quantiles.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index
                 Columns
@@ -358,12 +353,12 @@ class ODEModel(Term):
                     - Infected (int): the number of currently infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
-            tau (int): tau value [min]
-            q (float): the quantiles to compute, values between (0, 1)
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            tau: tau value [min]
+            q: the quantiles to compute, values between (0, 1)
+            digits: effective digits of ODE parameter values or None (skip rounding)
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
         """
         Validator(data, "data", accept_none=False).dataframe(columns=[cls.DATE, *cls._SIRF], empty_ok=False)
         Validator(tau, "tau", accept_none=False).tau()
@@ -374,15 +369,15 @@ class ODEModel(Term):
         return cls_obj
 
     @classmethod
-    def _param_quantile(cls, data, q=0.5):
+    def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> NoReturn:
         """With combinations (X, dX/dt) for variables, calculate quantile values of ODE parameters.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
-            q (float or array-like): the quantile(s) to compute, value(s) between (0, 1)
+            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            q: the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
-            dict of {str: float or pandas.Series}: parameter values at the quantile(s)
+            parameter values at the quantile(s)
 
         Note:
             This method must be defined by child classes.
@@ -390,26 +385,26 @@ class ODEModel(Term):
         raise NotImplementedError
 
     @classmethod
-    def _clip(cls, values, lower, upper):
+    def _clip(cls, values: float | pd.Series, lower: float, upper: float) -> float | pd.Series:
         """
         Trim values at input threshold.
 
         Args:
-            values (float or array-like): values to trim
-            lower (float): minimum threshold
-            upper (float): maximum threshold
+            values: values to trim
+            lower: minimum threshold
+            upper: maximum threshold
 
         Returns:
-            float or pandas.Series: clipped array
+            clipped array
         """
         return min(max(values, lower), upper) if isinstance(values, float) else pd.Series(values).clip()
 
     @classmethod
-    def from_data_with_optimization(cls, data, tau=1440, metric="RMSLE", digits=None, **kwargs):
+    def from_data_with_optimization(cls, data: pd.DataFrame, tau: int = 1440, metric: str = "RMSLE", digits: int | None = None, **kwargs) -> Self:
         """Initialize model with data, estimating ODE parameters hyperparameter optimization using Optuna.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     reset index
                 Columns
@@ -418,9 +413,9 @@ class ODEModel(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
-            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            tau: tau value [min]
+            metric: metric to minimize, refer to covsirphy.Evaluator.score()
+            digits: effective digits of ODE parameter values or None (skip rounding)
             **kwargs: keyword arguments of optimization
                 - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval, (0.1, 0.9) as default
                 - timeout (int): timeout of optimization, 180 as default
@@ -433,7 +428,7 @@ class ODEModel(Term):
                 - constant_liar (bool): whether use constant liar to reduce search effort or not, False as default
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
         """
         kwargs_default = {
             "quantiles": (0.1, 0.9),
@@ -461,13 +456,13 @@ class ODEModel(Term):
         return cls_obj
 
     @classmethod
-    def _estimate_params(cls, data, tau, metric, **kwargs):
+    def _estimate_params(cls, data: pd.DataFrame, tau: int, metric: str, **kwargs) -> tuple[dict[str, float], float, str, int]:
         """Estimate ODE parameter values with hyperparameter optimization.
 
         Args:
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
-            tau (int): tau value [min]
-            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau: tau value [min]
+            metric: metric to minimize, refer to covsirphy.Evaluator.score()
             **kwargs: keyword arguments of optimization and must includes
                 - quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
                 - timeout (int): timeout of optimization
@@ -480,13 +475,12 @@ class ODEModel(Term):
                 - constant_liar (bool): whether use constant liar to reduce search effort or not
 
         Returns:
-            tuple of (dict of {str: float}, str, int):
-                - dict of {str: float}: dictionary of parameter values
-                - float: score with metrics
-                - str: runtime of hyperparameter optimization
-                - int: the number of trials of hyperparameter optimization
+            - dict of {str: float}: dictionary of parameter values
+            - float: score with metrics
+            - str: runtime of hyperparameter optimization
+            - int: the number of trials of hyperparameter optimization
         """
-        optuna.logging.set_verbosity(optuna.logging.WARNING)
+        optuna.logging.set_verbosity(optuna.logging.WARNING)  # type: ignore
         # Create study of optimization
         pruner_dict = {
             "hyperband": optuna.pruners.HyperbandPruner,
@@ -526,18 +520,18 @@ class ODEModel(Term):
         return param_dict, scores[-1], len(study.trials), stopwatch.stop_show()
 
     @classmethod
-    def _optuna_objective(cls, trial, data, tau, value_range_dict, metric):
+    def _optuna_objective(cls, trial: optuna.Trial, data: pd.DataFrame, tau: int, value_range_dict: dict[str, pd.Series], metric: str) -> float:
         """Objective function to minimize (evaluation score of the difference of actual data and solved data) by Optuna.
 
         Args:
-            trial (optuna.trial): a trial of the study
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
-            tau (int): tau value [min]
-            value_range_dict (dict of {str: pandas.Series}): dictionary of value range of ODE parameters
-            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            trial: a trial of the study
+            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau: tau value [min]
+            value_range_dict: dictionary of value range of ODE parameters
+            metric: metric to minimize, refer to covsirphy.Evaluator.score()
 
         Returns:
-            float: score to minimize
+            score to minimize
         """
         param_dict = {}
         for (k, v) in value_range_dict.items():
@@ -548,17 +542,17 @@ class ODEModel(Term):
         return cls._optuna_score(param_dict, data, tau, metric)
 
     @classmethod
-    def _optuna_score(cls, param_dict, data, tau, metric):
+    def _optuna_score(cls, param_dict: dict[str, float], data: pd.DataFrame, tau: int, metric: str) -> float:
         """Score function to minimize (i.e. evaluation score of the difference of actual data and solved data).
 
         Args:
-            param_dict (dict of {str: float}): non-dimensional parameter values
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
-            tau (int): tau value [min]
-            metric (str): metric to minimize, refer to covsirphy.Evaluator.score()
+            param_dict: non-dimensional parameter values
+            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau: tau value [min]
+            metric: metric to minimize, refer to covsirphy.Evaluator.score()
 
         Returns:
-            float: score to minimize or positive infinity (when negative values are included in simulated values)
+            score to minimize or positive infinity (when negative values are included in simulated values)
         """
         df = cls._non_dim_to_date(data=data, tau=tau, start_date="01Jan2022")
         model = cls.from_data(data=cls.inverse_transform(df).reset_index(), param_dict=param_dict, tau=tau, digits=None)
@@ -567,18 +561,18 @@ class ODEModel(Term):
         return evaluator.score(metric=metric)
 
     @classmethod
-    def _optuna_is_in_allowance(cls, param_dict, data, tau, allowance):
+    def _optuna_is_in_allowance(cls, param_dict: dict[str, float], data: pd.DataFrame, tau: int, allowance: tuple[float, float]) -> bool:
         """
         Return whether all max values of estimated values are in allowance or not.
 
         Args:
-            param_dict (dict of {str: float}): non-dimensional parameter values
-            data (pandas.DataFrame): transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
-            tau (int): tau value [min]
-            allowance (tuple(float, float)): the allowance of the predicted value
+            param_dict: non-dimensional parameter values
+            data: transformed data with covsirphy.ODEModel.transform(data=data, tau=tau)
+            tau: tau value [min]
+            allowance: the allowance of the predicted value
 
         Returns:
-            bool: True when all max values of predicted values are in allowance
+            True when all max values of predicted values are in allowance
         """
         df = cls.inverse_transform(data=data, tau=tau, start_date="01Jan2022").reset_index()
         max_dict = {v: data[v].max() for v in cls._VARIABLES}
@@ -592,11 +586,11 @@ class ODEModel(Term):
         return all(ok_list)
 
     @classmethod
-    def sr(cls, data):
+    def sr(cls, data: pd.DataFrame) -> NoReturn:
         """Return log10(S) and R of model-specific variables for S-R trend analysis.
 
         Args:
-            data (pandas.DataFrame):
+            data:
                 Index
                     Date (pd.Timestamp): Observation date
                 Columns
@@ -606,11 +600,13 @@ class ODEModel(Term):
                     Fatal (int): the number of fatal cases
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): date
-                Columns
-                    log10(S) (np.float64): common logarithm of S of the ODE model
-                    R (np.int64): R of the model
+            Index
+                Date (pandas.Timestamp): date
+            Columns
+                log10(S) (np.float64): common logarithm of S of the ODE model
+                R (np.int64): R of the model
+
+        Note:
+            This method must be defined by child classes.
         """
         raise NotImplementedError

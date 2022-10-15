@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import timedelta
 from functools import partial
 from multiprocessing import cpu_count, Pool
@@ -5,6 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from p_tqdm import p_umap
+from typing_extensions import Self
 from covsirphy.util.config import config
 from covsirphy.util.error import EmptyError, NotEnoughDataError, UnExpectedNoneError, UnExpectedValueRangeError
 from covsirphy.util.evaluator import Evaluator
@@ -21,13 +23,13 @@ class Dynamics(Term):
     """Class to hand phase-dependent SIR-derived ODE models.
 
     Args:
-        model (covsirphy.ODEModel): definition of ODE model
-        date_range (tuple of (str, str)): start date and end date of dynamics to analyze
-        tau (int or None): tau value [min] or None (set later with data)
-        name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
+        model: definition of ODE model
+        date_range: start date and end date of dynamics to analyze
+        tau: tau value [min] or None (set later with data)
+        name: name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
 
-    def __init__(self, model, date_range, tau=None, name=None):
+    def __init__(self, model: ODEModel, date_range: tuple[str | None, str | None] | None, tau: int | None = None, name: str | None = None) -> None:
         self._model = Validator(model, "model", accept_none=False).subclass(ODEModel)
         first_date, last_date = Validator(date_range, "date_range", accept_none=False).sequence(length=2)
         self._first = Validator(first_date, name="the first value of @date_range", accept_none=False).date()
@@ -41,59 +43,60 @@ class Dynamics(Term):
             {self._PH: 0}, index=pd.date_range(start=self._first, end=self._last, freq="D"),
             columns=[self._PH, *self._SIRF, *self._parameters])
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._df[self._PH].nunique()
 
     @property
-    def model(self):
-        """covsirphy.ODEModel: model class
+    def model(self) -> ODEModel:
+        """Return model class.
         """
         return self._model
 
     @property
-    def model_name(self):
-        """str: name of ODE model
+    def model_name(self) -> str:
+        """Return name of ODE model.
         """
         return self._model._NAME
 
     @property
-    def tau(self):
-        """int or None: tau value [min] or None (un-set)
+    def tau(self) -> int | None:
+        """Return tau value [min] or None (un-set).
         """
         return self._tau
 
     @tau.setter
-    def tau(self, value):
+    def tau(self, value: int | None) -> None:
         self._tau = Validator(value, "tau", accept_none=True).tau()
 
     @tau.deleter
-    def tau(self):
+    def tau(self) -> None:
         self._tau = None
 
     @property
-    def name(self):
-        """str: name of dynamics to show in figures (e.g. "baseline") or None (un-set)
+    def name(self) -> str | None:
+        """Return name of dynamics to show in figures (e.g. "baseline") or None (un-set).
         """
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str | None) -> None:
         self._name = Validator(name, "name").instance(str)
 
     @name.deleter
-    def name(self):
+    def name(self) -> None:
         self._name = None
 
     @classmethod
-    def from_sample(cls, model, date_range=None, tau=1440):
+    def from_sample(cls, model: ODEModel, date_range: tuple[str | None, str | None] | None = None, tau: int = 1440) -> Self:
         """Initialize model with sample data of one-phase ODE model.
 
         Args:
-            date_range (tuple(str or None, str or None) or None): start date and end date of simulation
-            tau (int): tau value [min]
+            model: definition of ODE model
+            date_range: start date and end date of simulation
+            tau value [min]
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
 
         Note:
             Regarding @date_range, refer to covsirphy.ODEModel.from_sample().
@@ -110,11 +113,11 @@ class Dynamics(Term):
         return instance
 
     @classmethod
-    def from_data(cls, model, data, tau=1440, name=None):
+    def from_data(cls, model: ODEModel, data: pd.DataFrame, tau: int | None = 1440, name: str | None = None) -> Self:
         """Initialize model with data.
 
         Args:
-            data (pandas.DataFrame): new data to overwrite the current information
+            data: new data to overwrite the current information
                 Index
                     Date (pandas.Timestamp): Observation dates
                 Columns
@@ -123,11 +126,11 @@ class Dynamics(Term):
                     Fatal (int): the number of fatal cases
                     Recovered (int): the number of recovered cases
                     (numpy.float64): ODE parameter values defined with the ODE model (optional)
-            tau (int or None): tau value [min] or None (un-set)
-            name (str or None): name of dynamics to show in figures (e.g. "baseline") or None (un-set)
+            tau: tau value [min] or None (un-set)
+            name: name of dynamics to show in figures (e.g. "baseline") or None (un-set)
 
         Returns:
-            covsirphy.ODEModel: initialized model
+            initialized model
 
         Note:
             Regarding @date_range, refer to covsirphy.ODEModel.from_sample().
@@ -138,11 +141,11 @@ class Dynamics(Term):
         instance.register(data=data)
         return instance
 
-    def register(self, data=None):
+    def register(self, data: pd.DataFrame | None = None) -> pd.DataFrame:
         """Register data to get initial values and ODE parameter values (if available).
 
         Args:
-            data (pandas.DataFrame or None): new data to overwrite the current information or None (no new records)
+            data: new data to overwrite the current information or None (no new records)
                 Index
                     Date (pandas.Timestamp): Observation dates
                 Columns
@@ -153,7 +156,7 @@ class Dynamics(Term):
                     (numpy.float64): ODE parameter values defined with the model
 
         Returns:
-            pandas.DataFrame: the current information
+            dataframe of the current information:
                 Index
                     Date (pandas.Timestamp): Observation dates
                 Columns
@@ -188,15 +191,12 @@ class Dynamics(Term):
                 self._segment(points=param_df.index.tolist(), overwrite=True)
         return self._df.loc[:, [*self._SIRF, *self._parameters]]
 
-    def _segment(self, points, overwrite):
+    def _segment(self, points: list[str], overwrite: bool) -> None:
         """Perform time-series segmentation with points.
 
         Args:
-            points (list[str]): dates of change points
-            overwrite (bool): whether remove all phases before segmentation or not
-
-        Returns:
-            covsirphy.Dynamics: self
+            points: dates of change points
+            overwrite: whether remove all phases before segmentation or not
 
         Note:
             @points can include the first date, but not required.
@@ -214,16 +214,16 @@ class Dynamics(Term):
             df.loc[point:, self._PH] += 1
         self._df = df.convert_dtypes()
 
-    def segment(self, points=None, overwrite=False, **kwargs):
+    def segment(self, points: list[str] | None = None, overwrite: bool = False, **kwargs) -> Self:
         """Perform time-series segmentation with points manually selected or found with S-R trend analysis.
 
         Args:
-            points (list[str] or None): dates of change points or None (will be found with S-R trend analysis via .detect() method)
-            overwrite (bool): whether remove all phases before segmentation or not
+            points: dates of change points or None (will be found with S-R trend analysis via .detect() method)
+            overwrite: whether remove all phases before segmentation or not
             **kwargs: keyword arguments of covsirphy.Dynamics.detect()
 
         Returns:
-            covsirphy.Dynamics: self
+            Updated Dynamics object
 
         Note:
             @points can include the first date, but not required.
@@ -231,15 +231,16 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
-        return self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
+        self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
+        return self
 
-    def detect(self, algo="Binseg-normal", min_size=7, display=True, **kwargs):
+    def detect(self, algo: str = "Binseg-normal", min_size: int = 7, display: bool = True, **kwargs) -> tuple[pd.Timestamp, pd.DataFrame]:
         """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
 
         Args:
-            algo (str): detection algorithms and models
-            min_size (int): minimum value of phase length [days], be equal to or over 3
-            display (bool): whether display figure of log10(S) - R plane or not
+            algo: detection algorithms and models
+            min_size: minimum value of phase length [days], be equal to or over 3
+            display: whether display figure of log10(S) - R plane or not
             **kwargs: keyword arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp) except for "model",
                 covsirphy.VisualizeBase(), matplotlib.legend.Legend()
 
@@ -247,27 +248,26 @@ class Dynamics(Term):
             NotEnoughDataError: we have not enough records, the length of the records must be equal to or over min_size * 2
 
         Returns:
-            tuple of (pandas.Timestamp, pandas.DataFrame):
-                pandas.Timestamp: date of change points
-                pandas.Dataframe:
-                    Index
-                        R (int): actual R (R of the ODE model) values
-                    Columns
-                        Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
-                        Fitted (float): log10(S) values fitted with y = a * R + b
-                        0th (float): log10(S) values fitted with y = a * R + b and 0th phase data
-                        1st, 2nd... (float): fitted values of 1st, 2nd phases
+            - pandas.Timestamp: date of change points
+            - pandas.Dataframe:
+                Index
+                    R (int): actual R (R of the ODE model) values
+                Columns
+                    Actual (float): actual log10(S) (common logarithm of S of the ODE model) values
+                    Fitted (float): log10(S) values fitted with y = a * R + b
+                    0th (float): log10(S) values fitted with y = a * R + b and 0th phase data
+                    1st, 2nd... (float): fitted values of 1st, 2nd phases
 
         Note:
-            Python library `ruptures` will be used for off-line change point detection.
-            Refer to documentation of `ruptures` library, https://centre-borelli.github.io/ruptures-docs/
-            Candidates of @algo are "Pelt-rbf", "Binseg-rbf", "Binseg-normal", "BottomUp-rbf", "BottomUp-normal".
+            - Python library `ruptures` will be used for off-line change point detection.
+            - Refer to documentation of `ruptures` library, https://centre-borelli.github.io/ruptures-docs/
+            - Candidates of @algo are "Pelt-rbf", "Binseg-rbf", "Binseg-normal", "BottomUp-rbf", "BottomUp-normal".
 
         Note:
-            S-R trend analysis is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook
-            "Phase" means a sequential dates in which the parameters of SIR-derived models are fixed.
-            "Change points" means the dates when trend was changed.
-            "Change points" is the same as the start dates of phases except for the 0th phase.
+            - S-R trend analysis is original to Covsirphy, https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook
+            - "Phase" means a sequential dates in which the parameters of SIR-derived models are fixed.
+            - "Change points" means the dates when trend was changed.
+            - "Change points" is the same as the start dates of phases except for the 0th phase.
         """
         Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
         df = self._df.dropna(how="any", subset=self._SIRF)
@@ -280,11 +280,11 @@ class Dynamics(Term):
             analyzer.display(points=points, fit_df=fit_df, name=self._name, **kwargs)
         return points, fit_df
 
-    def summary(self):
+    def summary(self) -> pd.DataFrame:
         """Summarize phase information.
 
         Returns:
-            pandas.DataFrame:
+            Summarized information.
                 Index
                     Phase (str): phase names, 0th, 1st,...
                 Columns
@@ -301,7 +301,7 @@ class Dynamics(Term):
         df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
         df = df.loc[:, [col for col in df.columns if "_last" not in col]]
         df.index = [self.num2str(num) for num in df.index]
-        df.index.name = self.PHASE
+        df.index.name = self.PHASE  # type: ignore
         # Reproduction number
         df[self.RT] = df[self._parameters].apply(
             lambda x: np.nan if x.isna().any() else self._model.from_data(data=self._df.reset_index(), param_dict=x.to_dict(), tau=self._tau).r0(), axis=1)
@@ -319,11 +319,11 @@ class Dynamics(Term):
         others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIRF)]
         return df.reindex(columns=[*fixed_cols, *others]).dropna(how="all", axis=1).ffill().convert_dtypes()
 
-    def track(self):
+    def track(self) -> pd.DataFrame:
         """Track reproduction number, parameter value and dimensional parameter values.
 
         Returns:
-            pandas.DataFrame
+            Dataframe of time-series data of the values.
                 Index
                     Date (pandas.Timestamp): dates
                 Columns
@@ -336,7 +336,7 @@ class Dynamics(Term):
             lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
         return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
 
-    def simulate(self, model_specific=False):
+    def simulate(self, model_specific: bool = False) -> pd.DataFrame:
         """Perform simulation with phase-dependent ODE model.
 
         Args:
@@ -347,7 +347,7 @@ class Dynamics(Term):
             NAFoundError: ODE parameter values on the start dates of phases are un-set
 
         Returns:
-            pandas.DataFrame:
+            dataframe of time-series simulated data.
                 Index
                     Date (pd.Timestamp): dates
                 Columns
@@ -364,39 +364,38 @@ class Dynamics(Term):
         simulator = _Simulator(model=self._model, data=self._df)
         return simulator.run(tau=self._tau, model_specific=model_specific).set_index(self.DATE)
 
-    def estimate(self, **kwargs):
+    def estimate(self, **kwargs) -> Self:
         """Run covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params().
 
         Args:
             **kwargs: keyword arguments of covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params()
 
         Returns:
-            covsirphy.Dynamics: self
+            Updated Dynamics object with estimated ODE parameter values.
         """
         self.estimate_tau(**Validator(kwargs).kwargs(self.estimate_tau))
         self.estimate_params(**kwargs)
         return self
 
-    def estimate_tau(self, metric="RMSLE", q=0.5, digits=None, n_jobs=None):
+    def estimate_tau(self, metric: str = "RMSLE", q: float = 0.5, digits: int | None = None, n_jobs: int | None = None) -> tuple[float, pd.DataFrame]:
         """Set the best tau value for the registered data, estimating ODE parameters with quantiles.
 
         Args:
-            metric (str): metric name for scoring when selecting best tau value
-            q (float): the quantiles to compute, values between (0, 1)
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
-            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+            metric: metric name for scoring when selecting best tau value
+            q: the quantiles to compute, values between (0, 1)
+            digits: effective digits of ODE parameter values or None (skip rounding)
+            n_jobs: the number of parallel jobs or None (CPU count)
 
         Raises:
             NotEnoughDataError: less than three non-NA records are registered
 
         Returns:
-            tuple of (float, pandas.DataFrame):
-                float: tau value with best metric score
-                pandas.DataFrame: metric scores of tau candidates
-                    Index
-                        tau (int): candidate of tau values
-                    Columns
-                        {metric}: score of estimation with metric
+            - float: tau value with best metric score
+            - pandas.DataFrame: metric scores of tau candidates
+                Index
+                    tau (int): candidate of tau values
+                Columns
+                    {metric}: score of estimation with metric
         """
         all_df = self._df.dropna(how="any", subset=self._SIRF)
         if len(all_df) < 3:
@@ -411,17 +410,17 @@ class Dynamics(Term):
         self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
         return self._tau, pd.DataFrame.from_dict(score_dict, orient="index", columns=[metric])
 
-    def _score_with_tau(self, tau, metric, q, digits):
+    def _score_with_tau(self, tau: int, metric: str, q: float, digits: int | None) -> float:
         """Return the metric score with tau.
 
         Args:
-            tau (int): tau value [min]
-            metric (str): metric name for scoring when selecting best tau value
-            q (float): the quantiles to compute, values between (0, 1)
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
+            tau: tau value [min]
+            metric: metric name for scoring when selecting best tau value
+            q: the quantiles to compute, values between (0, 1)
+            digits: effective digits of ODE parameter values or None (skip rounding)
 
         Returns:
-            float: score to minimize
+            metric score
         """
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIRF)
@@ -437,13 +436,13 @@ class Dynamics(Term):
         evaluator = Evaluator(all_df[self._SIRF], sim_df[self._SIRF], how="inner")
         return evaluator.score(metric=metric)
 
-    def estimate_params(self, metric="RMSLE", digits=None, n_jobs=None, **kwargs):
+    def estimate_params(self, metric: str = "RMSLE", digits: int | None = None, n_jobs: int | None = None, **kwargs) -> pd.DataFrame:
         """Set ODE parameter values optimized for the registered data with hyperparameter optimization using Optuna.
 
         Args:
-            metric (str): metric name for scoring when optimizing ODE parameter values of phases
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
-            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+            metric: metric name for scoring when optimizing ODE parameter values of phases
+            digits: effective digits of ODE parameter values or None (skip rounding)
+            n_jobs: the number of parallel jobs or None (CPU count)
             **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()
 
         Raises:
@@ -451,14 +450,13 @@ class Dynamics(Term):
             NotEnoughDataError: less than three non-NA records are registered
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): dates
-                Columns
-                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
-                    {metric}: score with the estimated parameter values
-                    Trials (int): the number of trials
-                    Runtime (str): runtime of optimization, like 0 min 10 sec
+            Index
+                Date (pandas.Timestamp): dates
+            Columns
+                (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                {metric}: score with the estimated parameter values
+                Trials (int): the number of trials
+                Runtime (str): runtime of optimization, like 0 min 10 sec
         """
         if self._tau is None:
             raise UnExpectedNoneError(
@@ -486,27 +484,33 @@ class Dynamics(Term):
         self.register(data=r_df)
         return est_df
 
-    def _optimized_params(self, phase_df, model, tau, metric, digits, **kwargs):
+    def _optimized_params(self, phase_df: pd.DataFrame, model: ODEModel, tau: int, metric: str, digits: int | None, **kwargs) -> pd.DataFrame:
         """Return ODE parameter values optimized with the registered data, estimating ODE parameters hyperparameter optimization using Optuna.
 
         Args:
-            metric (str): metric name for scoring when optimizing ODE parameter values of phases
-            digits (int or None): effective digits of ODE parameter values or None (skip rounding)
-            n_jobs (int or None): the number of parallel jobs or None (CPU count)
+            phase_df: records of a phase
+                Index
+                    Date (pandas.Timestamp): observation dates
+                Columns
+                    variables of the model
+            model: definition of ODE model
+            tau: tau value [min]
+            metric: metric name for scoring when optimizing ODE parameter values of phases
+            digits: effective digits of ODE parameter values or None (skip rounding)
+            n_jobs: the number of parallel jobs or None (CPU count)
             **kwargs: keyword arguments of optimization, refer to covsirphy.ODEModel.from_data_with_optimization()
 
         Raises:
             UnExpectedNoneError: tau value is un-set
 
         Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): dates
-                Columns
-                    (numpy.float64): ODE parameter values defined with model.PARAMETERS
-                    {metric}: score with the estimated parameter values
-                    Trials (int): the number of trials
-                    Runtime (str): runtime of optimization, like 0 min 10 sec
+            Index
+                Date (pandas.Timestamp): dates
+            Columns
+                (numpy.float64): ODE parameter values defined with model.PARAMETERS
+                {metric}: score with the estimated parameter values
+                Trials (int): the number of trials
+                Runtime (str): runtime of optimization, like 0 min 10 sec
         """
         df = phase_df.copy()
         # ODE parameter optimization
@@ -519,14 +523,14 @@ class Dynamics(Term):
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
         return df
 
-    def parse_phases(self, phases=None):
+    def parse_phases(self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return minimum date and maximum date of the phases.
 
         Args:
-            phases (list of [str], or None): phases (0th, 1st, 2nd,... last) or None (all phases)
+            phases: phases (0th, 1st, 2nd,... last) or None (all phases)
 
         Returns:
-            tuple of (pandas.Timestamp): minimum date and maximum date of the phases
+            minimum date and maximum date of the phases
 
         Note:
             "last" can be used to specify the last phase.
@@ -539,38 +543,42 @@ class Dynamics(Term):
         df = all_df.loc[all_df[self._PH].isin(phase_numbers)]
         return df.index.min(), df.index.max()
 
-    def parse_days(self, days, ref="last"):
+    def parse_days(self, days: int, ref: pd.Timestamp | str | None = "last") -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return min(ref, ref + days) and max(ref, ref + days).
 
         Args:
-            days (int): the number of days
-            ref (pandas.Timestamp or None): reference date or "first" (the first date of records) or "last" (the last date)
+            days: the number of days
+            ref: reference date or "first" (the first date of records) or "last"/None (the last date)
+
+        Returns:
+            minimum date and maximum date of the selected dates
 
         Note:
             Note that the days clipped with the first and the last dates of records.
         """
         days_n = Validator(days, "days", accept_none=False).int()
         ref_dict = {"first": self._first, "last": self._last}
-        ref_date = Validator(ref_dict.get(ref, ref), "ref").date(
+        ref_date = Validator(ref_dict.get(ref, ref) if isinstance(ref, str) else ref, name="ref").date(
             value_range=(self._first, self._last), default=self._last)
         min_date = min(ref_date, ref_date + timedelta(days=days_n))
         max_date = max(ref_date, ref_date + timedelta(days=days_n))
         return max(min_date, self._first), min(max_date, self._last)
 
-    def evaluate(self, date_range=None, metric="RMSLE", display=True, **kwargs):
+    def evaluate(self, date_range: tuple[str | pd.Timestamp | None, str | pd.Timestamp | None] | None = None, metric: str = "RMSLE", display: bool = True, **kwargs) -> float:
         """Compare the simulated results and actual records, and evaluate the differences.
 
         Args:
-            date_range (tuple of (str or pandas.Timestamp or None) or None): range of dates to evaluate or None (the first and the last date)
-            metric (str): metric to evaluate the difference
-            display (bool): whether display figure of comparison or not
+            date_range: range of dates to evaluate or None (the first and the last date)
+            metric: metric to evaluate the difference
+            display: whether display figure of comparison or not
             kwargs: keyword arguments of covsirphy.compare_plot()
 
         Returns:
-            float: evaluation score
+            evaluation score
         """
         variables = [self.CI, self.F, self.R]
-        start_date, end_date = Validator(date_range, "date_range").sequence(default=(self._first, self._last), length=2)
+        start_date, end_date = Validator(date_range, name="date_range").sequence(
+            default=(self._first, self._last), length=2)
         start = Validator(start_date, "date_range[0]").date(value_range=(self._first, self._last), default=self._first)
         end = Validator(end_date, "date_range[1]").date(value_range=(self._first, self._last), default=self._last)
         actual_df = self._df.loc[start:end, variables].dropna(how="any", axis=0)
@@ -580,11 +588,11 @@ class Dynamics(Term):
             compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
         return Evaluator(actual_df, sim_df).score(metric=metric)
 
-    def start_dates(self):
+    def start_dates(self) -> list[str]:
         """Return the start dates of phases.
 
         Returns:
-            list of [str]: start dates
+            start dates
         """
         df = self._df.reset_index()
         df[self._PH], _ = df[self._PH].factorize()
