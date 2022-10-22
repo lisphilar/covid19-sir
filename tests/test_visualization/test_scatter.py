@@ -24,7 +24,6 @@ def test_error(japan_df, imgfile):
             sp.legend_hide()
 
 
-@pytest.mark.skip(reason="Refer to https://github.com/lisphilar/covid19-sir/issues/1225")
 def test_colormap(japan_df, imgfile):
     df = japan_df.rename(columns={"Positive": "x", "Discharged": "y"})
     with ScatterPlot(filename=imgfile) as sp:
