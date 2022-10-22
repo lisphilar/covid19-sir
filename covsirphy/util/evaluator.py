@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import UnExpectedValueError, NAFoundError
@@ -83,6 +84,7 @@ class Evaluator(object):
         Note:
             When @metric is None, @metrics will be used as @metric. Default value is "RMSLE".
         """
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
         metric = (metric or metrics).upper()
         # Check metric name
         if metric not in self._METRICS_DICT:
