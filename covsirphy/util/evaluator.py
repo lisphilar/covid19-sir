@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import sklearn.metrics
 from covsirphy.util.error import UnExpectedValueError, NAFoundError
 from covsirphy.util.validator import Validator
 
@@ -27,14 +26,14 @@ class Evaluator(object):
     _P = "_predicted"
     # Metrics: {name: (function(x1, x2), whether smaller is better or not)}
     _METRICS_DICT = {
-        "ME": (sklearn.metrics.max_error, True),
-        "MAE": (sklearn.metrics.mean_absolute_error, True),
-        "MSE": (sklearn.metrics.mean_squared_error, True),
-        "MSLE": (sklearn.metrics.mean_squared_log_error, True),
-        "MAPE": (sklearn.metrics.mean_absolute_percentage_error, True),
-        "RMSE": (lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False), True),
-        "RMSLE": (lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)), True),
-        "R2": (sklearn.metrics.r2_score, False),
+        "ME": (lambda x1, x2: np.max(np.abs(x2 - x1)), True),
+        "MAE": (lambda x1, x2: np.mean(np.abs(x2 - x1)), True),
+        "MSE": (lambda x1, x2: np.mean(np.square(x2 - x1)), True),
+        "MSLE": (lambda x1, x2: np.mean(np.square(np.log1p(x2) - np.log1p(x1))), True),
+        "MAPE": (lambda x1, x2: np.mean(np.abs((x2 - x1) / x1)) * 100, True),
+        "RMSE": (lambda x1, x2: np.sqrt(np.mean(np.square(x2 - x1))), True),
+        "RMSLE": (lambda x1, x2: np.sqrt(np.mean(np.square(np.log(x2 + 1) - np.log(x1 + 1)))), True),
+        "R2": (lambda x1, x2: np.corrcoef(x1, x2)[0, 1]**2, False),
     }
 
     def __init__(self, y_true, y_pred, how="inner", on=None):
