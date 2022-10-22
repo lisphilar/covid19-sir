@@ -103,7 +103,7 @@ class ODEModel(Term):
             - param_dict (dict of {str: float}): non-dimensional parameter values
             - estimation_dict (dict of {str: str or int}: information regarding ODE parameter estimation, when @with_estimation is True
                 - method (str): method of estimation, "with_quantile" or "with_optimization" or "not_performed"
-                - {metrics} (int): score of hyperparameter optimization, if available
+                - {metric} (int): score of hyperparameter optimization, if available
                 - Trials (int) : the number of trials of hyperparameter optimization, if available
                 - Runtime (str): runtime of hyperparameter optimization, if available
                 - keyword arguments set with covsirphy.ODEModel.with_optimization(), if available
@@ -476,7 +476,7 @@ class ODEModel(Term):
 
         Returns:
             - dict of {str: float}: dictionary of parameter values
-            - float: score with metrics
+            - float: score of the metric
             - str: runtime of hyperparameter optimization
             - int: the number of trials of hyperparameter optimization
         """

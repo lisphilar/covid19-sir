@@ -17,10 +17,6 @@ class Evaluator(object):
 
     Raises:
         NAFoundError: either @y_true or @pred has NA values
-
-    Note:
-        Evaluation with metrics will be done with sklearn.metrics package.
-        https://scikit-learn.org/stable/modules/model_evaluation.html
     """
     # Names
     _A = "_actual"
@@ -56,13 +52,12 @@ class Evaluator(object):
         self._true = all_df.loc[:, [f"{col}{self._A}" for col in true_df.columns]]
         self._pred = all_df.loc[:, [f"{col}{self._P}" for col in pred_df.columns]]
 
-    def score(self, metric=None, metrics="RMSLE"):
+    def score(self, metric="RMSLE"):
         """
         Calculate score with specified metric.
 
         Args:
-            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
-            metrics (str): alias of @metric
+            metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
 
         Raises:
             UnExpectedValueError: un-expected metric was applied
@@ -80,18 +75,14 @@ class Evaluator(object):
             RMSE: root mean squared error
             RMSLE: root mean squared logarithmic error
             R2: the coefficient of determination
-
-        Note:
-            When @metric is None, @metrics will be used as @metric. Default value is "RMSLE".
         """
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        metric = (metric or metrics).upper()
         # Check metric name
-        if metric not in self._METRICS_DICT:
+        if metric.upper() not in self._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
         # Calculate score
         try:
-            return float(self._METRICS_DICT[metric][0](self._true.values, self._pred.values))
+            return float(self._METRICS_DICT[metric.upper()][0](self._true.values, self._pred.values))
         except ValueError:
             raise ValueError(
                 f"When the targets have multiple columns or negative values, we cannot select {metric}.") from None
@@ -107,22 +98,19 @@ class Evaluator(object):
         return list(cls._METRICS_DICT.keys())
 
     @classmethod
-    def smaller_is_better(cls, metric=None, metrics="RMSLE"):
+    def smaller_is_better(cls, metric="RMSLE"):
         """
         Whether smaller value of the metric is better or not.
 
         Args:
-            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
-            metrics (str): alias of @metric
+            metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
 
         Returns:
             bool: whether smaller value is better or not
         """
-        metric = (metric or metrics).upper()
-        # Check metric name
-        if metric not in cls._METRICS_DICT:
+        if metric.upper() not in cls._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(cls._METRICS_DICT.keys()))
-        return cls._METRICS_DICT[metric][1]
+        return cls._METRICS_DICT[metric.upper()][1]
 
     @classmethod
     def best_one(cls, candidate_dict, **kwargs):
