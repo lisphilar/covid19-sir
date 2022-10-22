@@ -10,9 +10,7 @@ def test_score_series(metric):
     true = pd.Series([5, 10, 8, 6])
     pred = pd.Series([8, 12, 6, 5])
     evaluator = Evaluator(true, pred, on=None)
-    score_metric = evaluator.score(metric=metric)
-    score_metrics = evaluator.score(metrics=metric)
-    assert score_metric == score_metrics
+    assert isinstance(evaluator.score(metric=metric), float)
     assert isinstance(Evaluator.smaller_is_better(metric=metric), bool)
     best_tuple = Evaluator.best_one({"A": 1.0, "B": 1.5, "C": 2.0}, metric=metric)
     if metric == "R2":
@@ -38,10 +36,6 @@ def test_score_dataframe(metric, how, on):
         }
     )
     evaluator = Evaluator(true, pred, how=how, on=on)
-    if metric == "ME" and (how == "all" or on is None):
-        with pytest.raises(ValueError):
-            evaluator.score(metric=metric)
-        return
     assert isinstance(evaluator.score(metric=metric), float)
 
 
