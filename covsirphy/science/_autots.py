@@ -1,6 +1,4 @@
 import warnings
-from autots import AutoTS
-from autots.evaluator.auto_ts import fake_regressor
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -24,6 +22,7 @@ class _AutoTSHandler(Term):
     """
 
     def __init__(self, Y, days, seed, **kwargs):
+        from autots import AutoTS  # https://github.com/lisphilar/covid19-sir/issues/1265
         self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False)
         self._days = Validator(days, name="days").int(value_range=(1, None))
         autots_kwargs = {
@@ -57,6 +56,8 @@ class _AutoTSHandler(Term):
         Returns:
             _AutoTSHandler: self
         """
+        # https://github.com/lisphilar/covid19-sir/issues/1265
+        from autots.evaluator.auto_ts import fake_regressor
         if X is not None:
             regressor_train, self._regressor_forecast = fake_regressor(
                 self._Y,
