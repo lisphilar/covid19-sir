@@ -32,7 +32,7 @@ class Evaluator(object):
         "MSLE": (lambda x1, x2: np.mean(np.square(np.log1p(x2) - np.log1p(x1))), True),
         "MAPE": (lambda x1, x2: np.mean(np.abs((x2 - x1) / x1)) * 100, True),
         "RMSE": (lambda x1, x2: np.sqrt(np.mean(np.square(x2 - x1))), True),
-        "RMSLE": (lambda x1, x2: np.sqrt(np.mean(np.square(np.log(x2 + 1) - np.log(x1 + 1)))), True),
+        "RMSLE": (lambda x1, x2: np.sqrt(np.mean(np.square(np.log(x2 + 1.0) - np.log(x1 + 1.0)))), True),
         "R2": (lambda x1, x2: np.corrcoef(x1, x2)[0, 1]**2, False),
     }
 
