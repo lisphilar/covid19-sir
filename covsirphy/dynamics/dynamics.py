@@ -29,7 +29,7 @@ class Dynamics(Term):
         name: name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
 
-    def __init__(self, model: ODEModel, date_range: tuple[str | None, str | None] | None, tau: int | None = None, name: str | None = None) -> None:
+    def __init__(self, model: ODEModel, date_range: tuple[str | None, str | None], tau: int | None = None, name: str | None = None) -> None:
         self._model = Validator(model, "model", accept_none=False).subclass(ODEModel)
         first_date, last_date = Validator(date_range, "date_range", accept_none=False).sequence(length=2)
         self._first = Validator(first_date, name="the first value of @date_range", accept_none=False).date()
