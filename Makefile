@@ -146,8 +146,14 @@ clean:
 	@rm -rf dist covsirphy.egg-info
 	@rm -f .coverage*
 	@poetry cache clear . --all
+	@rm importtime.log
 
 .PHONY: shell
 shell:
 	@poetry shell
 	@python -i
+
+.PHONY: importtime
+importtime:
+	@poetry run python -X importtime -c "import covsirphy" 2> importtime.log
+	@poetry run tuna importtime.log
