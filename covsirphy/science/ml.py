@@ -1,4 +1,3 @@
-from pca import pca
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -62,6 +61,7 @@ class MLEngineer(Term):
         Note:
             Regarding pca package, please refer to https://github.com/erdogant/pca
         """
+        from pca import pca  # https://github.com/lisphilar/covid19-sir/issues/1265
         Validator(X, name="X", accept_none=False).dataframe(time_index=True, empty_ok=False)
         model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=config.logger_level)
         return {**model.fit_transform(X), "model": model}
