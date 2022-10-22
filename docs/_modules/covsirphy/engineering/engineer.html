@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev4
+                3.0.0.dev6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,8 +108,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.engineering.engineer</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotIncludedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.alias</span> <span class="kn">import</span> <span class="n">Alias</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
@@ -125,8 +127,8 @@
     <span class="sd">&quot;&quot;&quot;Class for data engineering including loading, cleaning, transforming, complementing, EDA (explanatory data analysis).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        layers (list[str] or None): list of layers of geographic information or None ([&quot;ISO3&quot;, &quot;Province&quot;, &quot;City&quot;])</span>
-<span class="sd">        country (str or None): layer name of countries or None (countries are not included in the layers)</span>
+<span class="sd">        layers: list of layers of geographic information or None (`[&quot;ISO3&quot;, &quot;Province&quot;, &quot;City&quot;]`)</span>
+<span class="sd">        country: layer name of countries or None (countries are not included in the layers)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: @layers has duplicates</span>
@@ -135,36 +137,36 @@
 <span class="sd">            Country level data specified with @country will be stored with ISO3 codes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="s2">&quot;layers&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sequence</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITY</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="n">country</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span><span class="p">)</span>
         <span class="c1"># Aliases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span> <span class="o">=</span> <span class="n">Alias</span><span class="o">.</span><span class="n">for_variables</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subset_alias</span> <span class="o">=</span> <span class="n">Alias</span><span class="p">(</span><span class="n">target_class</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DataEngineer.register"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.register"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">citations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Register new data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): new data</span>
+<span class="sd">            data: new data</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    columns defined by covsirphy.DataEngineer(layer)</span>
-<span class="sd">                    Date (pandas.DataFrame): observation dates</span>
-<span class="sd">                    Population (int): total population, optional</span>
-<span class="sd">                    Tests (int): column of the number of tests, optional</span>
-<span class="sd">                    Confirmed (int): the number of confirmed cases, optional</span>
-<span class="sd">                    Fatal (int): the number of fatal cases, optional</span>
-<span class="sd">                    Recovered (int): the number of recovered cases, optional</span>
-<span class="sd">                    the other columns will be also registered</span>
-<span class="sd">            citations (list[str] or str or None): citations of the dataset or None ([&quot;my own dataset&quot;])</span>
+<span class="sd">                    - columns defined by covsirphy.DataEngineer(layer)</span>
+<span class="sd">                    - Date (pandas.DataFrame): observation dates</span>
+<span class="sd">                    - Population (int): total population, optional</span>
+<span class="sd">                    - Tests (int): column of the number of tests, optional</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases, optional</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases, optional</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases, optional</span>
+<span class="sd">                    - the other columns will be also registered</span>
+<span class="sd">            citations: citations of the dataset or None ([&quot;my own dataset&quot;])</span>
 <span class="sd">            **kwargs: keyword arguments of pandas.to_datetime() including &quot;dayfirst (bool): whether date format is DD/MM or not&quot;</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
@@ -172,14 +174,14 @@
             <span class="n">citations</span><span class="o">=</span><span class="n">citations</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;my own dataset&quot;</span><span class="p">],</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="DataEngineer.download"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.download"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Download datasets from the recommended data servers using covsirphy.DataDownloader.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            **kwargs: keyword arguments of covsirphy.DataDownloader() and covsirphy.DataDownloader.layer()</span>
+<span class="sd">            **kwargs: keyword arguments of `covsirphy.DataDownloader()` and `covsirphy.DataDownloader.layer()`</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">validator</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span>
         <span class="n">downloader</span> <span class="o">=</span> <span class="n">DataDownloader</span><span class="p">(</span><span class="o">**</span><span class="n">validator</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">DataDownloader</span><span class="p">))</span>
@@ -190,56 +192,55 @@
             <span class="n">citations</span><span class="o">=</span><span class="n">citations</span><span class="p">,</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="DataEngineer.all"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.all"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return all available data, converting dtypes with pandas.DataFrame.convert_dtypes().</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)</span>
+<span class="sd">            variables: list of variables to collect or alias or None (all available variables)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotRegisteredError: No records have been registered yet</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Column</span>
-<span class="sd">                    columns defined by @layers of _DataEngineer()</span>
-<span class="sd">                    (pandas.Timestamp): observation dates defined by @date of _DataEngineer()</span>
-<span class="sd">                    the other columns</span>
+<span class="sd">            Index</span>
+<span class="sd">                reset index</span>
+<span class="sd">            Column</span>
+<span class="sd">                - columns defined by @layers of `DataEngineer()|</span>
+<span class="sd">                - Date (pandas.Timestamp): observation dates defined by @date of `DataEngineer()`</span>
+<span class="sd">                - the other columns</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">variables</span><span class="p">),</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DataEngineer.citations"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return citation list of the secondary data sources.</span>
+<div class="viewcode-block" id="DataEngineer.citations"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.citations">[docs]</a>    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return citation list of the secondary data sources.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or str or None): list of variables to collect or alias or None (all available variables)</span>
+<span class="sd">            variables: list of variables to collect or alias or None (all available variables)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list[str]: citation list</span>
+<span class="sd">            citations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">citations</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">variables</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DataEngineer.clean"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.clean"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Clean all registered data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            kinds (list[str] or None): kinds of data cleaning with order or None (all available kinds as follows)</span>
+<span class="sd">            kinds: kinds of data cleaning with order or None (all available kinds as follows)</span>
+
 <span class="sd">                - &quot;convert_date&quot;: Convert dtype of date column to pandas.Timestamp.</span>
 <span class="sd">                - &quot;resample&quot;: Resample records with dates.</span>
 <span class="sd">                - &quot;fillna&quot;: Fill NA values with &#39;-&#39; (layers) and the previous values and 0.</span>
 <span class="sd">            **kwargs: keyword arguments of data cleaning refer to note</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            For &quot;convert_date&quot;, keyword arguments of pandas.to_datetime() including &quot;dayfirst (bool): whether date format is DD/MM or not&quot; can be used.</span>
+<span class="sd">            When &quot;convert_date&quot; included, keyword arguments of pandas.to_datetime() including &quot;dayfirst (bool): whether date format is DD/MM or not&quot; can be used.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            For &quot;resample&quot;, `date_range=&lt;tuple of (str or None, str or None) or None&gt;)` can be applied as keyword arguments to set the range.</span>
+<span class="sd">            When &quot;resample&quot; included, `date_range=&lt;tuple of (str or None, str or None) or None&gt;)` can be applied as keyword arguments to set the range.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cleaner</span> <span class="o">=</span> <span class="n">_DataCleaner</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">kind_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -253,17 +254,15 @@
             <span class="n">kind_dict</span><span class="p">[</span><span class="n">kind</span><span class="p">](</span><span class="o">**</span><span class="n">Validator</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">&quot;keyword arguments&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="n">kind_dict</span><span class="p">[</span><span class="n">kind</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">cleaner</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.transform"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.transform"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Transform all registered data, calculating the number of susceptible and infected cases.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Susceptible = Population - Confirmed.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            Infected = Confirmed - Fatal - Recovered.</span>
+<span class="sd">            - Susceptible = Population - Confirmed</span>
+<span class="sd">            - Infected = Confirmed - Fatal - Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">all_df</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
@@ -271,39 +270,34 @@
         <span class="n">transformer</span><span class="o">.</span><span class="n">infected</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform inverse transformation, calculating total population and confirmed.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Population = Susceptible + Confirmed.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            Confirmed = Infected + Fatal + Recovered.</span>
+<span class="sd">            - Population = Susceptible + Confirmed</span>
+<span class="sd">            - Confirmed = Infected + Fatal + Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Validator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;all registered data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">],</span> <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="DataEngineer.diff"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;_diff&quot;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.diff"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_diff&quot;</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;D&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate daily new cases with &quot;f(x&gt;0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers&quot;.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            column (str): column name of the cumulative numbers</span>
-<span class="sd">            suffix (str): suffix if the column (new column name will be &#39;{column}{suffix}&#39;)</span>
-<span class="sd">            freq (str): offset aliases of shifting dates</span>
+<span class="sd">            column: column name of the cumulative numbers</span>
+<span class="sd">            suffix: suffix if the column (new column name will be &#39;{column}{suffix}&#39;)</span>
+<span class="sd">            freq: offset aliases of shifting dates</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Regarding @freq, refer to https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            If the alias of values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">transformer</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
@@ -312,49 +306,49 @@
             <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.add"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate element-wise addition with pandas.DataFrame.sum(axis=1), X1 + X2 + X3 +...</span>
+<div class="viewcode-block" id="DataEngineer.add"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate element-wise addition with `pandas.DataFrame.sum(axis=1)`, X1 + X2 + X3 +...</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            columns (str): columns to add</span>
-<span class="sd">            new (str): column name of addition or None (f&quot;{X1}+{X2}+{X3}...&quot;)</span>
-<span class="sd">            fill_value (float): value to fill in NAs</span>
+<span class="sd">            columns: columns (or alias) to add</span>
+<span class="sd">            new: column name of addition or None (f&quot;{X1}+{X2}+{X3}...&quot;)</span>
+<span class="sd">            fill_value: value to fill in NAs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">col_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">transformer</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">col_names</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span> <span class="ow">or</span> <span class="s2">&quot;+&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col_names</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.mul"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.mul">[docs]</a>    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate element-wise multiplication with pandas.DataFrame.product(axis=1), X1 * X2 * X3 *...</span>
+<div class="viewcode-block" id="DataEngineer.mul"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.mul">[docs]</a>    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate element-wise multiplication with `pandas.DataFrame.product(axis=1)`, X1 * X2 * X3 *...</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            columns (str): columns to multiply</span>
-<span class="sd">            new (str): column name of multiplication or None (f&quot;{X1}*{X2}*{X3}...&quot;)</span>
-<span class="sd">            fill_value (float): value to fill in NAs</span>
+<span class="sd">            columns: columns (or alias) to multiply</span>
+<span class="sd">            new: column name of multiplication or None (f&quot;{X1}*{X2}*{X3}...&quot;)</span>
+<span class="sd">            fill_value: value to fill in NAs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">col_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">transformer</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">col_names</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span> <span class="ow">or</span> <span class="s2">&quot;*&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col_names</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.sub"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.sub">[docs]</a>    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minuend</span><span class="p">,</span> <span class="n">subtrahend</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate element-wise subtraction with pandas.Series.sub(), minuend - subtrahend.</span>
+<div class="viewcode-block" id="DataEngineer.sub"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.sub">[docs]</a>    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minuend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subtrahend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate element-wise subtraction with `pandas.Series.sub()`, minuend - subtrahend.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            minuend (str): numerator column</span>
-<span class="sd">            subtrahend (str): subtrahend column</span>
-<span class="sd">            new (str): column name of subtraction or None (f&quot;{minuend}-{subtrahend}&quot;)</span>
-<span class="sd">            fill_value (float): value to fill in NAs</span>
+<span class="sd">            minuend: numerator column</span>
+<span class="sd">            subtrahend: subtrahend column</span>
+<span class="sd">            new: column name of subtraction or None (f&quot;{minuend}-{subtrahend}&quot;)</span>
+<span class="sd">            fill_value: value to fill in NAs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">transformer</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
@@ -365,17 +359,17 @@
             <span class="n">new</span><span class="o">=</span><span class="n">new</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minuend</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">subtrahend</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.div"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.div">[docs]</a>    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerator</span><span class="p">,</span> <span class="n">denominator</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate element-wise floating division with pandas.Series.div(), numerator / denominator.</span>
+<div class="viewcode-block" id="DataEngineer.div"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.div">[docs]</a>    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">denominator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate element-wise floating division with `pandas.Series.div()`, numerator / denominator.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            numerator (str): numerator column</span>
-<span class="sd">            denominator (str): denominator column</span>
-<span class="sd">            new (str or None): column name of floating division or None (f&quot;{numerator}_per_({denominator.replace(&#39; &#39;, &#39;_&#39;)})&quot;)</span>
-<span class="sd">            fill_value (float): value to fill in NAs</span>
+<span class="sd">            numerator: numerator column</span>
+<span class="sd">            denominator: denominator column</span>
+<span class="sd">            new: column name of floating division or None (f&quot;{numerator}_per_({denominator.replace(&#39; &#39;, &#39;_&#39;)})&quot;)</span>
+<span class="sd">            fill_value: value to fill in NAs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.DataEngineer: self</span>
+<span class="sd">            updated `DataEngineer` instance</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Positive rate could be calculated with Confirmed / Tested, `.div(numerator=&quot;Confirmed&quot;, denominator=&quot;Tested&quot;, new=&quot;Positive_rate&quot;)`</span>
@@ -389,24 +383,24 @@
             <span class="n">new</span><span class="o">=</span><span class="n">new</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">numerator</span><span class="si">}</span><span class="s2">_per_(</span><span class="si">{</span><span class="n">denominator</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.assign"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.assign">[docs]</a>    <span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Assign a new column with pandas.DataFrame.assign().</span>
+<div class="viewcode-block" id="DataEngineer.assign"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.assign">[docs]</a>    <span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Assign a new column with `pandas.DataFrame.assign()`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            **kwargs: dict of {str: callable or pandas.Series}</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Refer to documentation of pandas.DataFrame.assign(), https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html</span>
+<span class="sd">            Refer to documentation of `pandas.DataFrame.assign()`, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">transformer</span> <span class="o">=</span> <span class="n">_DataTransformer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">transformer</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_gis</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_recreate_gis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_recreate_gis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformer</span><span class="p">:</span> <span class="n">_DataTransformer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Recreate GIS instance with transformer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            transformer (class object which has .all() method): transformer</span>
+<span class="sd">            transformer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">citations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">citations</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span><span class="p">)</span>
@@ -415,62 +409,68 @@
             <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">citations</span><span class="o">=</span><span class="n">citations</span><span class="p">,</span> <span class="n">convert_iso3</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="DataEngineer.layer"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.layer"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.layer">[docs]</a>    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the data at the selected layer in the date range.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            geo(tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)</span>
-<span class="sd">            start_date(str or None): start date, like 22Jan2020</span>
-<span class="sd">            end_date(str or None): end date, like 01Feb2020</span>
-<span class="sd">            variables(list[str] or None): list of variables to add or None (all available columns)</span>
+<span class="sd">            geo: location names to specify the layer or None (the top level)</span>
+<span class="sd">            start_date: start date, like 22Jan2020</span>
+<span class="sd">            end_date: end date, like 01Feb2020</span>
+<span class="sd">            variables: list of variables to add or None (all available columns)</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            TypeError: @ geo has un - expected types</span>
-<span class="sd">            ValueError: the length of @ geo is larger than the length of layers</span>
+<span class="sd">            TypeError: @geo has un-expected types</span>
+<span class="sd">            ValueError: the length of @geo is larger than the length of layers</span>
 <span class="sd">            NotRegisteredError: No records have been registered at the layer yet</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    - (str): columns defined by covsirphy.GIS(layers)</span>
-<span class="sd">                    - Date(pandas.Timestamp): observation dates</span>
-<span class="sd">                    - columns defined by @ variables</span>
+<span class="sd">            Index:</span>
+<span class="sd">                reset index</span>
+<span class="sd">            Columns</span>
+<span class="sd">                - (str): columns defined by covsirphy.GIS(layers)</span>
+<span class="sd">                - Date (pandas.Timestamp): observation dates</span>
+<span class="sd">                - columns defined by @ variables</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">           Note that records with NAs as country names will be always removed.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Regarding @ geo argument, please refer to covsirphy.GIS.layer().</span>
+<span class="sd">            Regarding @geo argument, please refer to `covsirphy.GIS.layer()`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">v_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">v_converted</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.choropleth"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.choropleth">[docs]</a>    <span class="k">def</span> <span class="nf">choropleth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Choropleth map&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;choropleth.jpg&quot;</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.choropleth"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.choropleth">[docs]</a>    <span class="k">def</span> <span class="nf">choropleth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">variable</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Choropleth map&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;choropleth.jpg&quot;</span><span class="p">,</span>
+                   <span class="n">logscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">natural_earth</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create choropleth map.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            geo(tuple(list[str] or tuple(str) or str) or str or None): location names to specify the layer or None (the top level)</span>
-<span class="sd">            variable(str): variable name to show</span>
-<span class="sd">            on(str or None): the date, like 22Jan2020, or None (the last date of each location)</span>
-<span class="sd">            title(str): title of the map</span>
-<span class="sd">            filename(str or None): filename to save the figure or None (display)</span>
-<span class="sd">            logscale(bool): whether convert the value to log10 scale values or not</span>
-<span class="sd">            directory(str or None): directory to save GeoJSON file of &quot;Natural Earth&quot; GitHub repository or None (the directory of GIS class script)</span>
-<span class="sd">            natural_earth(str or None): title of GeoJSON file(without extension) of &quot;Natural Earth&quot; GitHub repository or None (automatically determined)</span>
+<span class="sd">            geo: location names to specify the layer or None (the top level)</span>
+<span class="sd">            variable: variable name to show</span>
+<span class="sd">            on: the date, like 22Jan2020, or None (the last date of each location)</span>
+<span class="sd">            title: title of the map</span>
+<span class="sd">            filename: filename to save the figure or None (display)</span>
+<span class="sd">            logscale: whether convert the value to log10 scale values or not</span>
+<span class="sd">            directory: directory to save GeoJSON file of &quot;Natural Earth&quot; GitHub repository or None (the directory of GIS class script)</span>
+<span class="sd">            natural_earth: title of GeoJSON file(without extension) of &quot;Natural Earth&quot; GitHub repository or None (automatically determined)</span>
 <span class="sd">            **kwargs: keyword arguments of the following classes and methods.</span>
-<span class="sd">                - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(), and</span>
-<span class="sd">                - pandas.DataFrame.plot()</span>
+
+<span class="sd">                - `matplotlib.pyplot.savefig()`,</span>
+<span class="sd">                - `matplotlib.pyplot.legend()`, and</span>
+<span class="sd">                - pandas.DataFrame.plot()`</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Regarding @ geo argument, please refer to covsirphy.GIS.layer().</span>
+<span class="sd">            Regarding @ geo argument, please refer to `covsirphy.GIS.layer()`.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            GeoJSON files are listed in https://github.com/nvkelso/natural-earth-vector/tree/master/geojson</span>
-<span class="sd">            https://www.naturalearthdata.com/</span>
-<span class="sd">            https://github.com/nvkelso/natural-earth-vector</span>
-<span class="sd">            Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)</span>
+<span class="sd">            GeoJSON files are listed in</span>
+
+<span class="sd">            - https://github.com/nvkelso/natural-earth-vector/tree/master/geojson</span>
+<span class="sd">            - https://www.naturalearthdata.com/</span>
+<span class="sd">            - https://github.com/nvkelso/natural-earth-vector</span>
+<span class="sd">            - Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">layer_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">variable</span><span class="p">])</span>
         <span class="n">gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_gis_kwargs</span><span class="p">)</span>
@@ -479,56 +479,62 @@
             <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">logscale</span><span class="o">=</span><span class="n">logscale</span><span class="p">,</span>
             <span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">natural_earth</span><span class="o">=</span><span class="n">natural_earth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.subset"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataEngineer.subset"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">complement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Return subset of the location and date range.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            geo(tuple(list[str] or tuple(str) or str) or str or None): location names to filter or None (total at the top level)</span>
-<span class="sd">            start_date(str or None): start date, like 22Jan2020</span>
-<span class="sd">            end_date(str or None): end date, like 01Feb2020</span>
-<span class="sd">            variables(list[str] or None): list of variables to add or None (all available columns)</span>
-<span class="sd">            complement (bool): whether perform data complement or not, True as default</span>
+<span class="sd">            geo: location names to filter or None (total at the top level)</span>
+<span class="sd">            start_date: start date, like 22Jan2020</span>
+<span class="sd">            end_date: end date, like 01Feb2020</span>
+<span class="sd">            variables: list of variables to add or None (all available columns)</span>
+<span class="sd">            complement: whether perform data complement or not, True as default</span>
 <span class="sd">            **Kwargs: keyword arguments for complement and default values</span>
-<span class="sd">                recovery_period(int): expected value of recovery period[days], 17</span>
-<span class="sd">                interval(int): expected update interval of the number of recovered cases[days], 2</span>
-<span class="sd">                max_ignored(int): Max number of recovered cases to be ignored[cases], 100</span>
-<span class="sd">                max_ending_unupdated(int): Max number of days to apply full complement, where max recovered cases are not updated[days], 14</span>
-<span class="sd">                upper_limit_days(int): maximum number of valid partial recovery periods[days], 90</span>
-<span class="sd">                lower_limit_days(int): minimum number of valid partial recovery periods[days], 7</span>
-<span class="sd">                upper_percentage(float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5</span>
-<span class="sd">                lower_percentage(float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</span>
+
+<span class="sd">                - recovery_period (int): expected value of recovery period[days], 17</span>
+<span class="sd">                - interval (int): expected update interval of the number of recovered cases[days], 2</span>
+<span class="sd">                - max_ignored (int): Max number of recovered cases to be ignored[cases], 100</span>
+<span class="sd">                - max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated[days], 14</span>
+<span class="sd">                - upper_limit_days (int): maximum number of valid partial recovery periods[days], 90</span>
+<span class="sd">                - lower_limit_days (int): minimum number of valid partial recovery periods[days], 7</span>
+<span class="sd">                - upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days, 0.5</span>
+<span class="sd">                - lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days, 0.5</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple(pandas.DataFrame, str, dict):</span>
-<span class="sd">                pandas.DataFrame</span>
-<span class="sd">                    Index</span>
-<span class="sd">                        Date(pandas.DataFrame): observation dates</span>
-<span class="sd">                    Columns</span>
-<span class="sd">                        Population(int): total population</span>
-<span class="sd">                        Tests(int): column of the number of tests</span>
-<span class="sd">                        Confirmed(int): the number of confirmed cases</span>
-<span class="sd">                        Fatal(int): the number of fatal cases</span>
-<span class="sd">                        Recovered(int): the number of recovered cases</span>
-<span class="sd">                        the other columns registered</span>
-<span class="sd">                str: status code: will be selected from</span>
-<span class="sd">                    - &#39;&#39; (not complemented)</span>
-<span class="sd">                    - &#39;monotonic increasing complemented confirmed data&#39;</span>
-<span class="sd">                    - &#39;monotonic increasing complemented fatal data&#39;</span>
-<span class="sd">                    - &#39;monotonic increasing complemented recovered data&#39;</span>
-<span class="sd">                    - &#39;fully complemented recovered data&#39;</span>
-<span class="sd">                    - &#39;partially complemented recovered data&#39;</span>
-<span class="sd">                dict[str, bool]: status for each complement type, keys are</span>
-<span class="sd">                    - Monotonic_confirmed</span>
-<span class="sd">                    - Monotonic_fatal</span>
-<span class="sd">                    - Monotonic_recovered</span>
-<span class="sd">                    - Full_recovered</span>
-<span class="sd">                    - Partial_recovered</span>
+<span class="sd">            - pandas.DataFrame</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date(pandas.DataFrame): observation dates</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Population(int): total population</span>
+<span class="sd">                    Tests(int): column of the number of tests</span>
+<span class="sd">                    Confirmed(int): the number of confirmed cases</span>
+<span class="sd">                    Fatal(int): the number of fatal cases</span>
+<span class="sd">                    Recovered(int): the number of recovered cases</span>
+<span class="sd">                    the other columns registered</span>
+
+<span class="sd">            - str: status code: will be selected from</span>
+
+<span class="sd">                - &#39;&#39; (not complemented)</span>
+<span class="sd">                - &#39;monotonic increasing complemented confirmed data&#39;</span>
+<span class="sd">                - &#39;monotonic increasing complemented fatal data&#39;</span>
+<span class="sd">                - &#39;monotonic increasing complemented recovered data&#39;</span>
+<span class="sd">                - &#39;fully complemented recovered data&#39;</span>
+<span class="sd">                - &#39;partially complemented recovered data&#39;</span>
+
+<span class="sd">            - dict[str, bool]: status for each complement type, keys are</span>
+
+<span class="sd">                - Monotonic_confirmed</span>
+<span class="sd">                - Monotonic_fatal</span>
+<span class="sd">                - Monotonic_recovered</span>
+<span class="sd">                - Full_recovered</span>
+<span class="sd">                - Partial_recovered</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Regarding @ geo argument, please refer to covsirphy.GIS.subset().</span>
+<span class="sd">            Regarding @geo argument, please refer to `covsirphy.GIS.subset()`.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Re - calculation of Susceptible and Infected will be done automatically.</span>
+<span class="sd">            Re-calculation of Susceptible and Infected will be done automatically.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">v_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="n">geo</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
@@ -556,21 +562,21 @@
         <span class="n">transformed_df</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">transformed_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">v_converted</span> <span class="ow">or</span> <span class="n">transformed_df</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">status</span><span class="p">,</span> <span class="n">status_dict</span></div>
 
-<div class="viewcode-block" id="DataEngineer.subset_alias"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset_alias">[docs]</a>    <span class="k">def</span> <span class="nf">subset_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set / get / list - up alias name(s) of subset.</span>
+<div class="viewcode-block" id="DataEngineer.subset_alias"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.subset_alias">[docs]</a>    <span class="k">def</span> <span class="nf">subset_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot;Set/get/list-up alias name(s) of subset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            alias(str or None): alias name or None (list - up alias names)</span>
-<span class="sd">            update(bool): force updating the alias when @ alias is not None</span>
+<span class="sd">            alias: alias name or None (list-up alias names)</span>
+<span class="sd">            update: force updating the alias when @alias is not None</span>
 <span class="sd">            **kwargs: keyword arguments of covsirphy.DataEngineer().subset()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple(pandas.DataFrame, str, dict) or dict[str, tuple(pandas.DataFrame, str, dict)]:</span>
-<span class="sd">                - tuple(pandas.DataFrame, str, dict): when @ alias is not None, the subset of the alias</span>
-<span class="sd">                - dict[str, tuple(pandas.DataFrame, str, dict)]: when @ alias is None, dictionary of aliases and subsets</span>
+<span class="sd">            - tuple[pandas.DataFrame, str, dict]: when @alias is not None, the subset of the alias</span>
+<span class="sd">            - dict[str, tuple[pandas.DataFrame, str, dict]]: when @alias is None, dictionary of aliases and subsets</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            When the alias name was a new one, subset will be registered with covsirphy.DataEngineer.subset(**kwargs).</span>
+<span class="sd">            When the alias name was a new one, subset will be registered with `covsirphy.DataEngineer.subset(**kwargs)`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_alias</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -579,26 +585,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_subset_alias</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataEngineer.variables_alias"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.variables_alias">[docs]</a>    <span class="k">def</span> <span class="nf">variables_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set / get / list - up alias name(s) of variables.</span>
+<div class="viewcode-block" id="DataEngineer.variables_alias"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.variables_alias">[docs]</a>    <span class="k">def</span> <span class="nf">variables_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Set/get/list-up alias name(s) of variables.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            alias(str or None): alias name or None (list - up alias names)</span>
-<span class="sd">            variables(list[str]): variables to register with the alias</span>
+<span class="sd">            alias: alias name or None (list - up alias names)</span>
+<span class="sd">            variables: variables to register with the alias</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotIncludedError: the alias is not None and un - registered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list[str] or dict[str, list[str]]:</span>
-<span class="sd">                - list[str]: when @ alias is not None, the variables of the alias</span>
-<span class="sd">                - dict[str, list[str]]: when @ alias is None, dictionary of aliases and variables</span>
+<span class="sd">            - list[str]: when @alias is not None, the variables of the alias</span>
+<span class="sd">            - dict[str, list[str]]: when @alias is None, dictionary of aliases and variables</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            When @ variables is not None, alias will be registered / updated.</span>
+<span class="sd">            When @variables is not None, alias will be registered/updated.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Some aliases are preset. We can check them with covsirphy.DataEngineer().variables_alias().</span>
+<span class="sd">            Some aliases are preset. We can check them with `covsirphy.DataEngineer().variables_alias()`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -609,21 +614,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_alias</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">alias</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataEngineer.recovery_period"><a class="viewcode-back" href="../../../covsirphy.engineering.html#covsirphy.engineering.engineer.DataEngineer.recovery_period">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate mode value of recovery period of the data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data(pandas.DataFrame): data for calculation</span>
+<span class="sd">            data: data for calculation</span>
 <span class="sd">                Index</span>
-<span class="sd">                    Date(pandas.Timestamp): observation dates</span>
+<span class="sd">                    Date (pandas.Timestamp): observation dates</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    Confirmed(int): the number of confirmed cases, optional</span>
-<span class="sd">                    Fatal(int): the number of fatal cases, optional</span>
-<span class="sd">                    Recovered(int): the number of recovered cases, optional</span>
-<span class="sd">                    the other columns will be ignored</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases, optional</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases, optional</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases, optional</span>
+<span class="sd">                    - the other columns will be ignored</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            int: mode value of recovery period[days]</span>
+<span class="sd">            mode value of recovery period [days]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
