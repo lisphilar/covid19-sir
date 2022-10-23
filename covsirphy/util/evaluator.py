@@ -1,6 +1,6 @@
+import warnings
 import numpy as np
 import pandas as pd
-import sklearn.metrics
 from covsirphy.util.error import UnExpectedValueError, NAFoundError
 from covsirphy.util.validator import Validator
 
@@ -17,24 +17,20 @@ class Evaluator(object):
 
     Raises:
         NAFoundError: either @y_true or @pred has NA values
-
-    Note:
-        Evaluation with metrics will be done with sklearn.metrics package.
-        https://scikit-learn.org/stable/modules/model_evaluation.html
     """
     # Names
     _A = "_actual"
     _P = "_predicted"
     # Metrics: {name: (function(x1, x2), whether smaller is better or not)}
     _METRICS_DICT = {
-        "ME": (sklearn.metrics.max_error, True),
-        "MAE": (sklearn.metrics.mean_absolute_error, True),
-        "MSE": (sklearn.metrics.mean_squared_error, True),
-        "MSLE": (sklearn.metrics.mean_squared_log_error, True),
-        "MAPE": (sklearn.metrics.mean_absolute_percentage_error, True),
-        "RMSE": (lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False), True),
-        "RMSLE": (lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)), True),
-        "R2": (sklearn.metrics.r2_score, False),
+        "ME": (lambda x1, x2: np.max(np.abs(x2 - x1)), True),
+        "MAE": (lambda x1, x2: np.mean(np.abs(x2 - x1)), True),
+        "MSE": (lambda x1, x2: np.mean(np.square(x2 - x1)), True),
+        "MSLE": (lambda x1, x2: np.mean(np.square(np.log1p(x2) - np.log1p(x1))), True),
+        "MAPE": (lambda x1, x2: np.mean(np.abs((x2 - x1) / x1)) * 100, True),
+        "RMSE": (lambda x1, x2: np.sqrt(np.mean(np.square(x2 - x1))), True),
+        "RMSLE": (lambda x1, x2: np.sqrt(np.mean(np.square(np.log1p(x2) - np.log1p(x1)))), True),
+        "R2": (lambda x1, x2: np.corrcoef(x1, x2)[0, 1]**2, False),
     }
 
     def __init__(self, y_true, y_pred, how="inner", on=None):
@@ -56,13 +52,12 @@ class Evaluator(object):
         self._true = all_df.loc[:, [f"{col}{self._A}" for col in true_df.columns]]
         self._pred = all_df.loc[:, [f"{col}{self._P}" for col in pred_df.columns]]
 
-    def score(self, metric=None, metrics="RMSLE"):
+    def score(self, metric="RMSLE"):
         """
         Calculate score with specified metric.
 
         Args:
-            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
-            metrics (str): alias of @metric
+            metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
 
         Raises:
             UnExpectedValueError: un-expected metric was applied
@@ -80,20 +75,18 @@ class Evaluator(object):
             RMSE: root mean squared error
             RMSLE: root mean squared logarithmic error
             R2: the coefficient of determination
-
-        Note:
-            When @metric is None, @metrics will be used as @metric. Default value is "RMSLE".
         """
-        metric = (metric or metrics).upper()
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
         # Check metric name
-        if metric not in self._METRICS_DICT:
+        if metric.upper() not in self._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
         # Calculate score
+        func = self._METRICS_DICT[metric.upper()][0]
         try:
-            return float(self._METRICS_DICT[metric][0](self._true.values, self._pred.values))
-        except ValueError:
-            raise ValueError(
-                f"When the targets have multiple columns or negative values, we cannot select {metric}.") from None
+            return float(func(self._true.values, self._pred.values))
+        except TypeError:
+            outputs = float(func(self._true.values.astype(np.float64), self._pred.values.astype(np.float64)))
+            return float(np.average(outputs))
 
     @classmethod
     def metrics(cls):
@@ -106,22 +99,19 @@ class Evaluator(object):
         return list(cls._METRICS_DICT.keys())
 
     @classmethod
-    def smaller_is_better(cls, metric=None, metrics="RMSLE"):
+    def smaller_is_better(cls, metric="RMSLE"):
         """
         Whether smaller value of the metric is better or not.
 
         Args:
-            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
-            metrics (str): alias of @metric
+            metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
 
         Returns:
             bool: whether smaller value is better or not
         """
-        metric = (metric or metrics).upper()
-        # Check metric name
-        if metric not in cls._METRICS_DICT:
+        if metric.upper() not in cls._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(cls._METRICS_DICT.keys()))
-        return cls._METRICS_DICT[metric][1]
+        return cls._METRICS_DICT[metric.upper()][1]
 
     @classmethod
     def best_one(cls, candidate_dict, **kwargs):
