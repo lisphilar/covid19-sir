@@ -85,7 +85,7 @@ class Evaluator(object):
         try:
             return float(func(self._true.values, self._pred.values))
         except TypeError:
-            outputs = float(func(self._true.values.float(), self._pred.values.float()))
+            outputs = float(func(self._true.values.astype(np.float64), self._pred.values.astype(np.float64)))
             return float(np.average(outputs))
 
     @classmethod
