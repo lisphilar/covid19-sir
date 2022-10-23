@@ -81,15 +81,11 @@ class Evaluator(object):
         if metric.upper() not in self._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
         # Calculate score
+        outputs = self._METRICS_DICT[metric.upper()][0](float(self._true.values), float(self._pred.values))
         try:
-            return float(
-                self._METRICS_DICT[metric.upper()][0](
-                    float(self._true.values), float(self._pred.values)
-                )
-            )
-        except ValueError:
-            raise ValueError(
-                f"When the targets have multiple columns or negative values, we cannot select {metric}.") from None
+            return float(outputs)
+        except TypeError:
+            return float(np.average(outputs))
 
     @classmethod
     def metrics(cls):
