@@ -46,7 +46,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev6
+                3.0.0.dev7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -108,8 +108,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.science.ml</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pca</span> <span class="kn">import</span> <span class="n">pca</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span></span><span class="kn">from</span> <span class="nn">covsirphy.util.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.science._autots</span> <span class="kn">import</span> <span class="n">_AutoTSHandler</span>
@@ -172,6 +171,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            Regarding pca package, please refer to https://github.com/erdogant/pca</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">pca</span> <span class="kn">import</span> <span class="n">pca</span>  <span class="c1"># https://github.com/lisphilar/covid19-sir/issues/1265</span>
         <span class="n">Validator</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">empty_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">logger_level</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">}</span></div>

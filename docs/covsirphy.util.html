@@ -48,7 +48,7 @@
             <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev6
+                3.0.0.dev7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -595,11 +595,6 @@ features and arguments may changed later.</p>
 <dd class="field-even"><p><a class="reference internal" href="#covsirphy.util.error.NAFoundError" title="covsirphy.util.error.NAFoundError"><strong>NAFoundError</strong></a> – either &#64;y_true or &#64;pred has NA values</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Evaluation with metrics will be done with sklearn.metrics package.
-<a class="reference external" href="https://scikit-learn.org/stable/modules/model_evaluation.html">https://scikit-learn.org/stable/modules/model_evaluation.html</a></p>
-</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.util.evaluator.Evaluator.best_one">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">best_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidate_dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator.best_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator.best_one" title="Permalink to this definition"></a></dt>
@@ -630,14 +625,11 @@ features and arguments may changed later.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.util.evaluator.Evaluator.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RMSLE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator.score" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RMSLE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator.score" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate score with specified metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
-<li><p><strong>metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias of &#64;metric</p></li>
-</ul>
+<dd class="field-odd"><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
@@ -660,22 +652,15 @@ RMSE: root mean squared error
 RMSLE: root mean squared logarithmic error
 R2: the coefficient of determination</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When &#64;metric is None, &#64;metrics will be used as &#64;metric. Default value is “RMSLE”.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.util.evaluator.Evaluator.smaller_is_better">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">smaller_is_better</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RMSLE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator.smaller_is_better"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator.smaller_is_better" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">smaller_is_better</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RMSLE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/evaluator.html#Evaluator.smaller_is_better"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.evaluator.Evaluator.smaller_is_better" title="Permalink to this definition"></a></dt>
 <dd><p>Whether smaller value of the metric is better or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>None</em>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use &#64;metrics)</p></li>
-<li><p><strong>metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – alias of &#64;metric</p></li>
-</ul>
+<dd class="field-odd"><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><em>bool</em> – whether smaller value is better or not</p>
