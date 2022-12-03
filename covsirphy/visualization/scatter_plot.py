@@ -46,13 +46,8 @@ class ScatterPlot(LinePlot):
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         self._data = Validator(data, "data").dataframe(columns=["x", "y"])
-        # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
-        # Set plotting
-        try:
-            self._ax = data.plot.scatter(x="x", y="y", **color_args, **kwargs)
-        except KeyError as e:
-            raise KeyError(e.args[0]) from None
+        self._ax = data.plot.scatter(x="x", y="y", **color_args, **kwargs)
 
     def line_straight(self, p1=None, p2=None, color="black", linestyle=":"):
         """Connect the points with a straight line.
