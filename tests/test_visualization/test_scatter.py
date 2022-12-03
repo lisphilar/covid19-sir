@@ -22,10 +22,3 @@ def test_error(japan_df, imgfile):
             sp.legend()
         with pytest.raises(NotImplementedError):
             sp.legend_hide()
-
-
-def test_colormap(japan_df, imgfile):
-    df = japan_df.rename(columns={"Positive": "x", "Discharged": "y"})
-    with ScatterPlot(filename=imgfile) as sp:
-        with pytest.raises(KeyError):
-            sp.plot(data=df, colormap="unknown")
