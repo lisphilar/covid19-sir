@@ -111,6 +111,7 @@ class _DataProvider(Term):
         except URLError:
             ctx = create_urllib3_context()
             ctx.load_default_certs()
+            # From Python 3.12, use import ssl; ssl.OP_LEGACY_SERVER_CONNECT instead of 0x4
             ctx.options |= 0x4
             with PoolManager(ssl_context=ctx) as http:
                 r = http.request("GET", path)
