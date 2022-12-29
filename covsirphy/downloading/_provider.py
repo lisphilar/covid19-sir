@@ -1,8 +1,13 @@
 import contextlib
 from datetime import datetime, timezone, timedelta
+import io
 from pathlib import Path
+from urllib.error import URLError
 from urllib.parse import urlparse
+from urllib3 import PoolManager
+from urllib3.util.ssl_ import create_urllib3_context
 import warnings
+from zipfile import ZipFile
 import numpy as np
 import pandas as pd
 from unidecode import unidecode
@@ -101,7 +106,18 @@ class _DataProvider(Term):
         }
         if urlparse(path).scheme:
             kwargs["storage_options"] = {"User-Agent": "Mozilla/5.0"}
-        df = pd.read_csv(path, **kwargs)
+        try:
+            df = pd.read_csv(path, **kwargs)
+        except URLError:
+            ctx = create_urllib3_context()
+            ctx.load_default_certs()
+            # From Python 3.12, use import ssl; ssl.OP_LEGACY_SERVER_CONNECT instead of 0x4
+            ctx.options |= 0x4
+            with PoolManager(ssl_context=ctx) as http:
+                r = http.request("GET", path)
+                with ZipFile(io.BytesIO(r.data), "r") as fh:
+                    text = fh.read(f"{Path(path).stem}.csv")
+            df = pd.read_csv(io.StringIO(text.decode("utf-8")))
         for col in df:
             with contextlib.suppress(TypeError):
                 df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
