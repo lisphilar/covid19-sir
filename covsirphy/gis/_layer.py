@@ -112,7 +112,7 @@ class _LayerAdjuster(Term):
             df[self.DATE] = df[self.DATE].dt.tz_convert(None)
         # Convert country names to ISO3 codes
         if convert_iso3 and self._country is not None and self._country in df:
-            df.loc[:, self._country] = self._to_iso3(df[self._country])
+            df.isetitem(self._country, self._to_iso3(df[self._country]))
         # Prepare necessary layers and fill in None with "NA"
         if data_layers is not None and data_layers != self._layers:
             df = self._prepare_layers(df, data_layers=data_layers)
