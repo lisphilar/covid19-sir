@@ -46,15 +46,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
-            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev7
+                3.0.0.dev10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -119,7 +123,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Data preparation</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -239,10 +243,11 @@ div.nboutput.container div.prompt > div {
     }
 }
 
-/* disable scrollbars on prompts */
+/* disable scrollbars and line breaks on prompts */
 div.nbinput.container div.prompt pre,
 div.nboutput.container div.prompt pre {
     overflow: hidden;
+    white-space: pre;
 }
 
 /* input/output area */
@@ -435,7 +440,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;3.0.0.dev7&#39;
+&#39;3.0.0.dev10&#39;
 </pre></div></div>
 </div>
 <p>From version 2.28.0, some classes and methods output the following information using <a class="reference external" href="https://github.com/Delgan/loguru">loguru: library which aims to bring enjoyable logging in Python</a>. We can change logging level with <code class="docutils literal notranslate"><span class="pre">cs.config(level=2)</span></code> (as default).</p>
@@ -521,11 +526,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-11-06 at 14:06:47 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
-2022-11-06 at 14:06:48 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
-2022-11-06 at 14:06:57 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
-2022-11-06 at 14:06:59 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
-2022-11-06 at 14:06:59 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+2023-02-13 at 17:42:58 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
+2023-02-13 at 17:42:59 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+2023-02-13 at 17:43:10 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+2023-02-13 at 17:43:13 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+2023-02-13 at 17:43:13 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -534,7 +539,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.engineering.engineer.DataEngineer at 0x7f56ed81d640&gt;
+&lt;covsirphy.engineering.engineer.DataEngineer at 0x7f4bf4a68390&gt;
 </pre></div></div>
 </div>
 <p>We can get the all downloaded records as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with <code class="docutils literal notranslate"><span class="pre">DataEngineer().all()</span></code> method.</p>
@@ -554,39 +559,39 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 232860 entries, 0 to 232859
+RangeIndex: 254954 entries, 0 to 254953
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 232860 non-null  category
- 1   Province                             232860 non-null  category
- 2   City                                 232860 non-null  category
- 3   Date                                 232860 non-null  datetime64[ns]
- 4   Cancel_events                        182232 non-null  Float64
- 5   Confirmed                            211102 non-null  Float64
- 6   Contact_tracing                      182039 non-null  Float64
- 7   Country                              230071 non-null  string
- 8   Fatal                                194456 non-null  Float64
- 9   Gatherings_restrictions              182179 non-null  Float64
- 10  Information_campaigns                182133 non-null  Float64
- 11  Internal_movement_restrictions       182176 non-null  Float64
- 12  International_movement_restrictions  182250 non-null  Float64
- 13  Population                           229053 non-null  Float64
- 14  Product                              125668 non-null  string
- 15  Recovered                            72012 non-null   Float64
- 16  School_closing                       182258 non-null  Float64
- 17  Stay_home_restrictions               182116 non-null  Float64
- 18  Stringency_index                     182134 non-null  Float64
- 19  Testing_policy                       182102 non-null  Float64
- 20  Tests                                86656 non-null   Float64
- 21  Transport_closing                    182093 non-null  Float64
- 22  Vaccinated_full                      50440 non-null   Float64
- 23  Vaccinated_once                      53033 non-null   Float64
- 24  Vaccinations                         55770 non-null   Float64
- 25  Vaccinations_boosters                28389 non-null   Float64
- 26  Workplace_closing                    182256 non-null  Float64
+ 0   ISO3                                 254954 non-null  category
+ 1   Province                             254954 non-null  category
+ 2   City                                 254954 non-null  category
+ 3   Date                                 254954 non-null  datetime64[ns]
+ 4   Cancel_events                        194594 non-null  Float64
+ 5   Confirmed                            231013 non-null  Float64
+ 6   Contact_tracing                      194621 non-null  Float64
+ 7   Country                              250999 non-null  string
+ 8   Fatal                                213965 non-null  Float64
+ 9   Gatherings_restrictions              194594 non-null  Float64
+ 10  Information_campaigns                194621 non-null  Float64
+ 11  Internal_movement_restrictions       194620 non-null  Float64
+ 12  International_movement_restrictions  194627 non-null  Float64
+ 13  Population                           249881 non-null  Float64
+ 14  Product                              140338 non-null  string
+ 15  Recovered                            72888 non-null   Float64
+ 16  School_closing                       194619 non-null  Float64
+ 17  Stay_home_restrictions               194588 non-null  Float64
+ 18  Stringency_index                     194583 non-null  Float64
+ 19  Testing_policy                       194620 non-null  Float64
+ 20  Tests                                88620 non-null   Float64
+ 21  Transport_closing                    194600 non-null  Float64
+ 22  Vaccinated_full                      54278 non-null   Float64
+ 23  Vaccinated_once                      56892 non-null   Float64
+ 24  Vaccinations                         59782 non-null   Float64
+ 25  Vaccinations_boosters                31540 non-null   Float64
+ 26  Workplace_closing                    194619 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), string(2)
-memory usage: 48.2 MB
+memory usage: 52.8 MB
 </pre></div></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer.citations()</span></code> shows citations of the datasets.</p>
@@ -608,7 +613,7 @@ Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Journal of Open So
 Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https: //doi.org/10.1038/s41597-020-00688-8
 </pre></div></div>
 </div>
-<p>Note that, as default, <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code> collects country-level data and save the datasets as CSV files in “input” (=``directory`` argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code>) folder of the current directory. If the last modification time of the saved CSV files is within the last 12 (=``update_interval`` argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code>) hours, the saved CSV files will be used as the database.</p>
+<p>Note that, as default, <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code> collects country-level data and save the datasets as CSV files in “input” (=<code class="docutils literal notranslate"><span class="pre">directory</span></code> argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code>) folder of the current directory. If the last modification time of the saved CSV files is within the last 12 (=<code class="docutils literal notranslate"><span class="pre">update_interval</span></code> argument of <code class="docutils literal notranslate"><span class="pre">DataEngineer().download()</span></code>) hours, the saved CSV files will be used as the database.</p>
 <p>For some countries (eg. Japan), province/state/prefecture level data is available and we can download it as follows.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -625,8 +630,8 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-11-06 at 14:07:06 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
-2022-11-06 at 14:07:07 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+2023-02-13 at 17:43:21 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
+2023-02-13 at 17:43:22 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -817,7 +822,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-11-06 at 14:07:10 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+2023-02-13 at 17:43:26 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1021,39 +1026,39 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 232860 entries, 0 to 232859
+RangeIndex: 254954 entries, 0 to 254953
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 232860 non-null  string
- 1   Province                             232860 non-null  string
- 2   City                                 232860 non-null  string
- 3   Date                                 232860 non-null  datetime64[ns]
- 4   Cancel_events                        182232 non-null  Float64
- 5   Confirmed                            211102 non-null  Float64
- 6   Contact_tracing                      182039 non-null  Float64
- 7   Country                              230071 non-null  string
- 8   Fatal                                194456 non-null  Float64
- 9   Gatherings_restrictions              182179 non-null  Float64
- 10  Information_campaigns                182133 non-null  Float64
- 11  Internal_movement_restrictions       182176 non-null  Float64
- 12  International_movement_restrictions  182250 non-null  Float64
- 13  Population                           229053 non-null  Float64
- 14  Product                              125668 non-null  string
- 15  Recovered                            72012 non-null   Float64
- 16  School_closing                       182258 non-null  Float64
- 17  Stay_home_restrictions               182116 non-null  Float64
- 18  Stringency_index                     182134 non-null  Float64
- 19  Testing_policy                       182102 non-null  Float64
- 20  Tests                                86656 non-null   Float64
- 21  Transport_closing                    182093 non-null  Float64
- 22  Vaccinated_full                      50440 non-null   Float64
- 23  Vaccinated_once                      53033 non-null   Float64
- 24  Vaccinations                         55770 non-null   Float64
- 25  Vaccinations_boosters                28389 non-null   Float64
- 26  Workplace_closing                    182256 non-null  Float64
+ 0   ISO3                                 254954 non-null  string
+ 1   Province                             254954 non-null  string
+ 2   City                                 254954 non-null  string
+ 3   Date                                 254954 non-null  datetime64[ns]
+ 4   Cancel_events                        194594 non-null  Float64
+ 5   Confirmed                            231013 non-null  Float64
+ 6   Contact_tracing                      194621 non-null  Float64
+ 7   Country                              250999 non-null  string
+ 8   Fatal                                213965 non-null  Float64
+ 9   Gatherings_restrictions              194594 non-null  Float64
+ 10  Information_campaigns                194621 non-null  Float64
+ 11  Internal_movement_restrictions       194620 non-null  Float64
+ 12  International_movement_restrictions  194627 non-null  Float64
+ 13  Population                           249881 non-null  Float64
+ 14  Product                              140338 non-null  string
+ 15  Recovered                            72888 non-null   Float64
+ 16  School_closing                       194619 non-null  Float64
+ 17  Stay_home_restrictions               194588 non-null  Float64
+ 18  Stringency_index                     194583 non-null  Float64
+ 19  Testing_policy                       194620 non-null  Float64
+ 20  Tests                                88620 non-null   Float64
+ 21  Transport_closing                    194600 non-null  Float64
+ 22  Vaccinated_full                      54278 non-null   Float64
+ 23  Vaccinated_once                      56892 non-null   Float64
+ 24  Vaccinations                         59782 non-null   Float64
+ 25  Vaccinations_boosters                31540 non-null   Float64
+ 26  Workplace_closing                    194619 non-null  Float64
 dtypes: Float64(21), datetime64[ns](1), string(5)
-memory usage: 52.6 MB
+memory usage: 57.6 MB
 </pre></div></div>
 </div>
 <p>Note that ISO3/Province/City columns have string data instead of categorical data.</p>
@@ -1114,9 +1119,9 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Global.health Monkeypox (accessed on 2022-11-06):
+Global.health Monkeypox (accessed on 2023-02-13):
 Kraemer, Tegally, Pigott, Dasgupta, Sheldon, Wilkinson, Schultheiss, et al. Tracking the 2022 Monkeypox Outbreak with Epidemiological Data in Real-Time. The Lancet Infectious Diseases. https://doi.org/10.1016/S1473-3099(22)00359-0.
-European Centre for Disease Prevention and Control/WHO Regional Office for Europe. Monkeypox, Joint Epidemiological overview, 6 11, 2022
+European Centre for Disease Prevention and Control/WHO Regional Office for Europe. Monkeypox, Joint Epidemiological overview, 13 2, 2022
 </pre></div></div>
 </div>
 <p>Retrieve CSV file with <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code>, using <a class="reference external" href="https://arrow.apache.org/docs/python/index.html">Pyarrow</a> as the engine.</p>
@@ -1125,7 +1130,7 @@ European Centre for Disease Prevention and Control/WHO Regional Office for Europ
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Deprecated: Final line list from Global.health, as of 2022-09-22</span>
-<span class="n">raw_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/globaldothealth/monkeypox/main/latest_deprecated.csv&quot;</span>
+<span class="n">raw_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/globaldothealth/monkeypox/9035dfb1303c05c380f86a3c1e00f81a1cc4046b/latest_deprecated.csv&quot;</span>
 <span class="n">raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">raw_url</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">)</span>
 <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
@@ -2026,7 +2031,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-11-06 at 14:08:40 | INFO | Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
+2023-02-13 at 17:45:20 | INFO | Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -2082,8 +2087,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-11-06 at 14:08:43 | INFO | Retrieving datasets from World Population Prospects https://population.un.org/wpp/
-2022-11-06 at 14:08:53 | INFO |         [INFO] &#39;Province&#39; layer was removed.
+2023-02-13 at 17:45:24 | INFO | Retrieving datasets from World Population Prospects https://population.un.org/wpp/
+2023-02-13 at 17:45:42 | INFO |         [INFO] &#39;Province&#39; layer was removed.
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -2124,31 +2129,31 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     </tr>
     <tr>
       <th>1</th>
-      <td>AFG</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>41128771.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>AGO</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>35588987.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
       <td>AIA</td>
       <td>-</td>
       <td>2022-07-01</td>
       <td>15857.0</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>ALB</td>
+      <th>2</th>
+      <td>ASM</td>
       <td>-</td>
       <td>2022-07-01</td>
-      <td>2842321.0</td>
+      <td>44273.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>AUS</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>26177413.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>AZE</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>10358074.0</td>
     </tr>
     <tr>
       <th>...</th>
@@ -2158,43 +2163,43 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>...</td>
     </tr>
     <tr>
-      <th>232</th>
+      <th>57</th>
+      <td>USA</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>338289857.0</td>
+    </tr>
+    <tr>
+      <th>58</th>
+      <td>VGB</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>31305.0</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>VIR</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>99465.0</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>WLF</td>
+      <td>-</td>
+      <td>2022-07-01</td>
+      <td>11572.0</td>
+    </tr>
+    <tr>
+      <th>61</th>
       <td>XKX</td>
       <td>-</td>
       <td>2022-07-01</td>
       <td>1659714.0</td>
     </tr>
-    <tr>
-      <th>233</th>
-      <td>YEM</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>33696614.0</td>
-    </tr>
-    <tr>
-      <th>234</th>
-      <td>ZAF</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>59893885.0</td>
-    </tr>
-    <tr>
-      <th>235</th>
-      <td>ZMB</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>20017675.0</td>
-    </tr>
-    <tr>
-      <th>236</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>16320537.0</td>
-    </tr>
   </tbody>
 </table>
-<p>237 rows × 4 columns</p>
+<p>62 rows × 4 columns</p>
 </div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -2315,7 +2320,17 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>...</td>
     </tr>
     <tr>
-      <th>98119</th>
+      <th>98029</th>
+      <td>ZMB</td>
+      <td>-</td>
+      <td>2022-09-18</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>98030</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-19</td>
@@ -2325,7 +2340,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98120</th>
+      <th>98031</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-20</td>
@@ -2335,7 +2350,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98121</th>
+      <th>98032</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-21</td>
@@ -2345,7 +2360,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98122</th>
+      <th>98033</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-22</td>
@@ -2354,19 +2369,9 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>&lt;NA&gt;</td>
       <td>0.0</td>
     </tr>
-    <tr>
-      <th>98123</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>2022-07-01</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>16320537.0</td>
-      <td>&lt;NA&gt;</td>
-    </tr>
   </tbody>
 </table>
-<p>98124 rows × 7 columns</p>
+<p>98034 rows × 7 columns</p>
 </div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -2376,13 +2381,13 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 <div class="highlight"><pre>
 [&#39;United Nations, Department of Economic and Social Affairs, Population &#39;
  &#39;Division (2022). World Population Prospects 2022, Online Edition.&#39;,
- &#39;Global.health Monkeypox (accessed on 2022-11-06):\n&#39;
+ &#39;Global.health Monkeypox (accessed on 2023-02-13):\n&#39;
  &#39;Kraemer, Tegally, Pigott, Dasgupta, Sheldon, Wilkinson, Schultheiss, et al. &#39;
  &#39;Tracking the 2022 Monkeypox Outbreak with Epidemiological Data in Real-Time. &#39;
  &#39;The Lancet Infectious Diseases. &#39;
  &#39;https://doi.org/10.1016/S1473-3099(22)00359-0.\n&#39;
  &#39;European Centre for Disease Prevention and Control/WHO Regional Office for &#39;
- &#39;Europe. Monkeypox, Joint Epidemiological overview, 6 11, 2022&#39;]
+ &#39;Europe. Monkeypox, Joint Epidemiological overview, 13 2, 2022&#39;]
 </pre></div></div>
 </div>
 <p>Move forward to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/02_data_engineering.html">Tutorial: Data engineering</a>.</p>

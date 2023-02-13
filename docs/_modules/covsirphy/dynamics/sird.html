@@ -42,15 +42,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html">
-            <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev7
+                3.0.0.dev10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -95,7 +99,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../covsirphy.html">covsirphy</a></li>
       <li class="breadcrumb-item active">covsirphy.dynamics.sird</li>
@@ -116,7 +120,7 @@
 
 
 <div class="viewcode-block" id="SIRDModel"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel">[docs]</a><span class="k">class</span> <span class="nc">SIRDModel</span><span class="p">(</span><span class="n">ODEModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class of SIR-D model.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class of SIR-D model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        date_range: start date and end date of simulation</span>
@@ -156,7 +160,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_dict</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_discretize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Discretize the ODE.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discretize the ODE.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            t: discrete time-steps</span>
@@ -175,7 +179,7 @@
 
 <div class="viewcode-block" id="SIRDModel.transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data:</span>
@@ -203,7 +207,7 @@
 
 <div class="viewcode-block" id="SIRDModel.inverse_transform"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.inverse_transform">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data:</span>
@@ -231,7 +235,7 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SIRF</span><span class="p">]</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SIRDModel.r0"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.r0">[docs]</a>    <span class="k">def</span> <span class="nf">r0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate basic reproduction number.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ZeroDivisionError: sigma + kappa value was over 0</span>
@@ -246,7 +250,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Sigma + kappa must be over 0 to calculate reproduction number with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
 <div class="viewcode-block" id="SIRDModel.dimensional_parameters"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.dimensional_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">dimensional_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate dimensional parameter values.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ZeroDivisionError: either kappa or rho or sigma value was over 0</span>
@@ -269,7 +273,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_param_quantile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: transformed data with covsirphy.SIRDModel.transform(data=data, tau=tau)</span>
@@ -303,7 +307,7 @@
 
 <div class="viewcode-block" id="SIRDModel.sr"><a class="viewcode-back" href="../../../covsirphy.dynamics.html#covsirphy.dynamics.sird.SIRDModel.sr">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return log10(S) and R of model-specific variables for S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data:</span>
