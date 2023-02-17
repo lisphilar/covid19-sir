@@ -164,7 +164,7 @@ Citation
 Please cite this library as follows with version number
 (``import covsirphy as cs; cs.__version__``).
 
-**Hirokazu Takaya and CovsirPhy Development Team (2020-2022), CovsirPhy
+**Hirokazu Takaya and CovsirPhy Development Team (2020-2023), CovsirPhy
 version [version number]: Python library for COVID-19 analysis with
 phase-dependent SIR-derived ODE
 models,**\ https://github.com/lisphilar/covid19-sir
