@@ -36,8 +36,7 @@ The latest stable version of CovsirPhy is available at [PyPI (The Python Package
 pip install --upgrade covsirphy
 ```
 
-> **Warning**  
-> We cannot use `covsirphy` on Google Colab, which uses Python 3.7. [Binder](https://mybinder.org/) is recommended.
+
 
 ## Demo
 
