@@ -52,12 +52,6 @@ Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 
    pip install --upgrade covsirphy
 
-..
-
-   | **Warning**
-   | We cannot use ``covsirphy`` on Google Colab, which uses Python 3.7.
-     `Binder <https://mybinder.org/>`__ is recommended.
-
 Demo
 ----
 
