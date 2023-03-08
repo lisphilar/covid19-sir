@@ -15,7 +15,7 @@ Note that this does not include the cases in Diamond Princess cruise ship (Yokoh
 
 Before analysing the data, please refer to [Kaggle notebook: EDA of Japan dataset](https://www.kaggle.com/lisphilar/eda-of-japan-dataset) and [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
 
-The detailed explanation of the build process is discussed in [Steps to build the dataset in Japan](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan/discussion/148766).
+The detailed explanation of the build process is discussed in [Steps to build the dataset in Japan](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan/discussion/148766) and [vaccine_data.py](https://github.com/lisphilar/covid19-sir/blob/main/data/vaccine_data.py).
 
 ### 1.1 Total number of cases in Japan
 
@@ -44,6 +44,8 @@ The number of vaccinated people:
 - `Vaccinated_1st`: the number of vaccinated persons for the first time on the date
 - `Vaccinated_2nd`: the number of vaccinated persons with the second dose on the date
 - `Vaccinated_3rd`: the number of vaccinated persons with the third dose on the date
+- `Vaccinated_4th`: the number of vaccinated persons with the fourth dose on the date
+- `Vaccinated_5th`: the number of vaccinated persons with the fifth dose on the date
 
 Data sources for vaccination:
 
@@ -142,5 +144,5 @@ LinkData:
 
 Kindly cite this dataset under CC BY-4.0 license as follows.
 
-- Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, <https://github.com/lisphilar/covid19-sir/data/japan>, or
-- Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, Kaggle Dataset, <https://www.kaggle.com/lisphilar/covid19-dataset-in-japan>
+- Hirokazu Takaya (2020-2023), COVID-19 dataset in Japan, GitHub repository, <https://github.com/lisphilar/covid19-sir/data/japan>, or
+- Hirokazu Takaya (2020-2023), COVID-19 dataset in Japan, Kaggle Dataset, <https://www.kaggle.com/lisphilar/covid19-dataset-in-japan>
