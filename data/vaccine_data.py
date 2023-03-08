@@ -203,12 +203,12 @@ def main():
     japan_directory = Path(__file__).resolve().parent / "japan"
     j = JapanData(directory=japan_directory)
     updated_df = j.uppdate_vaccine_data()
-    df = updated_df.loc[updated_df["Location"] == "Domestic"]
+    df = updated_df.loc[updated_df["Location"] == "Domestic"].set_index("Date")
     print(df.tail())
     # Postive
     cs.line_plot(
         df[["Positive"]],
-        title="Japan: Postive",
+        title="Japan: Positive",
         filename=japan_directory / "positive.jpg",
     )
     # Hosp_severe, Fatal
@@ -218,11 +218,13 @@ def main():
         filename=japan_directory / "severe_fatal.jpg",
     )
     # Vaccinated
-    cs.line_plot(
-        df[["Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]],
-        title="Japan: Vaccinated",
-        filename=japan_directory / "vaccinated.jpg",
-    )
+    with cs.LinePlot(filename=japan_directory / "vaccinated.jpg") as lp:
+        lp.title = "Japan: Vaccinated"
+        lp.plot(
+            df[["Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]],
+            figsize=(10, 6),
+        )
+        
 
 
 if __name__ == "__main__":
