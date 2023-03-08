@@ -157,3 +157,7 @@ shell:
 importtime:
 	@poetry run python -X importtime -c "import covsirphy" 2> importtime.log
 	@poetry run tuna importtime.log
+
+.PHONY: data
+data:
+	@poetry run python ./data/vaccine_data.py
