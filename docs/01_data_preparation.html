@@ -9,6 +9,7 @@
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -54,7 +55,7 @@
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev10
+                3.0.0.dev14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -133,286 +134,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars and line breaks on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-    white-space: pre;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt .copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-.jp-RenderedHTMLCommon table,
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-.jp-RenderedHTMLCommon thead,
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-.jp-RenderedHTMLCommon tr,
-.jp-RenderedHTMLCommon th,
-.jp-RenderedHTMLCommon td,
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-.jp-RenderedHTMLCommon th,
-div.rendered_html th {
-  font-weight: bold;
-}
-.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-.jp-RenderedHTMLCommon tbody tr:hover,
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F01_data_preparation.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+  <p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F01_data_preparation.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
 <div class="section" id="Data-preparation">
 <h1>Data preparation<a class="headerlink" href="#Data-preparation" title="Permalink to this heading"></a></h1>
 <p>The first step of data science is data preparation. <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> has the following three functionality for that.</p>
@@ -440,7 +162,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;3.0.0.dev10&#39;
+&#39;3.0.0.dev14&#39;
 </pre></div></div>
 </div>
 <p>From version 2.28.0, some classes and methods output the following information using <a class="reference external" href="https://github.com/Delgan/loguru">loguru: library which aims to bring enjoyable logging in Python</a>. We can change logging level with <code class="docutils literal notranslate"><span class="pre">cs.config(level=2)</span></code> (as default).</p>
@@ -473,7 +195,7 @@ div.rendered_html tbody tr:hover {
 </li>
 <li><p><a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World In Data</a></p>
 <ul>
-<li><p>Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p></li>
+<li><p>Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p></li>
 <li><p>The number of tests</p></li>
 <li><p>The number of vaccinations</p></li>
 <li><p>The number of people who received vaccinations</p></li>
@@ -526,11 +248,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-02-13 at 17:42:58 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
-2023-02-13 at 17:42:59 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
-2023-02-13 at 17:43:10 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
-2023-02-13 at 17:43:13 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
-2023-02-13 at 17:43:13 | INFO | Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/
+2023-04-15 at 12:44:40 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/</span>
+2023-04-15 at 12:44:40 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/</span>
+2023-04-15 at 12:44:47 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/</span>
+2023-04-15 at 12:44:48 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/</span>
+2023-04-15 at 12:44:48 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from Our World In Data https://github.com/owid/covid-19-data/</span>
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -539,7 +261,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.engineering.engineer.DataEngineer at 0x7f4bf4a68390&gt;
+&lt;covsirphy.engineering.engineer.DataEngineer at 0x7f11509fa010&gt;
 </pre></div></div>
 </div>
 <p>We can get the all downloaded records as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with <code class="docutils literal notranslate"><span class="pre">DataEngineer().all()</span></code> method.</p>
@@ -559,39 +281,39 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 254954 entries, 0 to 254953
+RangeIndex: 269156 entries, 0 to 269155
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 254954 non-null  category
- 1   Province                             254954 non-null  category
- 2   City                                 254954 non-null  category
- 3   Date                                 254954 non-null  datetime64[ns]
- 4   Cancel_events                        194594 non-null  Float64
- 5   Confirmed                            231013 non-null  Float64
- 6   Contact_tracing                      194621 non-null  Float64
- 7   Country                              250999 non-null  string
- 8   Fatal                                213965 non-null  Float64
- 9   Gatherings_restrictions              194594 non-null  Float64
- 10  Information_campaigns                194621 non-null  Float64
- 11  Internal_movement_restrictions       194620 non-null  Float64
- 12  International_movement_restrictions  194627 non-null  Float64
- 13  Population                           249881 non-null  Float64
- 14  Product                              140338 non-null  string
- 15  Recovered                            72888 non-null   Float64
- 16  School_closing                       194619 non-null  Float64
- 17  Stay_home_restrictions               194588 non-null  Float64
- 18  Stringency_index                     194583 non-null  Float64
- 19  Testing_policy                       194620 non-null  Float64
- 20  Tests                                88620 non-null   Float64
- 21  Transport_closing                    194600 non-null  Float64
- 22  Vaccinated_full                      54278 non-null   Float64
- 23  Vaccinated_once                      56892 non-null   Float64
- 24  Vaccinations                         59782 non-null   Float64
- 25  Vaccinations_boosters                31540 non-null   Float64
- 26  Workplace_closing                    194619 non-null  Float64
+ 0   ISO3                                 269156 non-null  category
+ 1   Province                             269156 non-null  category
+ 2   City                                 269156 non-null  category
+ 3   Date                                 269156 non-null  datetime64[ns]
+ 4   Cancel_events                        197308 non-null  Float64
+ 5   Confirmed                            236811 non-null  Float64
+ 6   Contact_tracing                      197335 non-null  Float64
+ 7   Country                              264377 non-null  string
+ 8   Fatal                                219655 non-null  Float64
+ 9   Gatherings_restrictions              197308 non-null  Float64
+ 10  Information_campaigns                197335 non-null  Float64
+ 11  Internal_movement_restrictions       197334 non-null  Float64
+ 12  International_movement_restrictions  197341 non-null  Float64
+ 13  Population                           263215 non-null  Float64
+ 14  Product                              150546 non-null  string
+ 15  Recovered                            73222 non-null   Float64
+ 16  School_closing                       197333 non-null  Float64
+ 17  Stay_home_restrictions               197302 non-null  Float64
+ 18  Stringency_index                     197297 non-null  Float64
+ 19  Testing_policy                       197334 non-null  Float64
+ 20  Tests                                89210 non-null   Float64
+ 21  Transport_closing                    197314 non-null  Float64
+ 22  Vaccinated_full                      55307 non-null   Float64
+ 23  Vaccinated_once                      57559 non-null   Float64
+ 24  Vaccinations                         60466 non-null   Float64
+ 25  Vaccinations_boosters                32061 non-null   Float64
+ 26  Workplace_closing                    197333 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), string(2)
-memory usage: 52.8 MB
+memory usage: 55.7 MB
 </pre></div></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer.citations()</span></code> shows citations of the datasets.</p>
@@ -630,8 +352,8 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-02-13 at 17:43:21 | INFO | Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/
-2023-02-13 at 17:43:22 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+2023-04-15 at 12:44:53 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/</span>
+2023-04-15 at 12:44:54 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/</span>
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -686,120 +408,120 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>JPN</td>
       <td>Aichi</td>
       <td>-</td>
-      <td>2020-01-16</td>
-      <td>0.0</td>
-      <td>0.0</td>
+      <td>2020-03-18</td>
       <td>1.0</td>
+      <td>130.0</td>
+      <td>2.0</td>
       <td>Japan</td>
-      <td>&lt;NA&gt;</td>
+      <td>14.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
-      <td>-2.78</td>
+      <td>-40.74</td>
       <td>1.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>847.0</td>
       <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>0.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>JPN</td>
       <td>Aichi</td>
       <td>-</td>
-      <td>2020-01-17</td>
-      <td>0.0</td>
-      <td>0.0</td>
+      <td>2020-03-19</td>
+      <td>1.0</td>
+      <td>134.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>&lt;NA&gt;</td>
+      <td>14.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
-      <td>-2.78</td>
+      <td>-40.74</td>
       <td>1.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>847.0</td>
       <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>0.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>JPN</td>
       <td>Aichi</td>
       <td>-</td>
-      <td>2020-01-18</td>
-      <td>0.0</td>
-      <td>0.0</td>
+      <td>2020-03-20</td>
+      <td>1.0</td>
+      <td>139.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>&lt;NA&gt;</td>
+      <td>16.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
-      <td>-2.78</td>
+      <td>-40.74</td>
       <td>1.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>847.0</td>
       <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>0.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>JPN</td>
       <td>Aichi</td>
       <td>-</td>
-      <td>2020-01-19</td>
-      <td>0.0</td>
-      <td>0.0</td>
+      <td>2020-03-21</td>
+      <td>1.0</td>
+      <td>141.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>&lt;NA&gt;</td>
+      <td>16.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
-      <td>-2.78</td>
+      <td>-40.74</td>
       <td>1.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>847.0</td>
       <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>0.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>JPN</td>
       <td>Aichi</td>
       <td>-</td>
-      <td>2020-01-20</td>
-      <td>0.0</td>
-      <td>0.0</td>
+      <td>2020-03-22</td>
+      <td>1.0</td>
+      <td>143.0</td>
       <td>2.0</td>
       <td>Japan</td>
-      <td>&lt;NA&gt;</td>
+      <td>16.0</td>
       <td>0.0</td>
       <td>...</td>
       <td>0.0</td>
-      <td>-2.78</td>
+      <td>-40.74</td>
       <td>1.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>847.0</td>
       <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>0.0</td>
+      <td>1.0</td>
     </tr>
   </tbody>
 </table>
@@ -822,7 +544,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-02-13 at 17:43:26 | INFO | Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+2023-04-15 at 12:44:56 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/</span>
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1026,39 +748,39 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 254954 entries, 0 to 254953
+RangeIndex: 269156 entries, 0 to 269155
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 254954 non-null  string
- 1   Province                             254954 non-null  string
- 2   City                                 254954 non-null  string
- 3   Date                                 254954 non-null  datetime64[ns]
- 4   Cancel_events                        194594 non-null  Float64
- 5   Confirmed                            231013 non-null  Float64
- 6   Contact_tracing                      194621 non-null  Float64
- 7   Country                              250999 non-null  string
- 8   Fatal                                213965 non-null  Float64
- 9   Gatherings_restrictions              194594 non-null  Float64
- 10  Information_campaigns                194621 non-null  Float64
- 11  Internal_movement_restrictions       194620 non-null  Float64
- 12  International_movement_restrictions  194627 non-null  Float64
- 13  Population                           249881 non-null  Float64
- 14  Product                              140338 non-null  string
- 15  Recovered                            72888 non-null   Float64
- 16  School_closing                       194619 non-null  Float64
- 17  Stay_home_restrictions               194588 non-null  Float64
- 18  Stringency_index                     194583 non-null  Float64
- 19  Testing_policy                       194620 non-null  Float64
- 20  Tests                                88620 non-null   Float64
- 21  Transport_closing                    194600 non-null  Float64
- 22  Vaccinated_full                      54278 non-null   Float64
- 23  Vaccinated_once                      56892 non-null   Float64
- 24  Vaccinations                         59782 non-null   Float64
- 25  Vaccinations_boosters                31540 non-null   Float64
- 26  Workplace_closing                    194619 non-null  Float64
+ 0   ISO3                                 269156 non-null  string
+ 1   Province                             269156 non-null  string
+ 2   City                                 269156 non-null  string
+ 3   Date                                 269156 non-null  datetime64[ns]
+ 4   Cancel_events                        197308 non-null  Float64
+ 5   Confirmed                            236811 non-null  Float64
+ 6   Contact_tracing                      197335 non-null  Float64
+ 7   Country                              264377 non-null  string
+ 8   Fatal                                219655 non-null  Float64
+ 9   Gatherings_restrictions              197308 non-null  Float64
+ 10  Information_campaigns                197335 non-null  Float64
+ 11  Internal_movement_restrictions       197334 non-null  Float64
+ 12  International_movement_restrictions  197341 non-null  Float64
+ 13  Population                           263215 non-null  Float64
+ 14  Product                              150546 non-null  string
+ 15  Recovered                            73222 non-null   Float64
+ 16  School_closing                       197333 non-null  Float64
+ 17  Stay_home_restrictions               197302 non-null  Float64
+ 18  Stringency_index                     197297 non-null  Float64
+ 19  Testing_policy                       197334 non-null  Float64
+ 20  Tests                                89210 non-null   Float64
+ 21  Transport_closing                    197314 non-null  Float64
+ 22  Vaccinated_full                      55307 non-null   Float64
+ 23  Vaccinated_once                      57559 non-null   Float64
+ 24  Vaccinations                         60466 non-null   Float64
+ 25  Vaccinations_boosters                32061 non-null   Float64
+ 26  Workplace_closing                    197333 non-null  Float64
 dtypes: Float64(21), datetime64[ns](1), string(5)
-memory usage: 57.6 MB
+memory usage: 60.8 MB
 </pre></div></div>
 </div>
 <p>Note that ISO3/Province/City columns have string data instead of categorical data.</p>
@@ -1119,9 +841,9 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Global.health Monkeypox (accessed on 2023-02-13):
+Global.health Monkeypox (accessed on 2023-04-15):
 Kraemer, Tegally, Pigott, Dasgupta, Sheldon, Wilkinson, Schultheiss, et al. Tracking the 2022 Monkeypox Outbreak with Epidemiological Data in Real-Time. The Lancet Infectious Diseases. https://doi.org/10.1016/S1473-3099(22)00359-0.
-European Centre for Disease Prevention and Control/WHO Regional Office for Europe. Monkeypox, Joint Epidemiological overview, 13 2, 2022
+European Centre for Disease Prevention and Control/WHO Regional Office for Europe. Monkeypox, Joint Epidemiological overview, 15 4, 2022
 </pre></div></div>
 </div>
 <p>Retrieve CSV file with <code class="docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code>, using <a class="reference external" href="https://arrow.apache.org/docs/python/index.html">Pyarrow</a> as the engine.</p>
@@ -1408,7 +1130,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Date_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_cols</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Date_recovered&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Outcome&quot;</span><span class="p">,</span> <span class="s2">&quot;Date_last_modified&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
     <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Recovered&quot;</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">NA</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 
 <span class="n">ppt_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">ppt_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -1588,7 +1310,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
   <tbody>
     <tr>
       <th rowspan="3" valign="top">ABW</th>
-      <th rowspan="3" valign="top"></th>
+      <th rowspan="3" valign="top">Unknown</th>
       <th>2022-08-22</th>
       <td>1</td>
     </tr>
@@ -1602,7 +1324,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     </tr>
     <tr>
       <th rowspan="2" valign="top">AND</th>
-      <th rowspan="2" valign="top"></th>
+      <th rowspan="2" valign="top">Unknown</th>
       <th>2022-07-25</th>
       <td>1</td>
     </tr>
@@ -1670,7 +1392,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     </tr>
     <tr>
       <th>TUR</th>
-      <th></th>
+      <th>Unknown</th>
       <th>2022-08-05</th>
       <td>4</td>
     </tr>
@@ -1728,13 +1450,13 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
   <tbody>
     <tr>
       <th>BEL</th>
-      <th></th>
+      <th>Unknown</th>
       <th>2022-08-29</th>
       <td>1</td>
     </tr>
     <tr>
       <th rowspan="2" valign="top">BRA</th>
-      <th rowspan="2" valign="top"></th>
+      <th rowspan="2" valign="top">Unknown</th>
       <th>2022-07-28</th>
       <td>1</td>
     </tr>
@@ -1744,13 +1466,13 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     </tr>
     <tr>
       <th>CAF</th>
-      <th></th>
+      <th>Unknown</th>
       <th>2022-03-04</th>
       <td>2</td>
     </tr>
     <tr>
       <th>COD</th>
-      <th></th>
+      <th>Unknown</th>
       <th>2022-01-16</th>
       <td>18</td>
     </tr>
@@ -1808,7 +1530,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>0</th>
       <td>ABW</td>
-      <td></td>
+      <td>Unknown</td>
       <td>2022-01-16</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -1817,7 +1539,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>1</th>
       <td>ABW</td>
-      <td></td>
+      <td>Unknown</td>
       <td>2022-01-17</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -1826,7 +1548,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>2</th>
       <td>ABW</td>
-      <td></td>
+      <td>Unknown</td>
       <td>2022-01-18</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -1835,7 +1557,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>3</th>
       <td>ABW</td>
-      <td></td>
+      <td>Unknown</td>
       <td>2022-01-19</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -1844,7 +1566,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>4</th>
       <td>ABW</td>
-      <td></td>
+      <td>Unknown</td>
       <td>2022-01-20</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -1854,13 +1576,13 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 </table>
 </div></div>
 </div>
-<p>At country level (City = “-”) and city level (City != “=”):</p>
+<p>At country level (City = “-“) and city level (City != “-“):</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">all_df_city</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">df2</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;City&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+<span class="n">df2</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df2</span><span class="p">,</span> <span class="n">all_df_city</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">]</span>
 <span class="n">all_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
@@ -1892,8 +1614,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr style="text-align: right;">
       <th></th>
       <th>ISO3</th>
-      <th>City</th>
       <th>Date</th>
+      <th>City</th>
       <th>Confirmed</th>
       <th>Fatal</th>
       <th>Recovered</th>
@@ -1903,8 +1625,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>0</th>
       <td>ABW</td>
-      <td>-</td>
       <td>2022-01-16</td>
+      <td>-</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1912,8 +1634,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>1</th>
       <td>ABW</td>
-      <td>-</td>
       <td>2022-01-17</td>
+      <td>-</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1921,8 +1643,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>2</th>
       <td>ABW</td>
-      <td>-</td>
       <td>2022-01-18</td>
+      <td>-</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1930,8 +1652,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>3</th>
       <td>ABW</td>
-      <td>-</td>
       <td>2022-01-19</td>
+      <td>-</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1939,8 +1661,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>4</th>
       <td>ABW</td>
-      <td>-</td>
       <td>2022-01-20</td>
+      <td>-</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1955,53 +1677,53 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>...</td>
     </tr>
     <tr>
-      <th>69745</th>
-      <td>ZMB</td>
-      <td></td>
+      <th>69245</th>
+      <td>ZAF</td>
       <td>2022-09-18</td>
+      <td>Johannesburg</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>69746</th>
-      <td>ZMB</td>
-      <td></td>
+      <th>69246</th>
+      <td>ZAF</td>
       <td>2022-09-19</td>
+      <td>Johannesburg</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>69747</th>
-      <td>ZMB</td>
-      <td></td>
+      <th>69247</th>
+      <td>ZAF</td>
       <td>2022-09-20</td>
+      <td>Johannesburg</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>69748</th>
-      <td>ZMB</td>
-      <td></td>
+      <th>69248</th>
+      <td>ZAF</td>
       <td>2022-09-21</td>
+      <td>Johannesburg</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>69749</th>
-      <td>ZMB</td>
-      <td></td>
+      <th>69249</th>
+      <td>ZAF</td>
       <td>2022-09-22</td>
+      <td>Johannesburg</td>
       <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
   </tbody>
 </table>
-<p>98000 rows × 6 columns</p>
+<p>70500 rows × 6 columns</p>
 </div></div>
 </div>
 <p>Check data.</p>
@@ -2031,7 +1753,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-02-13 at 17:45:20 | INFO | Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/
+2023-04-15 at 12:46:04 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/</span>
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -2087,8 +1809,8 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-02-13 at 17:45:24 | INFO | Retrieving datasets from World Population Prospects https://population.un.org/wpp/
-2023-02-13 at 17:45:42 | INFO |         [INFO] &#39;Province&#39; layer was removed.
+2023-04-15 at 12:46:08 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Retrieving datasets from World Population Prospects https://population.un.org/wpp/</span>
+2023-04-15 at 12:46:20 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold"> [INFO] &#39;Province&#39; layer was removed.</span>
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -2262,7 +1984,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>0</th>
       <td>ABW</td>
-      <td></td>
+      <td>-</td>
       <td>2022-01-16</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -2272,7 +1994,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>1</th>
       <td>ABW</td>
-      <td></td>
+      <td>-</td>
       <td>2022-01-17</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -2282,7 +2004,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>2</th>
       <td>ABW</td>
-      <td></td>
+      <td>-</td>
       <td>2022-01-18</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -2292,7 +2014,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>3</th>
       <td>ABW</td>
-      <td></td>
+      <td>-</td>
       <td>2022-01-19</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -2302,7 +2024,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     <tr>
       <th>4</th>
       <td>ABW</td>
-      <td></td>
+      <td>-</td>
       <td>2022-01-20</td>
       <td>0.0</td>
       <td>0.0</td>
@@ -2320,7 +2042,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>...</td>
     </tr>
     <tr>
-      <th>98029</th>
+      <th>70529</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-18</td>
@@ -2330,7 +2052,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98030</th>
+      <th>70530</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-19</td>
@@ -2340,7 +2062,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98031</th>
+      <th>70531</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-20</td>
@@ -2350,7 +2072,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98032</th>
+      <th>70532</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-21</td>
@@ -2360,7 +2082,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
       <td>0.0</td>
     </tr>
     <tr>
-      <th>98033</th>
+      <th>70533</th>
       <td>ZMB</td>
       <td>-</td>
       <td>2022-09-22</td>
@@ -2371,7 +2093,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
     </tr>
   </tbody>
 </table>
-<p>98034 rows × 7 columns</p>
+<p>70534 rows × 7 columns</p>
 </div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -2381,13 +2103,13 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 <div class="highlight"><pre>
 [&#39;United Nations, Department of Economic and Social Affairs, Population &#39;
  &#39;Division (2022). World Population Prospects 2022, Online Edition.&#39;,
- &#39;Global.health Monkeypox (accessed on 2023-02-13):\n&#39;
+ &#39;Global.health Monkeypox (accessed on 2023-04-15):\n&#39;
  &#39;Kraemer, Tegally, Pigott, Dasgupta, Sheldon, Wilkinson, Schultheiss, et al. &#39;
  &#39;Tracking the 2022 Monkeypox Outbreak with Epidemiological Data in Real-Time. &#39;
  &#39;The Lancet Infectious Diseases. &#39;
  &#39;https://doi.org/10.1016/S1473-3099(22)00359-0.\n&#39;
  &#39;European Centre for Disease Prevention and Control/WHO Regional Office for &#39;
- &#39;Europe. Monkeypox, Joint Epidemiological overview, 13 2, 2022&#39;]
+ &#39;Europe. Monkeypox, Joint Epidemiological overview, 15 4, 2022&#39;]
 </pre></div></div>
 </div>
 <p>Move forward to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/02_data_engineering.html">Tutorial: Data engineering</a>.</p>
@@ -2912,7 +2634,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
 <img alt="_images/01_data_preparation_67_0.png" src="_images/01_data_preparation_67_0.png" />
 </div>
 </div>
-<p>When we need convert model-specific variables to model-free variables (Susceptible/Infected/Fatal/Recovered), we will set <code class="docutils literal notranslate"><span class="pre">model_specific=False</span></code> (default). Because R=“Fatal or Recovered” in SIR model, we assume that R=“Recovered” and F = 0.</p>
+<p>When we need convert model-specific variables to model-free variables (Susceptible/Infected/Fatal/Recovered), we will set <code class="docutils literal notranslate"><span class="pre">model_specific=False</span></code> (default). Because R=”Fatal or Recovered” in SIR model, we assume that R=”Recovered” and F = 0.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
@@ -2969,7 +2691,7 @@ array([&#39;&#39;, &#39;Recovered&#39;, &#39;Death&#39;], dtype=object)
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2020-2022, Hirokazu Takaya and CovsirPhy Development Team.</p>
+    <p>&#169; Copyright 2020-2023, Hirokazu Takaya and CovsirPhy Development Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

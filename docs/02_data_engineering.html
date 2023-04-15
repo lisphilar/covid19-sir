@@ -9,6 +9,7 @@
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -54,7 +55,7 @@
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.0.dev10
+                3.0.0.dev14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -132,286 +133,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars and line breaks on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-    white-space: pre;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt .copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-.jp-RenderedHTMLCommon table,
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-.jp-RenderedHTMLCommon thead,
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-.jp-RenderedHTMLCommon tr,
-.jp-RenderedHTMLCommon th,
-.jp-RenderedHTMLCommon td,
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-.jp-RenderedHTMLCommon th,
-div.rendered_html th {
-  font-weight: bold;
-}
-.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-.jp-RenderedHTMLCommon tbody tr:hover,
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F02_data_engineering.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+  <p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F02_data_engineering.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
 <div class="section" id="Data-engineering">
 <h1>Data engineering<a class="headerlink" href="#Data-engineering" title="Permalink to this heading"></a></h1>
 <p>With <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/example/01_data_preparation.ipynb">Data preparation tutorial</a>, we prepared datasets (geospatial time-series data) to analyze. As the next step of data engineering, we will perform the followings here.</p>
@@ -441,7 +163,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;3.0.0.dev10&#39;
+&#39;3.0.0.dev14&#39;
 </pre></div></div>
 </div>
 <p>We will use the recommended datasets at country-level data as an example.</p>
@@ -461,39 +183,39 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 254954 entries, 0 to 254953
+RangeIndex: 269156 entries, 0 to 269155
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 254954 non-null  category
- 1   Province                             254954 non-null  category
- 2   City                                 254954 non-null  category
- 3   Date                                 254954 non-null  datetime64[ns]
- 4   Cancel_events                        194594 non-null  Float64
- 5   Confirmed                            231013 non-null  Float64
- 6   Contact_tracing                      194621 non-null  Float64
- 7   Country                              250999 non-null  string
- 8   Fatal                                213965 non-null  Float64
- 9   Gatherings_restrictions              194594 non-null  Float64
- 10  Information_campaigns                194621 non-null  Float64
- 11  Internal_movement_restrictions       194620 non-null  Float64
- 12  International_movement_restrictions  194627 non-null  Float64
- 13  Population                           249881 non-null  Float64
- 14  Product                              140338 non-null  string
- 15  Recovered                            72888 non-null   Float64
- 16  School_closing                       194619 non-null  Float64
- 17  Stay_home_restrictions               194588 non-null  Float64
- 18  Stringency_index                     194583 non-null  Float64
- 19  Testing_policy                       194620 non-null  Float64
- 20  Tests                                88620 non-null   Float64
- 21  Transport_closing                    194600 non-null  Float64
- 22  Vaccinated_full                      54278 non-null   Float64
- 23  Vaccinated_once                      56892 non-null   Float64
- 24  Vaccinations                         59782 non-null   Float64
- 25  Vaccinations_boosters                31540 non-null   Float64
- 26  Workplace_closing                    194619 non-null  Float64
+ 0   ISO3                                 269156 non-null  category
+ 1   Province                             269156 non-null  category
+ 2   City                                 269156 non-null  category
+ 3   Date                                 269156 non-null  datetime64[ns]
+ 4   Cancel_events                        197308 non-null  Float64
+ 5   Confirmed                            236811 non-null  Float64
+ 6   Contact_tracing                      197335 non-null  Float64
+ 7   Country                              264377 non-null  string
+ 8   Fatal                                219655 non-null  Float64
+ 9   Gatherings_restrictions              197308 non-null  Float64
+ 10  Information_campaigns                197335 non-null  Float64
+ 11  Internal_movement_restrictions       197334 non-null  Float64
+ 12  International_movement_restrictions  197341 non-null  Float64
+ 13  Population                           263215 non-null  Float64
+ 14  Product                              150546 non-null  string
+ 15  Recovered                            73222 non-null   Float64
+ 16  School_closing                       197333 non-null  Float64
+ 17  Stay_home_restrictions               197302 non-null  Float64
+ 18  Stringency_index                     197297 non-null  Float64
+ 19  Testing_policy                       197334 non-null  Float64
+ 20  Tests                                89210 non-null   Float64
+ 21  Transport_closing                    197314 non-null  Float64
+ 22  Vaccinated_full                      55307 non-null   Float64
+ 23  Vaccinated_once                      57559 non-null   Float64
+ 24  Vaccinations                         60466 non-null   Float64
+ 25  Vaccinations_boosters                32061 non-null   Float64
+ 26  Workplace_closing                    197333 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), string(2)
-memory usage: 52.8 MB
+memory usage: 55.7 MB
 </pre></div></div>
 </div>
 <div class="section" id="1.-Data-cleaning">
@@ -502,7 +224,7 @@ memory usage: 52.8 MB
 <ul class="simple">
 <li><p>“convert_date”: Convert dtype of date column to pandas.Timestamp.</p></li>
 <li><p>“resample”: Resample records with dates.</p></li>
-<li><p>“fillna”: Fill NA values with ‘-’ (layers) and the previous values and 0.</p></li>
+<li><p>“fillna”: Fill NA values with ‘-‘ (layers) and the previous values and 0.</p></li>
 </ul>
 <p>For “convert_date”, keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not” can be used.</p>
 <p>For “resample”, <code class="docutils literal notranslate"><span class="pre">date_range=&lt;tuple</span> <span class="pre">of</span> <span class="pre">(str</span> <span class="pre">or</span> <span class="pre">None,</span> <span class="pre">str</span> <span class="pre">or</span> <span class="pre">None)</span> <span class="pre">or</span> <span class="pre">None&gt;)</span></code> can be applied as keyword arguments to set the range.</p>
@@ -521,39 +243,39 @@ memory usage: 52.8 MB
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 255006 entries, 0 to 255005
+RangeIndex: 269214 entries, 0 to 269213
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 255006 non-null  category
- 1   Province                             255006 non-null  category
- 2   City                                 255006 non-null  category
- 3   Date                                 255006 non-null  datetime64[ns]
- 4   Cancel_events                        255006 non-null  Float64
- 5   Confirmed                            255006 non-null  Float64
- 6   Contact_tracing                      255006 non-null  Float64
- 7   Country                              255006 non-null  object
- 8   Fatal                                255006 non-null  Float64
- 9   Gatherings_restrictions              255006 non-null  Float64
- 10  Information_campaigns                255006 non-null  Float64
- 11  Internal_movement_restrictions       255006 non-null  Float64
- 12  International_movement_restrictions  255006 non-null  Float64
- 13  Population                           255006 non-null  Float64
- 14  Product                              255006 non-null  object
- 15  Recovered                            255006 non-null  Float64
- 16  School_closing                       255006 non-null  Float64
- 17  Stay_home_restrictions               255006 non-null  Float64
- 18  Stringency_index                     255006 non-null  Float64
- 19  Testing_policy                       255006 non-null  Float64
- 20  Tests                                255006 non-null  Float64
- 21  Transport_closing                    255006 non-null  Float64
- 22  Vaccinated_full                      255006 non-null  Float64
- 23  Vaccinated_once                      255006 non-null  Float64
- 24  Vaccinations                         255006 non-null  Float64
- 25  Vaccinations_boosters                255006 non-null  Float64
- 26  Workplace_closing                    255006 non-null  Float64
+ 0   ISO3                                 269214 non-null  category
+ 1   Province                             269214 non-null  category
+ 2   City                                 269214 non-null  category
+ 3   Date                                 269214 non-null  datetime64[ns]
+ 4   Cancel_events                        269214 non-null  Float64
+ 5   Confirmed                            269214 non-null  Float64
+ 6   Contact_tracing                      269214 non-null  Float64
+ 7   Country                              269214 non-null  object
+ 8   Fatal                                269214 non-null  Float64
+ 9   Gatherings_restrictions              269214 non-null  Float64
+ 10  Information_campaigns                269214 non-null  Float64
+ 11  Internal_movement_restrictions       269214 non-null  Float64
+ 12  International_movement_restrictions  269214 non-null  Float64
+ 13  Population                           269214 non-null  Float64
+ 14  Product                              269214 non-null  object
+ 15  Recovered                            269214 non-null  Float64
+ 16  School_closing                       269214 non-null  Float64
+ 17  Stay_home_restrictions               269214 non-null  Float64
+ 18  Stringency_index                     269214 non-null  Float64
+ 19  Testing_policy                       269214 non-null  Float64
+ 20  Tests                                269214 non-null  Float64
+ 21  Transport_closing                    269214 non-null  Float64
+ 22  Vaccinated_full                      269214 non-null  Float64
+ 23  Vaccinated_once                      269214 non-null  Float64
+ 24  Vaccinations                         269214 non-null  Float64
+ 25  Vaccinations_boosters                269214 non-null  Float64
+ 26  Workplace_closing                    269214 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), object(2)
-memory usage: 52.8+ MB
+memory usage: 55.7+ MB
 </pre></div></div>
 </div>
 </div>
@@ -618,68 +340,68 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
+      <td>2023-03-05</td>
       <td>14439018.0</td>
-      <td>14175935.0</td>
-      <td>263083.0</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127.0</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
+      <td>2023-03-06</td>
       <td>14439018.0</td>
-      <td>14175935.0</td>
-      <td>263083.0</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127.0</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
+      <td>2023-03-07</td>
       <td>14439018.0</td>
-      <td>14175935.0</td>
-      <td>263083.0</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127.0</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
+      <td>2023-03-08</td>
       <td>14439018.0</td>
-      <td>14175935.0</td>
-      <td>263083.0</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174742.0</td>
+      <td>264276.0</td>
+      <td>175611.0</td>
+      <td>5671.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
+      <td>2023-03-09</td>
       <td>14439018.0</td>
-      <td>14175935.0</td>
-      <td>263083.0</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174742.0</td>
+      <td>264276.0</td>
+      <td>175611.0</td>
+      <td>5671.0</td>
       <td>82994.0</td>
     </tr>
   </tbody>
@@ -733,68 +455,68 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
+      <td>2023-03-05</td>
       <td>14439018</td>
-      <td>14175935.0</td>
-      <td>263083</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
+      <td>2023-03-06</td>
       <td>14439018</td>
-      <td>14175935.0</td>
-      <td>263083</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
+      <td>2023-03-07</td>
       <td>14439018</td>
-      <td>14175935.0</td>
-      <td>263083</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174891.0</td>
+      <td>264127</td>
+      <td>175465.0</td>
+      <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
+      <td>2023-03-08</td>
       <td>14439018</td>
-      <td>14175935.0</td>
-      <td>263083</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174742.0</td>
+      <td>264276</td>
+      <td>175611.0</td>
+      <td>5671.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
+      <td>2023-03-09</td>
       <td>14439018</td>
-      <td>14175935.0</td>
-      <td>263083</td>
-      <td>174430.0</td>
-      <td>5659.0</td>
+      <td>14174742.0</td>
+      <td>264276</td>
+      <td>175611.0</td>
+      <td>5671.0</td>
       <td>82994.0</td>
     </tr>
   </tbody>
@@ -856,48 +578,48 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
-      <td>263083</td>
-      <td>759</td>
-    </tr>
-    <tr>
-      <th>255002</th>
-      <td>ZWE</td>
-      <td>-</td>
-      <td>-</td>
-      <td>2023-02-09</td>
-      <td>263083</td>
+      <td>2023-03-05</td>
+      <td>264127</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
-      <td>263083</td>
+      <td>2023-03-06</td>
+      <td>264127</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
-      <td>263083</td>
+      <td>2023-03-07</td>
+      <td>264127</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
-      <td>263083</td>
+      <td>2023-03-08</td>
+      <td>264276</td>
+      <td>149</td>
+    </tr>
+    <tr>
+      <th>269213</th>
+      <td>ZWE</td>
+      <td>-</td>
+      <td>-</td>
+      <td>2023-03-09</td>
+      <td>264276</td>
       <td>0</td>
     </tr>
   </tbody>
@@ -948,54 +670,54 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
-      <td>5659.0</td>
+      <td>2023-03-05</td>
+      <td>5668.0</td>
       <td>82994.0</td>
-      <td>88653</td>
+      <td>88662</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
-      <td>5659.0</td>
+      <td>2023-03-06</td>
+      <td>5668.0</td>
       <td>82994.0</td>
-      <td>88653</td>
+      <td>88662</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
-      <td>5659.0</td>
+      <td>2023-03-07</td>
+      <td>5668.0</td>
       <td>82994.0</td>
-      <td>88653</td>
+      <td>88662</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
-      <td>5659.0</td>
+      <td>2023-03-08</td>
+      <td>5671.0</td>
       <td>82994.0</td>
-      <td>88653</td>
+      <td>88665</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
-      <td>5659.0</td>
+      <td>2023-03-09</td>
+      <td>5671.0</td>
       <td>82994.0</td>
-      <td>88653</td>
+      <td>88665</td>
     </tr>
   </tbody>
 </table>
@@ -1045,54 +767,54 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
-      <td>263083</td>
+      <td>2023-03-05</td>
+      <td>264127</td>
       <td>82994.0</td>
-      <td>21834310502</td>
+      <td>21920956238</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
-      <td>263083</td>
+      <td>2023-03-06</td>
+      <td>264127</td>
       <td>82994.0</td>
-      <td>21834310502</td>
+      <td>21920956238</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
-      <td>263083</td>
+      <td>2023-03-07</td>
+      <td>264127</td>
       <td>82994.0</td>
-      <td>21834310502</td>
+      <td>21920956238</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
-      <td>263083</td>
+      <td>2023-03-08</td>
+      <td>264276</td>
       <td>82994.0</td>
-      <td>21834310502</td>
+      <td>21933322344</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
-      <td>263083</td>
+      <td>2023-03-09</td>
+      <td>264276</td>
       <td>82994.0</td>
-      <td>21834310502</td>
+      <td>21933322344</td>
     </tr>
   </tbody>
 </table>
@@ -1144,54 +866,54 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
+      <td>2023-03-05</td>
       <td>2379907.0</td>
-      <td>263083</td>
-      <td>11.05434</td>
+      <td>264127</td>
+      <td>11.098207</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
+      <td>2023-03-06</td>
       <td>2379907.0</td>
-      <td>263083</td>
-      <td>11.05434</td>
+      <td>264127</td>
+      <td>11.098207</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
+      <td>2023-03-07</td>
       <td>2379907.0</td>
-      <td>263083</td>
-      <td>11.05434</td>
+      <td>264127</td>
+      <td>11.098207</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
+      <td>2023-03-08</td>
       <td>2379907.0</td>
-      <td>263083</td>
-      <td>11.05434</td>
+      <td>264276</td>
+      <td>11.104468</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
+      <td>2023-03-09</td>
       <td>2379907.0</td>
-      <td>263083</td>
-      <td>11.05434</td>
+      <td>264276</td>
+      <td>11.104468</td>
     </tr>
   </tbody>
 </table>
@@ -1264,20 +986,20 @@ memory usage: 52.8+ MB
   </thead>
   <tbody>
     <tr>
-      <th>255001</th>
+      <th>269209</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-08</td>
+      <td>2023-03-05</td>
       <td>1.0</td>
-      <td>263083</td>
-      <td>21834310502</td>
-      <td>759</td>
+      <td>264127</td>
+      <td>21920956238</td>
+      <td>0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14175935.0</td>
+      <td>14174891.0</td>
       <td>3.0</td>
       <td>2379907.0</td>
       <td>1.0</td>
@@ -1288,20 +1010,20 @@ memory usage: 52.8+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>255002</th>
+      <th>269210</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-09</td>
+      <td>2023-03-06</td>
       <td>1.0</td>
-      <td>263083</td>
-      <td>21834310502</td>
+      <td>264127</td>
+      <td>21920956238</td>
       <td>0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14175935.0</td>
+      <td>14174891.0</td>
       <td>3.0</td>
       <td>2379907.0</td>
       <td>1.0</td>
@@ -1312,20 +1034,20 @@ memory usage: 52.8+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>255003</th>
+      <th>269211</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-10</td>
+      <td>2023-03-07</td>
       <td>1.0</td>
-      <td>263083</td>
-      <td>21834310502</td>
+      <td>264127</td>
+      <td>21920956238</td>
       <td>0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14175935.0</td>
+      <td>14174891.0</td>
       <td>3.0</td>
       <td>2379907.0</td>
       <td>1.0</td>
@@ -1336,20 +1058,20 @@ memory usage: 52.8+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>255004</th>
+      <th>269212</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-11</td>
+      <td>2023-03-08</td>
       <td>1.0</td>
-      <td>263083</td>
-      <td>21834310502</td>
-      <td>0</td>
+      <td>264276</td>
+      <td>21933322344</td>
+      <td>149</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14175935.0</td>
+      <td>14174742.0</td>
       <td>3.0</td>
       <td>2379907.0</td>
       <td>1.0</td>
@@ -1360,20 +1082,20 @@ memory usage: 52.8+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>255005</th>
+      <th>269213</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
-      <td>2023-02-12</td>
+      <td>2023-03-09</td>
       <td>1.0</td>
-      <td>263083</td>
-      <td>21834310502</td>
+      <td>264276</td>
+      <td>21933322344</td>
       <td>0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
       <td>53.7</td>
-      <td>14175935.0</td>
+      <td>14174742.0</td>
       <td>3.0</td>
       <td>2379907.0</td>
       <td>1.0</td>
@@ -1443,6 +1165,7 @@ memory usage: 52.8+ MB
 <li><p>end_date (str or None): end date, like 01Feb2020</p></li>
 <li><p>variables (list[str] or None): list of variables to add or None (all available columns)</p></li>
 <li><p>complement (bool): whether perform data complement or not, True as default</p></li>
+<li><p>get_dummies (bool): whether convert categorical variable into dummy variables or not, True as default</p></li>
 <li><p>**Kwargs: keyword arguments for complement and default values</p>
 <ul>
 <li><p>recovery_period (int): expected value of recovery period [days], 17</p></li>
@@ -1533,6 +1256,60 @@ fully complemented recovered data
 <img alt="_images/02_data_engineering_26_1.png" src="_images/02_data_engineering_26_1.png" />
 </div>
 </div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">with_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+DatetimeIndex: 1166 entries, 2020-02-05 to 2023-04-15
+Data columns (total 32 columns):
+ #   Column                                                         Non-Null Count  Dtype
+---  ------                                                         --------------  -----
+ 0   Cancel_events                                                  1166 non-null   Float64
+ 1   Confirmed*Recovered                                            1166 non-null   Int64
+ 2   Confirmed_diff                                                 1166 non-null   Int64
+ 3   Contact_tracing                                                1166 non-null   Float64
+ 4   Fatal+Recovered                                                1166 non-null   Int64
+ 5   Gatherings_restrictions                                        1166 non-null   Float64
+ 6   Infected                                                       1166 non-null   Int64
+ 7   Information_campaigns                                          1166 non-null   Float64
+ 8   Internal_movement_restrictions                                 1166 non-null   Float64
+ 9   International_movement_restrictions                            1166 non-null   Float64
+ 10  Population                                                     1166 non-null   Int64
+ 11  Positive_rate                                                  1166 non-null   Float64
+ 12  Positive_rate_%                                                1166 non-null   Float64
+ 13  School_closing                                                 1166 non-null   Float64
+ 14  Stay_home_restrictions                                         1166 non-null   Float64
+ 15  Stringency_index                                               1166 non-null   Float64
+ 16  Susceptible                                                    1166 non-null   Int64
+ 17  Testing_policy                                                 1166 non-null   Float64
+ 18  Tests                                                          1166 non-null   Float64
+ 19  Transport_closing                                              1166 non-null   Float64
+ 20  Vaccinated_full                                                1166 non-null   Float64
+ 21  Vaccinated_once                                                1166 non-null   Float64
+ 22  Vaccinations                                                   1166 non-null   Float64
+ 23  Vaccinations_boosters                                          1166 non-null   Float64
+ 24  Workplace_closing                                              1166 non-null   Float64
+ 25  Confirmed                                                      1166 non-null   Int64
+ 26  Fatal                                                          1166 non-null   Int64
+ 27  Recovered                                                      1166 non-null   Int64
+ 28  Country_0                                                      1166 non-null   Int64
+ 29  Country_Japan                                                  1166 non-null   Int64
+ 30  Product_0                                                      1166 non-null   Int64
+ 31  Product_Moderna, Novavax, Oxford/AstraZeneca, Pfizer/BioNTech  1166 non-null   Int64
+dtypes: Float64(19), Int64(13)
+memory usage: 337.0 KB
+</pre></div></div>
+</div>
 </div>
 <div class="section" id="5.2-Details-of-data-complement">
 <h3>5.2 Details of data complement<a class="headerlink" href="#5.2-Details-of-data-complement" title="Permalink to this heading"></a></h3>
@@ -1551,7 +1328,7 @@ fully complemented recovered data
 <div class="line">We defined “recovery period” as the time period between case confirmation and recovery (as it is subjectively defined per country). We can estimate the mode value of recovery period with class method <code class="docutils literal notranslate"><span class="pre">DataEngineer.recovery_period(data)</span></code>.</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jpn_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">],</span> <span class="n">complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1570,7 +1347,7 @@ Mode value of recovery period in Japan: 10 [days]
 </div>
 <p>Details of recovery period calculation:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">jpn_df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -1592,7 +1369,7 @@ Mode value of recovery period in Japan: 10 [days]
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_31_0.png" src="_images/02_data_engineering_31_0.png" />
+<img alt="_images/02_data_engineering_32_0.png" src="_images/02_data_engineering_32_0.png" />
 </div>
 </div>
 </div>
@@ -1604,7 +1381,7 @@ Mode value of recovery period in Japan: 10 [days]
 <div class="line">* alias (str or None): alias name or None (list-up alias names) * update (bool): force updating the alias when &#64;alias is not None * **kwargs: keyword arguments of covsirphy.DataEngineer().subset()</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register</span>
@@ -1617,7 +1394,7 @@ Mode value of recovery period in Japan: 10 [days]
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1634,7 +1411,7 @@ True
 <h3>7.1 Alias of variables<a class="headerlink" href="#7.1-Alias-of-variables" title="Permalink to this heading"></a></h3>
 <p>We can specify variables with alias. For example, “CIFR” is equivalent to list <code class="docutils literal notranslate"><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal']</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;CIRF&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
@@ -1642,7 +1419,7 @@ True
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1679,39 +1456,39 @@ True
   </thead>
   <tbody>
     <tr>
-      <th>2023-02-05</th>
-      <td>32735860</td>
-      <td>886041</td>
-      <td>31780522</td>
-      <td>69297</td>
+      <th>2023-04-11</th>
+      <td>33561362</td>
+      <td>121634</td>
+      <td>33365588</td>
+      <td>74140</td>
     </tr>
     <tr>
-      <th>2023-02-06</th>
-      <td>32735860</td>
-      <td>805826</td>
-      <td>31860737</td>
-      <td>69297</td>
+      <th>2023-04-12</th>
+      <td>33571541</td>
+      <td>125475</td>
+      <td>33371894</td>
+      <td>74172</td>
     </tr>
     <tr>
-      <th>2023-02-07</th>
-      <td>32735860</td>
-      <td>727252</td>
-      <td>31939311</td>
-      <td>69297</td>
+      <th>2023-04-13</th>
+      <td>33580673</td>
+      <td>131713</td>
+      <td>33374770</td>
+      <td>74190</td>
     </tr>
     <tr>
-      <th>2023-02-08</th>
-      <td>32735860</td>
-      <td>663109</td>
-      <td>32003454</td>
-      <td>69297</td>
+      <th>2023-04-14</th>
+      <td>33589093</td>
+      <td>131697</td>
+      <td>33383190</td>
+      <td>74206</td>
     </tr>
     <tr>
-      <th>2023-02-09</th>
-      <td>32735860</td>
-      <td>630784</td>
-      <td>32035779</td>
-      <td>69297</td>
+      <th>2023-04-15</th>
+      <td>33597694</td>
+      <td>131973</td>
+      <td>33391493</td>
+      <td>74228</td>
     </tr>
   </tbody>
 </table>
@@ -1719,7 +1496,7 @@ True
 </div>
 <p>All aliases can be checked with <code class="docutils literal notranslate"><span class="pre">DataEngineer().variables_alias()</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eng</span><span class="o">.</span><span class="n">variables_alias</span><span class="p">()</span>
@@ -1727,7 +1504,7 @@ True
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1747,7 +1524,7 @@ True
 </div>
 <p>We can register new alias “p” with <code class="docutils literal notranslate"><span class="pre">[&quot;Tests&quot;,</span> <span class="pre">&quot;Confirmed&quot;,</span> <span class="pre">&quot;Positive_rate_%&quot;]</span></code> as an example.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register new alias</span>
@@ -1760,7 +1537,7 @@ True
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1795,33 +1572,33 @@ True
   </thead>
   <tbody>
     <tr>
-      <th>2023-02-05</th>
+      <th>2023-04-11</th>
       <td>0.0</td>
-      <td>32735860</td>
+      <td>33561362</td>
       <td>inf</td>
     </tr>
     <tr>
-      <th>2023-02-06</th>
+      <th>2023-04-12</th>
       <td>0.0</td>
-      <td>32735860</td>
+      <td>33571541</td>
       <td>inf</td>
     </tr>
     <tr>
-      <th>2023-02-07</th>
+      <th>2023-04-13</th>
       <td>0.0</td>
-      <td>32735860</td>
+      <td>33580673</td>
       <td>inf</td>
     </tr>
     <tr>
-      <th>2023-02-08</th>
+      <th>2023-04-14</th>
       <td>0.0</td>
-      <td>32735860</td>
+      <td>33589093</td>
       <td>inf</td>
     </tr>
     <tr>
-      <th>2023-02-09</th>
+      <th>2023-04-15</th>
       <td>0.0</td>
-      <td>32735860</td>
+      <td>33597694</td>
       <td>inf</td>
     </tr>
   </tbody>
@@ -1833,7 +1610,7 @@ True
 <h3>7.2 Line plot<a class="headerlink" href="#7.2-Line-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with line plot. We can select function <code class="docutils literal notranslate"><span class="pre">line_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">LinePlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">line_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
@@ -1842,7 +1619,7 @@ True
 </div>
 <p>With function:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
@@ -1860,12 +1637,12 @@ True
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_44_0.png" src="_images/02_data_engineering_44_0.png" />
+<img alt="_images/02_data_engineering_45_0.png" src="_images/02_data_engineering_45_0.png" />
 </div>
 </div>
 <p>With class:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">LinePlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">lp</span><span class="p">:</span>
@@ -1881,7 +1658,7 @@ True
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_46_0.png" src="_images/02_data_engineering_46_0.png" />
+<img alt="_images/02_data_engineering_47_0.png" src="_images/02_data_engineering_47_0.png" />
 </div>
 </div>
 </div>
@@ -1889,7 +1666,7 @@ True
 <h3>7.3 Scatter plot<a class="headerlink" href="#7.3-Scatter-plot" title="Permalink to this heading"></a></h3>
 <p>Show data with scatter plot. We can select function <code class="docutils literal notranslate"><span class="pre">scatter_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc_df</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">eng</span><span class="o">.</span><span class="n">subset_alias</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;jp&quot;</span><span class="p">)</span>
@@ -1898,7 +1675,7 @@ True
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cs</span><span class="o">.</span><span class="n">scatter_plot</span><span class="p">(</span>
@@ -1915,11 +1692,11 @@ True
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_49_0.png" src="_images/02_data_engineering_49_0.png" />
+<img alt="_images/02_data_engineering_50_0.png" src="_images/02_data_engineering_50_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cs</span><span class="o">.</span><span class="n">ScatterPlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">sp</span><span class="p">:</span>
@@ -1935,7 +1712,7 @@ True
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/02_data_engineering_50_0.png" src="_images/02_data_engineering_50_0.png" />
+<img alt="_images/02_data_engineering_51_0.png" src="_images/02_data_engineering_51_0.png" />
 </div>
 </div>
 <p>Thank you!</p>
@@ -1954,7 +1731,7 @@ True
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2020-2022, Hirokazu Takaya and CovsirPhy Development Team.</p>
+    <p>&#169; Copyright 2020-2023, Hirokazu Takaya and CovsirPhy Development Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
