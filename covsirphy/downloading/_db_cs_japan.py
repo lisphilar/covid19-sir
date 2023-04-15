@@ -25,7 +25,7 @@ class _CSJapan(_DataBase):
     # Stdout when downloading (shown at most one time)
     STDOUT = "Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/"
     # Citation
-    CITATION = "Hirokazu Takaya (2020-2022), COVID-19 dataset in Japan, GitHub repository, " \
+    CITATION = "Hirokazu Takaya (2020-2023), COVID-19 dataset in Japan, GitHub repository, " \
         "https://github.com/lisphilar/covid19-sir/data/japan"
     # All columns
     _all_columns = [
@@ -54,7 +54,8 @@ class _CSJapan(_DataBase):
                     - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescribed by the protocol
         """
         cols = [
-            "Date", "Location", "Positive", "Tested", "Discharged", "Fatal", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
+            "Date", "Location", "Positive", "Tested", "Discharged", "Fatal",
+            "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]
         df = self._provide(url=self.URL_C, suffix="", columns=cols, date="Date", date_format="%Y-%m-%d")
         df = df.groupby("Date").sum(numeric_only=True).reset_index()
         df[self.ISO3] = "JPN"
@@ -62,7 +63,7 @@ class _CSJapan(_DataBase):
         df[self.CITY] = self.NA
         df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
-        df[self.VAC_BOOSTERS] = df["Vaccinated_3rd"].cumsum()
+        df[self.VAC_BOOSTERS] = df[["Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]].sum(axis=1).cumsum()
         df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
         return df.loc[:, self._all_columns]
 
