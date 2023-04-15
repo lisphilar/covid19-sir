@@ -371,7 +371,8 @@ class DataEngineer(Term):
 
     def subset(self, geo: tuple[list[str] | tuple[str] | str | None, ...] = None,
                start_date: str | None = None, end_date: str | None = None,
-               variables: list[str] | str | None = None, complement: bool = True, **kwargs) -> tuple[pd.DataFrame, str, dict[str, bool]]:
+               variables: list[str] | str | None = None, complement: bool = True, get_dummies: bool = True,
+               **kwargs) -> tuple[pd.DataFrame, str, dict[str, bool]]:
         """Return subset of the location and date range.
 
         Args:
@@ -380,6 +381,7 @@ class DataEngineer(Term):
             end_date: end date, like 01Feb2020
             variables: list of variables to add or None (all available columns)
             complement: whether perform data complement or not, True as default
+            get_dummies: whether convert categorical variable into dummy variables or not, True as default
             **Kwargs: keyword arguments for complement and default values
 
                 - recovery_period (int): expected value of recovery period[days], 17
@@ -450,6 +452,8 @@ class DataEngineer(Term):
         transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
         transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
         transformed_df = transformer.all().drop("location", axis=1).set_index(self.DATE)
+        if get_dummies:
+            transformed_df = pd.get_dummies(transformed_df, dtype=float).convert_dtypes()
         return transformed_df.loc[:, v_converted or transformed_df.columns], status, status_dict
 
     def subset_alias(self, alias: str | None = None, update: bool = False,
