@@ -54,7 +54,8 @@ class _CSJapan(_DataBase):
                     - Vaccinated_full (numpy.float64): cumulative number of people who received all doses prescribed by the protocol
         """
         cols = [
-            "Date", "Location", "Positive", "Tested", "Discharged", "Fatal", "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd"]
+            "Date", "Location", "Positive", "Tested", "Discharged", "Fatal",
+            "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]
         df = self._provide(url=self.URL_C, suffix="", columns=cols, date="Date", date_format="%Y-%m-%d")
         df = df.groupby("Date").sum(numeric_only=True).reset_index()
         df[self.ISO3] = "JPN"
