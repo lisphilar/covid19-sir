@@ -102,7 +102,7 @@ class _DataProvider(Term):
         warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
         kwargs = {
             "header": 0, "usecols": columns, "encoding": "utf-8", "engine": "pyarrow",
-            "parse_dates": None if date is None else [date], "date_parser": lambda x: datetime.strptime(x, date_format)
+            "parse_dates": None if date is None else [date], "date_format": date_format,
         }
         if urlparse(path).scheme:
             kwargs["storage_options"] = {"User-Agent": "Mozilla/5.0"}
