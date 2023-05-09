@@ -6,7 +6,7 @@ import pandas as pd
 
 class VaccineData:
     """Retrieve the latest vaccine data in Japan from the following primary sources and merge them with the CSV files.
-    
+
     - https://www.kantei.go.jp/jp/headline/kansensho/vaccine.html
     - https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_sesshujisseki.html
     """
@@ -14,11 +14,11 @@ class VaccineData:
 
     def _load(self, first_removed, **kwargs):
         """Load a sheet of the Excel file of the source and return it as a dataframe without NA rows, sorted with date index.
-        
+
         Args:
             first_removed (bool): whether the first line of the dataframe should be removed or not
             **kwargs: keyword arguments of pandas.read_excel() except for @io and @comment
-        
+
         Returns:
             pandas.DataFrame: the dataframe
 
@@ -33,7 +33,7 @@ class VaccineData:
 
     def load_total(self):
         """Get the cumulative number of vaccinated persons.
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: Date (pandas.DatetimeIndex)
@@ -54,7 +54,7 @@ class VaccineData:
 
     def _load_total_except_1st_2nd(self):
         """Get the cumulative number of vaccinated persons (>= 3rd shot).
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -65,14 +65,14 @@ class VaccineData:
         """
         df = self._load(
             first_removed=True,
-            sheet_name="総接種回数", index_col=0, skiprows=28, 
+            sheet_name="総接種回数", index_col=0, skiprows=24,
             usecols=["Unnamed: 0", "3回目接種", "4回目接種", "5回目接種"])
         df.columns = ["3rd", "4th", "5th"]
         return df
 
     def _load_total_1st_2nd(self):
         """Get the cumulative number of vaccinated persons (= 1st, 2nd shot).
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -92,7 +92,7 @@ class VaccineData:
 
     def _load_1st_2nd_vrs(self):
         """Get the cumulative number of vaccinated persons (= 1st, 2nd shot), recorded with VRS (Vaccination Record System).
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -109,7 +109,7 @@ class VaccineData:
 
     def _load_1st_2nd_medical(self):
         """Get the cumulative number of vaccinated persons (= 1st, 2nd shot), only for medical staffs.
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -129,7 +129,7 @@ class VaccineData:
 
     def _load_1st_2nd_work(self):
         """Get the cumulative number of vaccinated persons (= 1st, 2nd shot), only recoded in workspaces.
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -146,7 +146,7 @@ class VaccineData:
 
     def _load_1st_2nd_dup(self):
         """Get the cumulative number of vaccinated persons (= 1st, 2nd shot), duplicates of VRS and the other system (V-SYS).
-        
+
         Returns:
             pandas.DataFrame: the dataframe
                 Index: pandas.DatetimeIndex
@@ -166,17 +166,18 @@ class VaccineData:
 
 class JapanData:
     """Merge new vaccine data with the current dataset.
-    
+
     Args:
         directory (str or pathlib.Path): path of the directory which has covid_jpn_total.csv.
     """
+
     def __init__(self, directory):
         self._total_csv = Path(directory).joinpath("covid_jpn_total.csv")
         self._total_df = pd.read_csv(self._total_csv)
 
-    def uppdate_vaccine_data(self):
+    def update_vaccine_data(self):
         """Update vaccine data of covid_jpn_total.csv.
-        
+
         Returns:
             pandas.DataFrame:
                 Index: reset index
@@ -202,7 +203,7 @@ class JapanData:
 def main():
     japan_directory = Path(__file__).resolve().parent / "japan"
     j = JapanData(directory=japan_directory)
-    updated_df = j.uppdate_vaccine_data()
+    updated_df = j.update_vaccine_data()
     df = updated_df.loc[updated_df["Location"] == "Domestic"].set_index("Date")
     print(df.tail())
     # Postive
@@ -224,7 +225,6 @@ def main():
             df[["Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]],
             figsize=(10, 6),
         )
-        
 
 
 if __name__ == "__main__":
