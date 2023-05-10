@@ -161,3 +161,7 @@ importtime:
 .PHONY: data
 data:
 	@poetry run python ./data/vaccine_data.py
+
+.PHONY: demo
+demo:
+	@poetry run python ./example/demo.py

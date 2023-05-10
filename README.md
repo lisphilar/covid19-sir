@@ -36,8 +36,6 @@ The latest stable version of CovsirPhy is available at [PyPI (The Python Package
 pip install --upgrade covsirphy
 ```
 
-
-
 ## Demo
 
 Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan.
