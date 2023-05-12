@@ -136,8 +136,9 @@ Notebook: COVID-19 data with SIR
 model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
 on 12Feb2020 and developed it, discussing with Kaggle community. On
 07May2020, "covid19-sir" repository was created. On 10May2020,
-``covsirphy`` version 1.0.0 was published in GitHub. First release in
-PyPI (version 2.3.0) was on 28Jun2020.
+``covsirphy`` version 1.0.0 was published in GitHub. The first release
+in PyPI (version 2.3.0) was on 28Jun2020. Many APIs were reviewed via
+2.x series and version 3.0.0 was released on 12May2023.
 
 Support
 -------
