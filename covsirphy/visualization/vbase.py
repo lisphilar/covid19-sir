@@ -17,6 +17,7 @@ plt.rcParams["ytick.direction"] = "in"
 plt.rcParams["font.size"] = 11.0
 plt.rcParams["figure.figsize"] = (9, 6)
 plt.rcParams["legend.frameon"] = False
+plt.rcParams["figure.autolayout"] = True
 
 
 def find_args(func_list, **kwargs):
@@ -54,7 +55,7 @@ class VisualizeBase(Term):
         self._variables = []
         # Properties
         self._title = ""
-        self._fig, self._ax = plt.subplots(1, 1)
+        _, self._ax = plt.subplots(1, 1)
 
     def __enter__(self) -> Self:
         return self
@@ -63,8 +64,6 @@ class VisualizeBase(Term):
         # Settings
         if self._title:
             self._ax.title.set_text(self._title)
-        # Tight layout
-        self._fig.set_layout_engine("tight")
         # Display the figure if filename is None after plotting
         if self._filename is None:
             plt.show()
@@ -124,7 +123,6 @@ class VisualizeBase(Term):
         ncol = Validator(
             ncol or (1 if "left" in bbox_loc else len(self._variables)), "ncol").int(value_range=(1, None))
         self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
-        self._fig.set_layout_engine("tight")
 
     def legend_hide(self):
         """Hide legend.
