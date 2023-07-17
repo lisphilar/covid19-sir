@@ -54,7 +54,7 @@ class VisualizeBase(Term):
         self._variables = []
         # Properties
         self._title = ""
-        _, self._ax = plt.subplots(1, 1)
+        self._fig, self._ax = plt.subplots(1, 1)
 
     def __enter__(self) -> Self:
         return self
@@ -64,7 +64,7 @@ class VisualizeBase(Term):
         if self._title:
             self._ax.title.set_text(self._title)
         # Tight layout
-        plt.tight_layout()
+        self._fig.set_tight_layout(True)
         # Display the figure if filename is None after plotting
         if self._filename is None:
             plt.show()
@@ -124,7 +124,7 @@ class VisualizeBase(Term):
         ncol = Validator(
             ncol or (1 if "left" in bbox_loc else len(self._variables)), "ncol").int(value_range=(1, None))
         self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
-        plt.tight_layout()
+        self._fig.set_tight_layout(True)
 
     def legend_hide(self):
         """Hide legend.
