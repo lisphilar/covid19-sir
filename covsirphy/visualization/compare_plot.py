@@ -47,7 +47,7 @@ class ComparePlot(VisualizeBase):
         Validator(data, "data").dataframe(columns=sum(col_nest, []))
         # Prepare figure object
         fig_len = len(variables) + 1
-        _, self._ax = plt.subplots(ncols=1, nrows=fig_len, figsize=(9, 6 * fig_len / 2))
+        self._fig, self._ax = plt.subplots(ncols=1, nrows=fig_len, figsize=(9, 6 * fig_len / 2))
         # Compare each variable
         for (ax, v, columns) in zip(self._ax.ravel()[1:], variables, col_nest):
             data[columns].plot.line(
