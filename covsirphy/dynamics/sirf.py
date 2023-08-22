@@ -80,7 +80,7 @@ class SIRFModel(SIRDModel):
         """Calculate dimensional parameter values.
 
         Raises:
-            ZeroDivisionError: either kappa or rho or sigma value was over 0
+            ZeroDivisionError: either rho or sigma value was 0
 
         Returns:
             dictionary of dimensional parameter values
@@ -92,13 +92,13 @@ class SIRFModel(SIRDModel):
         try:
             return {
                 "alpha1 [-]": round(self._theta, 3),
-                "1/alpha2 [day]": round(self._tau / 24 / 60 / self._kappa),
+                "1/alpha2 [day]": round(self._tau / 24 / 60 / self._kappa) if self._kappa != 0 else np.NaN,
                 "1/beta [day]": round(self._tau / 24 / 60 / self._rho),
                 "1/gamma [day]": round(self._tau / 24 / 60 / self._sigma)
             }
         except ZeroDivisionError:
             raise ZeroDivisionError(
-                f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
+                f"Rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
     def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> dict[str, float | pd.Series]:

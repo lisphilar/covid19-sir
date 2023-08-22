@@ -163,7 +163,7 @@ class SEWIRFModel(ODEModel):
         """Calculate dimensional parameter values.
 
         Raises:
-            ZeroDivisionError: either kappa or rho_i for i=1,2,3 or sigma value was over 0
+            ZeroDivisionError: rho_i for i=1,2,3 or sigma value was 0
 
         Returns:
             dictionary of dimensional parameter values
@@ -177,7 +177,7 @@ class SEWIRFModel(ODEModel):
         try:
             return {
                 "alpha1 [-]": round(self._theta, 3),
-                "1/alpha2 [day]": round(self._tau / 24 / 60 / self._kappa),
+                "1/alpha2 [day]": round(self._tau / 24 / 60 / self._kappa) if self._kappa != 0 else np.NaN,
                 "1/beta1 [day]": round(self._tau / 24 / 60 / self._rho1),
                 "1/beta2 [day]": round(self._tau / 24 / 60 / self._rho2),
                 "1/beta3 [day]": round(self._tau / 24 / 60 / self._rho3),
@@ -185,7 +185,7 @@ class SEWIRFModel(ODEModel):
             }
         except ZeroDivisionError:
             raise ZeroDivisionError(
-                f"Kappa, rho_i for i=1,2,3 and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
+                f"Rho_i for i=1,2,3 and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
     def from_data_with_quantile(cls, *args, **kwargs) -> NoReturn:
