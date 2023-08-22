@@ -74,8 +74,8 @@ def test_r0(model_class):
 def test_dimensional_parameters(model_class):
     model = model_class.from_sample()
     assert model.dimensional_parameters()
+    _dict = model.settings()
     if not isinstance(model, SIRModel):
-        _dict = model.settings()
         _dict.update(param_dict={'_kappa': 0})
         assert model_class(**_dict).dimensional_parameters() is not None
     with pytest.raises(ZeroDivisionError):
