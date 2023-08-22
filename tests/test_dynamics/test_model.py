@@ -76,7 +76,7 @@ def test_dimensional_parameters(model_class):
     assert model.dimensional_parameters()
     _dict = model.settings()
     if not isinstance(model, SIRModel):
-        _dict.update(param_dict={'_kappa': 0})
+        _dict.update(param_dict={'kappa': 0})
         assert model_class(**_dict).dimensional_parameters() is not None
     with pytest.raises(ZeroDivisionError):
         _dict.update(param_dict={param: 0 for param in _dict["param_dict"].keys()})
