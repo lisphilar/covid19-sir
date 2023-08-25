@@ -178,7 +178,7 @@ in this project.**
 
 .. |PyPI version| image:: https://badge.fury.io/py/covsirphy.svg
    :target: https://badge.fury.io/py/covsirphy
-.. |Downloads| image:: https://pepy.tech/badge/covsirphy
+.. |Downloads| image:: https://static.pepy.tech/badge/covsirphy
    :target: https://pepy.tech/project/covsirphy
 .. |PyPI - Python Version| image:: https://img.shields.io/pypi/pyversions/covsirphy
    :target: https://badge.fury.io/py/covsirphy
