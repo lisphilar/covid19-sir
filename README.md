@@ -2,7 +2,7 @@
 <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
 
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
-[![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
+[![Downloads](https://static.pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
 [![Quality Check](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml/badge.svg)](https://github.com/lisphilar/covid19-sir/actions/workflows/test.yml)
