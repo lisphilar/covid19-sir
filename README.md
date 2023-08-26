@@ -19,6 +19,8 @@
 
 <strong>CovsirPhy is a Python library for infectious disease (COVID-19: Coronavirus disease 2019, Monkeypox 2022) data analysis with phase-dependent SIR-derived ODE models. We can download datasets and analyze them easily. Scenario analysis with CovsirPhy enables us to make data-informed decisions. </strong>
 
+<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/docs/dfd/covsirphy_dfd.png" width="800" alt="Data flow diagram: data science for infectious diseases with CovsirPhy Python library">
+
 ## Inspiration
 
 * Monitor the spread of COVID-19/Monkeypox with SIR-derived ODE models
