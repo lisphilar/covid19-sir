@@ -1,5 +1,5 @@
 
-<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
+<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
 
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://static.pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
@@ -71,7 +71,7 @@ snr.describe()
 
 Output of `snr.simulate(name="Predicted");`
 
-<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
+<img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/example/output/demo_jpn/04_predicted.png" width="600">
 
 ## Tutorial
 
