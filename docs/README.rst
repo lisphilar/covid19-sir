@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
+   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/docs/logo/covsirphy_headline.png" width="390" alt="CovsirPhy: COVID-19 analysis with phase-dependent SIRs">
 
 |PyPI version| |Downloads| |PyPI - Python Version| |GitHub license|
 |Quality Check| |Test Coverage|
@@ -23,6 +23,10 @@ Coronavirus disease 2019, Monkeypox 2022) data analysis with
 phase-dependent SIR-derived ODE models. We can download datasets and
 analyze them easily. Scenario analysis with CovsirPhy enables us to make
 data-informed decisions.
+
+.. raw:: html
+
+   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/docs/dfd/covsirphy_dfd.png" width="800" alt="Data flow diagram: data science for infectious diseases with CovsirPhy Python library">
 
 Inspiration
 -----------
@@ -89,7 +93,7 @@ Output of ``snr.simulate(name="Predicted");``
 
 .. raw:: html
 
-   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/example/output/demo_jpn/04_predicted.png" width="600">
+   <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/main/example/output/demo_jpn/04_predicted.png" width="600">
 
 Tutorial
 --------
