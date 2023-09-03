@@ -522,7 +522,10 @@ class Dynamics(Term):
         est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
         if self.RUNTIME in df:
             df[self.RUNTIME] = df[self.RUNTIME].astype(str)
+        print(df.info())
+        print(df)
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
+        print(df.info())
         return df
 
     def parse_phases(self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
