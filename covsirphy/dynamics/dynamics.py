@@ -512,7 +512,7 @@ class Dynamics(Term):
                 Trials (int): the number of trials
                 Runtime (str): runtime of optimization, like 0 min 10 sec
         """
-        df = phase_df.astype(object)
+        df = phase_df.copy()
         # ODE parameter optimization
         model_instance = model.from_data_with_optimization(
             data=df.reset_index(), tau=tau, metric=metric, digits=digits, **kwargs)
@@ -521,7 +521,7 @@ class Dynamics(Term):
         est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
         est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
-        return df.convert_dtypes()
+        return df
 
     def parse_phases(self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return minimum date and maximum date of the phases.
