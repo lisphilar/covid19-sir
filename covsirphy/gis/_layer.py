@@ -121,7 +121,10 @@ class _LayerAdjuster(Term):
         df[self._layers] = df[self._layers].astype("string").fillna(self.NA)
         # Locations
         loc_df = df.loc[:, self._layers]
-        loc_df = pd.concat([self._loc_df, loc_df], axis=0, ignore_index=True)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=FutureWarning)
+            # From Python 3.11: `warnings.catch_warnings(action="ignore", category=FutureWarning):`
+            loc_df = pd.concat([self._loc_df, loc_df], axis=0, ignore_index=True)
         loc_df.drop_duplicates(subset=self._layers, keep="first", ignore_index=True, inplace=True)
         loc_df.loc[loc_df[self._ID].isna(), self._ID] = f"id{len(loc_df)}-" + \
             loc_df[loc_df[self._ID].isna()].index.astype("str")
