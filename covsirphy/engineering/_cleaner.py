@@ -62,7 +62,7 @@ class _DataCleaner(Term):
             end = Validator(
                 end_date, name="the second date of @date_range").date(default=df[self._date].max(), value_range=(start, None))
             df = df[df[self._date].between(start, end, inclusive="both")]
-        grouped = df.set_index(self._date).groupby(self._layers, as_index=False)
+        grouped = df.set_index(self._date).groupby(self._layers, as_index=False, observed=True)
         df = grouped.resample("D").ffill()
         self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
 
@@ -72,5 +72,5 @@ class _DataCleaner(Term):
         df = self._df.copy()
         df[self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
         for col in set(df.columns) - set(self._id_cols):
-            df[col] = df.groupby(self._layers)[col].ffill().fillna(0)
+            df[col] = df.groupby(self._layers, observed=True)[col].ffill().fillna(0)
         self._df = df.copy()
