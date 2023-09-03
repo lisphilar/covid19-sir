@@ -520,12 +520,7 @@ class Dynamics(Term):
         # Get information regarding optimization
         est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
         est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
-        if self.RUNTIME not in df:
-            df[self.RUNTIME] = np.nan
-        print(df.info())
-        print(df)
-        df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
-        print(df.info())
+        df.astype(object).loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
         return df
 
     def parse_phases(self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
