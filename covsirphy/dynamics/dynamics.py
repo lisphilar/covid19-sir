@@ -520,6 +520,7 @@ class Dynamics(Term):
         # Get information regarding optimization
         est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
         for column in [metric, self.TRIALS, self.RUNTIME]:
+            df[column] = df[column].astype("object")
             df.loc[df.index[0], column] = est_dict[column]
         return df
 
