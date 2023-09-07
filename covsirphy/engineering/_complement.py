@@ -430,5 +430,6 @@ class _ComplementHandler(Term):
                 Columns
                     Confirmed, Fatal, Recovered
         """
-        df[self.C] = df[[self.C, self.F, self.R]].apply(lambda x: max(x[0], x[1] + x[2]), axis=1)
+        df[self.C] = df[[self.C, self.F, self.R]].apply(
+            lambda x: max(x.iloc[0], x.iloc[1] + x.iloc[2]), axis=1)
         return df

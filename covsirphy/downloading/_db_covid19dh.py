@@ -66,6 +66,7 @@ class _COVID19dh(_DataBase):
         df = self._provide(
             url=url, suffix="_level1", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
         # ships will be regarded as provinces of "Others" country
+        df[self.PROVINCE] = df[self.PROVINCE].astype(object)
         ships = df.loc[df[self.ISO3].isna(), self.COUNTRY].unique()
         for ship in ships:
             df.loc[df[self.COUNTRY] == ship, [self.ISO3, self.PROVINCE]] = [self.OTHERS, ship]

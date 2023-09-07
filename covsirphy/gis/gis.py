@@ -165,7 +165,7 @@ class GIS(Term):
             raise NotRegisteredError(
                 "GIS.register()", details=f"No records have been registered at the layer yet from {start_date} to {end_date}")
         # Get representative records for dates
-        df = df.groupby([*self._layers, self._date], dropna=True).first()
+        df = df.groupby([*self._layers, self._date], dropna=True, observed=True).first()
         return df.reset_index().convert_dtypes()
 
     def to_geopandas(self, geo=None, on=None, variables=None, directory=None, natural_earth=None):
@@ -203,7 +203,7 @@ class GIS(Term):
             raise ValueError("This cannot be done because country layer is not included in the dataset.")
         df = self.layer(geo=geo, variables=variables)
         if on is None:
-            df = df.sort_values(self._date, ascending=True).groupby(self._layers).last().reset_index()
+            df = df.sort_values(self._date, ascending=True).groupby(self._layers, observed=True).last().reset_index()
         else:
             df = df.loc[df[self._date] == Validator(on).date()]
         focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
@@ -306,7 +306,7 @@ class GIS(Term):
         # Get representative records for dates
         with contextlib.suppress(IndexError, KeyError):
             df = df.drop(self._layers[1:], axis=1)
-        df = df.groupby([self._layers[0], self._date], dropna=True).first().reset_index(level=self._date)
+        df = df.groupby([self._layers[0], self._date], dropna=True, observed=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
     @classmethod

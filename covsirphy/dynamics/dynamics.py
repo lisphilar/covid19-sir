@@ -520,6 +520,7 @@ class Dynamics(Term):
         # Get information regarding optimization
         est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
         est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
+        warnings.filterwarnings("ignore", category=FutureWarning)
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
         return df
 
@@ -541,6 +542,8 @@ class Dynamics(Term):
         all_df[self._PH], _ = all_df[self._PH].factorize()
         phase_numbers = [all_df[self._PH].max() if ph == "last" else self.str2num(ph) for ph in phases]
         df = all_df.loc[all_df[self._PH].isin(phase_numbers)]
+        # FutureWarning to be fixed by pandas version 3.0.0 release
+        warnings.filterwarnings("ignore", category=FutureWarning)
         return df.index.min(), df.index.max()
 
     def parse_days(self, days: int, ref: pd.Timestamp | str | None = "last") -> tuple[pd.Timestamp, pd.Timestamp]:
