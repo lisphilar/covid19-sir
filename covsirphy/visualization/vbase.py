@@ -2,6 +2,7 @@ from __future__ import annotations
 from inspect import signature
 import sys
 import matplotlib
+from matplotlib.axes import Axes
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 from matplotlib import pyplot as plt
@@ -91,7 +92,7 @@ class VisualizeBase(Term):
 
     @ax.setter
     def ax(self, ax):
-        self._ax = Validator(ax, "ax").instance(matplotlib.axes.Axes)
+        self._ax = Validator(ax, "ax").instance(Axes)
 
     def plot(self):
         """Method for plotting. This will be defined in child classes.
