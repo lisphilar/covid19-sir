@@ -486,6 +486,8 @@ class Dynamics(Term):
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
+        for col in self._parameters:
+            r_df[col] = r_df[col].astype(pd.Float64DType())
         r_df.update(est_df, overwrite=True)
         self.register(data=r_df)
         return est_df
