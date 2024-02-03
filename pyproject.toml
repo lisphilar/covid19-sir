@@ -93,9 +93,12 @@ filterwarnings = ["error", "ignore::pytest.PytestDeprecationWarning"]
 addopts = "--cov=covsirphy --cov-report=xml --cov-report=term-missing -vv --no-cov-on-fail -p no:cacheprovider --durations=1 --maxfail=1"
 
 [tool.deptry]
-ignore_transitive = ['urllib3']
-ignore_unused = ['pyarrow', 'tabulate', 'requests']
-exclude = ['tests', '.venv', 'example', 'docs']
+exclude = ["tests", ".venv", "example", "docs"]
+
+[tool.deptry.per_rule_ignores]
+DEP003 = ["urllib3"]
+DEP002 = ["pyarrow", "tabulate", "requests"]
+
 
 [tool.pyright]
 include = ["covsirphy"]
