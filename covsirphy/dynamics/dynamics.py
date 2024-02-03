@@ -173,7 +173,7 @@ class Dynamics(Term):
             NA can used in the newer phases because filled with that of the older phases.
         """
         if data is not None:
-            new_df = Validator(data, "data").dataframe(time_index=True)
+            new_df = Validator(data, "data").dataframe(time_index=True).convert_dtypes()
             new_df.index = pd.to_datetime(new_df.index).round("D")
             all_df = pd.DataFrame(
                 np.nan,
