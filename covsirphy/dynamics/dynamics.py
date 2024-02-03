@@ -181,8 +181,9 @@ class Dynamics(Term):
                 columns=self._df.columns,
             )
             all_df[self._PH] = 0
-            for col in self._SIRF:
-                new_df[col] = all_df[col].astype(np.float64)
+            for col in new_df:
+                new_df[col] = new_df[col].astype(pd.Float64Dtype())
+                all_df[col] = all_df[col].astype(pd.Float64Dtype())
             all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIRF].isna().any():
                 raise EmptyError(
