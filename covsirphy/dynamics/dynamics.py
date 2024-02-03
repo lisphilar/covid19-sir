@@ -173,15 +173,16 @@ class Dynamics(Term):
             NA can used in the newer phases because filled with that of the older phases.
         """
         if data is not None:
-            new_df = Validator(data, "data").dataframe(time_index=True).convert_dtypes()
+            new_df = Validator(data, "data").dataframe(time_index=True)
             new_df.index = pd.to_datetime(new_df.index).round("D")
             all_df = pd.DataFrame(
                 np.nan,
                 index=self._df.index,
                 columns=self._df.columns,
-                dtype=pd.Int64Dtype(),
             )
             all_df[self._PH] = 0
+            for col in self._SIRF:
+                new_df[col] = all_df[col].astype(np.float64)
             all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIRF].isna().any():
                 raise EmptyError(
