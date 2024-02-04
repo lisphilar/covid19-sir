@@ -22,7 +22,7 @@ class _AutoTSHandler(Term):
     """
 
     def __init__(self, Y, days, seed, **kwargs):
-        warnings.simplefilter("ignore", SyntaxError)
+        warnings.simplefilter("ignore", SyntaxWarning)
         from autots import AutoTS  # https://github.com/lisphilar/covid19-sir/issues/1265
         self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False)
         self._days = Validator(days, name="days").int(value_range=(1, None))
