@@ -16,7 +16,7 @@ def main(geo="Japan", file_prefix="jpn"):
         geo (str): location identifier
         file_prefix (str): prefix of the filenames
     """
-    print("This script works with version >= 2.26.0-eta")
+    print("This script works with version >= 3.0.0")
     print(cs.get_version())
     code_path = Path(__file__)
     output_dir = code_path.with_name("output").joinpath(f"{code_path.stem}_{file_prefix}")
