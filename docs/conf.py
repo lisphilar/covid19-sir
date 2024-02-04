@@ -18,7 +18,7 @@ import covsirphy as cs  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'CovsirPhy'
-copyright = '2020-2023, Hirokazu Takaya and CovsirPhy Development Team'
+copyright = '2020-2024, Hirokazu Takaya and CovsirPhy Development Team'
 author = 'Hirokazu Takaya and CovsirPhy Development Team'
 version = cs.__version__
 

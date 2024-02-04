@@ -25,7 +25,7 @@ class _CSJapan(_DataBase):
     # Stdout when downloading (shown at most one time)
     STDOUT = "Retrieving COVID-19 dataset from https://github.com/lisphilar/covid19-sir/data/"
     # Citation
-    CITATION = "Hirokazu Takaya (2020-2023), COVID-19 dataset in Japan, GitHub repository, " \
+    CITATION = "Hirokazu Takaya (2020-2024), COVID-19 dataset in Japan, GitHub repository, " \
         "https://github.com/lisphilar/covid19-sir/data/japan"
     # All columns
     _all_columns = [
