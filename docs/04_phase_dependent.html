@@ -1,28 +1,30 @@
 <!-- Refer to https://stackoverflow.com/a/50495306 -->
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phase-dependent SIR models &mdash; CovsirPhy  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=371f806f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=1facb17f" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=720011df" />
+
+  
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=63dc29e7"></script>
+        <script src="_static/doctools.js?v=695de88e"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -55,7 +57,7 @@
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.1.dev0
+                3.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -147,8 +149,8 @@
            <div itemprop="articleBody">
              
   <p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F04_phase_dependent.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
-<div class="section" id="Phase-dependent-SIR-models">
-<h1>Phase-dependent SIR models<a class="headerlink" href="#Phase-dependent-SIR-models" title="Permalink to this heading"></a></h1>
+<section id="Phase-dependent-SIR-models">
+<h1>Phase-dependent SIR models<a class="headerlink" href="#Phase-dependent-SIR-models" title="Link to this heading"></a></h1>
 <p>SIR-derived ODE models (SIR, SIR-D, SIR-F) assume that ODE parameter values are always constant. Can we apply this assumption to real data?</p>
 <p><a class="reference external" href="https://www.kaggle.com/code/lisphilar/covid-19-data-with-sir-model/notebook">Kaggle: COVID-19 data with SIR model</a> concluded this was No - ODE parameter values change with phases - because measures taken by people changed the situation of COVID-19 outbreak actually. Term “phase” means a sequential dates in which the parameters of SIR-derived models are constant. To remove fluctuations from analysis, “time-dependent” should be avoided.</p>
 <hr class="docutils" />
@@ -173,19 +175,19 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;3.0.1.dev0&#39;
+&#39;3.1.1&#39;
 </pre></div></div>
 </div>
-<div class="section" id="1.-Dynamics-of-phase-dependent-SIR-models">
-<h2>1. Dynamics of phase-dependent SIR models<a class="headerlink" href="#1.-Dynamics-of-phase-dependent-SIR-models" title="Permalink to this heading"></a></h2>
+<section id="1.-Dynamics-of-phase-dependent-SIR-models">
+<h2>1. Dynamics of phase-dependent SIR models<a class="headerlink" href="#1.-Dynamics-of-phase-dependent-SIR-models" title="Link to this heading"></a></h2>
 <p>Using <code class="docutils literal notranslate"><span class="pre">Dynamics</span></code> class, we will simulate phase-dependent SIR model with sample data (two phase) as an example.</p>
 <div class="line-block">
 <div class="line">The 0th phase: 01Jan2022 - 28Feb2022, rho=0.2, sigma=0.075 (preset)</div>
 <div class="line">The 1st phase: 01Mar2022 - 30Jun2022, <strong>rho=0.4</strong>, sigma=0.075</div>
 </div>
 <p>tau value: 1440 [min] (default)</p>
-<div class="section" id="1-1.-Define-the-0th-phase">
-<h3>1-1. Define the 0th phase<a class="headerlink" href="#1-1.-Define-the-0th-phase" title="Permalink to this heading"></a></h3>
+<section id="1-1.-Define-the-0th-phase">
+<h3>1-1. Define the 0th phase<a class="headerlink" href="#1-1.-Define-the-0th-phase" title="Link to this heading"></a></h3>
 <p>As the first step, define the 0th (initial) phase with preset ODE parameter values.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -254,9 +256,9 @@
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="1-2.-Define-the-1st-phase">
-<h3>1-2. Define the 1st phase<a class="headerlink" href="#1-2.-Define-the-1st-phase" title="Permalink to this heading"></a></h3>
+</section>
+<section id="1-2.-Define-the-1st-phase">
+<h3>1-2. Define the 1st phase<a class="headerlink" href="#1-2.-Define-the-1st-phase" title="Link to this heading"></a></h3>
 <p>Get the current settings of initial values of variables and ODE parameter values as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. Then, edit it and register it to the instance.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -310,10 +312,10 @@
   <tbody>
     <tr>
       <th>2022-01-01</th>
-      <td>999000</td>
-      <td>1000</td>
-      <td>0</td>
-      <td>0</td>
+      <td>999000.0</td>
+      <td>1000.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>0.2</td>
       <td>0.075</td>
     </tr>
@@ -464,10 +466,10 @@
   <tbody>
     <tr>
       <th>2022-01-01</th>
-      <td>999000</td>
-      <td>1000</td>
-      <td>0</td>
-      <td>0</td>
+      <td>999000.0</td>
+      <td>1000.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>0.2</td>
       <td>0.075</td>
     </tr>
@@ -529,10 +531,10 @@
   <tbody>
     <tr>
       <th>2022-01-01</th>
-      <td>999000</td>
-      <td>1000</td>
-      <td>0</td>
-      <td>0</td>
+      <td>999000.0</td>
+      <td>1000.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>0.2</td>
       <td>0.075</td>
     </tr>
@@ -683,10 +685,10 @@
   <tbody>
     <tr>
       <th>2022-01-01</th>
-      <td>999000</td>
-      <td>1000</td>
-      <td>0</td>
-      <td>0</td>
+      <td>999000.0</td>
+      <td>1000.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>0.2</td>
       <td>0.075</td>
     </tr>
@@ -796,21 +798,21 @@
 </div>
 <div class="output_area rendered_html docutils container">
 <style type="text/css">
-#T_411c2_row0_col5, #T_411c2_row1_col2, #T_411c2_row1_col3 {
+#T_fa65e_row0_col5, #T_fa65e_row1_col2, #T_fa65e_row1_col3 {
   background-color: yellow;
 }
 </style>
-<table id="T_411c2">
+<table id="T_fa65e">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_411c2_level0_col0" class="col_heading level0 col0" >Start</th>
-      <th id="T_411c2_level0_col1" class="col_heading level0 col1" >End</th>
-      <th id="T_411c2_level0_col2" class="col_heading level0 col2" >Rt</th>
-      <th id="T_411c2_level0_col3" class="col_heading level0 col3" >rho</th>
-      <th id="T_411c2_level0_col4" class="col_heading level0 col4" >sigma</th>
-      <th id="T_411c2_level0_col5" class="col_heading level0 col5" >1/beta [day]</th>
-      <th id="T_411c2_level0_col6" class="col_heading level0 col6" >1/gamma [day]</th>
+      <th id="T_fa65e_level0_col0" class="col_heading level0 col0" >Start</th>
+      <th id="T_fa65e_level0_col1" class="col_heading level0 col1" >End</th>
+      <th id="T_fa65e_level0_col2" class="col_heading level0 col2" >Rt</th>
+      <th id="T_fa65e_level0_col3" class="col_heading level0 col3" >rho</th>
+      <th id="T_fa65e_level0_col4" class="col_heading level0 col4" >sigma</th>
+      <th id="T_fa65e_level0_col5" class="col_heading level0 col5" >1/beta [day]</th>
+      <th id="T_fa65e_level0_col6" class="col_heading level0 col6" >1/gamma [day]</th>
     </tr>
     <tr>
       <th class="index_name level0" >Phase</th>
@@ -825,32 +827,32 @@
   </thead>
   <tbody>
     <tr>
-      <th id="T_411c2_level0_row0" class="row_heading level0 row0" >0th</th>
-      <td id="T_411c2_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
-      <td id="T_411c2_row0_col1" class="data row0 col1" >2022-02-28 00:00:00</td>
-      <td id="T_411c2_row0_col2" class="data row0 col2" >2.670000</td>
-      <td id="T_411c2_row0_col3" class="data row0 col3" >0.200000</td>
-      <td id="T_411c2_row0_col4" class="data row0 col4" >0.075000</td>
-      <td id="T_411c2_row0_col5" class="data row0 col5" >5</td>
-      <td id="T_411c2_row0_col6" class="data row0 col6" >13</td>
+      <th id="T_fa65e_level0_row0" class="row_heading level0 row0" >0th</th>
+      <td id="T_fa65e_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
+      <td id="T_fa65e_row0_col1" class="data row0 col1" >2022-02-28 00:00:00</td>
+      <td id="T_fa65e_row0_col2" class="data row0 col2" >2.670000</td>
+      <td id="T_fa65e_row0_col3" class="data row0 col3" >0.200000</td>
+      <td id="T_fa65e_row0_col4" class="data row0 col4" >0.075000</td>
+      <td id="T_fa65e_row0_col5" class="data row0 col5" >5</td>
+      <td id="T_fa65e_row0_col6" class="data row0 col6" >13</td>
     </tr>
     <tr>
-      <th id="T_411c2_level0_row1" class="row_heading level0 row1" >1st</th>
-      <td id="T_411c2_row1_col0" class="data row1 col0" >2022-03-01 00:00:00</td>
-      <td id="T_411c2_row1_col1" class="data row1 col1" >2022-06-30 00:00:00</td>
-      <td id="T_411c2_row1_col2" class="data row1 col2" >5.330000</td>
-      <td id="T_411c2_row1_col3" class="data row1 col3" >0.400000</td>
-      <td id="T_411c2_row1_col4" class="data row1 col4" >0.075000</td>
-      <td id="T_411c2_row1_col5" class="data row1 col5" >2</td>
-      <td id="T_411c2_row1_col6" class="data row1 col6" >13</td>
+      <th id="T_fa65e_level0_row1" class="row_heading level0 row1" >1st</th>
+      <td id="T_fa65e_row1_col0" class="data row1 col0" >2022-03-01 00:00:00</td>
+      <td id="T_fa65e_row1_col1" class="data row1 col1" >2022-06-30 00:00:00</td>
+      <td id="T_fa65e_row1_col2" class="data row1 col2" >5.330000</td>
+      <td id="T_fa65e_row1_col3" class="data row1 col3" >0.400000</td>
+      <td id="T_fa65e_row1_col4" class="data row1 col4" >0.075000</td>
+      <td id="T_fa65e_row1_col5" class="data row1 col5" >2</td>
+      <td id="T_fa65e_row1_col6" class="data row1 col6" >13</td>
     </tr>
   </tbody>
 </table></div>
 </div>
 <p>With the same way, we can set additional phases, if necessary for your analysis.</p>
-</div>
-<div class="section" id="1-3.-Track-ODE-parameter-values">
-<h3>1-3. Track ODE parameter values<a class="headerlink" href="#1-3.-Track-ODE-parameter-values" title="Permalink to this heading"></a></h3>
+</section>
+<section id="1-3.-Track-ODE-parameter-values">
+<h3>1-3. Track ODE parameter values<a class="headerlink" href="#1-3.-Track-ODE-parameter-values" title="Link to this heading"></a></h3>
 <p>Confirm the phase-dependent ODE parameter values and Rt (reproduction number) by plotting.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -881,19 +883,19 @@
 </div>
 <div class="output_area rendered_html docutils container">
 <style type="text/css">
-#T_5fd35_row0_col3, #T_5fd35_row1_col3, #T_5fd35_row2_col0, #T_5fd35_row2_col1, #T_5fd35_row3_col0, #T_5fd35_row3_col1 {
+#T_61d75_row0_col3, #T_61d75_row1_col3, #T_61d75_row2_col0, #T_61d75_row2_col1, #T_61d75_row3_col0, #T_61d75_row3_col1 {
   background-color: yellow;
 }
 </style>
-<table id="T_5fd35">
+<table id="T_61d75">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_5fd35_level0_col0" class="col_heading level0 col0" >Rt</th>
-      <th id="T_5fd35_level0_col1" class="col_heading level0 col1" >rho</th>
-      <th id="T_5fd35_level0_col2" class="col_heading level0 col2" >sigma</th>
-      <th id="T_5fd35_level0_col3" class="col_heading level0 col3" >1/beta [day]</th>
-      <th id="T_5fd35_level0_col4" class="col_heading level0 col4" >1/gamma [day]</th>
+      <th id="T_61d75_level0_col0" class="col_heading level0 col0" >Rt</th>
+      <th id="T_61d75_level0_col1" class="col_heading level0 col1" >rho</th>
+      <th id="T_61d75_level0_col2" class="col_heading level0 col2" >sigma</th>
+      <th id="T_61d75_level0_col3" class="col_heading level0 col3" >1/beta [day]</th>
+      <th id="T_61d75_level0_col4" class="col_heading level0 col4" >1/gamma [day]</th>
     </tr>
     <tr>
       <th class="index_name level0" >Date</th>
@@ -906,43 +908,43 @@
   </thead>
   <tbody>
     <tr>
-      <th id="T_5fd35_level0_row0" class="row_heading level0 row0" >2022-02-27 00:00:00</th>
-      <td id="T_5fd35_row0_col0" class="data row0 col0" >2.670000</td>
-      <td id="T_5fd35_row0_col1" class="data row0 col1" >0.200000</td>
-      <td id="T_5fd35_row0_col2" class="data row0 col2" >0.075000</td>
-      <td id="T_5fd35_row0_col3" class="data row0 col3" >5</td>
-      <td id="T_5fd35_row0_col4" class="data row0 col4" >13</td>
+      <th id="T_61d75_level0_row0" class="row_heading level0 row0" >2022-02-27 00:00:00</th>
+      <td id="T_61d75_row0_col0" class="data row0 col0" >2.670000</td>
+      <td id="T_61d75_row0_col1" class="data row0 col1" >0.200000</td>
+      <td id="T_61d75_row0_col2" class="data row0 col2" >0.075000</td>
+      <td id="T_61d75_row0_col3" class="data row0 col3" >5</td>
+      <td id="T_61d75_row0_col4" class="data row0 col4" >13</td>
     </tr>
     <tr>
-      <th id="T_5fd35_level0_row1" class="row_heading level0 row1" >2022-02-28 00:00:00</th>
-      <td id="T_5fd35_row1_col0" class="data row1 col0" >2.670000</td>
-      <td id="T_5fd35_row1_col1" class="data row1 col1" >0.200000</td>
-      <td id="T_5fd35_row1_col2" class="data row1 col2" >0.075000</td>
-      <td id="T_5fd35_row1_col3" class="data row1 col3" >5</td>
-      <td id="T_5fd35_row1_col4" class="data row1 col4" >13</td>
+      <th id="T_61d75_level0_row1" class="row_heading level0 row1" >2022-02-28 00:00:00</th>
+      <td id="T_61d75_row1_col0" class="data row1 col0" >2.670000</td>
+      <td id="T_61d75_row1_col1" class="data row1 col1" >0.200000</td>
+      <td id="T_61d75_row1_col2" class="data row1 col2" >0.075000</td>
+      <td id="T_61d75_row1_col3" class="data row1 col3" >5</td>
+      <td id="T_61d75_row1_col4" class="data row1 col4" >13</td>
     </tr>
     <tr>
-      <th id="T_5fd35_level0_row2" class="row_heading level0 row2" >2022-03-01 00:00:00</th>
-      <td id="T_5fd35_row2_col0" class="data row2 col0" >5.330000</td>
-      <td id="T_5fd35_row2_col1" class="data row2 col1" >0.400000</td>
-      <td id="T_5fd35_row2_col2" class="data row2 col2" >0.075000</td>
-      <td id="T_5fd35_row2_col3" class="data row2 col3" >2</td>
-      <td id="T_5fd35_row2_col4" class="data row2 col4" >13</td>
+      <th id="T_61d75_level0_row2" class="row_heading level0 row2" >2022-03-01 00:00:00</th>
+      <td id="T_61d75_row2_col0" class="data row2 col0" >5.330000</td>
+      <td id="T_61d75_row2_col1" class="data row2 col1" >0.400000</td>
+      <td id="T_61d75_row2_col2" class="data row2 col2" >0.075000</td>
+      <td id="T_61d75_row2_col3" class="data row2 col3" >2</td>
+      <td id="T_61d75_row2_col4" class="data row2 col4" >13</td>
     </tr>
     <tr>
-      <th id="T_5fd35_level0_row3" class="row_heading level0 row3" >2022-03-02 00:00:00</th>
-      <td id="T_5fd35_row3_col0" class="data row3 col0" >5.330000</td>
-      <td id="T_5fd35_row3_col1" class="data row3 col1" >0.400000</td>
-      <td id="T_5fd35_row3_col2" class="data row3 col2" >0.075000</td>
-      <td id="T_5fd35_row3_col3" class="data row3 col3" >2</td>
-      <td id="T_5fd35_row3_col4" class="data row3 col4" >13</td>
+      <th id="T_61d75_level0_row3" class="row_heading level0 row3" >2022-03-02 00:00:00</th>
+      <td id="T_61d75_row3_col0" class="data row3 col0" >5.330000</td>
+      <td id="T_61d75_row3_col1" class="data row3 col1" >0.400000</td>
+      <td id="T_61d75_row3_col2" class="data row3 col2" >0.075000</td>
+      <td id="T_61d75_row3_col3" class="data row3 col3" >2</td>
+      <td id="T_61d75_row3_col4" class="data row3 col4" >13</td>
     </tr>
   </tbody>
 </table></div>
 </div>
-</div>
-<div class="section" id="1-4.-Simulation">
-<h3>1-4. Simulation<a class="headerlink" href="#1-4.-Simulation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="1-4.-Simulation">
+<h3>1-4. Simulation<a class="headerlink" href="#1-4.-Simulation" title="Link to this heading"></a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">Dynamics().simulate()</span></code>, simulate the phase-dependent ODE model with numerical analysis of each phase. Because we did not specify the initial values on the start date of the 1st phase, simulated values on the 1st phase’s start date will be used as the initial values of the 1st phase.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -981,9 +983,9 @@
 <img alt="_images/04_phase_dependent_24_0.png" src="_images/04_phase_dependent_24_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="1-5.-Observable-variables">
-<h3>1-5. Observable variables<a class="headerlink" href="#1-5.-Observable-variables" title="Permalink to this heading"></a></h3>
+</section>
+<section id="1-5.-Observable-variables">
+<h3>1-5. Observable variables<a class="headerlink" href="#1-5.-Observable-variables" title="Link to this heading"></a></h3>
 <p>Actually, observable variables are Population/Confirmed/Infected/Recovered. We can calculate Population and Confirmed as follows.</p>
 <ul class="simple">
 <li><p>Confirmed = Infected + Fatal + Recovered</p></li>
@@ -1008,13 +1010,13 @@
 <img alt="_images/04_phase_dependent_26_0.png" src="_images/04_phase_dependent_26_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="2.-S-R-change-point-analysis">
-<h2>2. S-R change point analysis<a class="headerlink" href="#2.-S-R-change-point-analysis" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+<section id="2.-S-R-change-point-analysis">
+<h2>2. S-R change point analysis<a class="headerlink" href="#2.-S-R-change-point-analysis" title="Link to this heading"></a></h2>
 <p>S-R change point analysis (S-R trend analysis) is a technique to find the change points of phases with actual time-series data.</p>
-<div class="section" id="2-1.-S-R-plane">
-<h3>2-1. S-R plane<a class="headerlink" href="#2-1.-S-R-plane" title="Permalink to this heading"></a></h3>
+<section id="2-1.-S-R-plane">
+<h3>2-1. S-R plane<a class="headerlink" href="#2-1.-S-R-plane" title="Link to this heading"></a></h3>
 <p>Author of the Kaggle Notebook considered S-R plane. This idea (S-R plane) is from <a class="reference external" href="https://dc.etsu.edu/cgi/viewcontent.cgi?article=3102&amp;context=etd">Balkew, Teshome Mogessie, “The SIR Model When S(t) is a Multi-Exponential Function.” (2010).Electronic Theses and Dissertations.Paper 1747</a>. This is for simplest SIR model, but we can apply it to SIR-F model.</p>
 <p>We will focus on the following equations of SIR-derived ODE models.</p>
 <p><span class="math">\begin{align*}
@@ -1047,9 +1049,9 @@
 <div class="math notranslate nohighlight">
 $\displaystyle S{\left(R \right)} = N e^{- \frac{R \beta}{N \gamma}}$</div></div>
 </div>
-</div>
-<div class="section" id="2-2.-log(S)-vs.-R-plane">
-<h3>2-2. log(S) vs. R plane<a class="headerlink" href="#2-2.-log(S)-vs.-R-plane" title="Permalink to this heading"></a></h3>
+</section>
+<section id="2-2.-log(S)-vs.-R-plane">
+<h3>2-2. log(S) vs. R plane<a class="headerlink" href="#2-2.-log(S)-vs.-R-plane" title="Link to this heading"></a></h3>
 <p>Then,</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
@@ -1103,9 +1105,9 @@ $\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - 
 <div class="line">Limitations:</div>
 <div class="line">Because <span class="math notranslate nohighlight">\(a=\cfrac{\beta}{N \gamma}\)</span>, the changes of <span class="math notranslate nohighlight">\(\alpha_1\)</span> and <span class="math notranslate nohighlight">\(\alpha_2\)</span> of SIR-D/SIR-F model cannot be detected.</div>
 </div>
-</div>
-<div class="section" id="2-3.-Plane-of-phase-dependent-models">
-<h3>2-3. Plane of phase-dependent models<a class="headerlink" href="#2-3.-Plane-of-phase-dependent-models" title="Permalink to this heading"></a></h3>
+</section>
+<section id="2-3.-Plane-of-phase-dependent-models">
+<h3>2-3. Plane of phase-dependent models<a class="headerlink" href="#2-3.-Plane-of-phase-dependent-models" title="Link to this heading"></a></h3>
 <p>Correlation coefficient is about -1.0 when ODE parameter values are constant The slope of the line may change when the ODE parameter values are changed.</p>
 <p>Sample data of phase-dependent SIR-F model is here.</p>
 <div class="nbinput docutils container">
@@ -1133,46 +1135,46 @@ $\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - 
 </div>
 <div class="output_area rendered_html docutils container">
 <style type="text/css">
-#T_cbe37_row0_col2 {
+#T_166d9_row0_col2 {
   background-color: #dddbec;
   color: #000000;
 }
-#T_cbe37_row0_col3, #T_cbe37_row0_col4, #T_cbe37_row1_col4, #T_cbe37_row1_col5, #T_cbe37_row2_col4, #T_cbe37_row3_col2, #T_cbe37_row3_col5, #T_cbe37_row4_col4, #T_cbe37_row4_col5, #T_cbe37_row4_col6, #T_cbe37_row5_col4, #T_cbe37_row5_col5, #T_cbe37_row5_col6 {
+#T_166d9_row0_col3, #T_166d9_row0_col4, #T_166d9_row1_col4, #T_166d9_row1_col5, #T_166d9_row2_col4, #T_166d9_row3_col2, #T_166d9_row3_col5, #T_166d9_row4_col4, #T_166d9_row4_col5, #T_166d9_row4_col6, #T_166d9_row5_col4, #T_166d9_row5_col5, #T_166d9_row5_col6 {
   background-color: #023858;
   color: #f1f1f1;
 }
-#T_cbe37_row0_col5 {
+#T_166d9_row0_col5 {
   background-color: #dbdaeb;
   color: #000000;
 }
-#T_cbe37_row0_col6, #T_cbe37_row1_col6, #T_cbe37_row2_col2, #T_cbe37_row2_col5, #T_cbe37_row2_col6, #T_cbe37_row3_col4, #T_cbe37_row3_col6, #T_cbe37_row5_col3 {
+#T_166d9_row0_col6, #T_166d9_row1_col6, #T_166d9_row2_col2, #T_166d9_row2_col5, #T_166d9_row2_col6, #T_166d9_row3_col4, #T_166d9_row3_col6, #T_166d9_row5_col3 {
   background-color: #fff7fb;
   color: #000000;
 }
-#T_cbe37_row1_col2 {
+#T_166d9_row1_col2 {
   background-color: #034369;
   color: #f1f1f1;
 }
-#T_cbe37_row1_col3, #T_cbe37_row2_col3, #T_cbe37_row3_col3, #T_cbe37_row4_col3 {
+#T_166d9_row1_col3, #T_166d9_row2_col3, #T_166d9_row3_col3, #T_166d9_row4_col3 {
   background-color: #f0eaf4;
   color: #000000;
 }
-#T_cbe37_row4_col2, #T_cbe37_row5_col2 {
+#T_166d9_row4_col2, #T_166d9_row5_col2 {
   background-color: #d8d7e9;
   color: #000000;
 }
 </style>
-<table id="T_cbe37">
+<table id="T_166d9">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_cbe37_level0_col0" class="col_heading level0 col0" >Start</th>
-      <th id="T_cbe37_level0_col1" class="col_heading level0 col1" >End</th>
-      <th id="T_cbe37_level0_col2" class="col_heading level0 col2" >Rt</th>
-      <th id="T_cbe37_level0_col3" class="col_heading level0 col3" >theta</th>
-      <th id="T_cbe37_level0_col4" class="col_heading level0 col4" >kappa</th>
-      <th id="T_cbe37_level0_col5" class="col_heading level0 col5" >rho</th>
-      <th id="T_cbe37_level0_col6" class="col_heading level0 col6" >sigma</th>
+      <th id="T_166d9_level0_col0" class="col_heading level0 col0" >Start</th>
+      <th id="T_166d9_level0_col1" class="col_heading level0 col1" >End</th>
+      <th id="T_166d9_level0_col2" class="col_heading level0 col2" >Rt</th>
+      <th id="T_166d9_level0_col3" class="col_heading level0 col3" >theta</th>
+      <th id="T_166d9_level0_col4" class="col_heading level0 col4" >kappa</th>
+      <th id="T_166d9_level0_col5" class="col_heading level0 col5" >rho</th>
+      <th id="T_166d9_level0_col6" class="col_heading level0 col6" >sigma</th>
     </tr>
     <tr>
       <th class="index_name level0" >Phase</th>
@@ -1187,64 +1189,64 @@ $\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - 
   </thead>
   <tbody>
     <tr>
-      <th id="T_cbe37_level0_row0" class="row_heading level0 row0" >0th</th>
-      <td id="T_cbe37_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
-      <td id="T_cbe37_row0_col1" class="data row0 col1" >2022-02-17 00:00:00</td>
-      <td id="T_cbe37_row0_col2" class="data row0 col2" >2.5000</td>
-      <td id="T_cbe37_row0_col3" class="data row0 col3" >0.0020</td>
-      <td id="T_cbe37_row0_col4" class="data row0 col4" >0.0050</td>
-      <td id="T_cbe37_row0_col5" class="data row0 col5" >0.2000</td>
-      <td id="T_cbe37_row0_col6" class="data row0 col6" >0.0750</td>
+      <th id="T_166d9_level0_row0" class="row_heading level0 row0" >0th</th>
+      <td id="T_166d9_row0_col0" class="data row0 col0" >2022-01-01 00:00:00</td>
+      <td id="T_166d9_row0_col1" class="data row0 col1" >2022-02-17 00:00:00</td>
+      <td id="T_166d9_row0_col2" class="data row0 col2" >2.5000</td>
+      <td id="T_166d9_row0_col3" class="data row0 col3" >0.0020</td>
+      <td id="T_166d9_row0_col4" class="data row0 col4" >0.0050</td>
+      <td id="T_166d9_row0_col5" class="data row0 col5" >0.2000</td>
+      <td id="T_166d9_row0_col6" class="data row0 col6" >0.0750</td>
     </tr>
     <tr>
-      <th id="T_cbe37_level0_row1" class="row_heading level0 row1" >1st</th>
-      <td id="T_cbe37_row1_col0" class="data row1 col0" >2022-02-18 00:00:00</td>
-      <td id="T_cbe37_row1_col1" class="data row1 col1" >2022-02-23 00:00:00</td>
-      <td id="T_cbe37_row1_col2" class="data row1 col2" >5.0000</td>
-      <td id="T_cbe37_row1_col3" class="data row1 col3" >0.0002</td>
-      <td id="T_cbe37_row1_col4" class="data row1 col4" >0.0050</td>
-      <td id="T_cbe37_row1_col5" class="data row1 col5" >0.4000</td>
-      <td id="T_cbe37_row1_col6" class="data row1 col6" >0.0750</td>
+      <th id="T_166d9_level0_row1" class="row_heading level0 row1" >1st</th>
+      <td id="T_166d9_row1_col0" class="data row1 col0" >2022-02-18 00:00:00</td>
+      <td id="T_166d9_row1_col1" class="data row1 col1" >2022-02-23 00:00:00</td>
+      <td id="T_166d9_row1_col2" class="data row1 col2" >5.0000</td>
+      <td id="T_166d9_row1_col3" class="data row1 col3" >0.0002</td>
+      <td id="T_166d9_row1_col4" class="data row1 col4" >0.0050</td>
+      <td id="T_166d9_row1_col5" class="data row1 col5" >0.4000</td>
+      <td id="T_166d9_row1_col6" class="data row1 col6" >0.0750</td>
     </tr>
     <tr>
-      <th id="T_cbe37_level0_row2" class="row_heading level0 row2" >2nd</th>
-      <td id="T_cbe37_row2_col0" class="data row2 col0" >2022-02-24 00:00:00</td>
-      <td id="T_cbe37_row2_col1" class="data row2 col1" >2022-02-28 00:00:00</td>
-      <td id="T_cbe37_row2_col2" class="data row2 col2" >1.8700</td>
-      <td id="T_cbe37_row2_col3" class="data row2 col3" >0.0002</td>
-      <td id="T_cbe37_row2_col4" class="data row2 col4" >0.0050</td>
-      <td id="T_cbe37_row2_col5" class="data row2 col5" >0.1500</td>
-      <td id="T_cbe37_row2_col6" class="data row2 col6" >0.0750</td>
+      <th id="T_166d9_level0_row2" class="row_heading level0 row2" >2nd</th>
+      <td id="T_166d9_row2_col0" class="data row2 col0" >2022-02-24 00:00:00</td>
+      <td id="T_166d9_row2_col1" class="data row2 col1" >2022-02-28 00:00:00</td>
+      <td id="T_166d9_row2_col2" class="data row2 col2" >1.8700</td>
+      <td id="T_166d9_row2_col3" class="data row2 col3" >0.0002</td>
+      <td id="T_166d9_row2_col4" class="data row2 col4" >0.0050</td>
+      <td id="T_166d9_row2_col5" class="data row2 col5" >0.1500</td>
+      <td id="T_166d9_row2_col6" class="data row2 col6" >0.0750</td>
     </tr>
     <tr>
-      <th id="T_cbe37_level0_row3" class="row_heading level0 row3" >3rd</th>
-      <td id="T_cbe37_row3_col0" class="data row3 col0" >2022-03-01 00:00:00</td>
-      <td id="T_cbe37_row3_col1" class="data row3 col1" >2022-03-07 00:00:00</td>
-      <td id="T_cbe37_row3_col2" class="data row3 col2" >5.1300</td>
-      <td id="T_cbe37_row3_col3" class="data row3 col3" >0.0002</td>
-      <td id="T_cbe37_row3_col4" class="data row3 col4" >0.0030</td>
-      <td id="T_cbe37_row3_col5" class="data row3 col5" >0.4000</td>
-      <td id="T_cbe37_row3_col6" class="data row3 col6" >0.0750</td>
+      <th id="T_166d9_level0_row3" class="row_heading level0 row3" >3rd</th>
+      <td id="T_166d9_row3_col0" class="data row3 col0" >2022-03-01 00:00:00</td>
+      <td id="T_166d9_row3_col1" class="data row3 col1" >2022-03-07 00:00:00</td>
+      <td id="T_166d9_row3_col2" class="data row3 col2" >5.1300</td>
+      <td id="T_166d9_row3_col3" class="data row3 col3" >0.0002</td>
+      <td id="T_166d9_row3_col4" class="data row3 col4" >0.0030</td>
+      <td id="T_166d9_row3_col5" class="data row3 col5" >0.4000</td>
+      <td id="T_166d9_row3_col6" class="data row3 col6" >0.0750</td>
     </tr>
     <tr>
-      <th id="T_cbe37_level0_row4" class="row_heading level0 row4" >4th</th>
-      <td id="T_cbe37_row4_col0" class="data row4 col0" >2022-03-08 00:00:00</td>
-      <td id="T_cbe37_row4_col1" class="data row4 col1" >2022-03-14 00:00:00</td>
-      <td id="T_cbe37_row4_col2" class="data row4 col2" >2.5800</td>
-      <td id="T_cbe37_row4_col3" class="data row4 col3" >0.0002</td>
-      <td id="T_cbe37_row4_col4" class="data row4 col4" >0.0050</td>
-      <td id="T_cbe37_row4_col5" class="data row4 col5" >0.4000</td>
-      <td id="T_cbe37_row4_col6" class="data row4 col6" >0.1500</td>
+      <th id="T_166d9_level0_row4" class="row_heading level0 row4" >4th</th>
+      <td id="T_166d9_row4_col0" class="data row4 col0" >2022-03-08 00:00:00</td>
+      <td id="T_166d9_row4_col1" class="data row4 col1" >2022-03-14 00:00:00</td>
+      <td id="T_166d9_row4_col2" class="data row4 col2" >2.5800</td>
+      <td id="T_166d9_row4_col3" class="data row4 col3" >0.0002</td>
+      <td id="T_166d9_row4_col4" class="data row4 col4" >0.0050</td>
+      <td id="T_166d9_row4_col5" class="data row4 col5" >0.4000</td>
+      <td id="T_166d9_row4_col6" class="data row4 col6" >0.1500</td>
     </tr>
     <tr>
-      <th id="T_cbe37_level0_row5" class="row_heading level0 row5" >5th</th>
-      <td id="T_cbe37_row5_col0" class="data row5 col0" >2022-03-15 00:00:00</td>
-      <td id="T_cbe37_row5_col1" class="data row5 col1" >2022-06-30 00:00:00</td>
-      <td id="T_cbe37_row5_col2" class="data row5 col2" >2.5800</td>
-      <td id="T_cbe37_row5_col3" class="data row5 col3" >0.0000</td>
-      <td id="T_cbe37_row5_col4" class="data row5 col4" >0.0050</td>
-      <td id="T_cbe37_row5_col5" class="data row5 col5" >0.4000</td>
-      <td id="T_cbe37_row5_col6" class="data row5 col6" >0.1500</td>
+      <th id="T_166d9_level0_row5" class="row_heading level0 row5" >5th</th>
+      <td id="T_166d9_row5_col0" class="data row5 col0" >2022-03-15 00:00:00</td>
+      <td id="T_166d9_row5_col1" class="data row5 col1" >2022-06-30 00:00:00</td>
+      <td id="T_166d9_row5_col2" class="data row5 col2" >2.5800</td>
+      <td id="T_166d9_row5_col3" class="data row5 col3" >0.0000</td>
+      <td id="T_166d9_row5_col4" class="data row5 col4" >0.0050</td>
+      <td id="T_166d9_row5_col5" class="data row5 col5" >0.4000</td>
+      <td id="T_166d9_row5_col6" class="data row5 col6" >0.1500</td>
     </tr>
   </tbody>
 </table></div>
@@ -1301,9 +1303,9 @@ $\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - 
 </div>
 </div>
 <p>With the plotting, we can confirm most of the change points (except for 5th - 6th: difficult because the change was for <span class="math notranslate nohighlight">\(\alpha_1\)</span>).</p>
-</div>
-<div class="section" id="2.4-Time-series-segmentation">
-<h3>2.4 Time-series segmentation<a class="headerlink" href="#2.4-Time-series-segmentation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="2.4-Time-series-segmentation">
+<h3>2.4 Time-series segmentation<a class="headerlink" href="#2.4-Time-series-segmentation" title="Link to this heading"></a></h3>
 <p>The previous sub-sections demonstrated that change points of S-R trend suggest change points of phases. Here, we will detect the change points of S-R trend with <code class="docutils literal notranslate"><span class="pre">Dynamics().detect()</span></code> via <code class="docutils literal notranslate"><span class="pre">Dynamics.segment()</span></code>. They uses <a class="reference external" href="https://github.com/deepcharles/ruptures">ruptures library: change point detection in Python</a> for off-line change point detection.</p>
 <p>We will prepare a dataset which has the 0th - 5th phase.</p>
 <div class="nbinput docutils container">
@@ -1781,13 +1783,13 @@ $\displaystyle \log{\left(S{\left(R \right)} \right)} = \log{\left(N \right)} - 
 </table>
 </div></div>
 </div>
-</div>
-</div>
-<div class="section" id="3.-ODE-parameter-estimation">
-<h2>3. ODE parameter estimation<a class="headerlink" href="#3.-ODE-parameter-estimation" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+<section id="3.-ODE-parameter-estimation">
+<h2>3. ODE parameter estimation<a class="headerlink" href="#3.-ODE-parameter-estimation" title="Link to this heading"></a></h2>
 <p>This section demonstrates how to estimate tau value (constant for all phases) and the ODE parameter values of phases.</p>
-<div class="section" id="3.1-Preparation">
-<h3>3.1 Preparation<a class="headerlink" href="#3.1-Preparation" title="Permalink to this heading"></a></h3>
+<section id="3.1-Preparation">
+<h3>3.1 Preparation<a class="headerlink" href="#3.1-Preparation" title="Link to this heading"></a></h3>
 <p>Create an <code class="docutils literal notranslate"><span class="pre">Dynamics()</span></code> instance which has a dataset with 6 phases (the 0th - 5th). The instance knows change points, but does not know tau value and ODE parameter values.</p>
 <p>Create dataset.</p>
 <div class="nbinput docutils container">
@@ -1909,9 +1911,9 @@ Tau value [min]: un-set
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="3.2-Tau-estimation">
-<h3>3.2 Tau estimation<a class="headerlink" href="#3.2-Tau-estimation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="3.2-Tau-estimation">
+<h3>3.2 Tau estimation<a class="headerlink" href="#3.2-Tau-estimation" title="Link to this heading"></a></h3>
 <p>Before ODE parameter estimation, we need to select tau value [min]. Tau value is expected to be constant for all phases because tau value is a parameter used to convert actual time (with unit [min]) to time steps (without units) from divisors of 1440).</p>
 <p><code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_tau(metric=&quot;RMSLE&quot;,</span> <span class="pre">q=0.5,</span> <span class="pre">digits=None,</span> <span class="pre">n_jobs=None)</span></code> (as default) sets the best tau value for the registered data, estimating ODE parameters with quantiles.</p>
 <p>Arguments:</p>
@@ -1964,9 +1966,9 @@ Tau value [min]: 48
 <img alt="_images/04_phase_dependent_68_1.png" src="_images/04_phase_dependent_68_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="3.3-ODE-parameter-estimation">
-<h3>3.3 ODE parameter estimation<a class="headerlink" href="#3.3-ODE-parameter-estimation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="3.3-ODE-parameter-estimation">
+<h3>3.3 ODE parameter estimation<a class="headerlink" href="#3.3-ODE-parameter-estimation" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_params(metric=&quot;RMSLE&quot;,</span> <span class="pre">digits=None,</span> <span class="pre">n_jobs=None,</span> <span class="pre">**kwargs)</span></code> (as default) sets ODE parameter values optimized for the registered data with hyperparameter optimization using <a class="reference external" href="https://github.com/optuna/optuna">Optuna library</a>.</p>
 <p>Arguments of <code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_params</span></code>:</p>
 <ul class="simple">
@@ -2004,23 +2006,23 @@ Tau value [min]: 48
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-08-26 at 15:00:40 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">
+2024-02-04 at 14:28:17 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">
 &lt;SIR-F Model: parameter estimation&gt;</span>
-2023-08-26 at 15:00:40 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Running optimization with 2 CPUs...</span>
+2024-02-04 at 14:28:17 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Running optimization with 4 CPUs...</span>
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b2a2cc4ae537416192a9ea992c0b69ed"}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5a1b890c847242d8a30efa925e6f52c9"}</script></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-08-26 at 15:01:22 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Completed optimization. Total: 0 min 41 sec
+2024-02-04 at 14:28:41 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Completed optimization. Total: 0 min 23 sec
 </span>
 </pre></div></div>
 </div>
@@ -2068,63 +2070,63 @@ Tau value [min]: 48
   <tbody>
     <tr>
       <th>2022-01-01</th>
-      <td>0.000715</td>
-      <td>0.000174</td>
-      <td>0.006648</td>
-      <td>0.002478</td>
-      <td>0.00522</td>
-      <td>74</td>
-      <td>0 min  3 sec</td>
-    </tr>
-    <tr>
-      <th>2022-02-18</th>
-      <td>0.000336</td>
-      <td>0.000187</td>
-      <td>0.015656</td>
-      <td>0.002806</td>
-      <td>0.057964</td>
-      <td>284</td>
-      <td>0 min 10 sec</td>
+      <td>0.001586</td>
+      <td>0.000175</td>
+      <td>0.006537</td>
+      <td>0.00248</td>
+      <td>0.056584</td>
+      <td>83</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>2022-02-24</th>
-      <td>0.00002</td>
+      <td>0.000031</td>
       <td>0.000212</td>
-      <td>0.006512</td>
+      <td>0.006509</td>
       <td>0.003171</td>
-      <td>0.037842</td>
-      <td>261</td>
-      <td>0 min  9 sec</td>
-    </tr>
-    <tr>
-      <th>2022-03-08</th>
-      <td>0.000015</td>
-      <td>0.000204</td>
-      <td>0.01698</td>
-      <td>0.006123</td>
-      <td>0.062128</td>
-      <td>541</td>
-      <td>0 min 22 sec</td>
+      <td>0.037893</td>
+      <td>221</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>2022-03-01</th>
-      <td>0.00016</td>
+      <td>0.000003</td>
       <td>0.000115</td>
-      <td>0.016242</td>
-      <td>0.002899</td>
-      <td>0.054891</td>
-      <td>636</td>
-      <td>0 min 27 sec</td>
+      <td>0.016225</td>
+      <td>0.002869</td>
+      <td>0.054904</td>
+      <td>219</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>2022-03-08</th>
+      <td>0.000037</td>
+      <td>0.000204</td>
+      <td>0.01693</td>
+      <td>0.006109</td>
+      <td>0.061406</td>
+      <td>285</td>
+      <td>0 min 13 sec</td>
+    </tr>
+    <tr>
+      <th>2022-02-18</th>
+      <td>0.00003</td>
+      <td>0.000186</td>
+      <td>0.015258</td>
+      <td>0.002838</td>
+      <td>0.04687</td>
+      <td>570</td>
+      <td>0 min 22 sec</td>
     </tr>
     <tr>
       <th>2022-03-15</th>
-      <td>0.433412</td>
-      <td>0.000069</td>
-      <td>0.012135</td>
-      <td>0.004786</td>
-      <td>0.062484</td>
-      <td>114</td>
-      <td>0 min  6 sec</td>
+      <td>0.102932</td>
+      <td>0.000089</td>
+      <td>0.013803</td>
+      <td>0.005038</td>
+      <td>0.008034</td>
+      <td>155</td>
+      <td>0 min 12 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2193,13 +2195,13 @@ Tau value [min]: 48
       <th>0th</th>
       <td>2022-01-01</td>
       <td>2022-02-17</td>
-      <td>2.51</td>
-      <td>0.000715</td>
-      <td>0.000174</td>
-      <td>0.006648</td>
-      <td>0.002478</td>
-      <td>0.001</td>
-      <td>192</td>
+      <td>2.46</td>
+      <td>0.001586</td>
+      <td>0.000175</td>
+      <td>0.006537</td>
+      <td>0.00248</td>
+      <td>0.002</td>
+      <td>191</td>
       <td>5</td>
       <td>13</td>
     </tr>
@@ -2207,13 +2209,13 @@ Tau value [min]: 48
       <th>1st</th>
       <td>2022-02-18</td>
       <td>2022-02-23</td>
-      <td>5.23</td>
-      <td>0.000336</td>
-      <td>0.000187</td>
-      <td>0.015656</td>
-      <td>0.002806</td>
+      <td>5.04</td>
+      <td>0.00003</td>
+      <td>0.000186</td>
+      <td>0.015258</td>
+      <td>0.002838</td>
       <td>0.0</td>
-      <td>178</td>
+      <td>179</td>
       <td>2</td>
       <td>12</td>
     </tr>
@@ -2221,10 +2223,10 @@ Tau value [min]: 48
       <th>2nd</th>
       <td>2022-02-24</td>
       <td>2022-02-28</td>
-      <td>1.93</td>
-      <td>0.00002</td>
+      <td>1.92</td>
+      <td>0.000031</td>
       <td>0.000212</td>
-      <td>0.006512</td>
+      <td>0.006509</td>
       <td>0.003171</td>
       <td>0.0</td>
       <td>157</td>
@@ -2235,25 +2237,25 @@ Tau value [min]: 48
       <th>3rd</th>
       <td>2022-03-01</td>
       <td>2022-03-07</td>
-      <td>5.39</td>
-      <td>0.00016</td>
+      <td>5.44</td>
+      <td>0.000003</td>
       <td>0.000115</td>
-      <td>0.016242</td>
-      <td>0.002899</td>
+      <td>0.016225</td>
+      <td>0.002869</td>
       <td>0.0</td>
-      <td>289</td>
+      <td>290</td>
       <td>2</td>
-      <td>11</td>
+      <td>12</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>2022-03-08</td>
       <td>2022-03-14</td>
       <td>2.68</td>
-      <td>0.000015</td>
+      <td>0.000037</td>
       <td>0.000204</td>
-      <td>0.01698</td>
-      <td>0.006123</td>
+      <td>0.01693</td>
+      <td>0.006109</td>
       <td>0.0</td>
       <td>163</td>
       <td>2</td>
@@ -2263,27 +2265,27 @@ Tau value [min]: 48
       <th>5th</th>
       <td>2022-03-15</td>
       <td>2022-06-30</td>
-      <td>1.42</td>
-      <td>0.433412</td>
-      <td>0.000069</td>
-      <td>0.012135</td>
-      <td>0.004786</td>
-      <td>0.433</td>
-      <td>486</td>
-      <td>3</td>
+      <td>2.42</td>
+      <td>0.102932</td>
+      <td>0.000089</td>
+      <td>0.013803</td>
+      <td>0.005038</td>
+      <td>0.103</td>
+      <td>376</td>
+      <td>2</td>
       <td>7</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-</div>
-</div>
-<div class="section" id="4.-With-actual-data">
-<h2>4. With actual data<a class="headerlink" href="#4.-With-actual-data" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+<section id="4.-With-actual-data">
+<h2>4. With actual data<a class="headerlink" href="#4.-With-actual-data" title="Link to this heading"></a></h2>
 <p>This section demonstrates how to divide actual time-series data with phases (“S-R change point analysis”) and to estimate ODE parameter values of phases (“ODE parameter estimation”).</p>
-<div class="section" id="4-1.-Data-preparation">
-<h3>4-1. Data preparation<a class="headerlink" href="#4-1.-Data-preparation" title="Permalink to this heading"></a></h3>
+<section id="4-1.-Data-preparation">
+<h3>4-1. Data preparation<a class="headerlink" href="#4-1.-Data-preparation" title="Link to this heading"></a></h3>
 <p>Prepare actual prefecture-level time-series data in Japan for demonstration.</p>
 <p>Download the dataset.</p>
 <div class="nbinput nblast docutils container">
@@ -2468,10 +2470,10 @@ fully complemented recovered data
   <tbody>
     <tr>
       <th>2023-05-04</th>
-      <td>92738009</td>
-      <td>183209</td>
-      <td>33533260</td>
-      <td>74622</td>
+      <td>92738009.0</td>
+      <td>183209.0</td>
+      <td>33533260.0</td>
+      <td>74622.0</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
@@ -2479,10 +2481,10 @@ fully complemented recovered data
     </tr>
     <tr>
       <th>2023-05-05</th>
-      <td>92732198</td>
-      <td>177397</td>
-      <td>33544864</td>
-      <td>74641</td>
+      <td>92732198.0</td>
+      <td>177397.0</td>
+      <td>33544864.0</td>
+      <td>74641.0</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
@@ -2490,10 +2492,10 @@ fully complemented recovered data
     </tr>
     <tr>
       <th>2023-05-06</th>
-      <td>92725964</td>
-      <td>171546</td>
-      <td>33556937</td>
-      <td>74653</td>
+      <td>92725964.0</td>
+      <td>171546.0</td>
+      <td>33556937.0</td>
+      <td>74653.0</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
@@ -2501,10 +2503,10 @@ fully complemented recovered data
     </tr>
     <tr>
       <th>2023-05-07</th>
-      <td>92711524</td>
-      <td>175456</td>
-      <td>33567458</td>
-      <td>74662</td>
+      <td>92711524.0</td>
+      <td>175456.0</td>
+      <td>33567458.0</td>
+      <td>74662.0</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
@@ -2512,10 +2514,10 @@ fully complemented recovered data
     </tr>
     <tr>
       <th>2023-05-08</th>
-      <td>92702197</td>
-      <td>174762</td>
-      <td>33577464</td>
-      <td>74677</td>
+      <td>92702197.0</td>
+      <td>174762.0</td>
+      <td>33577464.0</td>
+      <td>74677.0</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
       <td>&lt;NA&gt;</td>
@@ -2576,9 +2578,9 @@ fully complemented recovered data
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="4-2.-Time-series-segmentation">
-<h3>4-2. Time-series segmentation<a class="headerlink" href="#4-2.-Time-series-segmentation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="4-2.-Time-series-segmentation">
+<h3>4-2. Time-series segmentation<a class="headerlink" href="#4-2.-Time-series-segmentation" title="Link to this heading"></a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">Dynamics.segment()</span></code>, we will apply S-R change point analysis (trend analysis) to the prepared actual data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
@@ -2697,9 +2699,9 @@ fully complemented recovered data
 <p>2 rows × 68 columns</p>
 </div></div>
 </div>
-</div>
-<div class="section" id="4-3.-Parameter-estimation">
-<h3>4-3. Parameter estimation<a class="headerlink" href="#4-3.-Parameter-estimation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="4-3.-Parameter-estimation">
+<h3>4-3. Parameter estimation<a class="headerlink" href="#4-3.-Parameter-estimation" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Dynamics().estimate(**kwargs)</span></code> performs <code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_tau()</span></code> and <code class="docutils literal notranslate"><span class="pre">Dynamics().estimate_params()</span></code> in order.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
@@ -2717,24 +2719,23 @@ fully complemented recovered data
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-08-26 at 15:02:23 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">
+2024-02-04 at 14:29:32 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">
 &lt;SIR-F Model: parameter estimation&gt;</span>
-2023-08-26 at 15:02:23 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Running optimization with 2 CPUs...</span>
+2024-02-04 at 14:29:32 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Running optimization with 4 CPUs...</span>
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "651261f41bee4af285816d5717d11a2f"}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "9206da47601a475aab3cd4411e348871"}</script></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2023-08-26 at 15:02:23 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Running optimization with 2 CPUs...</span>
-2023-08-26 at 15:07:12 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Completed optimization. Total: 4 min 49 sec
+2024-02-04 at 14:31:58 | <span class="ansi-bold">INFO</span> | <span class="ansi-bold">Completed optimization. Total: 2 min 25 sec
 </span>
 Tau value [min]: 15
 </pre></div></div>
@@ -2794,71 +2795,71 @@ Tau value [min]: 15
       <th>0th</th>
       <td>2020-02-06</td>
       <td>2020-08-10</td>
-      <td>1.45</td>
-      <td>0.103412</td>
-      <td>0.000005</td>
-      <td>0.001241</td>
-      <td>0.000762</td>
-      <td>0.103</td>
-      <td>1962</td>
-      <td>8</td>
-      <td>14</td>
+      <td>1.75</td>
+      <td>0.14743</td>
+      <td>0.000001</td>
+      <td>0.001128</td>
+      <td>0.00055</td>
+      <td>0.147</td>
+      <td>17171</td>
+      <td>9</td>
+      <td>19</td>
     </tr>
     <tr>
       <th>1st</th>
       <td>2020-08-11</td>
       <td>2020-11-16</td>
-      <td>0.82</td>
-      <td>0.001159</td>
-      <td>0.000005</td>
-      <td>0.000503</td>
-      <td>0.000604</td>
-      <td>0.001</td>
-      <td>1904</td>
-      <td>21</td>
-      <td>17</td>
+      <td>0.85</td>
+      <td>0.000455</td>
+      <td>0.000011</td>
+      <td>0.000567</td>
+      <td>0.000656</td>
+      <td>0.0</td>
+      <td>966</td>
+      <td>18</td>
+      <td>16</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>2020-11-17</td>
       <td>2020-12-24</td>
       <td>1.67</td>
-      <td>0.000143</td>
-      <td>0.000009</td>
-      <td>0.000755</td>
-      <td>0.000442</td>
+      <td>0.000472</td>
+      <td>0.000007</td>
+      <td>0.00071</td>
+      <td>0.000418</td>
       <td>0.0</td>
-      <td>1195</td>
-      <td>14</td>
-      <td>24</td>
+      <td>1439</td>
+      <td>15</td>
+      <td>25</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>2020-12-25</td>
       <td>2021-01-16</td>
-      <td>1.46</td>
-      <td>0.003176</td>
+      <td>1.84</td>
+      <td>0.001861</td>
       <td>0.000007</td>
-      <td>0.000867</td>
-      <td>0.000584</td>
-      <td>0.003</td>
-      <td>1416</td>
-      <td>12</td>
-      <td>18</td>
+      <td>0.000997</td>
+      <td>0.000533</td>
+      <td>0.002</td>
+      <td>1446</td>
+      <td>10</td>
+      <td>20</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>2021-01-17</td>
       <td>2021-02-10</td>
       <td>0.78</td>
-      <td>0.00038</td>
-      <td>0.000011</td>
-      <td>0.000561</td>
-      <td>0.000709</td>
-      <td>0.0</td>
-      <td>973</td>
-      <td>19</td>
-      <td>15</td>
+      <td>0.001694</td>
+      <td>0.00001</td>
+      <td>0.000519</td>
+      <td>0.000657</td>
+      <td>0.002</td>
+      <td>1052</td>
+      <td>20</td>
+      <td>16</td>
     </tr>
     <tr>
       <th>...</th>
@@ -2878,27 +2879,27 @@ Tau value [min]: 15
       <th>63rd</th>
       <td>2023-03-12</td>
       <td>2023-03-27</td>
-      <td>1.69</td>
-      <td>0.000485</td>
-      <td>0.000001</td>
-      <td>0.000633</td>
-      <td>0.000374</td>
+      <td>1.67</td>
+      <td>0.000229</td>
+      <td>0.000003</td>
+      <td>0.000653</td>
+      <td>0.000388</td>
       <td>0.0</td>
-      <td>7857</td>
+      <td>3887</td>
       <td>16</td>
-      <td>28</td>
+      <td>27</td>
     </tr>
     <tr>
       <th>64th</th>
       <td>2023-03-28</td>
       <td>2023-04-07</td>
-      <td>0.69</td>
-      <td>0.000012</td>
-      <td>0.000003</td>
-      <td>0.000728</td>
-      <td>0.001058</td>
-      <td>0.0</td>
-      <td>3353</td>
+      <td>0.7</td>
+      <td>0.000645</td>
+      <td>0.000001</td>
+      <td>0.00075</td>
+      <td>0.001068</td>
+      <td>0.001</td>
+      <td>7158</td>
       <td>14</td>
       <td>10</td>
     </tr>
@@ -2907,51 +2908,51 @@ Tau value [min]: 15
       <td>2023-04-08</td>
       <td>2023-04-18</td>
       <td>1.44</td>
-      <td>0.000788</td>
+      <td>0.003319</td>
       <td>0.000002</td>
-      <td>0.00105</td>
-      <td>0.000725</td>
-      <td>0.001</td>
-      <td>5424</td>
+      <td>0.001004</td>
+      <td>0.000695</td>
+      <td>0.003</td>
+      <td>6821</td>
       <td>10</td>
-      <td>14</td>
+      <td>15</td>
     </tr>
     <tr>
       <th>66th</th>
       <td>2023-04-19</td>
       <td>2023-04-27</td>
-      <td>1.81</td>
-      <td>0.000076</td>
+      <td>1.86</td>
+      <td>0.000024</td>
       <td>0.000002</td>
-      <td>0.000887</td>
-      <td>0.00049</td>
+      <td>0.000801</td>
+      <td>0.000428</td>
       <td>0.0</td>
-      <td>6526</td>
-      <td>12</td>
-      <td>21</td>
+      <td>4177</td>
+      <td>13</td>
+      <td>24</td>
     </tr>
     <tr>
       <th>67th</th>
       <td>2023-04-28</td>
       <td>2023-05-08</td>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
   </tbody>
 </table>
 <p>68 rows × 11 columns</p>
 </div></div>
 </div>
-</div>
-<div class="section" id="4-4.-Accuracy-evaluation">
-<h3>4-4. Accuracy evaluation<a class="headerlink" href="#4-4.-Accuracy-evaluation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="4-4.-Accuracy-evaluation">
+<h3>4-4. Accuracy evaluation<a class="headerlink" href="#4-4.-Accuracy-evaluation" title="Link to this heading"></a></h3>
 <p>Compare the simulated results and actual records, and evaluate the differences.</p>
 <p>Arguments: - date_range (tuple of (str or pandas.Timestamp or None) or None): range of dates to evaluate or None (the first and the last date) - metric (str): metric to evaluate the difference, “RMSLE” as default - display (bool): whether display figure of comparison or not - kwargs: keyword arguments of <code class="docutils literal notranslate"><span class="pre">covsirphy.compare_plot()</span></code></p>
 <div class="nbinput docutils container">
@@ -2976,12 +2977,12 @@ Tau value [min]: 15
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSLE: 0.5824 (overall score for time-series segmentation, tau estimation and ODE parameter estimation)
+RMSLE: 0.6067 (overall score for time-series segmentation, tau estimation and ODE parameter estimation)
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="4-5.-Simulation">
-<h3>4-5. Simulation<a class="headerlink" href="#4-5.-Simulation" title="Permalink to this heading"></a></h3>
+</section>
+<section id="4-5.-Simulation">
+<h3>4-5. Simulation<a class="headerlink" href="#4-5.-Simulation" title="Link to this heading"></a></h3>
 <p>Simulate the dynamics with the estimated parameter sets of phases.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
@@ -3055,9 +3056,9 @@ RMSLE: 0.5824 (overall score for time-series segmentation, tau estimation and OD
 <img alt="_images/04_phase_dependent_95_0.png" src="_images/04_phase_dependent_95_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="4-6.-Tracking-of-ODE-parameters">
-<h3>4-6. Tracking of ODE parameters<a class="headerlink" href="#4-6.-Tracking-of-ODE-parameters" title="Permalink to this heading"></a></h3>
+</section>
+<section id="4-6.-Tracking-of-ODE-parameters">
+<h3>4-6. Tracking of ODE parameters<a class="headerlink" href="#4-6.-Tracking-of-ODE-parameters" title="Link to this heading"></a></h3>
 <p>Track the estimated ODE parameter values.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
@@ -3117,63 +3118,63 @@ RMSLE: 0.5824 (overall score for time-series segmentation, tau estimation and OD
   <tbody>
     <tr>
       <th>2023-05-04</th>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
     <tr>
       <th>2023-05-05</th>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
     <tr>
       <th>2023-05-06</th>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
     <tr>
       <th>2023-05-07</th>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
     <tr>
       <th>2023-05-08</th>
-      <td>1.52</td>
-      <td>0.00068</td>
+      <td>1.56</td>
+      <td>0.000757</td>
       <td>0.000001</td>
-      <td>0.001136</td>
-      <td>0.000747</td>
+      <td>0.000944</td>
+      <td>0.000605</td>
       <td>0.001</td>
-      <td>12441</td>
-      <td>9</td>
-      <td>14</td>
+      <td>8899</td>
+      <td>11</td>
+      <td>17</td>
     </tr>
   </tbody>
 </table>
@@ -3379,10 +3380,10 @@ Index([&#39;Rt&#39;, &#39;theta&#39;, &#39;kappa&#39;, &#39;rho&#39;, &#39;sigma
 </div>
 <p>Thank you!</p>
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"9afbd4ea2aaf4ad5b9dce86985104fb6": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e5ae314894ea4697bd6c07fceb970c4b": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "8c3505153436441bb70d756178d7504f": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_9afbd4ea2aaf4ad5b9dce86985104fb6", "max": 6.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_e5ae314894ea4697bd6c07fceb970c4b", "tabbable": null, "tooltip": null, "value": 6.0}}, "1b244c5a5b764947b53a47a883d61b40": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2f40cb15fe944a6f9b62afa283f48785": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "ddf7fcbbcb9a487798bfebac8cd8d11b": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_1b244c5a5b764947b53a47a883d61b40", "placeholder": "\u200b", "style": "IPY_MODEL_2f40cb15fe944a6f9b62afa283f48785", "tabbable": null, "tooltip": null, "value": "100%"}}, "1d65ec033d9943028fa8c8ccdbc06bc5": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "bde705ee34f24f3aa8face82576a59b5": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "3f601ca833f84f8a855cfc017fa716b1": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_1d65ec033d9943028fa8c8ccdbc06bc5", "placeholder": "\u200b", "style": "IPY_MODEL_bde705ee34f24f3aa8face82576a59b5", "tabbable": null, "tooltip": null, "value": " 6/6 [00:41&lt;00:00,  6.69s/it]"}}, "8b68d3100dc34c22bd7534c28addfcd0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b2a2cc4ae537416192a9ea992c0b69ed": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_ddf7fcbbcb9a487798bfebac8cd8d11b", "IPY_MODEL_8c3505153436441bb70d756178d7504f", "IPY_MODEL_3f601ca833f84f8a855cfc017fa716b1"], "layout": "IPY_MODEL_8b68d3100dc34c22bd7534c28addfcd0", "tabbable": null, "tooltip": null}}, "3c7b093664924c9e970112e467a27a5e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "6c41b76f770f49e1be369fdbb697406c": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "f5ce9431312145479e6ba042bfef74b8": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_3c7b093664924c9e970112e467a27a5e", "max": 68.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_6c41b76f770f49e1be369fdbb697406c", "tabbable": null, "tooltip": null, "value": 68.0}}, "bee61bb5a0864051ac4b0bcce374e6d0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3ab1e0ffd76e4633996fcd18f560eaf2": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "2d1dae39013e45a19fdea15c1c59d668": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_bee61bb5a0864051ac4b0bcce374e6d0", "placeholder": "\u200b", "style": "IPY_MODEL_3ab1e0ffd76e4633996fcd18f560eaf2", "tabbable": null, "tooltip": null, "value": "100%"}}, "c6b6c1ad3c7e49fa8e3d435b3ba4d354": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "245161c1e06f4df4ac5915b01920b593": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "af9d4c778f4147848e77dc019daeedc7": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_c6b6c1ad3c7e49fa8e3d435b3ba4d354", "placeholder": "\u200b", "style": "IPY_MODEL_245161c1e06f4df4ac5915b01920b593", "tabbable": null, "tooltip": null, "value": " 68/68 [04:49&lt;00:00,  3.33s/it]"}}, "927d3e3cab104760b51972c1db7e1c83": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "651261f41bee4af285816d5717d11a2f": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_2d1dae39013e45a19fdea15c1c59d668", "IPY_MODEL_f5ce9431312145479e6ba042bfef74b8", "IPY_MODEL_af9d4c778f4147848e77dc019daeedc7"], "layout": "IPY_MODEL_927d3e3cab104760b51972c1db7e1c83", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
-</script></div>
-</div>
-</div>
+{"state": {"346b2ca15a8745a78255d3241a1869fb": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "fd6febb226bb4ae899b061f80a0f2010": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "ee0a660e4f7c424d8b10038b174e122d": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_346b2ca15a8745a78255d3241a1869fb", "max": 6.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_fd6febb226bb4ae899b061f80a0f2010", "tabbable": null, "tooltip": null, "value": 6.0}}, "4221f315bcfb4319844962101d8c07c9": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "efff2feb67e145bd90a416c63c435248": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "f0052cd7028846c789585ef9d4a86f05": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_4221f315bcfb4319844962101d8c07c9", "placeholder": "\u200b", "style": "IPY_MODEL_efff2feb67e145bd90a416c63c435248", "tabbable": null, "tooltip": null, "value": "100%"}}, "2a643215d0214419a9727b3cb0c52b94": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b11a469b0c1548ba8ce2f6a322cea905": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "998023ddc7214100b64892840880658b": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2a643215d0214419a9727b3cb0c52b94", "placeholder": "\u200b", "style": "IPY_MODEL_b11a469b0c1548ba8ce2f6a322cea905", "tabbable": null, "tooltip": null, "value": " 6/6 [00:23&lt;00:00,  3.27s/it]"}}, "c2ab85d963a244d792f5b0518cd1bfcf": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5a1b890c847242d8a30efa925e6f52c9": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_f0052cd7028846c789585ef9d4a86f05", "IPY_MODEL_ee0a660e4f7c424d8b10038b174e122d", "IPY_MODEL_998023ddc7214100b64892840880658b"], "layout": "IPY_MODEL_c2ab85d963a244d792f5b0518cd1bfcf", "tabbable": null, "tooltip": null}}, "046cb46c80ed41ff98e015ca5459246e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "0abd4654f7254819ab10a87641de330f": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "673c63dbf9044b6b9cda15a9a6465ab4": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_046cb46c80ed41ff98e015ca5459246e", "max": 68.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_0abd4654f7254819ab10a87641de330f", "tabbable": null, "tooltip": null, "value": 68.0}}, "7bd24ae6753f4a61bb1fe5ca56d47da7": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "286ff6d6a15c464f8fd9d54ae12ec533": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "c264caa4e3d84f388916cceea327d1d6": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_7bd24ae6753f4a61bb1fe5ca56d47da7", "placeholder": "\u200b", "style": "IPY_MODEL_286ff6d6a15c464f8fd9d54ae12ec533", "tabbable": null, "tooltip": null, "value": "100%"}}, "bcd756480e544e2b812e1e9ab718b822": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2e15a040dffd4104ae15af254b0e3553": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "2dff64462fbf4db0bb9ea5915699b757": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_bcd756480e544e2b812e1e9ab718b822", "placeholder": "\u200b", "style": "IPY_MODEL_2e15a040dffd4104ae15af254b0e3553", "tabbable": null, "tooltip": null, "value": " 68/68 [02:25&lt;00:00,  2.66s/it]"}}, "423c1751ebf649b09aa73f304d3b3458": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9206da47601a475aab3cd4411e348871": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_c264caa4e3d84f388916cceea327d1d6", "IPY_MODEL_673c63dbf9044b6b9cda15a9a6465ab4", "IPY_MODEL_2dff64462fbf4db0bb9ea5915699b757"], "layout": "IPY_MODEL_423c1751ebf649b09aa73f304d3b3458", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+</section>
 
 
            </div>
@@ -3395,7 +3396,7 @@ Index([&#39;Rt&#39;, &#39;theta&#39;, &#39;kappa&#39;, &#39;rho&#39;, &#39;sigma
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2020-2023, Hirokazu Takaya and CovsirPhy Development Team.</p>
+    <p>&#169; Copyright 2020-2024, Hirokazu Takaya and CovsirPhy Development Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

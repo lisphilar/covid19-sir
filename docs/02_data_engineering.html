@@ -1,28 +1,30 @@
 <!-- Refer to https://stackoverflow.com/a/50495306 -->
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data engineering &mdash; CovsirPhy  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=371f806f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=1facb17f" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=720011df" />
+
+  
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=63dc29e7"></script>
+        <script src="_static/doctools.js?v=695de88e"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -55,7 +57,7 @@
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0.1.dev0
+                3.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -134,8 +136,8 @@
            <div itemprop="articleBody">
              
   <p><a class="reference external" href="https://mybinder.org/v2/gh/lisphilar/covid19-sir/HEAD?labpath=example%2F02_data_engineering.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
-<div class="section" id="Data-engineering">
-<h1>Data engineering<a class="headerlink" href="#Data-engineering" title="Permalink to this heading"></a></h1>
+<section id="Data-engineering">
+<h1>Data engineering<a class="headerlink" href="#Data-engineering" title="Link to this heading"></a></h1>
 <p>With <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/example/01_data_preparation.ipynb">Data preparation tutorial</a>, we prepared datasets (geospatial time-series data) to analyze. As the next step of data engineering, we will perform the followings here.</p>
 <ol class="arabic simple">
 <li><p>Data cleaning</p></li>
@@ -163,7 +165,7 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;3.0.1.dev0&#39;
+&#39;3.1.1&#39;
 </pre></div></div>
 </div>
 <p>We will use the recommended datasets at country-level data as an example.</p>
@@ -183,48 +185,48 @@
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 281662 entries, 0 to 281661
+RangeIndex: 291874 entries, 0 to 291873
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 281662 non-null  category
- 1   Province                             281662 non-null  category
- 2   City                                 281662 non-null  category
- 3   Date                                 281662 non-null  datetime64[ns]
- 4   Cancel_events                        197519 non-null  Float64
- 5   Confirmed                            238276 non-null  Float64
- 6   Contact_tracing                      197545 non-null  Float64
- 7   Country                              274764 non-null  string
- 8   Fatal                                221079 non-null  Float64
- 9   Gatherings_restrictions              197519 non-null  Float64
- 10  Information_campaigns                197545 non-null  Float64
- 11  Internal_movement_restrictions       197545 non-null  Float64
- 12  International_movement_restrictions  197552 non-null  Float64
- 13  Population                           273602 non-null  Float64
- 14  Product                              162111 non-null  string
- 15  Recovered                            73545 non-null   Float64
- 16  School_closing                       197544 non-null  Float64
- 17  Stay_home_restrictions               197513 non-null  Float64
- 18  Stringency_index                     197508 non-null  Float64
- 19  Testing_policy                       197545 non-null  Float64
- 20  Tests                                90184 non-null   Float64
- 21  Transport_closing                    197525 non-null  Float64
- 22  Vaccinated_full                      56816 non-null   Float64
- 23  Vaccinated_once                      60238 non-null   Float64
- 24  Vaccinations                         63277 non-null   Float64
- 25  Vaccinations_boosters                34511 non-null   Float64
- 26  Workplace_closing                    197544 non-null  Float64
+ 0   ISO3                                 291874 non-null  category
+ 1   Province                             291874 non-null  category
+ 2   City                                 291874 non-null  category
+ 3   Date                                 291874 non-null  datetime64[ns]
+ 4   Cancel_events                        197780 non-null  Float64
+ 5   Confirmed                            238865 non-null  Float64
+ 6   Contact_tracing                      197806 non-null  Float64
+ 7   Country                              282538 non-null  string
+ 8   Fatal                                221668 non-null  Float64
+ 9   Gatherings_restrictions              197780 non-null  Float64
+ 10  Information_campaigns                197806 non-null  Float64
+ 11  Internal_movement_restrictions       197806 non-null  Float64
+ 12  International_movement_restrictions  197813 non-null  Float64
+ 13  Population                           281376 non-null  Float64
+ 14  Product                              171609 non-null  string
+ 15  Recovered                            73881 non-null   Float64
+ 16  School_closing                       197805 non-null  Float64
+ 17  Stay_home_restrictions               197774 non-null  Float64
+ 18  Stringency_index                     197769 non-null  Float64
+ 19  Testing_policy                       197806 non-null  Float64
+ 20  Tests                                90673 non-null   Float64
+ 21  Transport_closing                    197786 non-null  Float64
+ 22  Vaccinated_full                      58739 non-null   Float64
+ 23  Vaccinated_once                      61919 non-null   Float64
+ 24  Vaccinations                         65615 non-null   Float64
+ 25  Vaccinations_boosters                36673 non-null   Float64
+ 26  Workplace_closing                    197805 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), string(2)
-memory usage: 58.3 MB
+memory usage: 60.4 MB
 </pre></div></div>
 </div>
-<div class="section" id="1.-Data-cleaning">
-<h2>1. Data cleaning<a class="headerlink" href="#1.-Data-cleaning" title="Permalink to this heading"></a></h2>
+<section id="1.-Data-cleaning">
+<h2>1. Data cleaning<a class="headerlink" href="#1.-Data-cleaning" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer().clean()</span></code> performs the following data cleaning functionalities. By applying a list of strings to <code class="docutils literal notranslate"><span class="pre">kinds</span></code> argument (eg. <code class="docutils literal notranslate"><span class="pre">kinds=[&quot;resample&quot;]</span></code>), we can specify the cleaning method(s).</p>
 <ul class="simple">
 <li><p>“convert_date”: Convert dtype of date column to pandas.Timestamp.</p></li>
 <li><p>“resample”: Resample records with dates.</p></li>
-<li><p>“fillna”: Fill NA values with ‘-‘ (layers) and the previous values and 0.</p></li>
+<li><p>“fillna”: Fill NA values with ‘-’ (layers) and the previous values and 0.</p></li>
 </ul>
 <p>For “convert_date”, keyword arguments of pandas.to_datetime() including “dayfirst (bool): whether date format is DD/MM or not” can be used.</p>
 <p>For “resample”, <code class="docutils literal notranslate"><span class="pre">date_range=&lt;tuple</span> <span class="pre">of</span> <span class="pre">(str</span> <span class="pre">or</span> <span class="pre">None,</span> <span class="pre">str</span> <span class="pre">or</span> <span class="pre">None)</span> <span class="pre">or</span> <span class="pre">None&gt;)</span></code> can be applied as keyword arguments to set the range.</p>
@@ -243,44 +245,44 @@ memory usage: 58.3 MB
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 281779 entries, 0 to 281778
+RangeIndex: 292752 entries, 0 to 292751
 Data columns (total 27 columns):
  #   Column                               Non-Null Count   Dtype
 ---  ------                               --------------   -----
- 0   ISO3                                 281779 non-null  category
- 1   Province                             281779 non-null  category
- 2   City                                 281779 non-null  category
- 3   Date                                 281779 non-null  datetime64[ns]
- 4   Cancel_events                        281779 non-null  Float64
- 5   Confirmed                            281779 non-null  Float64
- 6   Contact_tracing                      281779 non-null  Float64
- 7   Country                              281779 non-null  object
- 8   Fatal                                281779 non-null  Float64
- 9   Gatherings_restrictions              281779 non-null  Float64
- 10  Information_campaigns                281779 non-null  Float64
- 11  Internal_movement_restrictions       281779 non-null  Float64
- 12  International_movement_restrictions  281779 non-null  Float64
- 13  Population                           281779 non-null  Float64
- 14  Product                              281779 non-null  object
- 15  Recovered                            281779 non-null  Float64
- 16  School_closing                       281779 non-null  Float64
- 17  Stay_home_restrictions               281779 non-null  Float64
- 18  Stringency_index                     281779 non-null  Float64
- 19  Testing_policy                       281779 non-null  Float64
- 20  Tests                                281779 non-null  Float64
- 21  Transport_closing                    281779 non-null  Float64
- 22  Vaccinated_full                      281779 non-null  Float64
- 23  Vaccinated_once                      281779 non-null  Float64
- 24  Vaccinations                         281779 non-null  Float64
- 25  Vaccinations_boosters                281779 non-null  Float64
- 26  Workplace_closing                    281779 non-null  Float64
+ 0   ISO3                                 292752 non-null  category
+ 1   Province                             292752 non-null  category
+ 2   City                                 292752 non-null  category
+ 3   Date                                 292752 non-null  datetime64[ns]
+ 4   Population                           292752 non-null  Float64
+ 5   Testing_policy                       292752 non-null  Float64
+ 6   Confirmed                            292752 non-null  Float64
+ 7   Vaccinations_boosters                292752 non-null  Float64
+ 8   Recovered                            292752 non-null  Float64
+ 9   Contact_tracing                      292752 non-null  Float64
+ 10  Vaccinations                         292752 non-null  Float64
+ 11  Stay_home_restrictions               292752 non-null  Float64
+ 12  International_movement_restrictions  292752 non-null  Float64
+ 13  Product                              292752 non-null  object
+ 14  Transport_closing                    292752 non-null  Float64
+ 15  Fatal                                292752 non-null  Float64
+ 16  Cancel_events                        292752 non-null  Float64
+ 17  Stringency_index                     292752 non-null  Float64
+ 18  Information_campaigns                292752 non-null  Float64
+ 19  Workplace_closing                    292752 non-null  Float64
+ 20  Tests                                292752 non-null  Float64
+ 21  Vaccinated_once                      292752 non-null  Float64
+ 22  Gatherings_restrictions              292752 non-null  Float64
+ 23  Vaccinated_full                      292752 non-null  Float64
+ 24  School_closing                       292752 non-null  Float64
+ 25  Country                              292752 non-null  object
+ 26  Internal_movement_restrictions       292752 non-null  Float64
 dtypes: Float64(21), category(3), datetime64[ns](1), object(2)
-memory usage: 58.3+ MB
+memory usage: 60.6+ MB
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="2.-Data-transformation">
-<h2>2. Data transformation<a class="headerlink" href="#2.-Data-transformation" title="Permalink to this heading"></a></h2>
+</section>
+<section id="2.-Data-transformation">
+<h2>2. Data transformation<a class="headerlink" href="#2.-Data-transformation" title="Link to this heading"></a></h2>
 <p>Transform all registered data, calculating the number of susceptible and infected cases. This is required to analyze real data with SIR-derived models.</p>
 <ul class="simple">
 <li><p>Susceptible = Population - Confirmed</p></li>
@@ -340,7 +342,7 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -353,7 +355,7 @@ memory usage: 58.3+ MB
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -366,7 +368,7 @@ memory usage: 58.3+ MB
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -379,7 +381,7 @@ memory usage: 58.3+ MB
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -392,7 +394,7 @@ memory usage: 58.3+ MB
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
@@ -455,66 +457,66 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
-      <td>14439018</td>
+      <td>14439018.0</td>
       <td>14174891.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>175465.0</td>
       <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
-      <td>14439018</td>
+      <td>14439018.0</td>
       <td>14174891.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>175465.0</td>
       <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
-      <td>14439018</td>
+      <td>14439018.0</td>
       <td>14174891.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>175465.0</td>
       <td>5668.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
-      <td>14439018</td>
+      <td>14439018.0</td>
       <td>14174742.0</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>175611.0</td>
       <td>5671.0</td>
       <td>82994.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
-      <td>14439018</td>
+      <td>14439018.0</td>
       <td>14174742.0</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>175611.0</td>
       <td>5671.0</td>
       <td>82994.0</td>
@@ -523,9 +525,9 @@ memory usage: 58.3+ MB
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="3.-Arithmetic-operations">
-<h2>3. Arithmetic operations<a class="headerlink" href="#3.-Arithmetic-operations" title="Permalink to this heading"></a></h2>
+</section>
+<section id="3.-Arithmetic-operations">
+<h2>3. Arithmetic operations<a class="headerlink" href="#3.-Arithmetic-operations" title="Link to this heading"></a></h2>
 <p>We can perform arithmetic operations to add new columns.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">.diff(column,</span> <span class="pre">suffix=&quot;_diff&quot;,</span> <span class="pre">freq=&quot;D&quot;)</span></code>: Calculate daily new cases with “f(x&gt;0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers”.</p></li>
@@ -578,49 +580,49 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
-      <td>264127</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
-      <td>264127</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
-      <td>264127</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
-      <td>264276</td>
-      <td>149</td>
+      <td>264276.0</td>
+      <td>149.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
-      <td>264276</td>
-      <td>0</td>
+      <td>264276.0</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -670,54 +672,54 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
       <td>5668.0</td>
       <td>82994.0</td>
-      <td>88662</td>
+      <td>88662.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
       <td>5668.0</td>
       <td>82994.0</td>
-      <td>88662</td>
+      <td>88662.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
       <td>5668.0</td>
       <td>82994.0</td>
-      <td>88662</td>
+      <td>88662.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
       <td>5671.0</td>
       <td>82994.0</td>
-      <td>88665</td>
+      <td>88665.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
       <td>5671.0</td>
       <td>82994.0</td>
-      <td>88665</td>
+      <td>88665.0</td>
     </tr>
   </tbody>
 </table>
@@ -767,54 +769,54 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>82994.0</td>
-      <td>21920956238</td>
+      <td>21920956238.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>82994.0</td>
-      <td>21920956238</td>
+      <td>21920956238.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>82994.0</td>
-      <td>21920956238</td>
+      <td>21920956238.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>82994.0</td>
-      <td>21933322344</td>
+      <td>21933322344.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>82994.0</td>
-      <td>21933322344</td>
+      <td>21933322344.0</td>
     </tr>
   </tbody>
 </table>
@@ -866,62 +868,62 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
       <td>2379907.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>11.098207</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
       <td>2379907.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>11.098207</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
       <td>2379907.0</td>
-      <td>264127</td>
+      <td>264127.0</td>
       <td>11.098207</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
       <td>2379907.0</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>11.104468</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
       <td>2379907.0</td>
-      <td>264276</td>
+      <td>264276.0</td>
       <td>11.104468</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="4.-EDA-at-a-geospatial-layer">
-<h2>4. EDA at a geospatial layer<a class="headerlink" href="#4.-EDA-at-a-geospatial-layer" title="Permalink to this heading"></a></h2>
+</section>
+<section id="4.-EDA-at-a-geospatial-layer">
+<h2>4. EDA at a geospatial layer<a class="headerlink" href="#4.-EDA-at-a-geospatial-layer" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">DataEngineer().layer()</span></code> returns the data at the selected layer in the date range.</p>
 <p>Arguments:</p>
 <ul class="simple">
@@ -986,15 +988,15 @@ memory usage: 58.3+ MB
   </thead>
   <tbody>
     <tr>
-      <th>281774</th>
+      <th>292747</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-05</td>
       <td>1.0</td>
-      <td>264127</td>
-      <td>21920956238</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>21920956238.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
@@ -1010,15 +1012,15 @@ memory usage: 58.3+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>281775</th>
+      <th>292748</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-06</td>
       <td>1.0</td>
-      <td>264127</td>
-      <td>21920956238</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>21920956238.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
@@ -1034,15 +1036,15 @@ memory usage: 58.3+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>281776</th>
+      <th>292749</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-07</td>
       <td>1.0</td>
-      <td>264127</td>
-      <td>21920956238</td>
-      <td>0</td>
+      <td>264127.0</td>
+      <td>21920956238.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
@@ -1058,15 +1060,15 @@ memory usage: 58.3+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>281777</th>
+      <th>292750</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-08</td>
       <td>1.0</td>
-      <td>264276</td>
-      <td>21933322344</td>
-      <td>149</td>
+      <td>264276.0</td>
+      <td>21933322344.0</td>
+      <td>149.0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
@@ -1082,15 +1084,15 @@ memory usage: 58.3+ MB
       <td>1.0</td>
     </tr>
     <tr>
-      <th>281778</th>
+      <th>292751</th>
       <td>ZWE</td>
       <td>-</td>
       <td>-</td>
       <td>2023-03-09</td>
       <td>1.0</td>
-      <td>264276</td>
-      <td>21933322344</td>
-      <td>0</td>
+      <td>264276.0</td>
+      <td>21933322344.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>Zimbabwe</td>
       <td>...</td>
@@ -1151,12 +1153,12 @@ memory usage: 58.3+ MB
 <img alt="_images/02_data_engineering_21_0.png" src="_images/02_data_engineering_21_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="5.-Data-subsetting-for-a-location-and-data-complement">
-<h2>5. Data subsetting for a location and data complement<a class="headerlink" href="#5.-Data-subsetting-for-a-location-and-data-complement" title="Permalink to this heading"></a></h2>
+</section>
+<section id="5.-Data-subsetting-for-a-location-and-data-complement">
+<h2>5. Data subsetting for a location and data complement<a class="headerlink" href="#5.-Data-subsetting-for-a-location-and-data-complement" title="Link to this heading"></a></h2>
 <p>The dataset is a geospatial time-series data. By selecting a location, the dataset will be converted to a time-series data, which is easier to analyze.</p>
-<div class="section" id="5.1-Subsetting">
-<h3>5.1 Subsetting<a class="headerlink" href="#5.1-Subsetting" title="Permalink to this heading"></a></h3>
+<section id="5.1-Subsetting">
+<h3>5.1 Subsetting<a class="headerlink" href="#5.1-Subsetting" title="Link to this heading"></a></h3>
 <p>We will create a subset for selected location (eg. country, province/prefecture/state, city). Because the loaded dataset has country-level data, total values in United Kingdom (UK) on dates will be created here as an example.</p>
 <p>Arguments of <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset()</span></code>:</p>
 <ul class="simple">
@@ -1275,22 +1277,22 @@ Data columns (total 32 columns):
  #   Column                                                         Non-Null Count  Dtype
 ---  ------                                                         --------------  -----
  0   Cancel_events                                                  1189 non-null   Float64
- 1   Confirmed*Recovered                                            1189 non-null   Int64
- 2   Confirmed_diff                                                 1189 non-null   Int64
+ 1   Confirmed*Recovered                                            1189 non-null   Float64
+ 2   Confirmed_diff                                                 1189 non-null   Float64
  3   Contact_tracing                                                1189 non-null   Float64
- 4   Fatal+Recovered                                                1189 non-null   Int64
+ 4   Fatal+Recovered                                                1189 non-null   Float64
  5   Gatherings_restrictions                                        1189 non-null   Float64
  6   Infected                                                       1189 non-null   Int64
  7   Information_campaigns                                          1189 non-null   Float64
  8   Internal_movement_restrictions                                 1189 non-null   Float64
  9   International_movement_restrictions                            1189 non-null   Float64
- 10  Population                                                     1189 non-null   Int64
+ 10  Population                                                     1189 non-null   Float64
  11  Positive_rate                                                  1189 non-null   Float64
  12  Positive_rate_%                                                1189 non-null   Float64
  13  School_closing                                                 1189 non-null   Float64
  14  Stay_home_restrictions                                         1189 non-null   Float64
  15  Stringency_index                                               1189 non-null   Float64
- 16  Susceptible                                                    1189 non-null   Int64
+ 16  Susceptible                                                    1189 non-null   Float64
  17  Testing_policy                                                 1189 non-null   Float64
  18  Tests                                                          1189 non-null   Float64
  19  Transport_closing                                              1189 non-null   Float64
@@ -1306,13 +1308,13 @@ Data columns (total 32 columns):
  29  Country_Japan                                                  1189 non-null   Int64
  30  Product_0                                                      1189 non-null   Int64
  31  Product_Moderna, Novavax, Oxford/AstraZeneca, Pfizer/BioNTech  1189 non-null   Int64
-dtypes: Float64(19), Int64(13)
+dtypes: Float64(24), Int64(8)
 memory usage: 343.7 KB
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="5.2-Details-of-data-complement">
-<h3>5.2 Details of data complement<a class="headerlink" href="#5.2-Details-of-data-complement" title="Permalink to this heading"></a></h3>
+</section>
+<section id="5.2-Details-of-data-complement">
+<h3>5.2 Details of data complement<a class="headerlink" href="#5.2-Details-of-data-complement" title="Link to this heading"></a></h3>
 <p>When <code class="docutils literal notranslate"><span class="pre">complement=True</span></code> (default), data complement will be performed for confirmed/fatal/recovered data. This may be required for analysis because reported cumulative values sometimes show decreasing by changing accidentally for an example. Additionally, some countries, including UK, do not report the number of recovered cases.</p>
 <p>The possible kinds of complement for each country are the following:</p>
 <ul class="simple">
@@ -1320,9 +1322,9 @@ memory usage: 343.7 KB
 <li><p>“Full_recovered” (full complement of recovered data) Estimate the number of recovered cases using the value of estimated average recovery period.</p></li>
 <li><p>“Partial_recovered” (partial complement of recovered data) When recovered values are not updated for some days, extrapolate the values.</p></li>
 </ul>
-</div>
-<div class="section" id="5.3-Recovery-period">
-<h3>5.3 Recovery period<a class="headerlink" href="#5.3-Recovery-period" title="Permalink to this heading"></a></h3>
+</section>
+<section id="5.3-Recovery-period">
+<h3>5.3 Recovery period<a class="headerlink" href="#5.3-Recovery-period" title="Link to this heading"></a></h3>
 <div class="line-block">
 <div class="line">What is “recovery period”?</div>
 <div class="line">We defined “recovery period” as the time period between case confirmation and recovery (as it is subjectively defined per country). We can estimate the mode value of recovery period with class method <code class="docutils literal notranslate"><span class="pre">DataEngineer.recovery_period(data)</span></code>.</div>
@@ -1372,9 +1374,9 @@ Mode value of recovery period in Japan: 10 [days]
 <img alt="_images/02_data_engineering_32_0.png" src="_images/02_data_engineering_32_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="5.4-Alias-of-subsets">
-<h3>5.4 Alias of subsets<a class="headerlink" href="#5.4-Alias-of-subsets" title="Permalink to this heading"></a></h3>
+</section>
+<section id="5.4-Alias-of-subsets">
+<h3>5.4 Alias of subsets<a class="headerlink" href="#5.4-Alias-of-subsets" title="Link to this heading"></a></h3>
 <p>We can register alias names of subsets with <code class="docutils literal notranslate"><span class="pre">DataEngineer().subset_alias()</span></code>.</p>
 <div class="line-block">
 <div class="line">Arguments:</div>
@@ -1402,13 +1404,13 @@ Mode value of recovery period in Japan: 10 [days]
 True
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="7.-EDA-of-subset">
-<h2>7. EDA of subset<a class="headerlink" href="#7.-EDA-of-subset" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+<section id="7.-EDA-of-subset">
+<h2>7. EDA of subset<a class="headerlink" href="#7.-EDA-of-subset" title="Link to this heading"></a></h2>
 <p>With explanatory data analysis, we will get the figure of datasets.</p>
-<div class="section" id="7.1-Alias-of-variables">
-<h3>7.1 Alias of variables<a class="headerlink" href="#7.1-Alias-of-variables" title="Permalink to this heading"></a></h3>
+<section id="7.1-Alias-of-variables">
+<h3>7.1 Alias of variables<a class="headerlink" href="#7.1-Alias-of-variables" title="Link to this heading"></a></h3>
 <p>We can specify variables with alias. For example, “CIFR” is equivalent to list <code class="docutils literal notranslate"><span class="pre">['Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal']</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
@@ -1605,9 +1607,9 @@ True
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="7.2-Line-plot">
-<h3>7.2 Line plot<a class="headerlink" href="#7.2-Line-plot" title="Permalink to this heading"></a></h3>
+</section>
+<section id="7.2-Line-plot">
+<h3>7.2 Line plot<a class="headerlink" href="#7.2-Line-plot" title="Link to this heading"></a></h3>
 <p>Show data with line plot. We can select function <code class="docutils literal notranslate"><span class="pre">line_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">LinePlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -1661,9 +1663,9 @@ True
 <img alt="_images/02_data_engineering_47_0.png" src="_images/02_data_engineering_47_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="7.3-Scatter-plot">
-<h3>7.3 Scatter plot<a class="headerlink" href="#7.3-Scatter-plot" title="Permalink to this heading"></a></h3>
+</section>
+<section id="7.3-Scatter-plot">
+<h3>7.3 Scatter plot<a class="headerlink" href="#7.3-Scatter-plot" title="Link to this heading"></a></h3>
 <p>Show data with scatter plot. We can select function <code class="docutils literal notranslate"><span class="pre">scatter_plot</span></code> or class <code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
@@ -1716,9 +1718,9 @@ True
 </div>
 </div>
 <p>Thank you!</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
@@ -1731,7 +1733,7 @@ True
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2020-2023, Hirokazu Takaya and CovsirPhy Development Team.</p>
+    <p>&#169; Copyright 2020-2024, Hirokazu Takaya and CovsirPhy Development Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
