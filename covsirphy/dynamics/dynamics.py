@@ -480,6 +480,8 @@ class Dynamics(Term):
         config.info(f"\n<{self._model._NAME}: parameter estimation>")
         config.info(f"Running optimization with {n_jobs_validated} CPUs...")
         stopwatch = StopWatch()
+        # p-tqdm with Python 3.12: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version.
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         results = p_umap(est_f, phase_dataframes, num_cpus=n_jobs_validated)
         config.info(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
