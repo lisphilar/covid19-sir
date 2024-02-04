@@ -21,8 +21,8 @@ jobs:
           all_but_latest: true
           access_token: ${{ github.token }}
 
-  poetry-test:
-    name: quality check and pytest with Poetry
+  poetry--quality-check:
+    name: quality check
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,8 +58,46 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with test
 
-      - name: run quality check with "make test" command
-        run: make test
+      - name: run quality check with "make check" command
+        run: make check
+
+  poetry-test:
+    name: quality check and pytest with Poetry
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v3
+
+      - name: set up Python
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: load cached venv if available
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: install dependencies and test tools if cache does not exist
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root --with test
+
+      - name: run tests
+        run: poetry run pytest tests
 
       - name: upload test coverage to Codecov
         uses: codecov/codecov-action@v3
