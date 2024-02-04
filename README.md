@@ -109,7 +109,7 @@ Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/L
 
 Please cite this library as follows with version number (`import covsirphy as cs; cs.__version__`).
 
-**Hirokazu Takaya and CovsirPhy Development Team (2020-2023), CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models, [https://github.com/lisphilar/covid19-sir](https://github.com/lisphilar/covid19-sir)**
+**Hirokazu Takaya and CovsirPhy Development Team (2020-2024), CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models, [https://github.com/lisphilar/covid19-sir](https://github.com/lisphilar/covid19-sir)**
 
 This is the output of `covsirphy.__citation__`.
 
