@@ -23,7 +23,7 @@ class DataDownloader(Term):
     """
     LAYERS: list[str] = [Term.ISO3, Term.PROVINCE, Term.CITY]
 
-    def __init__(self, directory: str or Path = "input", update_interval: int = 12, **kwargs) -> None:
+    def __init__(self, directory: str | Path = "input", update_interval: int = 12, **kwargs) -> None:
         self._directory = directory
         self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)

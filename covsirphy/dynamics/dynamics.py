@@ -175,8 +175,15 @@ class Dynamics(Term):
         if data is not None:
             new_df = Validator(data, "data").dataframe(time_index=True)
             new_df.index = pd.to_datetime(new_df.index).round("D")
-            all_df = pd.DataFrame(np.nan, index=self._df.index, columns=self._df.columns)
+            all_df = pd.DataFrame(
+                np.nan,
+                index=self._df.index,
+                columns=self._df.columns,
+            )
             all_df[self._PH] = 0
+            for col in new_df:
+                new_df[col] = new_df[col].astype(pd.Float64Dtype())
+                all_df[col] = all_df[col].astype(pd.Float64Dtype())
             all_df.update(new_df, overwrite=True)
             if all_df.loc[self._first, self._SIRF].isna().any():
                 raise EmptyError(
@@ -333,7 +340,7 @@ class Dynamics(Term):
         """
         df = self.summary()
         df[self.DATE] = df[[self.START, self.END]].apply(
-            lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
+            lambda x: pd.date_range(start=x[self.START], end=x[self.END], freq="D"), axis=1)
         return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
 
     def simulate(self, model_specific: bool = False) -> pd.DataFrame:
@@ -473,13 +480,16 @@ class Dynamics(Term):
         config.info(f"\n<{self._model._NAME}: parameter estimation>")
         config.info(f"Running optimization with {n_jobs_validated} CPUs...")
         stopwatch = StopWatch()
+        # p-tqdm with Python 3.12: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version.
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         results = p_umap(est_f, phase_dataframes, num_cpus=n_jobs_validated)
         config.info(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
         est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
-        warnings.filterwarnings("ignore", category=FutureWarning)
+        for col in self._parameters:
+            r_df[col] = r_df[col].astype(pd.Float64Dtype())
         r_df.update(est_df, overwrite=True)
         self.register(data=r_df)
         return est_df

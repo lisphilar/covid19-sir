@@ -1,4 +1,7 @@
 from pathlib import Path
+import warnings
+
+warnings.simplefilter("ignore", DeprecationWarning)
 import pandas as pd
 import pytest
 
