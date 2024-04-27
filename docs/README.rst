@@ -50,7 +50,7 @@ The latest stable version of CovsirPhy is available at `PyPI (The Python
 Package Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and
 supports Python 3.8 or newer versions. Details are explained in
 `Documentation:
-Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
+Installation <https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html>`__.
 
 .. code:: Bash
 
