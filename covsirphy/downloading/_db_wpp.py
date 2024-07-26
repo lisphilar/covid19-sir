@@ -1,4 +1,5 @@
 import pandas as pd
+from pyarrow.lib import ArrowKeyError
 from covsirphy.util.term import Term
 from covsirphy.downloading._db import _DataBase
 
@@ -39,7 +40,11 @@ class _WPP(_DataBase):
                     - Population (numpy.float64): population values
         """
         url = f"{self.TOP_URL}WPP2024_TotalPopulationBySex.csv.gz"
-        df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
+        try:
+            df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
+        except ArrowKeyError:
+            df = self._provide(url=url, suffix="_level1", columns=None)
+            df = df.rename(self.COL_DICT.keys())
         df[self.DATE] = pd.to_datetime(df["Year"], format="%Y") + pd.offsets.DateOffset(months=6)
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA
