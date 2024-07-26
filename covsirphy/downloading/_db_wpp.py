@@ -20,7 +20,7 @@ class _WPP(_DataBase):
     ALL_COLS = [Term.DATE, Term.ISO3, Term.PROVINCE, Term.CITY, Term.N]
     # Stdout when downloading (shown at most one time)
     STDOUT = "Retrieving datasets from World Population Prospects https://population.un.org/wpp/"
-    # Citation
+    # Citations
     CITATION = 'United Nations, Department of Economic and Social Affairs,' \
         ' Population Division (2022). World Population Prospects 2022, Online Edition.'
 
@@ -38,7 +38,7 @@ class _WPP(_DataBase):
                     - City (object): NAs
                     - Population (numpy.float64): population values
         """
-        url = f"{self.TOP_URL}WPP2022_TotalPopulationBySex.zip"
+        url = f"{self.TOP_URL}WPP2022_TotalPopulationBySex.csv.gz"
         df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
         df[self.DATE] = pd.to_datetime(df["Year"], format="%Y") + pd.offsets.DateOffset(months=6)
         df[self.PROVINCE] = self.NA
