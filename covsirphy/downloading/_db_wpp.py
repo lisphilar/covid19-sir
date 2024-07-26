@@ -1,4 +1,5 @@
 import pandas as pd
+from pyarrow.lib import ArrowKeyError
 from covsirphy.util.term import Term
 from covsirphy.downloading._db import _DataBase
 
@@ -20,7 +21,7 @@ class _WPP(_DataBase):
     ALL_COLS = [Term.DATE, Term.ISO3, Term.PROVINCE, Term.CITY, Term.N]
     # Stdout when downloading (shown at most one time)
     STDOUT = "Retrieving datasets from World Population Prospects https://population.un.org/wpp/"
-    # Citation
+    # Citations
     CITATION = 'United Nations, Department of Economic and Social Affairs,' \
         ' Population Division (2022). World Population Prospects 2022, Online Edition.'
 
@@ -38,8 +39,12 @@ class _WPP(_DataBase):
                     - City (object): NAs
                     - Population (numpy.float64): population values
         """
-        url = f"{self.TOP_URL}WPP2022_TotalPopulationBySex.zip"
-        df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
+        url = f"{self.TOP_URL}WPP2024_TotalPopulationBySex.csv.gz"
+        try:
+            df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
+        except ArrowKeyError:
+            df = self._provide(url=url, suffix="_level1", columns=None)
+            df = df.rename(self.COL_DICT.keys())
         df[self.DATE] = pd.to_datetime(df["Year"], format="%Y") + pd.offsets.DateOffset(months=6)
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA
