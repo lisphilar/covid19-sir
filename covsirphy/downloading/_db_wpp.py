@@ -38,7 +38,7 @@ class _WPP(_DataBase):
                     - City (object): NAs
                     - Population (numpy.float64): population values
         """
-        url = f"{self.TOP_URL}WPP2022_TotalPopulationBySex.csv.gz"
+        url = f"{self.TOP_URL}WPP2024_TotalPopulationBySex.csv.gz"
         df = self._provide(url=url, suffix="_level1", columns=list(self.COL_DICT.keys()))
         df[self.DATE] = pd.to_datetime(df["Year"], format="%Y") + pd.offsets.DateOffset(months=6)
         df[self.PROVINCE] = self.NA
