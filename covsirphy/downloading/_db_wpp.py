@@ -46,7 +46,7 @@ class _WPP(_DataBase):
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA
         df[self.N] = df["value"]
-        return df.dropna(how="any").loc[:, self.ALL_COLS]
+        return df.loc[:, self.ALL_COLS].dropna(how="any")
 
     def _province(self, country):
         """Returns province-level data.
