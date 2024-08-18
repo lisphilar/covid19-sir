@@ -41,6 +41,7 @@ class _WPP(_DataBase):
         """
         url = f"{self.TOP_URL}country/all/indicator/SP.POP.TOTLL?per_page=30000"
         df = pd.read_xml(url,  parser="etree")
+        print(df.columns)
         df[self.DATE] = pd.to_datetime(df["date"], format="%Y") + pd.offsets.DateOffset(months=6)
         df = df.rename({"countryiso3code": Term.ISO3})
         df[self.PROVINCE] = self.NA
