@@ -1,5 +1,4 @@
 import pandas as pd
-from pyarrow.lib import ArrowKeyError
 from covsirphy.util.term import Term
 from covsirphy.downloading._db import _DataBase
 
