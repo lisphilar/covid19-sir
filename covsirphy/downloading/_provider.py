@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from urllib3 import PoolManager
 from urllib3.util.ssl_ import create_urllib3_context
 import warnings
-from zipfile import ZipFile,BadZipFile
+from zipfile import ZipFile, BadZipFile
 import numpy as np
 import pandas as pd
 from unidecode import unidecode
