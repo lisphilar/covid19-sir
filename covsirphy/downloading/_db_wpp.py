@@ -45,7 +45,7 @@ class _WPP(_DataBase):
         df = df.rename({"countryiso3code": Term.ISO3})
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA
-        df[self.N] = df[self.N] * 1_000
+        df[self.N] = df["value"]
         return df.dropna(how="any").loc[:, self.ALL_COLS]
 
     def _province(self, country):
