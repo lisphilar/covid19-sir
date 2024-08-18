@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from urllib3 import PoolManager
 from urllib3.util.ssl_ import create_urllib3_context
 import warnings
-from zipfile import ZipFile
+from zipfile import ZipFile, BadZipFile
 import numpy as np
 import pandas as pd
 from unidecode import unidecode
@@ -104,10 +104,12 @@ class _DataProvider(Term):
             "header": 0, "usecols": columns, "encoding": "utf-8", "engine": "pyarrow",
             "parse_dates": None if date is None else [date], "date_format": date_format,
         }
-        if urlparse(path).scheme:
-            kwargs["storage_options"] = {"User-Agent": "Mozilla/5.0"}
         try:
-            df = pd.read_csv(path, **kwargs)
+            df = pd.read_csv(
+                path,
+                storage_options={"User-Agent": "Mozilla/5.0"} if urlparse(path).scheme else None,
+                **kwargs
+            )
         except URLError:
             ctx = create_urllib3_context()
             ctx.load_default_certs()
@@ -115,9 +117,12 @@ class _DataProvider(Term):
             ctx.options |= 0x4
             with PoolManager(ssl_context=ctx) as http:
                 r = http.request("GET", path)
-                with ZipFile(io.BytesIO(r.data), "r") as fh:
-                    text = fh.read(f"{Path(path).stem}.csv")
-            df = pd.read_csv(io.StringIO(text.decode("utf-8")))
+                try:
+                    with ZipFile(io.BytesIO(r.data), "r") as fh:
+                        text = fh.read(f"{Path(path).stem}.csv")
+                        df = pd.read_csv(io.StringIO(text.decode("utf-8")), **kwargs)
+                except BadZipFile:
+                    df = pd.read_csv(io.BytesIO(r.data), **kwargs)
         for col in df:
             with contextlib.suppress(TypeError):
                 df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
