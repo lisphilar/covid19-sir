@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: styfle/cancel-workflow-action
+      - uses: styfle/cancel-workflow-action@main
         with:
           all_but_latest: true
           access_token: ${{ github.token }}
@@ -30,16 +30,16 @@ jobs:
 
     steps:
       - name: check out repository
-        uses: actions/checkout
+        uses: actions/checkout@main
 
       - name: set up Python
         id: setup-python
-        uses: actions/setup-python
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: install Poetry
-        uses: snok/install-poetry
+        uses: snok/install-poetry@main
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
@@ -47,7 +47,7 @@ jobs:
 
       - name: load cached venv if available
         id: cached-poetry-dependencies
-        uses: actions/cache
+        uses: actions/cache@main
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -68,16 +68,16 @@ jobs:
 
     steps:
       - name: check out repository
-        uses: actions/checkout
+        uses: actions/checkout@main
 
       - name: set up Python
         id: setup-python
-        uses: actions/setup-python
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: install Poetry
-        uses: snok/install-poetry
+        uses: snok/install-poetry@main
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
@@ -85,7 +85,7 @@ jobs:
 
       - name: load cached venv if available
         id: cached-poetry-dependencies
-        uses: actions/cache
+        uses: actions/cache@main
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -98,7 +98,7 @@ jobs:
         run: poetry run pytest tests
 
       - name: upload test coverage to Codecov
-        uses: codecov/codecov-action
+        uses: codecov/codecov-action@main
 
   pip-test:
     name: test with pip
@@ -109,10 +109,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout
+        uses: actions/checkout@main
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -132,9 +132,9 @@ jobs:
         python-version: ["3.12"]
 
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@main
       - name: Setup conda
-        uses: s-weigand/setup-conda
+        uses: s-weigand/setup-conda@main
         with:
           update-conda: true
           python-version: ${{ matrix.python-version }}
@@ -153,17 +153,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout
+        uses: actions/checkout@main
         with:
           fetch-depth: 2
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init
+        uses: github/codeql-action/init@main
         with:
           languages: python
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild
+        uses: github/codeql-action/autobuild@main
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze
+        uses: github/codeql-action/analyze@main
