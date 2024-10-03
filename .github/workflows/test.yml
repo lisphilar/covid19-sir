@@ -134,11 +134,15 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Setup conda
-        uses: s-weigand/setup-conda@main
+        uses: conda-incubator/setup-miniconda@main
         with:
-          update-conda: true
           python-version: ${{ matrix.python-version }}
-          conda-channels: anaconda, conda-forge
+          auto-activate-base: true
+          activate-environment: true
+          channels: conda-forge
+          miniforge-version: 24.3.0-0
+          show-channel-urls: true
+          use-only-tar-bz2: false
 
       - name: installation of CovsirPhy
         run: |
