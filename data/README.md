@@ -150,7 +150,7 @@ Kindly cite this dataset under CC BY-4.0 license as follows.
 BibTeX format citation is here.
 
 ```
-@misc{github_repo,
+@misc{covid19_jp_repo,
 author = {Hirokazu Takaya},
 title = {COVID-19 dataset in Japan},
 year = {2020},

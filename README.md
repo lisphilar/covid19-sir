@@ -123,7 +123,7 @@ cs.__citation__
 BibTeX format citation is here.
 
 ```
-@misc{github_repo,
+@misc{covsirphy_repo,
 author = {Hirokazu Takaya and CovsirPhy Development Team},
 title = {CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models},
 year = {2020},
