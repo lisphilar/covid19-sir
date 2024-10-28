@@ -154,7 +154,7 @@ BibTeX format citation is here.
 author = {Hirokazu Takaya},
 title = {COVID-19 dataset in Japan},
 year = {2020},
-url = {https://github.com/lisphilar/covid19-sir/data/japan),
+url = {https://github.com/lisphilar/covid19-sir/data/japan},
 note = {Accessed: YYYY-MM-DD}
 }
 ```

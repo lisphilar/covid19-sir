@@ -127,7 +127,7 @@ BibTeX format citation is here.
 author = {Hirokazu Takaya and CovsirPhy Development Team},
 title = {CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models},
 year = {2020},
-url = {https://github.com/lisphilar/covid19-sir),
+url = {https://github.com/lisphilar/covid19-sir},
 note = {Accessed: YYYY-MM-DD}
 }
 ```
