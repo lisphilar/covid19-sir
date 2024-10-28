@@ -119,3 +119,15 @@ cs.__citation__
 ```
 
 **We have no original papers the author and contributors wrote, but note that some scientific approaches, including SIR-F model, S-R change point analysis, phase-dependent approach to SIR-derived models, were developed in this project.**
+
+BibTeX format citation is here.
+
+```
+@misc{covsirphy_repo,
+author = {Hirokazu Takaya and CovsirPhy Development Team},
+title = {CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models},
+year = {2020},
+url = {https://github.com/lisphilar/covid19-sir},
+note = {Accessed: YYYY-MM-DD}
+}
+```
