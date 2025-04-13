@@ -1,6 +1,12 @@
 import contextlib
 from pathlib import Path
-import geopandas as gpd
+try:
+    import geopandas as gpd
+eccept DeprecationWaning:
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+        import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
 from covsirphy.util.error import NotRegisteredError, SubsetNotFoundError
