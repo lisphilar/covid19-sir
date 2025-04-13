@@ -5,6 +5,7 @@ try:
 except DeprecationWarning:
     import warnings
     with warnings.catch_warnings():
+        # Issue #1819
         warnings.simplefilter("ignore", category=DeprecationWarning)
         import geopandas as gpd
 from matplotlib import pyplot as plt
