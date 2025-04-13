@@ -2,7 +2,7 @@ import contextlib
 from pathlib import Path
 try:
     import geopandas as gpd
-eccept DeprecationWaning:
+except DeprecationWarning:
     import warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=DeprecationWarning)
