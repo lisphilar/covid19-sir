@@ -72,8 +72,7 @@ def test_variables_alias():
 def test_resample_with_date_range():
     eng = DataEngineer(layers=["Country"], country=["Country"])
     eng.download(databases=["wpp"])
-    eng.clean(kinds=["resample"], date_range=("01Jan2022", "19Sep2022"))
+    eng.clean(kinds=["resample"], date_range=("01Jan2024", "19Sep2024"))
     df = eng.all()
-    print(df)
-    assert df["Date"].min() >= pd.to_datetime("01Jan2022")
-    assert df["Date"].max() <= pd.to_datetime("19Sep2022")
+    assert df["Date"].min() >= pd.to_datetime("01Jan2024")
+    assert df["Date"].max() <= pd.to_datetime("19Sep2024")
