@@ -74,5 +74,5 @@ def test_resample_with_date_range():
     eng.download(databases=["wpp"])
     eng.clean(kinds=["resample"], date_range=("01Jan2022", "19Sep2022"))
     df = eng.all()
-    assert pd.to_datetime(df["Date"].min()) >= pd.to_datetime("01Jan2022")
-    assert pd.to_datetime(df["Date"].max()) <= pd.to_datetime("19Sep2022")
+    assert df["Date"].min() >= pd.to_datetime("01Jan2022")
+    assert df["Date"].max() <= pd.to_datetime("19Sep2022")
