@@ -64,7 +64,7 @@ class _DataCleaner(Term):
             df = df[df[self._date].between(start, end, inclusive="both")]
         grouped = df.set_index(self._date).groupby(self._layers, as_index=False, observed=True)
         df = grouped[list(set(df.columns) - set([self._date]))].resample("D").ffill()
-        self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
+        self._df = df.drop("Country", errors="ignore", axis=1).reset_index().drop("level_0", errors="ignore", axis=1)
 
     def fillna(self):
         """Fill NA values with '-' (layers) and the previous values and 0.
