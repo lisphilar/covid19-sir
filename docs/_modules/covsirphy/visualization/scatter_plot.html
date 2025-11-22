@@ -1,5 +1,7 @@
 <!-- Refer to https://stackoverflow.com/a/50495306 -->
 
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -12,19 +14,15 @@
 
   
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
-        <script src="../../../_static/doctools.js?v=695de88e"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
+      <script src="../../../_static/doctools.js?v=695de88e"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -50,9 +48,6 @@
             
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                3.1.2
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -113,19 +108,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.visualization.scatter_plot</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
-<span class="kn">from</span> <span class="nn">covsirphy.visualization.vbase</span> <span class="kn">import</span> <span class="n">find_args</span>
-<span class="kn">from</span> <span class="nn">covsirphy.visualization.line_plot</span> <span class="kn">import</span> <span class="n">LinePlot</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnExecutedError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.visualization.vbase</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_args</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.visualization.line_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinePlot</span>
 
 
 <div class="viewcode-block" id="ScatterPlot">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot">[docs]</a>
-<span class="k">class</span> <span class="nc">ScatterPlot</span><span class="p">(</span><span class="n">LinePlot</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScatterPlot</span><span class="p">(</span><span class="n">LinePlot</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a scatter plot.</span>
 
 <span class="sd">    Args:</span>
@@ -134,7 +129,7 @@
 <span class="sd">        kwargs: the other arguments of matplotlib.pyplot.savefig()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_savefig_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bbox_inches&quot;</span><span class="p">:</span> <span class="n">bbox_inches</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
         <span class="c1"># Properties</span>
@@ -142,15 +137,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">exc_info</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ScatterPlot.plot">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot chronological change of the data.</span>
 
 <span class="sd">        Args:</span>
@@ -171,7 +166,7 @@
 
 <div class="viewcode-block" id="ScatterPlot.line_straight">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.line_straight">[docs]</a>
-    <span class="k">def</span> <span class="nf">line_straight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">line_straight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect the points with a straight line.</span>
 
 <span class="sd">        Args:</span>
@@ -192,7 +187,7 @@
 
 <div class="viewcode-block" id="ScatterPlot.legend">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.legend">[docs]</a>
-    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;ScatterPlot.legend() is not implemented.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
@@ -200,7 +195,7 @@
 
 <div class="viewcode-block" id="ScatterPlot.legend_hide">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.ScatterPlot.legend_hide">[docs]</a>
-    <span class="k">def</span> <span class="nf">legend_hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">legend_hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;ScatterPlot.legend_hide() is not implemented.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
@@ -210,7 +205,7 @@
 
 <div class="viewcode-block" id="scatter_plot">
 <a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.visualization.scatter_plot.scatter_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">scatter_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scatter_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper function: show chronological change of the data.</span>
 
 <span class="sd">    Args:</span>

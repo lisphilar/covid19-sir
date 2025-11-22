@@ -1,5 +1,7 @@
 <!-- Refer to https://stackoverflow.com/a/50495306 -->
 
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -12,19 +14,15 @@
 
   
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
-        <script src="../../../_static/doctools.js?v=695de88e"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
+      <script src="../../../_static/doctools.js?v=695de88e"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -50,9 +48,6 @@
             
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                3.1.2
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -113,22 +108,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.downloading.downloader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
-<span class="kn">from</span> <span class="nn">covsirphy.gis.gis</span> <span class="kn">import</span> <span class="n">GIS</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_cs_japan</span> <span class="kn">import</span> <span class="n">_CSJapan</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_covid19dh</span> <span class="kn">import</span> <span class="n">_COVID19dh</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_owid</span> <span class="kn">import</span> <span class="n">_OWID</span>
-<span class="kn">from</span> <span class="nn">covsirphy.downloading._db_wpp</span> <span class="kn">import</span> <span class="n">_WPP</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotRegisteredError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.gis.gis</span><span class="w"> </span><span class="kn">import</span> <span class="n">GIS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.downloading._db_cs_japan</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CSJapan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.downloading._db_covid19dh</span><span class="w"> </span><span class="kn">import</span> <span class="n">_COVID19dh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.downloading._db_owid</span><span class="w"> </span><span class="kn">import</span> <span class="n">_OWID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.downloading._db_wpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">_WPP</span>
 
 
 <div class="viewcode-block" id="DataDownloader">
 <a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader">[docs]</a>
-<span class="k">class</span> <span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataDownloader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to download datasets from the recommended data servers.</span>
 
 <span class="sd">    Args:</span>
@@ -140,14 +135,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LAYERS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Term</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="n">Term</span><span class="o">.</span><span class="n">CITY</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="n">directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_interval</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">update_interval</span><span class="p">,</span> <span class="s2">&quot;update_interval&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span> <span class="o">=</span> <span class="n">GIS</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAYERS</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DataDownloader.layer">
 <a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.layer">[docs]</a>
-    <span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">databases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the data at the selected layer.</span>
 
 <span class="sd">        Args:</span>
@@ -219,12 +214,12 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gis</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">NotRegisteredError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span></div>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">geo</span><span class="o">=</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="DataDownloader.citations">
 <a class="viewcode-back" href="../../../covsirphy.downloading.html#covsirphy.downloading.downloader.DataDownloader.citations">[docs]</a>
-    <span class="k">def</span> <span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">citations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return citation list of the data sources.</span>
 

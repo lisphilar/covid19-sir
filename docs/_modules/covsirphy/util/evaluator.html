@@ -1,5 +1,7 @@
 <!-- Refer to https://stackoverflow.com/a/50495306 -->
 
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -12,19 +14,15 @@
 
   
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
-        <script src="../../../_static/doctools.js?v=695de88e"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=63dc29e7"></script>
+      <script src="../../../_static/doctools.js?v=695de88e"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -50,9 +48,6 @@
             
               <img src="https://raw.githubusercontent.com/lisphilar/covid19-sir/master/docs/logo/covsirphy_logo_100.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                3.1.2
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -113,16 +108,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for covsirphy.util.evaluator</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExpectedValueError</span><span class="p">,</span> <span class="n">NAFoundError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnExpectedValueError</span><span class="p">,</span> <span class="n">NAFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">covsirphy.util.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
 
 
 <div class="viewcode-block" id="Evaluator">
 <a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.evaluator.Evaluator">[docs]</a>
-<span class="k">class</span> <span class="nc">Evaluator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Evaluator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate residual errors.</span>
 
@@ -150,7 +145,7 @@
         <span class="s2">&quot;R2&quot;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Check types</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">,</span> <span class="s2">&quot;y_pred&quot;</span><span class="p">]):</span>
             <span class="n">Validator</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">instance</span><span class="p">(</span><span class="n">expected</span><span class="o">=</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
@@ -171,7 +166,7 @@
 
 <div class="viewcode-block" id="Evaluator.score">
 <a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.evaluator.Evaluator.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate score with specified metric.</span>
 
@@ -211,7 +206,7 @@
 <div class="viewcode-block" id="Evaluator.metrics">
 <a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.evaluator.Evaluator.metrics">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the list of metric names.</span>
 
@@ -224,7 +219,7 @@
 <div class="viewcode-block" id="Evaluator.smaller_is_better">
 <a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.evaluator.Evaluator.smaller_is_better">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">smaller_is_better</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">smaller_is_better</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whether smaller value of the metric is better or not.</span>
 
@@ -242,7 +237,7 @@
 <div class="viewcode-block" id="Evaluator.best_one">
 <a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.util.evaluator.Evaluator.best_one">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">best_one</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">candidate_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">best_one</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">candidate_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select the best one with scores.</span>
 

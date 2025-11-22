@@ -48,7 +48,7 @@ Installation
 
 The latest stable version of CovsirPhy is available at `PyPI (The Python
 Package Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and
-supports Python 3.10 or newer versions. Details are explained in
+supports Python 3.8 or newer versions. Details are explained in
 `Documentation:
 Installation <https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html>`__.
 
@@ -165,8 +165,8 @@ Please cite this library as follows with version number
 
 **Hirokazu Takaya and CovsirPhy Development Team (2020-2024), CovsirPhy
 version [version number]: Python library for COVID-19 analysis with
-phase-dependent SIR-derived ODE
-models,**\ https://github.com/lisphilar/covid19-sir
+phase-dependent SIR-derived ODE models,**
+https://github.com/lisphilar/covid19-sir
 
 This is the output of ``covsirphy.__citation__``.
 
@@ -179,6 +179,18 @@ This is the output of ``covsirphy.__citation__``.
 that some scientific approaches, including SIR-F model, S-R change point
 analysis, phase-dependent approach to SIR-derived models, were developed
 in this project.**
+
+BibTeX format citation is here.
+
+::
+
+   @misc{covsirphy_repo,
+   author = {Hirokazu Takaya and CovsirPhy Development Team},
+   title = {CovsirPhy version [version number]: Python library for COVID-19 analysis with phase-dependent SIR-derived ODE models},
+   year = {2020},
+   url = {https://github.com/lisphilar/covid19-sir},
+   note = {Accessed: YYYY-MM-DD}
+   }
 
 .. |PyPI version| image:: https://badge.fury.io/py/covsirphy.svg
    :target: https://badge.fury.io/py/covsirphy
