@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 import pandas as pd
-from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
+from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedValueRangeError
 from covsirphy.util.error import UnExpectedValueError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
@@ -512,10 +512,12 @@ class ODEScenario(Term):
         last_param_dict = param_df.iloc[-1].to_dict()
         start_date = param_df.index[-1] + timedelta(days=1)
         try:
+            int(end)
+        except (ValueError, TypeError):
+            end_date = Validator(end, "end", accept_none=False).date(value_range=(param_df.index[-1], None))
+        else:
             delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
             end_date = param_df.index[-1] + delta
-        except UnExpectedTypeError:
-            end_date = Validator(end, "end", accept_none=False).date(value_range=(param_df.index[-1], None))
         new_param_dict = Validator(kwargs, "keyword arguments").dict(
             default=last_param_dict, required_keys=list(last_param_dict.keys()))
         new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
