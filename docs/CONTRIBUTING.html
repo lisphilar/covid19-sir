@@ -85,8 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#clone-covsirphy-repository-and-install-dependencies">Clone CovsirPhy repository and install dependencies</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#clone-fork-the-repository">Clone/Fork the repository</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setup-python">Setup Python</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#install-poetry-windows">Install Poetry (Windows)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#install-poetry-linux-wsl-macos">Install Poetry (Linux, WSL, macOS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-uv">Install uv</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
 </ul>
 </li>
@@ -134,7 +133,7 @@ We hope this project contribute to COVID-19 outbreak research and we will overco
 </ul>
 <section id="clone-covsirphy-repository-and-install-dependencies">
 <h2>Clone CovsirPhy repository and install dependencies<a class="headerlink" href="#clone-covsirphy-repository-and-install-dependencies" title="Link to this heading"></a></h2>
-<p>Developers will clone CovsirPhy repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command and install dependencies with Poetry.</p>
+<p>Developers will clone CovsirPhy repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command and install dependencies with uv.</p>
 <section id="clone-fork-the-repository">
 <h3>Clone/Fork the repository<a class="headerlink" href="#clone-fork-the-repository" title="Link to this heading"></a></h3>
 <p>Please start by cloning the GitHub repository with git command.</p>
@@ -159,37 +158,26 @@ git<span class="w"> </span>merge<span class="w"> </span>upstream/master
 <h3>Setup Python<a class="headerlink" href="#setup-python" title="Link to this heading"></a></h3>
 <p>Setup base Python with <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a> (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).</p>
 </section>
-<section id="install-poetry-windows">
-<h3>Install Poetry (Windows)<a class="headerlink" href="#install-poetry-windows" title="Link to this heading"></a></h3>
-<p>Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.</p>
-<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>Invoke-WebRequest<span class="w"> </span>-Uri<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span>-UseBasicParsing<span class="o">)</span>.Content<span class="w"> </span><span class="p">|</span><span class="w"> </span>py<span class="w"> </span>-
-poetry<span class="w"> </span>--version
-poetry<span class="w"> </span>config<span class="w"> </span>virtualenvs.in-project<span class="w"> </span><span class="nb">true</span>
-poetry<span class="w"> </span>config<span class="w"> </span>--list
+<section id="install-uv">
+<h3>Install uv<a class="headerlink" href="#install-uv" title="Link to this heading"></a></h3>
+<p>Then, please install uv, a package management tool.</p>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>uv
+uv<span class="w"> </span>--version
 </pre></div>
 </div>
-<p>If you have <code class="docutils literal notranslate"><span class="pre">make</span></code> commands, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">poetry-windows</span></code>. This is defined in “Makefile” of the top directory.</p>
-</section>
-<section id="install-poetry-linux-wsl-macos">
-<h3>Install Poetry (Linux, WSL, macOS)<a class="headerlink" href="#install-poetry-linux-wsl-macos" title="Link to this heading"></a></h3>
-<p>Please use <code class="docutils literal notranslate"><span class="pre">make</span></code> command.</p>
-<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>poetry-linux
-</pre></div>
-</div>
+<p>If you have <code class="docutils literal notranslate"><span class="pre">make</span></code> commands, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">setup-uv</span></code>. This is defined in “Makefile” of the top directory.</p>
 </section>
 <section id="install-dependencies">
 <h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading"></a></h3>
-<p>To install dependencies with Poetry, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> or the following commands before editing codes.</p>
-<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>
-poetry<span class="w"> </span>self<span class="w"> </span>update
-poetry<span class="w"> </span>install
+<p>To install dependencies with uv, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> or the following commands before editing codes.</p>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--group<span class="w"> </span>docs
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>New dependencies can be installed with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--dev</span></code>.</p></li>
-<li><p>Un-necessary dependencies will be removed with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--dev</span></code>.</p></li>
-<li><p>Start shell with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell;</span> <span class="pre">python</span></code>.</p></li>
-<li><p>Run python scripts with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> command, like <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">examples/scenario_analysis.py</span></code>.</p></li>
+<li><p>New dependencies can be installed with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--group</span> <span class="pre">dev</span></code>.</p></li>
+<li><p>Un-necessary dependencies will be removed with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--group</span> <span class="pre">dev</span></code>.</p></li>
+<li><p>Start shell with <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">.venv/bin/activate;</span> <span class="pre">python</span></code> (Linux/macOS) or <code class="docutils literal notranslate"><span class="pre">.venv\Scripts\activate;</span> <span class="pre">python</span></code> (Windows).</p></li>
+<li><p>Run python scripts with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code> command, like <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">examples/scenario_analysis.py</span></code>.</p></li>
 </ul>
 </section>
 </section>
@@ -233,19 +221,19 @@ Please ensure that</p>
 <h2>Run tests<a class="headerlink" href="#run-tests" title="Link to this heading"></a></h2>
 <p>Before creating a pull request, please run tests with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">pytest</span></code> or the following commands.</p>
 <p>All tests:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">covsirphy</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">term</span><span class="o">-</span><span class="n">missing</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">covsirphy</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">term</span><span class="o">-</span><span class="n">missing</span>
 </pre></div>
 </div>
 <p>Selected tests:
 (e.g. when you updated codes related to tests/test_scenario.py)</p>
 <p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span> <span class="pre">target=/test_scenario.py</span></code> or commands as follows.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span><span class="n">test_scenario</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> \
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">uv</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span><span class="n">test_scenario</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> \
     <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">covsirphy</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">term</span><span class="o">-</span><span class="n">missing</span>
 </pre></div>
 </div>
-<p>When you create a pull request to upstream repository, CI tools will test the codes with Python 3.8+. When development version number is updated (i.e. a pull request merged), CI tools will test the codes with the all supported Python versions.</p>
+<p>When you create a pull request to upstream repository, CI tools will test the codes with Python 3.10+. When development version number is updated (i.e. a pull request merged), CI tools will test the codes with the all supported Python versions.</p>
 </section>
 <section id="versioning">
 <h2>Versioning<a class="headerlink" href="#versioning" title="Link to this heading"></a></h2>
@@ -257,7 +245,7 @@ Please ensure that</p>
 <p>Maintainers will</p>
 <ul class="simple">
 <li><p>update <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx document</a> with CI tools and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code>,</p></li>
-<li><p>update “pyproject.toml” and “poetry.lock” with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">update</span></code>,</p></li>
+<li><p>update “pyproject.toml” and “uv.lock” with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">update</span></code>,</p></li>
 <li><p>update “covsirphy/__init__.py” to update development or stable version number,</p></li>
 <li><p>update “pyproject.toml” to update stable version number,</p></li>
 <li><p>upload to <a class="reference external" href="https://pypi.org/">PyPI: The Python Package Index</a>, and</p></li>

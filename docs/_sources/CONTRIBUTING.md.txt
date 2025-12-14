@@ -13,7 +13,7 @@ Terms:
 
 ## Clone CovsirPhy repository and install dependencies
 
-Developers will clone CovsirPhy repository with `git clone` command and install dependencies with Poetry.
+Developers will clone CovsirPhy repository with `git clone` command and install dependencies with uv.
 
 ### Clone/Fork the repository
 
@@ -44,41 +44,29 @@ git merge upstream/master
 
 Setup base Python with <https://www.python.org/downloads/> (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).
 
-### Install Poetry (Windows)
+### Install uv
 
-Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.
-
-```Bash
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
-poetry --version
-poetry config virtualenvs.in-project true
-poetry config --list
-```
-
-If you have `make` commands, run `make poetry-windows`. This is defined in "Makefile" of the top directory.
-
-### Install Poetry (Linux, WSL, macOS)
-
-Please use `make` command.
+Then, please install uv, a package management tool.
 
 ```Bash
-make poetry-linux
+pip install uv
+uv --version
 ```
+
+If you have `make` commands, run `make setup-uv`. This is defined in "Makefile" of the top directory.
 
 ### Install dependencies
 
-To install dependencies with Poetry, run `make install` or the following commands before editing codes.
+To install dependencies with uv, run `make install` or the following commands before editing codes.
 
 ```Bash
-pip install --upgrade 
-poetry self update
-poetry install
+uv sync --group test --group docs
 ```
 
-- New dependencies can be installed with `poetry add <name>` or `poetry add <name> --dev`.
-- Un-necessary dependencies will be removed with `poetry remove <name>` or `poetry remove <name> --dev`.
-- Start shell with `poetry shell; python`.
-- Run python scripts with `poetry run` command, like `poetry run examples/scenario_analysis.py`.
+- New dependencies can be installed with `uv add <name>` or `uv add <name> --group dev`.
+- Un-necessary dependencies will be removed with `uv remove <name>` or `uv remove <name> --group dev`.
+- Start shell with `source .venv/bin/activate; python` (Linux/macOS) or `.venv\Scripts\activate; python` (Windows).
+- Run python scripts with `uv run` command, like `uv run examples/scenario_analysis.py`.
 
 ## Issues
 
@@ -126,8 +114,8 @@ Before creating a pull request, please run tests with `make pytest` or the follo
 All tests:
 
 ```Python
-poetry run flake8 covsirphy --ignore=E501
-poetry run pytest tests -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing
+uv run flake8 covsirphy --ignore=E501
+uv run pytest tests -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing
 ```
 
 Selected tests:
@@ -136,12 +124,12 @@ Selected tests:
 Run `make test target=/test_scenario.py` or commands as follows.
 
 ```Python
-poetry run flake8 covsirphy --ignore=E501
-poetry run pytest tests/test_scenario.py -v --durations=0 --failed-first --maxfail=1 \
+uv run flake8 covsirphy --ignore=E501
+uv run pytest tests/test_scenario.py -v --durations=0 --failed-first --maxfail=1 \
     --cov=covsirphy --cov-report=term-missing
 ```
 
-When you create a pull request to upstream repository, CI tools will test the codes with Python 3.8+. When development version number is updated (i.e. a pull request merged), CI tools will test the codes with the all supported Python versions.
+When you create a pull request to upstream repository, CI tools will test the codes with Python 3.10+. When development version number is updated (i.e. a pull request merged), CI tools will test the codes with the all supported Python versions.
 
 ## Versioning
 
@@ -153,7 +141,7 @@ CovsirPhy follows [Semantic Versioning 2.0.0](https://semver.org/). However, the
 Maintainers will
 
 - update [sphinx document](https://lisphilar.github.io/covid19-sir/) with CI tools and `make docs`,
-- update "pyproject.toml" and "poetry.lock" with `make update`,
+- update "pyproject.toml" and "uv.lock" with `make update`,
 - update "covsirphy/\_\_init\_\_.py" to update development or stable version number,
 - update "pyproject.toml" to update stable version number,
 - upload to [PyPI: The Python Package Index](https://pypi.org/), and
