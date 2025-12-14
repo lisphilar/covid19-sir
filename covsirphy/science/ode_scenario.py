@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 import pandas as pd
-from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedTypeError, UnExpectedValueRangeError
+from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedValueRangeError
 from covsirphy.util.error import UnExpectedValueError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
