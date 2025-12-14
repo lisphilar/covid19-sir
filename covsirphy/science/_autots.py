@@ -58,7 +58,7 @@ class _AutoTSHandler(Term):
             _AutoTSHandler: self
         """
         # https://github.com/lisphilar/covid19-sir/issues/1265
-        from autots.evaluator.auto_ts import fake_regressor
+        from autots.tools.regressor import fake_regressor
         if X is not None:
             regressor_train, self._regressor_forecast = fake_regressor(
                 self._Y,
