@@ -29,21 +29,17 @@ jobs:
       - name: check out repository
         uses: actions/checkout@main
 
+      - name: install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
       - name: set up Python
-        uses: actions/setup-python@main
-        with:
-          python-version: "3.12"
-
-      - name: install Poetry
-        uses: snok/install-poetry@main
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
+        run: uv python install 3.12
 
       - name: install dependencies
-        run: poetry install --no-interaction --with docs
+        run: uv sync --group docs
 
       - name: create html files with "make docs" command
         run: make docs
