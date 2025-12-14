@@ -17,93 +17,62 @@ setup-python:
 	@pyenv local `pyenv install -l | grep -x '  [0-9]*\.[0-9]*\.[0-9]*' | tail -n 1 | tr -d ' '`
 	@anyenv versions
 
-.PHONY: setup-poetry
-setup-poetry:
-	@# Install poetry
-	@curl -sSL https://install.python-poetry.org | python3 -
-	@export PATH=$PATH:$HOME/.poetry/bin
-	@poetry --version
-	@poetry env info
-	@poetry config virtualenvs.in-project true
-	@poetry config repositories.testpypi https://test.pypi.org/legacy/
-	@poetry env info
-	@poetry config --list
+.PHONY: setup-uv
+setup-uv:
+	@# Install uv
+	@curl -LsSf https://astral.sh/uv/install.sh | sh
+	@export PATH="$$HOME/.local/bin:$$PATH"
+	@uv --version
 	@rm -rf .venv
-	@rm -f poetry.lock
-
-.PHONY: poetry-windows
-poetry-windows:
-	@# Install poetry (Windows)
-	@# system Python should be installed in advance
-	@(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
-	@export PATH=$PATH:$HOME/.poetry/bin
-	@poetry --version
-	@poetry config virtualenvs.in-project true
-	@poetry env info
-	@poetry config --list
-	@rm -rf .venv
-	@rm -f poetry.lock
+	@rm -f uv.lock
 
 .PHONY: install
 install:
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry install --with test,docs
+	@uv sync --group test --group docs
 
 .PHONY: update
 update:
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry update
-	@poetry install --with test,docs
+	@uv sync --upgrade --group test --group docs
 
 .PHONY: add
 add:
-	@# for main dependencies: make add pandas
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry add ${target}@latest
-	@poetry install --with test,docs
+	@# for main dependencies: make add target=pandas
+	@uv add ${target}
+	@uv sync --group test --group docs
 
 .PHONY: add-dev
 add-dev:
-	@# for test dependencies: make add target=pytest group=test
-	@# for docs dependencies: make add target=Sphinx group=docs
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry add ${target}@latest --group ${group}
-	@poetry install --with test,docs
+	@# for test dependencies: make add-dev target=pytest group=test
+	@# for docs dependencies: make add-dev target=Sphinx group=docs
+	@uv add ${target} --group ${group}
+	@uv sync --group test --group docs
 
 .PHONY: remove
 remove:
-	@# for main dependencies: make remove pandas
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry remove ${target}
-	@poetry install --with test,docs
+	@# for main dependencies: make remove target=pandas
+	@uv remove ${target}
+	@uv sync --group test --group docs
 
 .PHONY: remove-dev
 remove-dev:
-	@# for test dependencies: make remove target=pytest group=test
-	@# for docs dependencies: make remove target=Sphinx group=docs
-	@python -m pip install --upgrade pip
-	@poetry self update
-	@poetry remove ${target} --group ${group}
-	@poetry install --with test,docs
+	@# for test dependencies: make remove-dev target=pytest group=test
+	@# for docs dependencies: make remove-dev target=Sphinx group=docs
+	@uv remove ${target} --group ${group}
+	@uv sync --group test --group docs
 
 .PHONY: check
 check:
 	@# Check codes with deptry and pflake8
-	@poetry run deptry .
-	@poetry run pflake8 covsirphy
-	@poetry run pyright
+	@uv run deptry .
+	@uv run pflake8 covsirphy
+	@uv run pyright
 
 .PHONY: test
 test:
 	@# All tests: make test
 	@# Selected tests: make test target=/test_scenario.py::TestScenario
 	@make check --no-print-directory
-	@poetry run pytest tests${target}
+	@uv run pytest tests${target}
 
 .PHONY: docs
 docs:
@@ -117,25 +86,24 @@ docs:
 	@cp --force SECURITY.md docs/SECURITY.md
 	@pandoc -f commonmark -o docs/README.rst README.md --to rst
 	# Create API reference
-	@poetry run sphinx-apidoc -o docs covsirphy -fMT -t=docs/_templates
+	@uv run sphinx-apidoc -o docs covsirphy -fMT -t=docs/_templates
 	# Execute sphinx
-	@cd docs; poetry run make html --no-print-directory; cp -a _build/html/. ../docs
+	@cd docs; uv run make html --no-print-directory; cp -a _build/html/. ../docs
 
 .PHONY: pypi
 pypi:
 	@# https://pypi.org/
-	@# poetry config pypi-token.pypi "API Token of PyPi"
-	@rm -rf covsirphy.egg-info/*
+	@# UV_PUBLISH_TOKEN="API Token of PyPi"
 	@rm -rf dist/*
-	@poetry publish --build
+	@uv build
+	@uv publish
 
 .PHONY: test-pypi
 test-pypi:
-	@# poetry config pypi-token.testpypi "API Token of Test-PyPi"
-	@poetry config repositories.testpypi https://test.pypi.org/legacy/
-	@rm -rf covsirphy.egg-info/*
+	@# UV_PUBLISH_TOKEN="API Token of Test-PyPi"
 	@rm -rf dist/*
-	@poetry publish -r testpypi --build
+	@uv build
+	@uv publish --publish-url https://test.pypi.org/legacy/
 
 .PHONY: clean
 clean:
@@ -145,23 +113,23 @@ clean:
 	@find -name __pycache__ | xargs --no-run-if-empty rm -r
 	@rm -rf dist covsirphy.egg-info
 	@rm -f .coverage*
-	@poetry cache clear . --all
+	@uv cache clean
 	@rm importtime.log
 
 .PHONY: shell
 shell:
-	@poetry shell
-	@python -i
+	@# To activate the virtual environment: source .venv/bin/activate
+	@uv run python -i
 
 .PHONY: importtime
 importtime:
-	@poetry run python -X importtime -c "import covsirphy" 2> importtime.log
-	@poetry run tuna importtime.log
+	@uv run python -X importtime -c "import covsirphy" 2> importtime.log
+	@uv run tuna importtime.log
 
 .PHONY: data
 data:
-	@poetry run python ./data/vaccine_data.py
+	@uv run python ./data/vaccine_data.py
 
 .PHONY: demo
 demo:
-	@poetry run python ./example/demo.py
+	@uv run python ./example/demo.py

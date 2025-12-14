@@ -1,12 +1,17 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "covsirphy"
 version = "3.1.2"
 description = "COVID-19 data analysis with phase-dependent SIR-derived ODE models"
-authors = ["Hirokazu Takaya <lisphilar@outlook.jp>"]
-license = "Apache-2.0"
-repository = "https://github.com/lisphilar/covid19-sir/"
-documentation = "https://lisphilar.github.io/covid19-sir/"
 readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Hirokazu Takaya", email = "lisphilar@outlook.jp"}
+]
 keywords = ["covid19", "covid", "data engineering", "data science"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -17,68 +22,60 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
 ]
+dependencies = [
+    "numpy>=1.26.3,<3.0.0",
+    "optuna>=3.5,<5.0",
+    "pandas>=2.2.0,<3.0.0",
+    "pyarrow>=15,<23",
+    "tabulate>=0.9.0,<0.10.0",
+    "scipy>=1.12.0,<2.0.0",
+    "ruptures>=1.1.9,<2.0.0",
+    "matplotlib>=3.8.2,<4.0.0",
+    "country-converter>=1.2.0,<2.0.0",
+    "geopandas>=0.14.3,<1.2.0",
+    "Unidecode>=1.3.8,<2.0.0",
+    "AutoTS>=1.0.0,<2.0.0",
+    "p-tqdm>=1.4.0,<2.0.0",
+    "pca>=2.0.5,<3.0.0",
+    "loguru>=0.7.2,<0.8.0",
+    "requests>=2.31.0,<3.0.0",
+    "typing-extensions>=4.9.0,<5.0.0",
+]
 
-[tool.poetry.dependencies]
-# `poetry install` installs all dependencies, including optional ones
-# `poetry install --only main` install only main dependencies
-python = "^3.10,<3.14"
-numpy = ">=1.26.3,<3.0.0"
-optuna = ">=3.5,<5.0"
-pandas = "^2.2.0"
-pyarrow = ">=15,<23"
-tabulate = "^0.9.0"
-scipy = "^1.12.0"
-ruptures = "^1.1.9"
-matplotlib = "^3.8.2"
-country-converter = "^1.2.0"
-geopandas = ">=0.14.3,<1.2.0"
-Unidecode = "^1.3.8"
-AutoTS = "^1.0.0"
-p-tqdm = "^1.4.0"
-pca = "^2.0.5"
-loguru = "^0.7.2"
-requests = "^2.31.0"
-typing-extensions = "^4.9.0"
+[project.urls]
+Repository = "https://github.com/lisphilar/covid19-sir/"
+Documentation = "https://lisphilar.github.io/covid19-sir/"
 
-[tool.poetry.group.test]
-# poetry install --with test
-optional = true
-[tool.poetry.group.test.dependencies]
-autopep8 = "^2.0.4"
-flake8 = "^7.0.0"
-pyproject-flake8 = "^7.0.0"
-deptry = ">=0.12,<0.25"
-pyright = "^1.1.349"
-pytest = ">=8,<10"
-pytest-profiling = "^1.7.0"
-pytest-cov = ">=4.1,<8.0"
-tuna = "^0.5.11"
-
-[tool.poetry.group.docs]
-# poetry install --with docs
-optional = true
-[tool.poetry.group.docs.dependencies]
-jupyter = "^1.0.0"
-ipykernel = ">=6.29,<8.0"
-ipywidgets = "^8.1.1"
-docutils = ">=0.20.1,<0.22.0"
-Sphinx = "^7.2.6"
-sphinx-rtd-theme = ">=2,<4"
-sphinxcontrib-seqdiag = "^3.0.0"
-sphinx-copybutton = "^0.5.2"
-nbsphinx = "^0.9.3"
-Pillow = ">=10.2,<13.0"
-myst-parser = ">=2,<5"
-sympy = "^1.12.0"
-sphinx = "^7.2.6"
-sphinx-autodoc-typehints = ">=1.25.3,<3.0.0"
-
-[tool.poetry.group.data.dependencies]
-openpyxl = "^3.1.2"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+test = [
+    "autopep8>=2.0.4,<3.0.0",
+    "flake8>=7.0.0,<8.0.0",
+    "pyproject-flake8>=7.0.0,<8.0.0",
+    "deptry>=0.12,<0.25",
+    "pyright>=1.1.349,<2.0.0",
+    "pytest>=8,<10",
+    "pytest-profiling>=1.7.0,<2.0.0",
+    "pytest-cov>=4.1,<8.0",
+    "tuna>=0.5.11,<0.6.0",
+]
+docs = [
+    "jupyter>=1.0.0,<2.0.0",
+    "ipykernel>=6.29,<8.0",
+    "ipywidgets>=8.1.1,<9.0.0",
+    "docutils>=0.20.1,<0.22.0",
+    "Sphinx>=7.2.6,<8.0.0",
+    "sphinx-rtd-theme>=2,<4",
+    "sphinxcontrib-seqdiag>=3.0.0,<4.0.0",
+    "sphinx-copybutton>=0.5.2,<0.6.0",
+    "nbsphinx>=0.9.3,<0.10.0",
+    "Pillow>=10.2,<13.0",
+    "myst-parser>=2,<5",
+    "sympy>=1.12.0,<2.0.0",
+    "sphinx-autodoc-typehints>=1.25.3,<3.0.0",
+]
+data = [
+    "openpyxl>=3.1.2,<4.0.0",
+]
 
 [tool.flake8]
 extend-ignore = ["E501"]
@@ -99,7 +96,6 @@ exclude = ["tests", ".venv", "example", "docs"]
 DEP003 = ["urllib3"]
 DEP002 = ["pyarrow", "tabulate", "requests"]
 
-
 [tool.pyright]
 include = ["covsirphy"]
 reportArgumentType = false
@@ -111,3 +107,6 @@ reportOperatorIssue = false
 reportOptionalMemberAccess = false
 reportReturnType = false
 reportUnboundVariable = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["covsirphy"]

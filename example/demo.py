@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-When you use this file from the top directory of the repository with poetry, please run
-cd example; poetry run ./demo.py; cd ../
+When you use this file from the top directory of the repository with uv, please run
+cd example; uv run ./demo.py; cd ../
 """
 
 from pathlib import Path
