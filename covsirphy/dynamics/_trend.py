@@ -92,10 +92,12 @@ class _TrendAnalyzer(Term):
         all_df = self._all_df.copy()
         starts = [all_df.index.min(), *points]
         ends = [point - timedelta(days=1) for point in points] + [all_df.index.max()]
+        new_cols = {}
         for i, (start, end) in enumerate(zip(starts, ends)):
             phase_df = all_df.loc[start: end, :]
             param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
-            all_df[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
+            new_cols[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
+        all_df = pd.concat([all_df, pd.DataFrame(new_cols)], axis=1)
         all_df[self.FITTED] = all_df.drop([logS, r], axis=1).sum(axis=1)
         return all_df.rename(columns={logS: self.ACTUAL}).set_index(r).groupby(level=0).first()
 
