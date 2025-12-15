@@ -1,4 +1,6 @@
 import warnings
+import contextlib
+import os
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
@@ -69,7 +71,13 @@ class _AutoTSHandler(Term):
                 verbose=self._autots.verbose,
             )
         warnings.filterwarnings("ignore", category=FutureWarning)
-        self._autots.fit(self._Y, future_regressor=None if X is None else regressor_train)
+
+        if self._autots.verbose > 0:
+            self._autots.fit(self._Y, future_regressor=None if X is None else regressor_train)
+        else:
+            with open(os.devnull, "w") as f, contextlib.redirect_stdout(f), contextlib.redirect_stderr(f):
+                self._autots.fit(self._Y, future_regressor=None if X is None else regressor_train)
+
         return self
 
     def predict(self):
