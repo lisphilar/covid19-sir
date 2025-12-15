@@ -68,10 +68,21 @@ class _OWID(_DataBase):
             url=URL_V_LOC, suffix="_vaccine_locations", columns=["iso_code", "vaccines"], date=None, date_format="%Y-%m-%d")
         v_df = v_rec_df.merge(v_loc_df, how="left", on=self.ISO3)
         # Tests
-        pcr_rec_cols = ["ISO code", "Date", "Daily change in cumulative total", "Cumulative total"]
-        pcr_df = self._provide(url=URL_P_REC, suffix="", columns=pcr_rec_cols, date="Date", date_format="%Y-%m-%d")
-        pcr_df["cumsum"] = pcr_df.groupby(self.ISO3)["Daily change in cumulative total"].cumsum()
-        pcr_df = pcr_df.assign(tests=lambda x: x[self.TESTS].fillna(x["cumsum"]))
+        pcr_rec_cols = [
+            "ISO code",
+            "Date",
+            "Daily change in cumulative total",
+            "Cumulative total"]
+        pcr_df = self._provide(
+            url=URL_P_REC,
+            suffix="",
+            columns=pcr_rec_cols,
+            date="Date",
+            date_format="%Y-%m-%d")
+        pcr_df["cumsum"] = pcr_df.groupby(
+            self.ISO3)["Daily change in cumulative total"].cumsum()
+        pcr_df = pcr_df.assign(
+            tests=lambda x: x[self.TESTS].fillna(x["cumsum"]))
         pcr_df.rename(columns={"tests": self.TESTS})
         pcr_df = pcr_df.loc[:, [self.ISO3, self.DATE, self.TESTS]]
         # Combine data (vaccinations/tests)

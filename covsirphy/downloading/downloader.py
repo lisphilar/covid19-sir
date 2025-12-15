@@ -23,12 +23,19 @@ class DataDownloader(Term):
     """
     LAYERS: list[str] = [Term.ISO3, Term.PROVINCE, Term.CITY]
 
-    def __init__(self, directory: str | Path = "input", update_interval: int = 12, **kwargs) -> None:
+    def __init__(self, directory: str | Path = "input",
+                 update_interval: int = 12, **kwargs) -> None:
         self._directory = directory
-        self._update_interval = Validator(update_interval, "update_interval").int(value_range=(0, None))
+        self._update_interval = Validator(
+            update_interval,
+            "update_interval").int(
+            value_range=(
+                0,
+                None))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
 
-    def layer(self, country: str | None = None, province: str | None = None, databases: list[str] | None = None) -> pd.DataFrame:
+    def layer(self, country: str | None = None, province: str |
+              None = None, databases: list[str] | None = None) -> pd.DataFrame:
         """Return the data at the selected layer.
 
         Args:
@@ -87,12 +94,19 @@ class DataDownloader(Term):
             "wpp": _WPP,
         }
         all_databases = ["japan", "covid19dh", "owid"]
-        selected = Validator(databases, "databases").sequence(default=all_databases, candidates=list(db_dict.keys()))
+        selected = Validator(
+            databases,
+            "databases").sequence(
+            default=all_databases,
+            candidates=list(
+                db_dict.keys()))
         self._gis = GIS(layers=self.LAYERS, country=self.ISO3, date=self.DATE)
         for database in selected:
             db = db_dict[database](
                 directory=self._directory, update_interval=self._update_interval,)
-            new_df = db.layer(country=country, province=province).convert_dtypes()
+            new_df = db.layer(
+                country=country,
+                province=province).convert_dtypes()
             if new_df.empty:
                 continue
             self._gis.register(

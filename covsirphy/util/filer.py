@@ -30,14 +30,19 @@ class Filer(object):
 
     def __init__(self, directory: list[str] | tuple[str, ...] | str | Path,
                  prefix: str | None = None, suffix: str | None = None, numbering: str | None = None) -> None:
-        directories = [directory] if isinstance(directory, (str, Path)) else directory
+        directories = [directory] if isinstance(
+            directory, (str, Path)) else directory
         self._dir_path = Path(*directories).resolve()
         self._pre = "" if prefix is None else f"{prefix}_"
         self._suf = "" if suffix is None else f"_{suffix}"
         # Create the directory
         self._dir_path.mkdir(parents=True, exist_ok=True)
         # Numbering
-        num_dict = {"001": "{num:0>3}_", "01": "{num:0>2}_", "1": "{num:0>1}_", None: ""}
+        num_dict = {
+            "001": "{num:0>3}_",
+            "01": "{num:0>2}_",
+            "1": "{num:0>1}_",
+            None: ""}
         if numbering not in num_dict:
             num_str = ", ".join(str(sel) for sel in num_dict)
             raise ValueError(
@@ -58,8 +63,12 @@ class Filer(object):
             str: absolute filename
         """
         # Create filename
-        basename_format = f"{self._pre}{self._num_format}{title}{self._suf}.{ext}"
-        basename = basename_format.format(num=len(self._file_dict.get(ext, [])) + 1)
+        basename_format = f"{
+            self._pre}{
+            self._num_format}{title}{
+            self._suf}.{ext}"
+        basename = basename_format.format(
+            num=len(self._file_dict.get(ext, [])) + 1)
         filename = str(self._dir_path.joinpath(basename))
         # Register the filename
         self._file_dict[ext] = self._file_dict.get(ext, []) + [filename]
@@ -76,7 +85,8 @@ class Filer(object):
             list[str]: list of files
         """
         if ext is None:
-            return [file for filenames in self._file_dict.values() for file in filenames]
+            return [file for filenames in self._file_dict.values()
+                    for file in filenames]
         return self._file_dict.get(ext, [])
 
     def png(self, title: str, **kwargs: Any) -> dict[str, Any]:

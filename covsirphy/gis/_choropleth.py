@@ -4,7 +4,6 @@ import warnings
 from typing import Any
 import geopandas as gpd
 import numpy as np
-import pandas as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from covsirphy.util.validator import Validator
 from covsirphy.visualization.vbase import VisualizeBase
@@ -28,7 +27,8 @@ class _ChoroplethMap(VisualizeBase):
     def __exit__(self, *exc_info: Any) -> None:
         return super().__exit__(*exc_info)
 
-    def plot(self, data: gpd.GeoDataFrame, logscale: bool, **kwargs: Any) -> None:
+    def plot(self, data: gpd.GeoDataFrame,
+             logscale: bool, **kwargs: Any) -> None:
         """Set geopandas.GeoDataFrame to create a choropleth map.
 
         Args:
@@ -43,7 +43,13 @@ class _ChoroplethMap(VisualizeBase):
             kwargs: arguments of geopandas.GeoDataFrame.plot() except for 'column'
         """
         warnings.filterwarnings("ignore", category=UserWarning)
-        df = Validator(data, "data").dataframe(columns=["Location", "Variable", "geometry"])
+        df = Validator(
+            data,
+            "data").dataframe(
+            columns=[
+                "Location",
+                "Variable",
+                "geometry"])
         df["Variable"] = df["Variable"].astype("float64")
         gdf = gpd.GeoDataFrame(df)
         # Color bar
@@ -73,4 +79,8 @@ class _ChoroplethMap(VisualizeBase):
             plot_kwargs.pop("missing_kwds")
         gdf.plot(column="Variable", **plot_kwargs)
         # Remove all ticks
-        self._ax.tick_params(labelbottom=False, labelleft=False, left=False, bottom=False)
+        self._ax.tick_params(
+            labelbottom=False,
+            labelleft=False,
+            left=False,
+            bottom=False)

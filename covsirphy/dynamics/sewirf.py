@@ -32,7 +32,13 @@ class SEWIRFModel(ODEModel):
     # Name of ODE model
     _NAME = "SEWIR-F Model"
     # Variables
-    _VARIABLES = [ODEModel.S, ODEModel.E, ODEModel.W, ODEModel.CI, ODEModel.R, ODEModel.F]
+    _VARIABLES = [
+        ODEModel.S,
+        ODEModel.E,
+        ODEModel.W,
+        ODEModel.CI,
+        ODEModel.R,
+        ODEModel.F]
     # Non-dimensional parameters
     _PARAMETERS = ["theta", "kappa", "rho1", "rho2", "rho3", "sigma"]
     # Dimensional parameters
@@ -48,14 +54,51 @@ class SEWIRFModel(ODEModel):
             "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075, "rho2": 0.167, "rho3": 0.167}
     }
 
-    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
+    def __init__(self, date_range: tuple[str, str], tau: int,
+                 initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
-        self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
-        self._kappa = Validator(self._param_dict["kappa"], "kappa", accept_none=False).float(value_range=(0, 1))
-        self._rho1 = Validator(self._param_dict["rho1"], "rho1", accept_none=False).float(value_range=(0, 1))
-        self._rho2 = Validator(self._param_dict["rho2"], "rho2", accept_none=False).float(value_range=(0, 1))
-        self._rho3 = Validator(self._param_dict["rho3"], "rho3", accept_none=False).float(value_range=(0, 1))
-        self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
+        self._theta = Validator(
+            self._param_dict["theta"],
+            "theta",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._kappa = Validator(
+            self._param_dict["kappa"],
+            "kappa",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._rho1 = Validator(
+            self._param_dict["rho1"],
+            "rho1",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._rho2 = Validator(
+            self._param_dict["rho2"],
+            "rho2",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._rho3 = Validator(
+            self._param_dict["rho3"],
+            "rho3",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._sigma = Validator(
+            self._param_dict["sigma"],
+            "sigma",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
 
     def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
@@ -79,7 +122,8 @@ class SEWIRFModel(ODEModel):
         return np.array([dsdt, didt, drdt, dfdt, dedt, dwdt])
 
     @ classmethod
-    def transform(cls, data: pd.DataFrame, tau: int | None = None) -> pd.DataFrame:
+    def transform(cls, data: pd.DataFrame, tau: int |
+                  None = None) -> pd.DataFrame:
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
@@ -111,7 +155,8 @@ class SEWIRFModel(ODEModel):
         return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @ classmethod
-    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None, start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
+    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None,
+                          start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
@@ -232,7 +277,13 @@ class SEWIRFModel(ODEModel):
                 log10(S) (np.float64): common logarithm of Susceptible
                 R (np.int64): Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
+        Validator(
+            data,
+            "data",
+            accept_none=False).dataframe(
+            time_index=True,
+            columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})
         df[cls._logS] = np.log10(df[cls.S])
-        return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
+        return df.loc[:, [cls._logS, cls._r]].astype(
+            {cls._logS: np.float64, cls._r: np.int64})

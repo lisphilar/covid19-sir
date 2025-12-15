@@ -23,7 +23,9 @@ class _DataBase(Term):
     def __init__(self, directory, update_interval):
         self._filer = Filer(directory=directory)
         self._update_interval = update_interval
-        self._provider = _DataProvider(update_interval=self._update_interval, stdout=self.STDOUT)
+        self._provider = _DataProvider(
+            update_interval=self._update_interval,
+            stdout=self.STDOUT)
 
     def layer(self, country, province):
         """Return the data at the selected layer.
@@ -113,7 +115,8 @@ class _DataBase(Term):
         """
         raise NotImplementedError
 
-    def _provide(self, url, suffix, columns, date=None, date_format="%Y-%m-%d"):
+    def _provide(self, url, suffix, columns, date=None,
+                 date_format="%Y-%m-%d"):
         """Provide the latest data and rename with class variable .COL_DICT.
 
         Args:
@@ -129,6 +132,12 @@ class _DataBase(Term):
         Note:
             File will be downloaded to '/{self._directory}/{title}{suffix}.csv'.
         """
-        filename = self._filer.csv(title=f"{self.TITLE}{suffix}")["path_or_buf"]
-        df = self._provider.latest(filename=filename, url=url, columns=columns, date=date, date_format=date_format)
+        filename = self._filer.csv(title=f"{self.TITLE}{suffix}")[
+            "path_or_buf"]
+        df = self._provider.latest(
+            filename=filename,
+            url=url,
+            columns=columns,
+            date=date,
+            date_format=date_format)
         return df.rename(columns=self.COL_DICT)

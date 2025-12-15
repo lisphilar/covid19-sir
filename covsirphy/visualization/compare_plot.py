@@ -43,18 +43,26 @@ class ComparePlot(VisualizeBase):
         """
         Validator(variables, "variables").sequence()
         group1, group2 = Validator(groups, "groups").sequence()
-        col_nest = [[f"{variable}_{group}" for group in groups] for variable in variables]
+        col_nest = [[f"{variable}_{group}" for group in groups]
+                    for variable in variables]
         Validator(data, "data").dataframe(columns=sum(col_nest, []))
         # Prepare figure object
         fig_len = len(variables) + 1
-        _, self._ax = plt.subplots(ncols=1, nrows=fig_len, figsize=(9, 6 * fig_len / 2))
+        _, self._ax = plt.subplots(
+            ncols=1, nrows=fig_len, figsize=(
+                9, 6 * fig_len / 2))
         # Compare each variable
         for (ax, v, columns) in zip(self._ax.ravel()[1:], variables, col_nest):
             data[columns].plot.line(
                 ax=ax, ylim=(None, None), sharex=True, title=f"Comparison regarding {v}(t)")
             ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
             ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-            ax.legend(bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0)
+            ax.legend(
+                bbox_to_anchor=(
+                    1.02,
+                    0),
+                loc="lower left",
+                borderaxespad=0)
         # Show residuals
         for (v, columns) in zip(variables, col_nest):
             data[f"{v}_diff"] = data[columns[0]] - data[columns[1]]
@@ -62,9 +70,16 @@ class ComparePlot(VisualizeBase):
                 ax=self._ax.ravel()[0], sharex=True,
                 title=f"{group1.capitalize()} - {group2.capitalize()}")
         self._ax.ravel()[0].axhline(y=0, color="black", linestyle="--")
-        self._ax.ravel()[0].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
-        self._ax.ravel()[0].ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-        self._ax.ravel()[0].legend(bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0)
+        self._ax.ravel()[0].yaxis.set_major_formatter(
+            ScalarFormatter(useMathText=True))
+        self._ax.ravel()[0].ticklabel_format(
+            style="sci", axis="y", scilimits=(0, 0))
+        self._ax.ravel()[0].legend(
+            bbox_to_anchor=(
+                1.02,
+                0),
+            loc="lower left",
+            borderaxespad=0)
 
 
 def compare_plot(df, variables, groups, filename=None, **kwargs):

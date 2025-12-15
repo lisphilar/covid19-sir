@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 import logging
 import warnings
-from typing import ClassVar, Any
+from typing import ClassVar
 import country_converter as coco
 import pandas as pd
 from covsirphy.util.validator import Validator
@@ -131,7 +131,8 @@ class Term(object):
             return int(string[:-2])
         except ValueError as e:
             raise ValueError(
-                f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied."
+                f"Examples of {name} are 0th, 1st, 2nd..., but {
+                    string} was applied."
             ) from e
 
     @classmethod
@@ -167,7 +168,8 @@ class Term(object):
         names = [name] if (isinstance(name, str) or name is None) else name
         excepted_dict = {"UK": "GBR", None: cls.NA * 3}
         code_dict = {
-            elem: excepted_dict[elem] if elem in excepted_dict else coco.convert(elem, to="ISO3", not_found=elem)
+            elem: excepted_dict[elem] if elem in excepted_dict else coco.convert(
+                elem, to="ISO3", not_found=elem)
             for elem in set(names)
         }
         return [code_dict[elem] for elem in names]

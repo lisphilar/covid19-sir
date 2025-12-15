@@ -65,8 +65,10 @@ class _TrendAnalyzer(Term):
         sr_df = self._all_df.pivot_table(index=r, values=logS, aggfunc="last")
         sr_df.index.name = None
         warnings.filterwarnings("ignore", category=UserWarning)
-        detector = algo_dict[algo][0](**algo_dict[algo][1], **Validator(kwargs).kwargs(algo_dict[algo][0]))
-        results = detector.fit_predict(sr_df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
+        detector = algo_dict[algo][0](
+            **algo_dict[algo][1], **Validator(kwargs).kwargs(algo_dict[algo][0]))
+        results = detector.fit_predict(
+            sr_df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
         logs_df = sr_df.iloc[[result - 1 for result in results]]
         merge_df = pd.merge_asof(
             logs_df.sort_values(logS), self._all_df.reset_index().sort_values(logS), on=logS, direction="nearest")
@@ -91,15 +93,17 @@ class _TrendAnalyzer(Term):
         r, logS = self._r, self._logS
         all_df = self._all_df.copy()
         starts = [all_df.index.min(), *points]
-        ends = [point - timedelta(days=1) for point in points] + [all_df.index.max()]
-        new_cols = {}
+        ends = [point - timedelta(days=1)
+                for point in points] + [all_df.index.max()]
         for i, (start, end) in enumerate(zip(starts, ends)):
             phase_df = all_df.loc[start: end, :]
-            param, _ = curve_fit(self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
-            new_cols[self.num2str(i)] = self._linear_f(phase_df[r], a=param[0], b=param[1])
-        all_df = pd.concat([all_df, pd.DataFrame(new_cols)], axis=1)
+            param, _ = curve_fit(
+                self._linear_f, phase_df[r], phase_df[logS], maxfev=10000)
+            all_df[self.num2str(i)] = self._linear_f(
+                phase_df[r], a=param[0], b=param[1])
         all_df[self.FITTED] = all_df.drop([logS, r], axis=1).sum(axis=1)
-        return all_df.rename(columns={logS: self.ACTUAL}).set_index(r).groupby(level=0).first()
+        return all_df.rename(columns={logS: self.ACTUAL}).set_index(
+            r).groupby(level=0).first()
 
     @staticmethod
     def _linear_f(x, a, b):
@@ -137,12 +141,15 @@ class _TrendAnalyzer(Term):
             lp.ax.plot(
                 fit_df.index, fit_df[self.ACTUAL], label=self.ACTUAL,
                 color="black", marker=".", markeredgewidth=0, linewidth=0)
-            for phase in fit_df.drop([self.ACTUAL, self.FITTED], axis=1).columns:
+            for phase in fit_df.drop(
+                    [self.ACTUAL, self.FITTED], axis=1).columns:
                 lp.ax.plot(fit_df.index, fit_df[phase], label=phase)
-            for r_value in [self._all_df.loc[point, self._r] for point in points]:
+            for r_value in [self._all_df.loc[point, self._r]
+                            for point in points]:
                 lp.ax.axvline(x=r_value, color="black", linestyle=":")
             pre = "Phases" if name is None else name + ": phases"
-            lp.title = f"{pre} detected by S-R trend analysis of {self._model_name}"
+            lp.title = f"{
+                pre} detected by S-R trend analysis of {self._model_name}"
             lp.ax.set_xlim(max(0, min(fit_df.index)), None)
             lp.ax.set_xlabel(xlabel=f"R of {self._model_name}")
             lp.ax.set_ylabel(ylabel=f"log10(S) of {self._model_name}")

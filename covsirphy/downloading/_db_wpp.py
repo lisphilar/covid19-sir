@@ -40,8 +40,9 @@ class _WPP(_DataBase):
                     - Population (numpy.float64): population values
         """
         url = f"{self.TOP_URL}country/all/indicator/SP.POP.TOTL?per_page=20000"
-        df = pd.read_xml(url,  parser="etree")
-        df[self.DATE] = pd.to_datetime(df["date"], format="%Y") + pd.offsets.DateOffset(months=6)
+        df = pd.read_xml(url, parser="etree")
+        df[self.DATE] = pd.to_datetime(
+            df["date"], format="%Y") + pd.offsets.DateOffset(months=6)
         df = df.rename(columns={"countryiso3code": Term.ISO3})
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA

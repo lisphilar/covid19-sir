@@ -57,17 +57,31 @@ class _DataCleaner(Term):
         self.convert_date()
         df = self._df.copy()
         if date_range is not None:
-            start_date, end_date = Validator(date_range, "date_range").sequence(length=2)
-            start = Validator(start_date, name="the first value of @date_range").date(default=df[self._date].min())
+            start_date, end_date = Validator(
+                date_range, "date_range").sequence(
+                length=2)
+            start = Validator(
+                start_date, name="the first value of @date_range").date(default=df[self._date].min())
             end = Validator(
                 end_date, name="the second date of @date_range").date(default=df[self._date].max(), value_range=(start, None))
             df = df[df[self._date].between(start, end, inclusive="both")]
-        grouped = df.set_index(self._date).groupby(self._layers, as_index=False, observed=True)
-        df = grouped[list(set(df.columns) - set([self._date]))].resample("D").ffill()
+        grouped = df.set_index(
+            self._date).groupby(
+            self._layers,
+            as_index=False,
+            observed=True)
+        df = grouped[list(set(df.columns) - set([self._date]))
+                     ].resample("D").ffill()
         try:
             self._df = df.reset_index().drop("level_0", errors="ignore", axis=1)
         except ValueError:
-            self._df = df.drop("Country", errors="ignore", axis=1).reset_index().drop("level_0", errors="ignore", axis=1)
+            self._df = df.drop(
+                "Country",
+                errors="ignore",
+                axis=1).reset_index().drop(
+                "level_0",
+                errors="ignore",
+                axis=1)
 
     def fillna(self):
         """Fill NA values with '-' (layers) and the previous values and 0.
@@ -75,5 +89,6 @@ class _DataCleaner(Term):
         df = self._df.copy()
         df[self._layers] = df.loc[:, self._layers].astype(str).fillna(self.NA)
         for col in set(df.columns) - set(self._id_cols):
-            df[col] = df.groupby(self._layers, observed=True)[col].ffill().fillna(0)
+            df[col] = df.groupby(self._layers, observed=True)[
+                col].ffill().fillna(0)
         self._df = df.copy()

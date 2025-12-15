@@ -32,16 +32,27 @@ class SIRFModel(SIRDModel):
     # Non-dimensional parameters
     _PARAMETERS = ["theta", "kappa", "rho", "sigma"]
     # Dimensional parameters
-    _DAY_PARAMETERS = ["alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
+    _DAY_PARAMETERS = [
+        "alpha1 [-]",
+        "1/alpha2 [day]",
+        "1/beta [day]",
+        "1/gamma [day]"]
     # Sample data
     _SAMPLE_DICT = {
         "initial_dict": {SIRDModel.S: 999_000, SIRDModel.CI: 1000, SIRDModel.R: 0, SIRDModel.F: 0},
         "param_dict": {"theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075}
     }
 
-    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
+    def __init__(self, date_range: tuple[str, str], tau: int,
+                 initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
-        self._theta = Validator(self._param_dict["theta"], "theta", accept_none=False).float(value_range=(0, 1))
+        self._theta = Validator(
+            self._param_dict["theta"],
+            "theta",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
 
     def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
@@ -71,7 +82,8 @@ class SIRFModel(SIRDModel):
             reproduction number of the ODE model and parameters
         """
         try:
-            return round(self._rho * (1 - self._theta) / (self._sigma + self._kappa), 2)
+            return round(self._rho * (1 - self._theta) /
+                         (self._sigma + self._kappa), 2)
         except ZeroDivisionError:
             raise ZeroDivisionError(
                 f"Sigma + kappa must be over 0 to calculate reproduction number with {self._NAME}.") from None
@@ -101,7 +113,8 @@ class SIRFModel(SIRDModel):
                 f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
-    def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> dict[str, float | pd.Series]:
+    def _param_quantile(cls, data: pd.DataFrame, q: float |
+                        pd.Series = 0.5) -> dict[str, float | pd.Series]:
         """With combinations (X, dX/dt) for X=S, I, R, F, calculate quantile values of ODE parameters.
 
         Args:
@@ -126,7 +139,8 @@ class SIRFModel(SIRDModel):
         n = df.loc[df.index[0], cls._VARIABLES].sum()
         # Calculate parameter values with non-dimensional difference equation
         kappa_series = df[cls.F].diff() / periods / df[cls.CI]
-        rho_series = 0 - n * df[cls.S].diff() / periods / df[cls.S] / df[cls.CI]
+        rho_series = 0 - n * df[cls.S].diff() / periods / \
+            df[cls.S] / df[cls.CI]
         sigma_series = df[cls.R].diff() / periods / df[cls.CI]
         # Guess representative values
         return {
@@ -157,7 +171,13 @@ class SIRFModel(SIRDModel):
                 log10(S) (np.float64): common logarithm of Susceptible
                 R (np.int64): Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
+        Validator(
+            data,
+            "data",
+            accept_none=False).dataframe(
+            time_index=True,
+            columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})
         df[cls._logS] = np.log10(df[cls.S])
-        return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
+        return df.loc[:, [cls._logS, cls._r]].astype(
+            {cls._logS: np.float64, cls._r: np.int64})

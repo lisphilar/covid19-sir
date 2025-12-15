@@ -1,10 +1,11 @@
 import sys
 import warnings
-from typing import TextIO, Union, cast
+from typing import Union
 from os import PathLike
 from loguru import logger as loguru_logger
 
 PathLikeStr = Union[str, PathLike]
+
 
 class _Config(object):
     """Class for configuration of logger.
@@ -43,7 +44,8 @@ class _Config(object):
         """
         self._logger.error(message)
 
-    def warning(self, message: str, category: type[Warning] | None = None) -> None:
+    def warning(self, message: str,
+                category: type[Warning] | None = None) -> None:
         """Raise warning.
 
         Args:

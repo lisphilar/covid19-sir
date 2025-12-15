@@ -46,7 +46,10 @@ class ScatterPlot(LinePlot):
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         self._data = Validator(data, "data").dataframe(columns=["x", "y"])
-        color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
+        color_args = self._plot_colors(
+            data.columns,
+            colormap=colormap,
+            color_dict=color_dict)
         self._ax = data.plot.scatter(x="x", y="y", **color_args, **kwargs)
 
     def line_straight(self, p1=None, p2=None, color="black", linestyle=":"):
@@ -63,8 +66,10 @@ class ScatterPlot(LinePlot):
         """
         if self._data.empty:
             raise UnExecutedError("ScatterPlot.plot()")
-        x1, y1 = (self._data["x"].min(), self._data["y"].min()) if p1 is None else p1
-        x2, y2 = (self._data["x"].max(), self._data["y"].max()) if p2 is None else p2
+        x1, y1 = (self._data["x"].min(),
+                  self._data["y"].min()) if p1 is None else p1
+        x2, y2 = (self._data["x"].max(),
+                  self._data["y"].max()) if p2 is None else p2
         self._ax.plot([x1, x2], [y1, y2], color=color, linestyle=linestyle)
 
     def legend(self, **kwargs):
@@ -97,7 +102,8 @@ def scatter_plot(df, title=None, filename=None, **kwargs):
     """
     with ScatterPlot(filename=filename, **find_args(plt.savefig, **kwargs)) as sp:
         sp.title = title
-        sp.plot(data=df, **find_args([ScatterPlot.plot, pd.DataFrame.plot], **kwargs))
+        sp.plot(
+            data=df, **find_args([ScatterPlot.plot, pd.DataFrame.plot], **kwargs))
         # Axis
         sp.x_axis(**find_args([ScatterPlot.x_axis], **kwargs))
         sp.y_axis(**find_args([ScatterPlot.y_axis], **kwargs))

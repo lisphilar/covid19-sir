@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Iterable, Callable
+from typing import Any, Callable
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
@@ -40,7 +40,15 @@ class Evaluator(object):
                  how: str = "inner", on: str | list[str] | None = None) -> None:
         # Check types
         for (y, name) in zip([y_true, y_pred], ["y_true", "y_pred"]):
-            Validator(y, name, accept_none=False).instance(expected=(pd.DataFrame, pd.Series, list, tuple))
+            Validator(
+                y,
+                name,
+                accept_none=False).instance(
+                expected=(
+                    pd.DataFrame,
+                    pd.Series,
+                    list,
+                    tuple))
             if bool(pd.DataFrame(y).isna().any().any()):
                 raise NAFoundError(name, y)
         # Join dataframes
@@ -51,10 +59,16 @@ class Evaluator(object):
         if on is not None:
             true_df = true_df.set_index(on)
             pred_df = pred_df.set_index(on)
-        all_df = true_df.join(pred_df, how="inner", lsuffix=self._A, rsuffix=self._P)
+        all_df = true_df.join(
+            pred_df,
+            how="inner",
+            lsuffix=self._A,
+            rsuffix=self._P)
         # Register values
-        self._true = all_df.loc[:, [f"{col}{self._A}" for col in true_df.columns]]
-        self._pred = all_df.loc[:, [f"{col}{self._P}" for col in pred_df.columns]]
+        self._true = all_df.loc[:,
+                                [f"{col}{self._A}" for col in true_df.columns]]
+        self._pred = all_df.loc[:,
+                                [f"{col}{self._P}" for col in pred_df.columns]]
 
     def score(self, metric: str = "RMSLE") -> float:
         """
@@ -83,13 +97,19 @@ class Evaluator(object):
         warnings.filterwarnings("ignore", category=RuntimeWarning)
         # Check metric name
         if metric.upper() not in self._METRICS_DICT:
-            raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
+            raise UnExpectedValueError(
+                "metric", metric, candidates=list(
+                    self._METRICS_DICT.keys()))
         # Calculate score
         func = self._METRICS_DICT[metric.upper()][0]
         try:
             return float(func(self._true.values, self._pred.values))
         except TypeError:
-            outputs = float(func(self._true.values.astype(np.float64), self._pred.values.astype(np.float64)))
+            outputs = float(
+                func(
+                    self._true.values.astype(
+                        np.float64), self._pred.values.astype(
+                        np.float64)))
             return float(np.average(outputs))
 
     @classmethod
@@ -114,11 +134,14 @@ class Evaluator(object):
             bool: whether smaller value is better or not
         """
         if metric.upper() not in cls._METRICS_DICT:
-            raise UnExpectedValueError("metric", metric, candidates=list(cls._METRICS_DICT.keys()))
+            raise UnExpectedValueError(
+                "metric", metric, candidates=list(
+                    cls._METRICS_DICT.keys()))
         return cls._METRICS_DICT[metric.upper()][1]
 
     @classmethod
-    def best_one(cls, candidate_dict: dict[object, float], **kwargs: Any) -> tuple[object, float]:
+    def best_one(
+            cls, candidate_dict: dict[object, float], **kwargs: Any) -> tuple[object, float]:
         """
         Select the best one with scores.
 

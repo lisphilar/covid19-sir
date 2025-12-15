@@ -41,7 +41,9 @@ class Alias(Term):
             updated Alias instance
         """
         Validator(name, "name", accept_none=False).instance(str)
-        self._dict[name] = Validator(target, "target").instance(expected=self._target_class)
+        self._dict[name] = Validator(
+            target, "target").instance(
+            expected=self._target_class)
         return self
 
     def find(self, name: str, default: Any = None) -> Any:
@@ -82,5 +84,6 @@ class Alias(Term):
         try:
             del self._dict[name]
         except KeyError:
-            raise KeyError(f"{name} has not been registered as an alias.") from None
+            raise KeyError(
+                f"{name} has not been registered as an alias.") from None
         return self

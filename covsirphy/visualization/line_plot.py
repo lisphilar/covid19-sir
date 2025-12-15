@@ -48,7 +48,10 @@ class LinePlot(VisualizeBase):
         Validator(data, "data").dataframe()
         self._variables = data.columns.tolist()
         # Color
-        color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
+        color_args = self._plot_colors(
+            data.columns,
+            colormap=colormap,
+            color_dict=color_dict)
         # Set plotting
         try:
             self._ax = data.plot(**color_args, **kwargs)
@@ -75,7 +78,8 @@ class LinePlot(VisualizeBase):
         # limit
         self._ax.set_xlim(*xlim)
 
-    def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(0, None), math_scale=True, y_integer=False):
+    def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(
+            0, None), math_scale=True, y_integer=False):
         """Set x axis.
 
         Args:
@@ -92,7 +96,8 @@ class LinePlot(VisualizeBase):
         self._ax.set_ylabel(ylabel)
         # Math scale
         if math_scale:
-            self._ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self._ax.yaxis.set_major_formatter(
+                ScalarFormatter(useMathText=True))
             self._ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
         # Integer scale
         if y_integer:
@@ -156,7 +161,8 @@ def line_plot(df, title=None, filename=None, show_legend=True, **kwargs):
     """
     with LinePlot(filename=filename, **find_args(plt.savefig, **kwargs)) as lp:
         lp.title = title
-        lp.plot(data=df, **find_args([LinePlot.plot, pd.DataFrame.plot], **kwargs))
+        lp.plot(
+            data=df, **find_args([LinePlot.plot, pd.DataFrame.plot], **kwargs))
         # Axis
         lp.x_axis(**find_args([LinePlot.x_axis], **kwargs))
         lp.y_axis(**find_args([LinePlot.y_axis], **kwargs))

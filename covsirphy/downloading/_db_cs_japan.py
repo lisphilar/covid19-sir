@@ -9,8 +9,10 @@ class _CSJapan(_DataBase):
     https://github.com/lisphilar/covid19-sir/tree/master/data
     """
     GITHUB_URL = "https://raw.githubusercontent.com"
-    URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
-    URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
+    URL_C = f"{
+        GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
+    URL_P = f"{
+        GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
     # File title without extensions and suffix
     TITLE = "covid_japan"
     # Dictionary of column names
@@ -56,15 +58,22 @@ class _CSJapan(_DataBase):
         cols = [
             "Date", "Location", "Positive", "Tested", "Discharged", "Fatal",
             "Vaccinated_1st", "Vaccinated_2nd", "Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]
-        df = self._provide(url=self.URL_C, suffix="", columns=cols, date="Date", date_format="%Y-%m-%d")
+        df = self._provide(
+            url=self.URL_C,
+            suffix="",
+            columns=cols,
+            date="Date",
+            date_format="%Y-%m-%d")
         df = df.groupby("Date").sum(numeric_only=True).reset_index()
         df[self.ISO3] = "JPN"
         df[self.PROVINCE] = self.NA
         df[self.CITY] = self.NA
         df[self.V_ONCE] = df["Vaccinated_1st"].cumsum()
         df[self.V_FULL] = df["Vaccinated_2nd"].cumsum()
-        df[self.VAC_BOOSTERS] = df[["Vaccinated_3rd", "Vaccinated_4th", "Vaccinated_5th"]].sum(axis=1).cumsum()
-        df[self.VAC] = df[[self.V_ONCE, self.V_FULL, self.VAC_BOOSTERS]].sum(axis=1)
+        df[self.VAC_BOOSTERS] = df[["Vaccinated_3rd",
+                                    "Vaccinated_4th", "Vaccinated_5th"]].sum(axis=1).cumsum()
+        df[self.VAC] = df[[self.V_ONCE, self.V_FULL,
+                           self.VAC_BOOSTERS]].sum(axis=1)
         return df.loc[:, self._all_columns]
 
     def _province(self, country):
@@ -92,8 +101,19 @@ class _CSJapan(_DataBase):
             return pd.DataFrame(columns=[
                 self.DATE, self.ISO3, self.PROVINCE, self.CITY,
                 self.C, self.F, self.R, self.TESTS, self.VAC, self.VAC_BOOSTERS, self.V_ONCE, self.V_FULL])
-        cols = ["Date", "Prefecture", "Positive", "Tested", "Discharged", "Fatal"]
-        df = self._provide(url=self.URL_P, suffix="_prefecture", columns=cols, date="Date", date_format="%Y-%m-%d")
+        cols = [
+            "Date",
+            "Prefecture",
+            "Positive",
+            "Tested",
+            "Discharged",
+            "Fatal"]
+        df = self._provide(
+            url=self.URL_P,
+            suffix="_prefecture",
+            columns=cols,
+            date="Date",
+            date_format="%Y-%m-%d")
         df[self.ISO3] = "JPN"
         df[self.CITY] = self.NA
         df[self.V_ONCE] = pd.NA

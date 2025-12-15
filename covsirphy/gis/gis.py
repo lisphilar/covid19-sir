@@ -1,6 +1,6 @@
 import contextlib
 from pathlib import Path
-from typing import Any, cast, Hashable
+from typing import Any, cast
 try:
     import geopandas as gpd
 except DeprecationWarning:
@@ -35,18 +35,29 @@ class GIS(Term):
         Country level data specified with @country will be stored with ISO3 codes.
     """
 
-    def __init__(self, layers: list[str] | None = None, country: str | None = "ISO3", date: str = "Date", **kwargs: Any) -> None:
-        # Countries will be specified with ISO3 codes and this requires conversion
+    def __init__(self, layers: list[str] | None = None, country: str |
+                 None = "ISO3", date: str = "Date", **kwargs: Any) -> None:
+        # Countries will be specified with ISO3 codes and this requires
+        # conversion
         self._country = None if country is None else str(country)
         # Location data
-        self._layers: list[str] = Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence()
+        self._layers: list[str] = Validator(
+            layers or [
+                self._country,
+                self.PROVINCE,
+                self.CITY],
+            "layers").sequence()
         # Date column
         self._date = str(date)
         # Layer adjuster
-        self._adjuster = _LayerAdjuster(layers=self._layers, country=self._country, date=self._date)
+        self._adjuster = _LayerAdjuster(
+            layers=self._layers,
+            country=self._country,
+            date=self._date)
         self._un_registered = True
 
-    def all(self, variables: list[str] | None = None, errors: str = "raise") -> pd.DataFrame:
+    def all(self, variables: list[str] | None = None,
+            errors: str = "raise") -> pd.DataFrame:
         """Return all available data.
 
         Args:
@@ -161,25 +172,33 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("GIS.register()", details="No records have been registered yet")
+            raise NotRegisteredError(
+                "GIS.register()",
+                details="No records have been registered yet")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
         manager = _SubsetManager(layers=self._layers)
         df = manager.layer(data=data, geo=geo_converted)
         if df.empty and errors == "raise":
-            raise NotRegisteredError("GIS.register()", details="No records have been registered at the layer yet")
+            raise NotRegisteredError(
+                "GIS.register()",
+                details="No records have been registered at the layer yet")
         # Filter with date
         series = df[self._date].copy()
-        # Cast min/max to expected types if necessary, though Validator handles Any generally
-        start = Validator(start_date).date(default=cast(pd.Timestamp, series.min()))
-        end = Validator(end_date).date(default=cast(pd.Timestamp, series.max()))
+        # Cast min/max to expected types if necessary, though Validator handles
+        # Any generally
+        start = Validator(start_date).date(
+            default=cast(pd.Timestamp, series.min()))
+        end = Validator(end_date).date(
+            default=cast(pd.Timestamp, series.max()))
         df = df.loc[(df[self._date] >= start) & (df[self._date] <= end)]
         if df.empty and errors == "raise":
             raise NotRegisteredError(
                 "GIS.register()", details=f"No records have been registered at the layer yet from {start_date} to {end_date}")
         # Get representative records for dates
-        df = df.groupby([*self._layers, self._date], dropna=True, observed=True).first()
+        df = df.groupby([*self._layers, self._date],
+                        dropna=True, observed=True).first()
         return df.reset_index().convert_dtypes()
 
     def to_geopandas(self, geo: tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None = None,
@@ -216,33 +235,43 @@ class GIS(Term):
             Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)
         """
         if self._country not in self._layers:
-            raise ValueError("This cannot be done because country layer is not included in the dataset.")
+            raise ValueError(
+                "This cannot be done because country layer is not included in the dataset.")
         df = self.layer(geo=geo, variables=variables)
         if on is None:
-            df = df.sort_values(self._date, ascending=True).groupby(self._layers, observed=True).last().reset_index()
+            df = df.sort_values(
+                self._date, ascending=True).groupby(
+                self._layers, observed=True).last().reset_index()
         else:
             df = df.loc[df[self._date] == Validator(on).date()]
 
         # Check for nunique attribute or availability
         # Pandas Series has nunique
-        focused_layer = [layer for layer in self._layers if df[layer][df[layer] != self.NA].nunique() > 0][-1]
+        focused_layer = [layer for layer in self._layers if df[layer]
+                         [df[layer] != self.NA].nunique() > 0][-1]
 
-        # Casting directory to satisfy type checker, Filer accepts str | Path | list | tuple
-        dir_arg: str | Path | list[str] | tuple[str, ...] = directory or Path(__file__).with_name("Natural_Earth")
+        # Casting directory to satisfy type checker, Filer accepts str | Path |
+        # list | tuple
+        dir_arg: str | Path | list[str] | tuple[str, ...] = directory or Path(
+            __file__).with_name("Natural_Earth")
 
         geometry = _Geometry(
             data=df, layer=focused_layer, directory=dir_arg)
         # Ensure _country is not None before accessing it
         if self._country is None:
-             iso3 = None
+            iso3 = None
         else:
-             iso3 = None if focused_layer == self._country else self._to_iso3(list(df[self._country].unique())[0])
+            iso3 = None if focused_layer == self._country else self._to_iso3(
+                list(df[self._country].unique())[0])
 
-        # Drop columns not needed. drop expects IndexLabel = Hashable | Sequence[Hashable]
+        # Drop columns not needed. drop expects IndexLabel = Hashable |
+        # Sequence[Hashable]
         cols_to_drop = list(set(self._layers) - {focused_layer})
-        return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(labels=cols_to_drop, axis=1)
+        return geometry.to_geopandas(iso3=iso3, natural_earth=natural_earth).drop(
+            labels=cols_to_drop, axis=1)
 
-    def choropleth(self, variable: str, filename: str | None, title: str = "Choropleth map", logscale: bool = True, **kwargs: Any) -> None:
+    def choropleth(self, variable: str, filename: str | None,
+                   title: str = "Choropleth map", logscale: bool = True, **kwargs: Any) -> None:
         """Create choropleth map.
 
         Args:
@@ -264,8 +293,13 @@ class GIS(Term):
         to_geo_kwargs = v.kwargs(functions=func_list, default=None)
 
         gdf = self.to_geopandas(variables=[variable], **to_geo_kwargs)
-        focused_layer = [layer for layer in self._layers if layer in gdf.columns][0]
-        gdf.rename(columns={focused_layer: "Location", variable: "Variable"}, inplace=True)
+        focused_layer = [
+            layer for layer in self._layers if layer in gdf.columns][0]
+        gdf.rename(
+            columns={
+                focused_layer: "Location",
+                variable: "Variable"},
+            inplace=True)
 
         func_list_plt = [plt.savefig]
         savefig_kwargs = v.kwargs(functions=func_list_plt, default=None)
@@ -327,7 +361,9 @@ class GIS(Term):
         """
         # Get all data
         if self._un_registered and errors == "raise":
-            raise NotRegisteredError("GIS.register()", details="No records have been registered yet.")
+            raise NotRegisteredError(
+                "GIS.register()",
+                details="No records have been registered yet.")
         data = self._adjuster.all(variables=variables)
         # Filter with geo
         geo_converted = self._parse_geo(geo=geo, data=data)
@@ -337,24 +373,33 @@ class GIS(Term):
             raise SubsetNotFoundError(geo=geo)
         # Filter with date
         series = df[self._date].copy()
-        start = Validator(start_date).date(default=cast(pd.Timestamp, series.min()))
-        end = Validator(end_date).date(default=cast(pd.Timestamp, series.max()))
+        start = Validator(start_date).date(
+            default=cast(pd.Timestamp, series.min()))
+        end = Validator(end_date).date(
+            default=cast(pd.Timestamp, series.max()))
         df = df.loc[df[self._date].between(start, end)]
         if df.empty and errors == "raise":
-            raise SubsetNotFoundError(geo=geo, start_date=start_date, end_date=end_date)
+            raise SubsetNotFoundError(
+                geo=geo, start_date=start_date, end_date=end_date)
         # Calculate total value if geo=None
         if geo is None or (isinstance(geo, tuple) and geo[0] is None):
             variables_agg = list(set(df.columns) - {*self._layers, self._date})
-            df = df.pivot_table(values=variables_agg, index=self._date, columns=self._layers[0], aggfunc="last")
+            df = df.pivot_table(
+                values=variables_agg,
+                index=self._date,
+                columns=self._layers[0],
+                aggfunc="last")
             df = df.ffill().fillna(0).stack().reset_index()
         # Get representative records for dates
         with contextlib.suppress(IndexError, KeyError):
             df = df.drop(self._layers[1:], axis=1)
-        df = df.groupby([self._layers[0], self._date], dropna=True, observed=True).first().reset_index(level=self._date)
+        df = df.groupby([self._layers[0], self._date], dropna=True,
+                        observed=True).first().reset_index(level=self._date)
         return df.groupby(self._date, as_index=False).sum().convert_dtypes()
 
     @classmethod
-    def area_name(cls, geo: tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None = None) -> str:
+    def area_name(cls, geo: tuple[list[str] | tuple[str, ...] | str | None, ...]
+                  | list[str] | tuple[str, ...] | str | None = None) -> str:
         """
         Return area name of the geographic information, like 'Japan', 'Tokyo/Japan', 'Japan_UK', 'the world'.
 
@@ -370,7 +415,8 @@ class GIS(Term):
             info if isinstance(info, str) else "_".join(list(info)) for info in ([geo] if isinstance(geo, str) else geo)]
         return cls.SEP.join(names[:: -1])
 
-    def _parse_geo(self, geo: tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None, data: pd.DataFrame) -> tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None:
+    def _parse_geo(self, geo: tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None,
+                   data: pd.DataFrame) -> tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None:
         """Parse geographic specifier.
 
         Args:
@@ -386,11 +432,14 @@ class GIS(Term):
         """
         if geo is None:
             return geo
-        # Convert to list to iterate if it's not already iterable or if it is a string
+        # Convert to list to iterate if it's not already iterable or if it is a
+        # string
         iterable_geo = [geo] if isinstance(geo, str) else geo
-        return tuple([self._info_to_iso3(info, self._layers[i], data) for i, info in enumerate(iterable_geo)])
+        return tuple([self._info_to_iso3(info, self._layers[i], data)
+                     for i, info in enumerate(iterable_geo)])
 
-    def _info_to_iso3(self, geo_info: list[str] | tuple[str, ...] | str | None, layer: str, data: pd.DataFrame) -> list[str] | tuple[str, ...] | str | None:
+    def _info_to_iso3(self, geo_info: list[str] | tuple[str, ...] | str | None,
+                      layer: str, data: pd.DataFrame) -> list[str] | tuple[str, ...] | str | None:
         """Convert a element of geographic specifier to ISO3 code.
 
         Args:
@@ -403,15 +452,15 @@ class GIS(Term):
                     - (str): column defined by @country if @country is not None
         """
         if layer != self._country or geo_info is None:
-             return geo_info
+            return geo_info
 
         # Check if geo_info values are in data[layer]
         # geo_info can be list, tuple, str.
         if isinstance(geo_info, str):
-             if geo_info in data[layer].unique():
-                  return geo_info
+            if geo_info in data[layer].unique():
+                return geo_info
         else:
-             if set(geo_info).issubset(data[layer].unique()):
-                  return geo_info
+            if set(geo_info).issubset(data[layer].unique()):
+                return geo_info
 
         return self._to_iso3(geo_info)

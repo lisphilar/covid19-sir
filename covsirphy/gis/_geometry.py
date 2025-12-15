@@ -1,7 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
 import warnings
-from typing import Any
 import geopandas as gpd
 import pandas as pd
 from unidecode import unidecode
@@ -25,12 +24,15 @@ class _Geometry(Term):
         directory (str): directory to save GeoJSON files
     """
 
-    def __init__(self, data: pd.DataFrame, layer: str, directory: str | Path) -> None:
-        self._df = Validator(data, f"{layer}-level data").dataframe(columns=[layer])
+    def __init__(self, data: pd.DataFrame, layer: str,
+                 directory: str | Path) -> None:
+        self._df = Validator(
+            data, f"{layer}-level data").dataframe(columns=[layer])
         self._layer = layer
         self._filer = Filer(directory=directory)
 
-    def to_geopandas(self, iso3: str | None, natural_earth: str | None) -> gpd.GeoDataFrame:
+    def to_geopandas(self, iso3: str | None,
+                     natural_earth: str | None) -> gpd.GeoDataFrame:
         """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.
 
         Args:
@@ -52,10 +54,17 @@ class _Geometry(Term):
             Natural Earth (Free vector and raster map data at naturalearthdata.com, Public Domain)
         """
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        gdf = self._natural_earth(title=natural_earth or self._natural_earth_parse_title(iso3=iso3))
+        gdf = self._natural_earth(
+            title=natural_earth or self._natural_earth_parse_title(
+                iso3=iso3))
         right_on = self.ISO3 if iso3 is None else "NAME"
-        gdf = self._df.merge(gdf, how="left", left_on=self._layer, right_on=right_on)
-        return gdf.rename(columns={f"{self.ISO3}_x": self.ISO3}).loc[:, [*self._df.columns.tolist(), "geometry"]]
+        gdf = self._df.merge(
+            gdf,
+            how="left",
+            left_on=self._layer,
+            right_on=right_on)
+        return gdf.rename(columns={f"{self.ISO3}_x": self.ISO3}).loc[:, [
+            *self._df.columns.tolist(), "geometry"]]
 
     @staticmethod
     def _natural_earth_parse_title(iso3: str | None) -> str:
@@ -98,16 +107,25 @@ class _Geometry(Term):
         if Path(filename).exists():
             gdf = gpd.read_file(filename)
         else:
-            config.info("Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/")
-            url = f"https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/{title}.geojson"
+            config.info(
+                "Retrieving GIS data from Natural Earth https://www.naturalearthdata.com/")
+            url = f"https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/{
+                title}.geojson"
             gdf = gpd.read_file(url)
-            gdf.rename(columns={"ISO_A3": self.ISO3, "adm0_a3": self.ISO3, "name": "NAME"}, inplace=True)
+            gdf.rename(
+                columns={
+                    "ISO_A3": self.ISO3,
+                    "adm0_a3": self.ISO3,
+                    "name": "NAME"},
+                inplace=True)
             gdf["NAME"] = gdf["NAME"].fillna(self.NA).apply(unidecode)
             gdf["NAME"] = gdf["NAME"].replace(
                 {"Xizang": "Tibet", "Inner Mongol": "Inner Mongolia", "S. Sudan": "South Sudan",
                  "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands"})
             gdf.loc[gdf[self.ISO3] == "HKG", "NAME"] = "Hong Kong"
-            gdf.loc[gdf[self.ISO3] == "-99", self.ISO3] = self._to_iso3(gdf.loc[gdf[self.ISO3] == "-99", "NAME"].tolist())
+            gdf.loc[gdf[self.ISO3] == "-99",
+                    self.ISO3] = self._to_iso3(gdf.loc[gdf[self.ISO3] == "-99",
+                                                       "NAME"].tolist())
             gdf[self.ISO3] = gdf[self.ISO3].replace({"MAC": "CHN"})
             gdf.to_file(**file_dict)
         return gdf.reindex(columns=[self.ISO3, "NAME", "geometry"])

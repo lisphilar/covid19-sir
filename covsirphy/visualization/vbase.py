@@ -110,7 +110,8 @@ class VisualizeBase(Term):
         """
         self._ax.tick_params(**kwargs)
 
-    def legend(self, bbox_to_anchor=(0.5, -0.2), bbox_loc="lower center", ncol=None, **kwargs):
+    def legend(self, bbox_to_anchor=(0.5, -0.2),
+               bbox_loc="lower center", ncol=None, **kwargs):
         """Set legend.
 
         Args:
@@ -123,7 +124,12 @@ class VisualizeBase(Term):
             raise UnExecutedError(".plot()")
         ncol = Validator(
             ncol or (1 if "left" in bbox_loc else len(self._variables)), "ncol").int(value_range=(1, None))
-        self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
+        self._ax.legend(
+            bbox_to_anchor=bbox_to_anchor,
+            loc=bbox_loc,
+            borderaxespad=0,
+            ncol=ncol,
+            **kwargs)
 
     def legend_hide(self):
         """Hide legend.
@@ -142,5 +148,6 @@ class VisualizeBase(Term):
         # Color
         if color_dict is None:
             return {"colormap": colormap}
-        colors = [color_dict.get(col) for col in variables if col in color_dict]
+        colors = [color_dict.get(col)
+                  for col in variables if col in color_dict]
         return {"colormap": colormap, "color": colors}

@@ -69,7 +69,8 @@ class _COVID19dh(_DataBase):
         df[self.PROVINCE] = df[self.PROVINCE].astype(object)
         ships = df.loc[df[self.ISO3].isna(), self.COUNTRY].unique()
         for ship in ships:
-            df.loc[df[self.COUNTRY] == ship, [self.ISO3, self.PROVINCE]] = [self.OTHERS, ship]
+            df.loc[df[self.COUNTRY] == ship, [
+                self.ISO3, self.PROVINCE]] = [self.OTHERS, ship]
         return df
 
     def _province(self, country):
@@ -130,4 +131,5 @@ class _COVID19dh(_DataBase):
         url = f"https://storage.covid19datahub.io/country/{iso3}.csv.zip"
         df = self._provide(
             url=url, suffix=f"_{iso3.lower()}", columns=list(self.COL_DICT.keys()), date="date", date_format="%Y-%m-%d")
-        return df.loc[(df[self.PROVINCE] == province) & (~df[self.CITY].isna())]
+        return df.loc[(df[self.PROVINCE] == province)
+                      & (~df[self.CITY].isna())]

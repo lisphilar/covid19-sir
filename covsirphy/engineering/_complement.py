@@ -47,15 +47,46 @@ class _ComplementHandler(Term):
     def __init__(self, recovery_period, interval, max_ignored, max_ending_unupdated,
                  upper_limit_days, lower_limit_days, upper_percentage, lower_percentage):
         # Arguments for complement
-        self.recovery_period: int = Validator(recovery_period, "recovery_period").int(value_range=(1, None))
-        self.interval: int = Validator(interval, "interval").int(value_range=(0, None))
-        self.max_ignored: int = Validator(max_ignored, "max_ignored").int(value_range=(1, None))
+        self.recovery_period: int = Validator(
+            recovery_period,
+            "recovery_period").int(
+            value_range=(
+                1,
+                None))
+        self.interval: int = Validator(
+            interval, "interval").int(
+            value_range=(
+                0, None))
+        self.max_ignored: int = Validator(
+            max_ignored, "max_ignored").int(
+            value_range=(
+                1, None))
         self.max_ending_unupdated: int = Validator(
             max_ending_unupdated, "max_ending_unupdated").int(value_range=(0, None))
-        self.upper_limit_days: int = Validator(upper_limit_days, "upper_limit_days").int(value_range=(0, None))
-        self.lower_limit_days: int = Validator(lower_limit_days, "lower_limit_days").int(value_range=(0, None))
-        self.upper_percentage: float = Validator(upper_percentage, "upper_percentage").float(value_range=(0, 100))
-        self.lower_percentage: float = Validator(lower_percentage, "lower_percentage").float(value_range=(0, 100))
+        self.upper_limit_days: int = Validator(
+            upper_limit_days,
+            "upper_limit_days").int(
+            value_range=(
+                0,
+                None))
+        self.lower_limit_days: int = Validator(
+            lower_limit_days,
+            "lower_limit_days").int(
+            value_range=(
+                0,
+                None))
+        self.upper_percentage: float = Validator(
+            upper_percentage,
+            "upper_percentage").float(
+            value_range=(
+                0,
+                100))
+        self.lower_percentage: float = Validator(
+            lower_percentage,
+            "lower_percentage").float(
+            value_range=(
+                0,
+                100))
         self.complement_dict: dict[str, bool] = {}
 
     def _protocol(self):
@@ -125,7 +156,8 @@ class _ComplementHandler(Term):
         # Initialize
         after_df = data.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
-        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
+        self.complement_dict = dict.fromkeys(
+            self.SHOW_COMPLEMENT_FULL_COLS, False)
         # Perform complement one by one
         for (variable, func, score) in self._protocol():
             before_df, after_df = after_df.copy(), func(after_df)
@@ -135,7 +167,8 @@ class _ComplementHandler(Term):
         # Create status code
         status_list = [
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data" for (v, score) in status_dict.items() if score]
-        return (after_df.convert_dtypes(), " and \n".join(status_list), self.complement_dict)
+        return (after_df.convert_dtypes(), " and \n".join(
+            status_list), self.complement_dict)
 
     def _pre_processing(self, data):
         """
@@ -157,7 +190,8 @@ class _ComplementHandler(Term):
         """
         sel_invalid_R = data[self.C] - data[self.F] < data[self.R]
         data.loc[sel_invalid_R, self.R] = data[self.C] - data[self.F]
-        data.loc[sel_invalid_R, self.CI] = data[self.C] - data[self.F] - data[self.R]
+        data.loc[sel_invalid_R, self.CI] = data[self.C] - \
+            data[self.F] - data[self.R]
         return data.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, data):
@@ -282,7 +316,8 @@ class _ComplementHandler(Term):
         # Whether complement is necessary or not
         if df[self.R].max() > self.max_ignored:
             # Necessary if sum of recovered is more than 99%
-            # or less than 1% of sum of recovered minus infected when out-breaking
+            # or less than 1% of sum of recovered minus infected when
+            # out-breaking
             sel_C1 = df[self.C] > self.max_ignored
             sel_R1 = df[self.R] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
@@ -292,7 +327,8 @@ class _ComplementHandler(Term):
             if s_df.empty and self._validate_recovery_period(df):
                 return df
         # Estimate recovered records
-        df[self.R] = (df[self.C] - df[self.F]).shift(periods=self.recovery_period, freq="D")
+        df[self.R] = (df[self.C] - df[self.F]
+                      ).shift(periods=self.recovery_period, freq="D")
         self.complement_dict[self.FULL_RECOVERED] = True
         return df
 
@@ -335,13 +371,20 @@ class _ComplementHandler(Term):
         min_index = df[self.R].idxmax() + timedelta(days=1)
         first_value = df.loc[min_index, self.R]
         df_ending = df.copy()
-        df_ending.loc[df_ending.duplicated([self.R], keep="first"), self.R] = None
-        diff_series = df_ending[self.R].diff().ffill().fillna(0).astype(np.int64)
+        df_ending.loc[df_ending.duplicated(
+            [self.R], keep="first"), self.R] = None
+        diff_series = df_ending[self.R].diff(
+        ).ffill().fillna(0).astype(np.int64)
         diff_series.loc[diff_series.duplicated(keep="last")] = None
-        diff_series.interpolate(method="linear", inplace=True, limit_direction="both")
-        df.loc[min_index:, self.R] = first_value + diff_series[min_index:].cumsum()
+        diff_series.interpolate(
+            method="linear",
+            inplace=True,
+            limit_direction="both")
+        df.loc[min_index:, self.R] = first_value + \
+            diff_series[min_index:].cumsum()
         # Check if the ending complement is valid (too large recovered ending values)
-        # If the validity check fails, then fully complement these ending values
+        # If the validity check fails, then fully complement these ending
+        # values
         sel_C1 = df[self.C] > self.max_ignored
         sel_R1 = df[self.R] > self.max_ignored
         # check all values one-by-one, no rolling window
@@ -382,7 +425,8 @@ class _ComplementHandler(Term):
         sel_C = df[self.C] > self.max_ignored
         sel_duplicate = df.duplicated([self.R], keep="first")
         df.loc[sel_C & sel_duplicate, self.R] = None
-        df[self.R].interpolate(method="linear", inplace=True, limit_direction="both")
+        df[self.R].interpolate(
+            method="linear", inplace=True, limit_direction="both")
         df[self.R] = df[self.R].fillna(method="bfill")
         self.complement_dict[self.PARTIAL_RECOVERED] = True
         return df

@@ -42,7 +42,8 @@ class _DataProvider(Term):
         """
         if not self.download_necessity(filename):
             with contextlib.suppress(ValueError):
-                return self.read_csv(filename, columns, date=date, date_format=date_format)
+                return self.read_csv(
+                    filename, columns, date=date, date_format=date_format)
         config.info(self._stdout)
         df = self.read_csv(url, columns, date=date, date_format=date_format)
         df.to_csv(filename, index=False)
@@ -107,23 +108,29 @@ class _DataProvider(Term):
         try:
             df = pd.read_csv(
                 path,
-                storage_options={"User-Agent": "Mozilla/5.0"} if urlparse(path).scheme else None,
+                storage_options={
+                    "User-Agent": "Mozilla/5.0"} if urlparse(path).scheme else None,
                 **kwargs
             )
         except URLError:
             ctx = create_urllib3_context()
             ctx.load_default_certs()
-            # From Python 3.12, use import ssl; ssl.OP_LEGACY_SERVER_CONNECT instead of 0x4
+            # From Python 3.12, use import ssl; ssl.OP_LEGACY_SERVER_CONNECT
+            # instead of 0x4
             ctx.options |= 0x4
             with PoolManager(ssl_context=ctx) as http:
                 r = http.request("GET", path)
                 try:
                     with ZipFile(io.BytesIO(r.data), "r") as fh:
                         text = fh.read(f"{Path(path).stem}.csv")
-                        df = pd.read_csv(io.StringIO(text.decode("utf-8")), **kwargs)
+                        df = pd.read_csv(
+                            io.StringIO(
+                                text.decode("utf-8")),
+                            **kwargs)
                 except BadZipFile:
                     df = pd.read_csv(io.BytesIO(r.data), **kwargs)
         for col in df:
             with contextlib.suppress(TypeError):
-                df[col] = df[col].apply(lambda x: unidecode(x) if len(x) else np.nan)
+                df[col] = df[col].apply(
+                    lambda x: unidecode(x) if len(x) else np.nan)
         return df

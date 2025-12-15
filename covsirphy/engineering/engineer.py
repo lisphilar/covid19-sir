@@ -27,16 +27,27 @@ class DataEngineer(Term):
             Country level data specified with @country will be stored with ISO3 codes.
     """
 
-    def __init__(self, layers: list[str] | None = None, country: str = "ISO3", **kwargs) -> None:
-        self._layers = Validator(layers, "layers").sequence(default=[self.ISO3, self.PROVINCE, self.CITY])
+    def __init__(self, layers: list[str] | None = None,
+                 country: str = "ISO3", **kwargs) -> None:
+        self._layers = Validator(
+            layers,
+            "layers").sequence(
+            default=[
+                self.ISO3,
+                self.PROVINCE,
+                self.CITY])
         self._country = country
-        self._gis_kwargs = dict(layers=self._layers, country=self._country, date=self.DATE)
+        self._gis_kwargs = dict(
+            layers=self._layers,
+            country=self._country,
+            date=self.DATE)
         self._gis = GIS(**self._gis_kwargs)
         # Aliases
         self._var_alias = Alias.for_variables()
         self._subset_alias = Alias(target_class=tuple)
 
-    def register(self, data: pd.DataFrame, citations: list[str] | str | None = None, **kwargs) -> Self:
+    def register(self, data: pd.DataFrame,
+                 citations: list[str] | str | None = None, **kwargs) -> Self:
         """Register new data.
 
         Args:
@@ -78,7 +89,8 @@ class DataEngineer(Term):
         df = downloader.layer(**validator.kwargs(DataDownloader.layer))
         citations = downloader.citations()
         self._gis.register(
-            data=df, layers=[self.ISO3, self.PROVINCE, self.CITY], date=self.DATE, variables=None,
+            data=df, layers=[self.ISO3, self.PROVINCE,
+                             self.CITY], date=self.DATE, variables=None,
             citations=citations, convert_iso3=False, **kwargs)
         return self
 
@@ -99,7 +111,8 @@ class DataEngineer(Term):
                 - Date (pandas.Timestamp): observation dates defined by @date of `DataEngineer()`
                 - the other columns
         """
-        return self._gis.all(variables=self._var_alias.find(name=variables, default=variables), errors="raise").convert_dtypes()
+        return self._gis.all(variables=self._var_alias.find(
+            name=variables, default=variables), errors="raise").convert_dtypes()
 
     def citations(self, variables: list[str] | str | None = None) -> list[str]:
         """Return citation list of the secondary data sources.
@@ -110,7 +123,8 @@ class DataEngineer(Term):
         Returns:
             citations
         """
-        return self._gis.citations(variables=self._var_alias.find(name=variables, default=variables))
+        return self._gis.citations(variables=self._var_alias.find(
+            name=variables, default=variables))
 
     def clean(self, kinds: list[str] | None = None, **kwargs) -> Self:
         """Clean all registered data.
@@ -132,16 +146,25 @@ class DataEngineer(Term):
         Note:
             When "resample" included, `date_range=<tuple of (str or None, str or None) or None>)` can be applied as keyword arguments to set the range.
         """
-        cleaner = _DataCleaner(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        cleaner = _DataCleaner(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
         kind_dict = {
             "convert_date": cleaner.convert_date,
             "resample": cleaner.resample,
             "fillna": cleaner.fillna,
         }
         all_kinds = list(kind_dict.keys())
-        selected = Validator(kinds, "kind").sequence(default=all_kinds, candidates=all_kinds)
+        selected = Validator(
+            kinds,
+            "kind").sequence(
+            default=all_kinds,
+            candidates=all_kinds)
         for kind in selected:
-            kind_dict[kind](**Validator(kwargs, "keyword arguments").kwargs(functions=kind_dict[kind], default=None))
+            kind_dict[kind](**Validator(kwargs,
+                                        "keyword arguments").kwargs(functions=kind_dict[kind],
+                                                                    default=None))
         return self._recreate_gis(cleaner)
 
     def transform(self) -> Self:
@@ -155,9 +178,17 @@ class DataEngineer(Term):
             - Infected = Confirmed - Fatal - Recovered
         """
         all_df = self._gis.all()
-        transformer = _DataTransformer(data=all_df, layers=self._layers, date=self.DATE)
-        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
-        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
+        transformer = _DataTransformer(
+            data=all_df, layers=self._layers, date=self.DATE)
+        transformer.susceptible(
+            new=self.S,
+            population=self.N,
+            confirmed=self.C)
+        transformer.infected(
+            new=self.CI,
+            confirmed=self.C,
+            fatal=self.F,
+            recovered=self.R)
         return self._recreate_gis(transformer)
 
     def inverse_transform(self) -> Self:
@@ -170,12 +201,20 @@ class DataEngineer(Term):
             - Population = Susceptible + Confirmed
             - Confirmed = Infected + Fatal + Recovered
         """
-        Validator(self._gis.all(), "all registered data").dataframe(columns=[self.S, self.CI, self.F, self.R])
+        Validator(
+            self._gis.all(),
+            "all registered data").dataframe(
+            columns=[
+                self.S,
+                self.CI,
+                self.F,
+                self.R])
         self.add(columns=[self.CI, self.F, self.R], new=self.C)
         self.add(columns=[self.S, self.C], new=self.N)
         return self
 
-    def diff(self, column: str, suffix: str = "_diff", freq: str = "D") -> Self:
+    def diff(self, column: str, suffix: str = "_diff",
+             freq: str = "D") -> Self:
         """Calculate daily new cases with "f(x>0) = F(x) - F(x-1), x(0) = 0 when F is cumulative numbers".
 
         Args:
@@ -189,14 +228,18 @@ class DataEngineer(Term):
         Note:
             Regarding @freq, refer to https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
         """
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
         transformer.diff(
             column=Validator(
                 self._var_alias.find(name=column, default=[column]), "column", accept_none=False).sequence(length=1)[0],
             suffix=suffix, freq=freq)
         return self._recreate_gis(transformer)
 
-    def add(self, columns: list[str] | str, new: str | None = None, fill_value: float | int = 0) -> Self:
+    def add(self, columns: list[str] | str, new: str |
+            None = None, fill_value: float | int = 0) -> Self:
         """Calculate element-wise addition with `pandas.DataFrame.sum(axis=1)`, X1 + X2 + X3 +...
 
         Args:
@@ -208,11 +251,18 @@ class DataEngineer(Term):
             updated `DataEngineer` instance
         """
         col_names = self._var_alias.find(name=columns, default=columns)
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
-        transformer.add(columns=col_names, new=new or "+".join(col_names), fill_value=fill_value)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
+        transformer.add(
+            columns=col_names,
+            new=new or "+".join(col_names),
+            fill_value=fill_value)
         return self._recreate_gis(transformer)
 
-    def mul(self, columns: list[str] | str, new: str | None = None, fill_value: float | int = 0) -> Self:
+    def mul(self, columns: list[str] | str, new: str |
+            None = None, fill_value: float | int = 0) -> Self:
         """Calculate element-wise multiplication with `pandas.DataFrame.product(axis=1)`, X1 * X2 * X3 *...
 
         Args:
@@ -224,11 +274,18 @@ class DataEngineer(Term):
             updated `DataEngineer` instance
         """
         col_names = self._var_alias.find(name=columns, default=columns)
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
-        transformer.mul(columns=col_names, new=new or "*".join(col_names), fill_value=fill_value)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
+        transformer.mul(
+            columns=col_names,
+            new=new or "*".join(col_names),
+            fill_value=fill_value)
         return self._recreate_gis(transformer)
 
-    def sub(self, minuend: str, subtrahend: str, new: str | None = None, fill_value: float | int = 0) -> Self:
+    def sub(self, minuend: str, subtrahend: str, new: str |
+            None = None, fill_value: float | int = 0) -> Self:
         """Calculate element-wise subtraction with `pandas.Series.sub()`, minuend - subtrahend.
 
         Args:
@@ -240,7 +297,10 @@ class DataEngineer(Term):
         Returns:
             updated `DataEngineer` instance
         """
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
         transformer.sub(
             minuend=Validator(
                 self._var_alias.find(name=minuend, default=[minuend]), "minuend", accept_none=False).sequence(length=1)[0],
@@ -249,7 +309,8 @@ class DataEngineer(Term):
             new=new or f"{minuend}-{subtrahend}", fill_value=fill_value)
         return self._recreate_gis(transformer)
 
-    def div(self, numerator: str, denominator: str, new: str | None = None, fill_value: float | int = 0) -> Self:
+    def div(self, numerator: str, denominator: str, new: str |
+            None = None, fill_value: float | int = 0) -> Self:
         """Calculate element-wise floating division with `pandas.Series.div()`, numerator / denominator.
 
         Args:
@@ -264,7 +325,10 @@ class DataEngineer(Term):
         Note:
             Positive rate could be calculated with Confirmed / Tested, `.div(numerator="Confirmed", denominator="Tested", new="Positive_rate")`
         """
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
         transformer.div(
             numerator=Validator(
                 self._var_alias.find(name=numerator, default=[numerator]), "numerator", accept_none=False).sequence(length=1)[0],
@@ -282,7 +346,10 @@ class DataEngineer(Term):
         Note:
             Refer to documentation of `pandas.DataFrame.assign()`, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html
         """
-        transformer = _DataTransformer(data=self._gis.all(), layers=self._layers, date=self.DATE)
+        transformer = _DataTransformer(
+            data=self._gis.all(),
+            layers=self._layers,
+            date=self.DATE)
         transformer.assign(**kwargs)
         return self._recreate_gis(transformer)
 
@@ -329,7 +396,8 @@ class DataEngineer(Term):
             Regarding @geo argument, please refer to `covsirphy.GIS.layer()`.
         """
         v_converted = self._var_alias.find(name=variables, default=variables)
-        return self._gis.layer(geo=geo, start_date=start_date, end_date=end_date, variables=v_converted, errors="raise")
+        return self._gis.layer(geo=geo, start_date=start_date,
+                               end_date=end_date, variables=v_converted, errors="raise")
 
     def choropleth(self, geo: tuple[list[str] | tuple[str] | str | None, ...], variable: str,
                    on: str | None = None, title: str = "Choropleth map", filename: str = "choropleth.jpg",
@@ -429,10 +497,16 @@ class DataEngineer(Term):
             Re-calculation of Susceptible and Infected will be done automatically.
         """
         v_converted = self._var_alias.find(name=variables, default=variables)
-        subset_df = self._gis.subset(geo=geo, start_date=start_date, end_date=end_date, variables=None, errors="raise")
+        subset_df = self._gis.subset(
+            geo=geo,
+            start_date=start_date,
+            end_date=end_date,
+            variables=None,
+            errors="raise")
         if not complement:
             df = subset_df.set_index(self.DATE)
-            return df.loc[:, v_converted or df.columns].convert_dtypes(), "", {}
+            return df.loc[:, v_converted or df.columns].convert_dtypes(), "", {
+            }
         default_kwargs = {
             "recovery_period": 17,
             "interval": 2,
@@ -446,15 +520,26 @@ class DataEngineer(Term):
         handler = _ComplementHandler(
             **Validator(kwargs, "keyword arguments").kwargs(_ComplementHandler, default=default_kwargs))
         c_df, status, status_dict = handler.run(data=subset_df)
-        df = pd.concat([subset_df.drop([self.DATE, self.C, self.F, self.R], axis=1), c_df], axis=1)
+        df = pd.concat(
+            [subset_df.drop([self.DATE, self.C, self.F, self.R], axis=1), c_df], axis=1)
         df["location"] = self.NA
-        transformer = _DataTransformer(data=df, layers=["location"], date=self.DATE)
-        transformer.susceptible(new=self.S, population=self.N, confirmed=self.C)
-        transformer.infected(new=self.CI, confirmed=self.C, fatal=self.F, recovered=self.R)
+        transformer = _DataTransformer(
+            data=df, layers=["location"], date=self.DATE)
+        transformer.susceptible(
+            new=self.S,
+            population=self.N,
+            confirmed=self.C)
+        transformer.infected(
+            new=self.CI,
+            confirmed=self.C,
+            fatal=self.F,
+            recovered=self.R)
         transformed_df = transformer.all().drop("location", axis=1).set_index(self.DATE)
         if get_dummies:
-            transformed_df = pd.get_dummies(transformed_df, dtype=float).convert_dtypes()
-        return transformed_df.loc[:, v_converted or transformed_df.columns], status, status_dict
+            transformed_df = pd.get_dummies(
+                transformed_df, dtype=float).convert_dtypes()
+        return transformed_df.loc[:,
+                                  v_converted or transformed_df.columns], status, status_dict
 
     def subset_alias(self, alias: str | None = None, update: bool = False,
                      **kwargs) -> tuple[pd.DataFrame, str, dict[str, bool]] | dict[str, tuple[pd.DataFrame, str, dict[str, bool]]]:
@@ -479,7 +564,8 @@ class DataEngineer(Term):
             self._subset_alias.update(name=alias, target=self.subset(**kwargs))
         return self._subset_alias.find(alias)
 
-    def variables_alias(self, alias: str | None = None, variables: list[str] | None = None) -> list[str] | dict[str, list[str]]:
+    def variables_alias(self, alias: str | None = None,
+                        variables: list[str] | None = None) -> list[str] | dict[str, list[str]]:
         """Set/get/list-up alias name(s) of variables.
 
         Args:
@@ -504,7 +590,8 @@ class DataEngineer(Term):
         if variables is not None:
             self._var_alias.update(name=alias, target=variables)
         elif alias not in self._var_alias.all():
-            raise NotIncludedError(alias, "keys of alias dictionary of variables")
+            raise NotIncludedError(
+                alias, "keys of alias dictionary of variables")
         return self._var_alias.find(name=alias)
 
     @classmethod
@@ -524,7 +611,15 @@ class DataEngineer(Term):
         Returns:
             mode value of recovery period [days]
         """
-        df = Validator(data, "data").dataframe(time_index=True, columns=[cls.C, cls.F, cls.R], empty_ok=False)
+        df = Validator(
+            data,
+            "data").dataframe(
+            time_index=True,
+            columns=[
+                cls.C,
+                cls.F,
+                cls.R],
+            empty_ok=False)
         df = df.resample("D").sum()
         df["diff"] = df[cls.C] - df[cls.F]
         df = df.loc[:, ["diff", cls.R]].unstack().reset_index()

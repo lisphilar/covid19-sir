@@ -30,7 +30,8 @@ class BarPlot(VisualizeBase):
     def __exit__(self, *exc_info):
         return super().__exit__(*exc_info)
 
-    def plot(self, data, vertical=True, colormap=None, color_dict=None, **kwargs):
+    def plot(self, data, vertical=True, colormap=None,
+             color_dict=None, **kwargs):
         """Create bar plot.
 
         Args:
@@ -49,7 +50,10 @@ class BarPlot(VisualizeBase):
         Validator(data, "data").dataframe()
         self._variables = data.columns.tolist()
         # Color
-        color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
+        color_args = self._plot_colors(
+            data.columns,
+            colormap=colormap,
+            color_dict=color_dict)
         # Set plotting
         method_dict = {True: data.plot.bar, False: data.plot.barh}
         try:
@@ -68,7 +72,8 @@ class BarPlot(VisualizeBase):
         # Label
         self._ax.set_xlabel(xlabel)
 
-    def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(0, None), math_scale=True, y_integer=False):
+    def y_axis(self, ylabel="Cases", y_logscale=False, ylim=(
+            0, None), math_scale=True, y_integer=False):
         """Set x axis.
 
         Args:
@@ -85,7 +90,8 @@ class BarPlot(VisualizeBase):
         self._ax.set_ylabel(ylabel)
         # Math scale
         if math_scale:
-            self._ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self._ax.yaxis.set_major_formatter(
+                ScalarFormatter(useMathText=True))
             self._ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
         # Integer scale
         if y_integer:
@@ -135,7 +141,8 @@ def bar_plot(df, title=None, filename=None, show_legend=True, **kwargs):
     """
     with BarPlot(filename=filename, **find_args(plt.savefig, **kwargs)) as bp:
         bp.title = title
-        bp.plot(data=df, **find_args([BarPlot.plot, pd.DataFrame.plot], **kwargs))
+        bp.plot(
+            data=df, **find_args([BarPlot.plot, pd.DataFrame.plot], **kwargs))
         # Axis
         bp.x_axis(**find_args([BarPlot.x_axis], **kwargs))
         bp.y_axis(**find_args([BarPlot.y_axis], **kwargs))

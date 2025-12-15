@@ -29,14 +29,22 @@ class Dynamics(Term):
         name: name of dynamics to show in figures (e.g. "baseline") or None (un-set)
     """
 
-    def __init__(self, model: ODEModel, date_range: tuple[str | None, str | None], tau: int | None = None, name: str | None = None) -> None:
-        self._model = Validator(model, "model", accept_none=False).subclass(ODEModel)
-        first_date, last_date = Validator(date_range, "date_range", accept_none=False).sequence(length=2)
-        self._first = Validator(first_date, name="the first value of @date_range", accept_none=False).date()
+    def __init__(self, model: ODEModel, date_range: tuple[str | None, str |
+                 None], tau: int | None = None, name: str | None = None) -> None:
+        self._model = Validator(
+            model, "model", accept_none=False).subclass(ODEModel)
+        first_date, last_date = Validator(
+            date_range, "date_range", accept_none=False).sequence(
+            length=2)
+        self._first = Validator(
+            first_date,
+            name="the first value of @date_range",
+            accept_none=False).date()
         self._last = Validator(
             last_date, name="the second date of @date_range", accept_none=False).date(value_range=(self._first, None))
         self._tau = Validator(tau, "tau", accept_none=True).tau()
-        self._name = None if name is None else Validator(name, "name").instance(str)
+        self._name = None if name is None else Validator(
+            name, "name").instance(str)
         # Index: Date, Columns: S, I, F, R, ODE parameters
         self._parameters = self._model._PARAMETERS[:]
         self._df = pd.DataFrame(
@@ -87,7 +95,8 @@ class Dynamics(Term):
         self._name = None
 
     @classmethod
-    def from_sample(cls, model: ODEModel, date_range: tuple[str | None, str | None] | None = None, tau: int = 1440) -> Self:
+    def from_sample(cls, model: ODEModel,
+                    date_range: tuple[str | None, str | None] | None = None, tau: int = 1440) -> Self:
         """Initialize model with sample data of one-phase ODE model.
 
         Args:
@@ -105,15 +114,23 @@ class Dynamics(Term):
         model_instance = model.from_sample(date_range=date_range, tau=tau)
         settings_dict = model_instance.settings()
         variable_df = model.inverse_transform(model_instance.solve()).iloc[[0]]
-        param_df = pd.DataFrame(settings_dict["param_dict"], index=[pd.to_datetime(settings_dict["date_range"][0])])
+        param_df = pd.DataFrame(
+            settings_dict["param_dict"], index=[
+                pd.to_datetime(
+                    settings_dict["date_range"][0])])
         param_df.index.name = cls.DATE
         df = pd.concat([variable_df, param_df], axis=1)
-        instance = cls(model=model, date_range=settings_dict["date_range"], tau=tau, name="Sample data")
+        instance = cls(
+            model=model,
+            date_range=settings_dict["date_range"],
+            tau=tau,
+            name="Sample data")
         instance.register(data=df)
         return instance
 
     @classmethod
-    def from_data(cls, model: ODEModel, data: pd.DataFrame, tau: int | None = 1440, name: str | None = None) -> Self:
+    def from_data(cls, model: ODEModel, data: pd.DataFrame,
+                  tau: int | None = 1440, name: str | None = None) -> Self:
         """Initialize model with data.
 
         Args:
@@ -137,7 +154,13 @@ class Dynamics(Term):
         """
         Validator(model, "model", accept_none=False).subclass(ODEModel)
         Validator(data, "data").dataframe(time_index=True)
-        instance = cls(model=model, date_range=(data.index.min(), data.index.max()), tau=tau, name=name)
+        instance = cls(
+            model=model,
+            date_range=(
+                data.index.min(),
+                data.index.max()),
+            tau=tau,
+            name=name)
         instance.register(data=data)
         return instance
 
@@ -189,11 +212,13 @@ class Dynamics(Term):
                 raise EmptyError(
                     f"records on {self._first.strftime(self.DATE_FORMAT)}", details="Records must be registered for simulation")
             if all_df.min().min() < 0:
-                raise UnExpectedValueRangeError("minimum value of the data", all_df.min().min(), (0, None))
+                raise UnExpectedValueRangeError(
+                    "minimum value of the data", all_df.min().min(), (0, None))
             all_df.index.name = self.DATE
             self._df = all_df.convert_dtypes()
             # Find change points with parameter values
-            param_df = all_df.loc[:, self._parameters].ffill().drop_duplicates().dropna(axis=0)
+            param_df = all_df.loc[:, self._parameters].ffill(
+            ).drop_duplicates().dropna(axis=0)
             if not param_df.empty:
                 self._segment(points=param_df.index.tolist(), overwrite=True)
         return self._df.loc[:, [*self._SIRF, *self._parameters]]
@@ -211,9 +236,20 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
-        point_dates = [Validator(point, "a change point", accept_none=False).date() for point in points]
-        candidates = pd.date_range(start=self._first, end=self._last - timedelta(days=2), freq="D")
-        change_points = Validator(point_dates, "points", accept_none=False).sequence(unique=True, candidates=candidates)
+        point_dates = [
+            Validator(
+                point,
+                "a change point",
+                accept_none=False).date() for point in points]
+        candidates = pd.date_range(
+            start=self._first,
+            end=self._last -
+            timedelta(
+                days=2),
+            freq="D")
+        change_points = Validator(
+            point_dates, "points", accept_none=False).sequence(
+            unique=True, candidates=candidates)
         df = self._df.copy()
         if overwrite:
             df[self._PH] = 0
@@ -221,7 +257,8 @@ class Dynamics(Term):
             df.loc[point:, self._PH] += 1
         self._df = df.convert_dtypes()
 
-    def segment(self, points: list[str] | None = None, overwrite: bool = False, **kwargs) -> Self:
+    def segment(self, points: list[str] | None = None,
+                overwrite: bool = False, **kwargs) -> Self:
         """Perform time-series segmentation with points manually selected or found with S-R trend analysis.
 
         Args:
@@ -238,10 +275,14 @@ class Dynamics(Term):
         Note:
             @points must be selected from the first date to three days before the last date specified covsirphy.Dynamics(date_range).
         """
-        self._segment(points=points or self.detect(**kwargs)[0], overwrite=overwrite)
+        self._segment(
+            points=points or self.detect(
+                **kwargs)[0],
+            overwrite=overwrite)
         return self
 
-    def detect(self, algo: str = "Binseg-normal", min_size: int = 7, display: bool = True, **kwargs) -> tuple[pd.Timestamp, pd.DataFrame]:
+    def detect(self, algo: str = "Binseg-normal", min_size: int = 7,
+               display: bool = True, **kwargs) -> tuple[pd.Timestamp, pd.DataFrame]:
         """Perform S-R trend analysis to find change points of log10(S) - R of model-specific variables, not that segmentation requires .segment() method.
 
         Args:
@@ -276,15 +317,29 @@ class Dynamics(Term):
             - "Change points" means the dates when trend was changed.
             - "Change points" is the same as the start dates of phases except for the 0th phase.
         """
-        Validator(min_size, "min_size", accept_none=False).int(value_range=(3, None))
+        Validator(
+            min_size,
+            "min_size",
+            accept_none=False).int(
+            value_range=(
+                3,
+                None))
         df = self._df.dropna(how="any", subset=self._SIRF)
         if len(df) < min_size * 2:
-            raise NotEnoughDataError("the records of the number of cases without NAs", df, required_n=min_size * 2)
-        analyzer = _TrendAnalyzer(data=df, model=self._model, min_size=min_size)
+            raise NotEnoughDataError(
+                "the records of the number of cases without NAs",
+                df,
+                required_n=min_size * 2)
+        analyzer = _TrendAnalyzer(
+            data=df, model=self._model, min_size=min_size)
         points = analyzer.find_points(algo=algo, **kwargs)
         fit_df = analyzer.fitting(points=points)
         if display:
-            analyzer.display(points=points, fit_df=fit_df, name=self._name, **kwargs)
+            analyzer.display(
+                points=points,
+                fit_df=fit_df,
+                name=self._name,
+                **kwargs)
         return points, fit_df
 
     def summary(self) -> pd.DataFrame:
@@ -305,7 +360,10 @@ class Dynamics(Term):
         df[self._PH], _ = df[self._PH].factorize()
         first_df = df.groupby(self._PH).first()
         df = first_df.join(df.groupby(self._PH).last(), rsuffix="_last")
-        df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
+        df = df.rename(
+            columns={
+                self.DATE: self.START, f"{
+                    self.DATE}_last": self.END})
         df = df.loc[:, [col for col in df.columns if "_last" not in col]]
         df.index = [self.num2str(num) for num in df.index]
         df.index.name = self.PHASE  # type: ignore
@@ -323,8 +381,10 @@ class Dynamics(Term):
         # Set the order of columns
         fixed_cols = [
             self.START, self.END, self.RT, *self._model._PARAMETERS, *self._model._DAY_PARAMETERS]
-        others = [col for col in df.columns if col not in set(fixed_cols) | set(self._SIRF)]
-        return df.reindex(columns=[*fixed_cols, *others]).dropna(how="all", axis=1).ffill().convert_dtypes()
+        others = [col for col in df.columns if col not in set(
+            fixed_cols) | set(self._SIRF)]
+        return df.reindex(columns=[*fixed_cols, *others]
+                          ).dropna(how="all", axis=1).ffill().convert_dtypes()
 
     def track(self) -> pd.DataFrame:
         """Track reproduction number, parameter value and dimensional parameter values.
@@ -341,7 +401,8 @@ class Dynamics(Term):
         df = self.summary()
         df[self.DATE] = df[[self.START, self.END]].apply(
             lambda x: pd.date_range(start=x[self.START], end=x[self.END], freq="D"), axis=1)
-        return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
+        return df.explode(self.DATE).set_index(
+            self.DATE).drop([self.START, self.END], axis=1)
 
     def simulate(self, model_specific: bool = False) -> pd.DataFrame:
         """Perform simulation with phase-dependent ODE model.
@@ -369,7 +430,8 @@ class Dynamics(Term):
             raise UnExpectedNoneError(
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
         simulator = _Simulator(model=self._model, data=self._df)
-        return simulator.run(tau=self._tau, model_specific=model_specific).set_index(self.DATE)
+        return simulator.run(
+            tau=self._tau, model_specific=model_specific).set_index(self.DATE)
 
     def estimate(self, **kwargs) -> Self:
         """Run covsirphy.Dynamics.estimate_tau() and covsirphy.Dynamics.estimate_params().
@@ -384,7 +446,8 @@ class Dynamics(Term):
         self.estimate_params(**kwargs)
         return self
 
-    def estimate_tau(self, metric: str = "RMSLE", q: float = 0.5, digits: int | None = None, n_jobs: int | None = None) -> tuple[float, pd.DataFrame]:
+    def estimate_tau(self, metric: str = "RMSLE", q: float = 0.5, digits: int |
+                     None = None, n_jobs: int | None = None) -> tuple[float, pd.DataFrame]:
         """Set the best tau value for the registered data, estimating ODE parameters with quantiles.
 
         Args:
@@ -406,18 +469,32 @@ class Dynamics(Term):
         """
         all_df = self._df.dropna(how="any", subset=self._SIRF)
         if len(all_df) < 3:
-            raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
-        score_f = partial(self._score_with_tau, metric=metric, q=q, digits=digits)
+            raise NotEnoughDataError(
+                "registered S/I/F/R data except NAs", all_df, 3)
+        score_f = partial(
+            self._score_with_tau,
+            metric=metric,
+            q=q,
+            digits=digits)
         divisors = [i for i in range(1, 1441) if 1440 % i == 0]
-        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
+        n_jobs_validated = Validator(
+            n_jobs,
+            "n_jobs").int(
+            value_range=(
+                1,
+                cpu_count()),
+            default=cpu_count())
         with Pool(n_jobs_validated) as p:
             scores = p.map(score_f, divisors)
         score_dict = dict(zip(divisors, scores))
-        comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
+        comp_f = {True: min, False: max}[
+            Evaluator.smaller_is_better(metric=metric)]
         self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
-        return self._tau, pd.DataFrame.from_dict(score_dict, orient="index", columns=[metric])
+        return self._tau, pd.DataFrame.from_dict(
+            score_dict, orient="index", columns=[metric])
 
-    def _score_with_tau(self, tau: int, metric: str, q: float, digits: int | None) -> float:
+    def _score_with_tau(self, tau: int, metric: str,
+                        q: float, digits: int | None) -> float:
         """Return the metric score with tau.
 
         Args:
@@ -432,18 +509,26 @@ class Dynamics(Term):
         parameters = self._model._PARAMETERS[:]
         all_df = self._df.dropna(how="any", subset=self._SIRF)
         all_df[parameters] = all_df.loc[:, parameters].astype("Float64")
-        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
-        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
+        starts = all_df.reset_index().groupby(
+            self._PH)[self.DATE].first().sort_values()
+        ends = all_df.reset_index().groupby(
+            self._PH)[self.DATE].last().sort_values()
         for start, end in zip(starts, ends):
             model_instance = self._model.from_data_with_quantile(
                 data=all_df.loc[start: end].reset_index(), tau=tau, q=q, digits=digits)
-            all_df.loc[start, parameters] = pd.Series(model_instance.settings()["param_dict"])
+            all_df.loc[start, parameters] = pd.Series(
+                model_instance.settings()["param_dict"])
         simulator = _Simulator(model=self._model, data=all_df)
-        sim_df = simulator.run(tau=tau, model_specific=False).set_index(self.DATE)
-        evaluator = Evaluator(all_df[self._SIRF], sim_df[self._SIRF], how="inner")
+        sim_df = simulator.run(
+            tau=tau,
+            model_specific=False).set_index(
+            self.DATE)
+        evaluator = Evaluator(all_df[self._SIRF],
+                              sim_df[self._SIRF], how="inner")
         return evaluator.score(metric=metric)
 
-    def estimate_params(self, metric: str = "RMSLE", digits: int | None = None, n_jobs: int | None = None, **kwargs) -> pd.DataFrame:
+    def estimate_params(self, metric: str = "RMSLE", digits: int |
+                        None = None, n_jobs: int | None = None, **kwargs) -> pd.DataFrame:
         """Set ODE parameter values optimized for the registered data with hyperparameter optimization using Optuna.
 
         Args:
@@ -470,22 +555,37 @@ class Dynamics(Term):
                 "tau", details="Tau value must be set with covsirphy.Dynamics(tau) or covsirphy.Dynamics.tau or covsirphy.Dynamics.estimate_tau()")
         all_df = self._df.loc[:, [self._PH, *self._SIRF]].dropna(how="any")
         if len(all_df) < 3:
-            raise NotEnoughDataError("registered S/I/F/R data except NAs", all_df, 3)
-        n_jobs_validated = Validator(n_jobs, "n_jobs").int(value_range=(1, cpu_count()), default=cpu_count())
-        starts = all_df.reset_index().groupby(self._PH)[self.DATE].first().sort_values()
-        ends = all_df.reset_index().groupby(self._PH)[self.DATE].last().sort_values()
+            raise NotEnoughDataError(
+                "registered S/I/F/R data except NAs", all_df, 3)
+        n_jobs_validated = Validator(
+            n_jobs,
+            "n_jobs").int(
+            value_range=(
+                1,
+                cpu_count()),
+            default=cpu_count())
+        starts = all_df.reset_index().groupby(
+            self._PH)[self.DATE].first().sort_values()
+        ends = all_df.reset_index().groupby(
+            self._PH)[self.DATE].last().sort_values()
         est_f = partial(
             self._optimized_params, model=self._model, tau=self._tau, metric=metric, digits=digits, **kwargs)
-        phase_dataframes = [all_df[start: end] for start, end in zip(starts, ends)]
+        phase_dataframes = [all_df[start: end]
+                            for start, end in zip(starts, ends)]
         config.info(f"\n<{self._model._NAME}: parameter estimation>")
         config.info(f"Running optimization with {n_jobs_validated} CPUs...")
         stopwatch = StopWatch()
-        # p-tqdm with Python 3.12: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version.
+        # p-tqdm with Python 3.12: DeprecationWarning:
+        # datetime.datetime.utcfromtimestamp() is deprecated and scheduled for
+        # removal in a future version.
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         results = p_umap(est_f, phase_dataframes, num_cpus=n_jobs_validated)
-        config.info(f"Completed optimization. Total: {stopwatch.stop_show()}\n")
+        config.info(
+            f"Completed optimization. Total: {
+                stopwatch.stop_show()}\n")
         est_df = pd.concat(results, sort=True, axis=0)
-        est_df = est_df.loc[:, [*self._parameters, metric, self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
+        est_df = est_df.loc[:, [*self._parameters, metric,
+                                self.TRIALS, self.RUNTIME]].ffill().convert_dtypes()
         # Update registered parameter values
         r_df = self.register()
         for col in self._parameters:
@@ -494,7 +594,8 @@ class Dynamics(Term):
         self.register(data=r_df)
         return est_df
 
-    def _optimized_params(self, phase_df: pd.DataFrame, model: ODEModel, tau: int, metric: str, digits: int | None, **kwargs) -> pd.DataFrame:
+    def _optimized_params(self, phase_df: pd.DataFrame, model: ODEModel,
+                          tau: int, metric: str, digits: int | None, **kwargs) -> pd.DataFrame:
         """Return ODE parameter values optimized with the registered data, estimating ODE parameters hyperparameter optimization using Optuna.
 
         Args:
@@ -526,15 +627,23 @@ class Dynamics(Term):
         # ODE parameter optimization
         model_instance = model.from_data_with_optimization(
             data=df.reset_index(), tau=tau, metric=metric, digits=digits, **kwargs)
-        df.loc[df.index[0], model._PARAMETERS] = pd.Series(model_instance.settings()["param_dict"])
+        df.loc[df.index[0], model._PARAMETERS] = pd.Series(
+            model_instance.settings()["param_dict"])
         # Get information regarding optimization
-        est_dict = model_instance.settings(with_estimation=True)["estimation_dict"]
-        est_dict = {k: v for k, v in est_dict.items() if k in {metric, self.TRIALS, self.RUNTIME}}
+        est_dict = model_instance.settings(
+            with_estimation=True)["estimation_dict"]
+        est_dict = {
+            k: v for k,
+            v in est_dict.items() if k in {
+                metric,
+                self.TRIALS,
+                self.RUNTIME}}
         warnings.filterwarnings("ignore", category=FutureWarning)
         df.loc[df.index[0], list(est_dict.keys())] = pd.Series(est_dict)
         return df
 
-    def parse_phases(self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
+    def parse_phases(
+            self, phases: list[str] | None = None) -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return minimum date and maximum date of the phases.
 
         Args:
@@ -550,11 +659,15 @@ class Dynamics(Term):
             return self._first, self._last
         all_df = self._df.copy()
         all_df[self._PH], _ = all_df[self._PH].factorize()
-        phase_numbers = [all_df[self._PH].max() if ph == "last" else self.str2num(ph) for ph in phases]
+        phase_numbers = [all_df[self._PH].max() if ph ==
+                         "last" else self.str2num(ph) for ph in phases]
         df = all_df.loc[all_df[self._PH].isin(phase_numbers)]
+        # FutureWarning to be fixed by pandas version 3.0.0 release
+        warnings.filterwarnings("ignore", category=FutureWarning)
         return df.index.min(), df.index.max()
 
-    def parse_days(self, days: int, ref: pd.Timestamp | str | None = "last") -> tuple[pd.Timestamp, pd.Timestamp]:
+    def parse_days(self, days: int, ref: pd.Timestamp | str |
+                   None = "last") -> tuple[pd.Timestamp, pd.Timestamp]:
         """Return min(ref, ref + days) and max(ref, ref + days).
 
         Args:
@@ -575,7 +688,8 @@ class Dynamics(Term):
         max_date = max(ref_date, ref_date + timedelta(days=days_n))
         return max(min_date, self._first), min(max_date, self._last)
 
-    def evaluate(self, date_range: tuple[str | pd.Timestamp | None, str | pd.Timestamp | None] | None = None, metric: str = "RMSLE", display: bool = True, **kwargs) -> float:
+    def evaluate(self, date_range: tuple[str | pd.Timestamp | None, str | pd.Timestamp | None]
+                 | None = None, metric: str = "RMSLE", display: bool = True, **kwargs) -> float:
         """Compare the simulated results and actual records, and evaluate the differences.
 
         Args:
@@ -590,13 +704,33 @@ class Dynamics(Term):
         variables = [self.CI, self.F, self.R]
         start_date, end_date = Validator(date_range, name="date_range").sequence(
             default=(self._first, self._last), length=2)
-        start = Validator(start_date, "date_range[0]").date(value_range=(self._first, self._last), default=self._first)
-        end = Validator(end_date, "date_range[1]").date(value_range=(self._first, self._last), default=self._last)
-        actual_df = self._df.loc[start:end, variables].dropna(how="any", axis=0)
-        sim_df = self.simulate(model_specific=False).loc[start: end, variables].dropna(how="any", axis=0)
-        df = actual_df.join(sim_df, how="inner", lsuffix="_actual", rsuffix="_simulated")
+        start = Validator(
+            start_date,
+            "date_range[0]").date(
+            value_range=(
+                self._first,
+                self._last),
+            default=self._first)
+        end = Validator(
+            end_date,
+            "date_range[1]").date(
+            value_range=(
+                self._first,
+                self._last),
+            default=self._last)
+        actual_df = self._df.loc[start:end,
+                                 variables].dropna(how="any", axis=0)
+        sim_df = self.simulate(
+            model_specific=False).loc[start: end, variables].dropna(how="any", axis=0)
+        df = actual_df.join(
+            sim_df,
+            how="inner",
+            lsuffix="_actual",
+            rsuffix="_simulated")
         if display:
-            compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
+            compare_plot(
+                df, variables=variables, groups=[
+                    "actual", "simulated"], **kwargs)
         return Evaluator(actual_df, sim_df).score(metric=metric)
 
     def start_dates(self) -> list[str]:

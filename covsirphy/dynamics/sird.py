@@ -39,11 +39,30 @@ class SIRDModel(ODEModel):
         "param_dict": {"kappa": 0.005, "rho": 0.2, "sigma": 0.075}
     }
 
-    def __init__(self, date_range: tuple[str, str], tau: int, initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
+    def __init__(self, date_range: tuple[str, str], tau: int,
+                 initial_dict: dict[str, int], param_dict: dict[str, float]) -> None:
         super().__init__(date_range, tau, initial_dict, param_dict)
-        self._kappa = Validator(self._param_dict["kappa"], "kappa", accept_none=False).float(value_range=(0, 1))
-        self._rho = Validator(self._param_dict["rho"], "rho", accept_none=False).float(value_range=(0, 1))
-        self._sigma = Validator(self._param_dict["sigma"], "sigma", accept_none=False).float(value_range=(0, 1))
+        self._kappa = Validator(
+            self._param_dict["kappa"],
+            "kappa",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._rho = Validator(
+            self._param_dict["rho"],
+            "rho",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
+        self._sigma = Validator(
+            self._param_dict["sigma"],
+            "sigma",
+            accept_none=False).float(
+            value_range=(
+                0,
+                1))
 
     def _discretize(self, t: int, X: np.ndarray) -> np.ndarray:
         """Discretize the ODE.
@@ -64,7 +83,8 @@ class SIRDModel(ODEModel):
         return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
-    def transform(cls, data: pd.DataFrame, tau: int | None = None) -> pd.DataFrame:
+    def transform(cls, data: pd.DataFrame, tau: int |
+                  None = None) -> pd.DataFrame:
         """Transform a dataframe, converting Susceptible/Infected/Fatal/Recovered to model-specific variables.
 
         Args:
@@ -92,7 +112,8 @@ class SIRDModel(ODEModel):
         return df.loc[:, cls._VARIABLES].convert_dtypes()
 
     @classmethod
-    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None, start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
+    def inverse_transform(cls, data: pd.DataFrame, tau: int | None = None,
+                          start_date: str | pd.Timestamp | None = None) -> pd.DataFrame:
         """Transform a dataframe, converting model-specific variables to Susceptible/Infected/Fatal/Recovered.
 
         Args:
@@ -158,7 +179,8 @@ class SIRDModel(ODEModel):
                 f"Kappa, rho and sigma must be over 0 to calculate dimensional parameters with {self._NAME}.") from None
 
     @classmethod
-    def _param_quantile(cls, data: pd.DataFrame, q: float | pd.Series = 0.5) -> dict[str, float | pd.Series]:
+    def _param_quantile(cls, data: pd.DataFrame, q: float |
+                        pd.Series = 0.5) -> dict[str, float | pd.Series]:
         """With combinations (X, dX/dt) for X=S, I, R, D, calculate quantile values of ODE parameters.
 
         Args:
@@ -182,7 +204,8 @@ class SIRDModel(ODEModel):
         n = df.loc[df.index[0], cls._VARIABLES].sum()
         # Calculate parameter values with non-dimensional difference equation
         kappa_series = df[cls.F].diff() / periods / df[cls.CI]
-        rho_series = 0 - n * df[cls.S].diff() / periods / df[cls.S] / df[cls.CI]
+        rho_series = 0 - n * df[cls.S].diff() / periods / \
+            df[cls.S] / df[cls.CI]
         sigma_series = df[cls.R].diff() / periods / df[cls.CI]
         # Guess representative values
         return {
@@ -212,7 +235,13 @@ class SIRDModel(ODEModel):
                 log10(S) (np.float64): common logarithm of Susceptible
                 R (np.int64): Recovered
         """
-        Validator(data, "data", accept_none=False).dataframe(time_index=True, columns=cls._SIRF)
+        Validator(
+            data,
+            "data",
+            accept_none=False).dataframe(
+            time_index=True,
+            columns=cls._SIRF)
         df = data.rename(columns={cls.R: cls._r})
         df[cls._logS] = np.log10(df[cls.S])
-        return df.loc[:, [cls._logS, cls._r]].astype({cls._logS: np.float64, cls._r: np.int64})
+        return df.loc[:, [cls._logS, cls._r]].astype(
+            {cls._logS: np.float64, cls._r: np.int64})
