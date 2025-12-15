@@ -567,7 +567,7 @@ class ODEScenario(Term):
                 raise e from None
         return self
 
-    def predict(self, days, name, seed=0, verbose=1, X=None, **kwargs):
+    def predict(self, days, name, seed=0, verbose=0, X=None, **kwargs):
         """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
@@ -595,7 +595,7 @@ class ODEScenario(Term):
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
         eng = MLEngineer(seed=seed, verbose=verbose)
-        param_df = eng.forecast(Y=Y, days=days, X=X, **kwargs).reset_index()
+        param_df = eng.forecast(Y=Y, days=days, X=X, verbose=verbose, **kwargs).reset_index()
         # Create phases with Rt values
         param_df[self.RT] = param_df[model._PARAMETERS].apply(
             lambda x: model.from_data(data=self._actual_df.reset_index(), param_dict=x.to_dict(), tau=1440).r0(), axis=1)
