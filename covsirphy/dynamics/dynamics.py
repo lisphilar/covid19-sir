@@ -552,8 +552,6 @@ class Dynamics(Term):
         all_df[self._PH], _ = all_df[self._PH].factorize()
         phase_numbers = [all_df[self._PH].max() if ph == "last" else self.str2num(ph) for ph in phases]
         df = all_df.loc[all_df[self._PH].isin(phase_numbers)]
-        # FutureWarning to be fixed by pandas version 3.0.0 release
-        warnings.filterwarnings("ignore", category=FutureWarning)
         return df.index.min(), df.index.max()
 
     def parse_days(self, days: int, ref: pd.Timestamp | str | None = "last") -> tuple[pd.Timestamp, pd.Timestamp]:
