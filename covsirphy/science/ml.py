@@ -1,4 +1,5 @@
 from covsirphy.util.config import config
+from covsirphy.util.config import _Config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.science._autots import _AutoTSHandler
@@ -63,7 +64,8 @@ class MLEngineer(Term):
         """
         from pca import pca  # https://github.com/lisphilar/covid19-sir/issues/1265
         Validator(X, name="X", accept_none=False).dataframe(time_index=True, empty_ok=False)
-        model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=config.logger_level)
+        verbose = _Config._LEVEL_DICT.get(config.logger_level, "INFO").lower()
+        model = pca(n_components=n_components, normalize=True, random_state=self._seed, verbose=verbose)
         return {**model.fit_transform(X), "model": model}
 
     def forecast(self, Y, days, X=None, **kwargs):

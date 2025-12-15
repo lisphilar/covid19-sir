@@ -601,7 +601,7 @@ class ODEScenario(Term):
                 raise e from None
         return self
 
-    def predict(self, days: int, name: str, seed: int | None = 0, verbose: int = 1, X: pd.DataFrame | None = None, **kwargs: Any) -> "ODEScenario":
+    def predict(self, days: int, name: str, seed: int | None = 0, verbose: int = 0, X: pd.DataFrame | None = None, **kwargs: Any) -> "ODEScenario":
         """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
@@ -628,11 +628,7 @@ class ODEScenario(Term):
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
-        eng = MLEngineer(seed=seed)
-        # autots keyword args don't include verbose as integer, but we pass config.logger_level if not provided
-        # The original code passed verbose to MLEngineer, but MLEngineer.__init__ takes seed and kwargs.
-        # MLEngineer.forecast uses _AutoTSHandler which uses verbose.
-        # Let's adjust kwargs.
+        eng = MLEngineer(seed=seed, verbose=verbose)
         param_df = eng.forecast(Y=Y, days=days, X=X, verbose=verbose, **kwargs).reset_index()
         # Create phases with Rt values
         param_df[self.RT] = param_df[model._PARAMETERS].apply(
