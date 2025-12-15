@@ -1,6 +1,9 @@
+from __future__ import annotations
 from pathlib import Path
 import warnings
+from typing import Any
 import geopandas as gpd
+import pandas as pd
 from unidecode import unidecode
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
@@ -22,12 +25,12 @@ class _Geometry(Term):
         directory (str): directory to save GeoJSON files
     """
 
-    def __init__(self, data, layer, directory):
+    def __init__(self, data: pd.DataFrame, layer: str, directory: str | Path) -> None:
         self._df = Validator(data, f"{layer}-level data").dataframe(columns=[layer])
         self._layer = layer
         self._filer = Filer(directory=directory)
 
-    def to_geopandas(self, iso3, natural_earth):
+    def to_geopandas(self, iso3: str | None, natural_earth: str | None) -> gpd.GeoDataFrame:
         """Add geometry information with GeoJSON file of "Natural Earth" GitHub repository to data.
 
         Args:
@@ -55,7 +58,7 @@ class _Geometry(Term):
         return gdf.rename(columns={f"{self.ISO3}_x": self.ISO3}).loc[:, [*self._df.columns.tolist(), "geometry"]]
 
     @staticmethod
-    def _natural_earth_parse_title(iso3):
+    def _natural_earth_parse_title(iso3: str | None) -> str:
         """Find the best file title ("Natural Earth" GitHub repository) for the layer and country.
 
         Args:
@@ -69,7 +72,7 @@ class _Geometry(Term):
         scale = "50m" if iso3 == "USA" else "10m"
         return f"ne_{scale}_admin_1_states_provinces"
 
-    def _natural_earth(self, title):
+    def _natural_earth(self, title: str) -> gpd.GeoDataFrame:
         """Download GeoJSON files from "Natural Earth" GitHub repository.
         https://www.naturalearthdata.com/
         https://github.com/nvkelso/natural-earth-vector
@@ -104,7 +107,7 @@ class _Geometry(Term):
                 {"Xizang": "Tibet", "Inner Mongol": "Inner Mongolia", "S. Sudan": "South Sudan",
                  "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands"})
             gdf.loc[gdf[self.ISO3] == "HKG", "NAME"] = "Hong Kong"
-            gdf.loc[gdf[self.ISO3] == "-99", self.ISO3] = self._to_iso3(gdf.loc[gdf[self.ISO3] == "-99", "NAME"])
+            gdf.loc[gdf[self.ISO3] == "-99", self.ISO3] = self._to_iso3(gdf.loc[gdf[self.ISO3] == "-99", "NAME"].tolist())
             gdf[self.ISO3] = gdf[self.ISO3].replace({"MAC": "CHN"})
             gdf.to_file(**file_dict)
         return gdf.reindex(columns=[self.ISO3, "NAME", "geometry"])

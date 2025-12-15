@@ -1,7 +1,10 @@
+from __future__ import annotations
 from collections import defaultdict
 import logging
 import warnings
+from typing import ClassVar, Any
 import country_converter as coco
+import pandas as pd
 from covsirphy.util.validator import Validator
 
 
@@ -10,94 +13,94 @@ class Term(object):
     Term definition.
     """
     # Variables of SIR-derived model
-    N = "Population"
-    S = "Susceptible"
-    C = "Confirmed"
-    CI = "Infected"
-    F = "Fatal"
-    R = "Recovered"
-    FR = "Fatal or Recovered"
-    E = "Exposed"
-    W = "Waiting"
+    N: str = "Population"
+    S: str = "Susceptible"
+    C: str = "Confirmed"
+    CI: str = "Infected"
+    F: str = "Fatal"
+    R: str = "Recovered"
+    FR: str = "Fatal or Recovered"
+    E: str = "Exposed"
+    W: str = "Waiting"
     # PCR tests
-    TESTS = "Tests"
-    TESTS_DIFF = "Tests_diff"
+    TESTS: str = "Tests"
+    TESTS_DIFF: str = "Tests_diff"
     # Severity
-    MODERATE = "Moderate"
-    SEVERE = "Severe"
+    MODERATE: str = "Moderate"
+    SEVERE: str = "Severe"
     # Vaccination
-    VAC = "Vaccinations"
-    V = "Vaccinated"
-    V_ONCE = f"{V}_once"
-    V_FULL = f"{V}_full"
-    VAC_BOOSTERS = f"{VAC}_boosters"
-    PRODUCT = "Product"
+    VAC: str = "Vaccinations"
+    V: str = "Vaccinated"
+    V_ONCE: str = f"{V}_once"
+    V_FULL: str = f"{V}_full"
+    VAC_BOOSTERS: str = f"{VAC}_boosters"
+    PRODUCT: str = "Product"
     # Column names
-    DATE = "Date"
-    START = "Start"
-    END = "End"
-    T = "Elapsed"
-    TS = "t"
-    TAU = "tau"
-    COUNTRY = "Country"
-    ISO3 = "ISO3"
-    PROVINCE = "Province"
-    CITY = "City"
-    STEP_N = "step_n"
-    Y0_DICT = "y0_dict"
-    PARAM_DICT = "param_dict"
-    ID = "ID"
-    _PH = "Phase_ID"
-    _SIRF = [S, CI, R, F]
-    AREA_COLUMNS = [COUNTRY, PROVINCE]
-    STR_COLUMNS = [DATE, *AREA_COLUMNS]
-    COLUMNS = [*STR_COLUMNS, C, CI, F, R]
-    NLOC_COLUMNS = [DATE, C, CI, F, R]
-    SUB_COLUMNS = [DATE, C, CI, F, R, S]
-    VALUE_COLUMNS = [C, CI, F, R]
-    FIG_COLUMNS = [CI, F, R, FR, V, E, W]
-    MONO_COLUMNS = [C, F, R]
-    AREA_ABBR_COLS = [ISO3, *AREA_COLUMNS]
-    DSIFR_COLUMNS = [DATE, S, CI, F, R]
+    DATE: str = "Date"
+    START: str = "Start"
+    END: str = "End"
+    T: str = "Elapsed"
+    TS: str = "t"
+    TAU: str = "tau"
+    COUNTRY: str = "Country"
+    ISO3: str = "ISO3"
+    PROVINCE: str = "Province"
+    CITY: str = "City"
+    STEP_N: str = "step_n"
+    Y0_DICT: str = "y0_dict"
+    PARAM_DICT: str = "param_dict"
+    ID: str = "ID"
+    _PH: str = "Phase_ID"
+    _SIRF: list[str] = [S, CI, R, F]
+    AREA_COLUMNS: list[str] = [COUNTRY, PROVINCE]
+    STR_COLUMNS: list[str] = [DATE, *AREA_COLUMNS]
+    COLUMNS: list[str] = [*STR_COLUMNS, C, CI, F, R]
+    NLOC_COLUMNS: list[str] = [DATE, C, CI, F, R]
+    SUB_COLUMNS: list[str] = [DATE, C, CI, F, R, S]
+    VALUE_COLUMNS: list[str] = [C, CI, F, R]
+    FIG_COLUMNS: list[str] = [CI, F, R, FR, V, E, W]
+    MONO_COLUMNS: list[str] = [C, F, R]
+    AREA_ABBR_COLS: list[str] = [ISO3, *AREA_COLUMNS]
+    DSIFR_COLUMNS: list[str] = [DATE, S, CI, F, R]
     # Date format: 22Jan2020 etc.
-    DATE_FORMAT = "%d%b%Y"
-    DATE_FORMAT_DESC = "DDMmmYYYY"
+    DATE_FORMAT: str = "%d%b%Y"
+    DATE_FORMAT_DESC: str = "DDMmmYYYY"
     # Separator of country and province
-    SEP = "/"
+    SEP: str = "/"
     # EDA
-    RATE_COLUMNS = [
+    RATE_COLUMNS: list[str] = [
         "Fatal per Confirmed",
         "Recovered per Confirmed",
         "Fatal per (Fatal or Recovered)"
     ]
     # Optimization
-    A = "_actual"
-    P = "_predicted"
-    ACTUAL = "Actual"
-    FITTED = "Fitted"
+    A: str = "_actual"
+    P: str = "_predicted"
+    ACTUAL: str = "Actual"
+    FITTED: str = "Fitted"
     # Phase name
-    SUFFIX_DICT = defaultdict(lambda: "th")
+    SUFFIX_DICT: ClassVar[defaultdict[int, str]] = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
     # Summary of phases
-    TENSE = "Type"
-    PAST = "Past"
-    FUTURE = "Future"
-    INITIAL = "Initial"
-    ODE = "ODE"
-    RT = "Rt"
-    RT_FULL = "Reproduction number"
-    TRIALS = "Trials"
-    RUNTIME = "Runtime"
+    TENSE: str = "Type"
+    PAST: str = "Past"
+    FUTURE: str = "Future"
+    INITIAL: str = "Initial"
+    ODE: str = "ODE"
+    RT: str = "Rt"
+    RT_FULL: str = "Reproduction number"
+    TRIALS: str = "Trials"
+    RUNTIME: str = "Runtime"
     # Scenario analysis
-    PHASE = "Phase"
-    SERIES = "Scenario"
-    MAIN = "Main"
+    PHASE: str = "Phase"
+    SERIES: str = "Scenario"
+    MAIN: str = "Main"
     # Flag
-    NA = "-"
-    OTHERS = "Others"
+    NA: str = "-"
+    OTHERS: str = "Others"
 
     @classmethod
-    def num2str(cls, num):
+    def num2str(cls, num: int) -> str:
         """
         Convert numbers to 1st, 2nd etc.
 
@@ -113,7 +116,7 @@ class Term(object):
         return f"{num}{suffix}"
 
     @staticmethod
-    def str2num(string, name="phase names"):
+    def str2num(string: str, name: str = "phase names") -> int:
         """
         Convert 1st to 1 and so on.
 
@@ -132,7 +135,7 @@ class Term(object):
             ) from e
 
     @classmethod
-    def _to_iso3(cls, name):
+    def _to_iso3(cls, name: str | list[str] | None) -> list[str]:
         """Convert country name(s) to ISO3 codes.
 
         Args:
@@ -169,7 +172,7 @@ class Term(object):
         }
         return [code_dict[elem] for elem in names]
 
-    def _country_information(self):
+    def _country_information(self) -> pd.DataFrame:
         """Return the raw data of country_converter library raw data as a dataframe.
 
         Returns:

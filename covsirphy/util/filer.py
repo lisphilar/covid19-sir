@@ -1,4 +1,6 @@
+from __future__ import annotations
 from pathlib import Path
+from typing import Any
 
 
 class Filer(object):
@@ -26,7 +28,8 @@ class Filer(object):
         {"path_or_buf": "<absolute path>/output/jpn_01_records.csv", index: True}
     """
 
-    def __init__(self, directory, prefix=None, suffix=None, numbering=None):
+    def __init__(self, directory: list[str] | tuple[str, ...] | str | Path,
+                 prefix: str | None = None, suffix: str | None = None, numbering: str | None = None) -> None:
         directories = [directory] if isinstance(directory, (str, Path)) else directory
         self._dir_path = Path(*directories).resolve()
         self._pre = "" if prefix is None else f"{prefix}_"
@@ -41,9 +44,9 @@ class Filer(object):
                 f"@numbering should be selected from {num_str}, but {numbering} was applied.")
         self._num_format = num_dict[numbering]
         # Filenames
-        self._file_dict = {}
+        self._file_dict: dict[str, list[str]] = {}
 
-    def _register(self, title, ext):
+    def _register(self, title: str, ext: str) -> str:
         """
         Create filename with file title and register it.
 
@@ -62,7 +65,7 @@ class Filer(object):
         self._file_dict[ext] = self._file_dict.get(ext, []) + [filename]
         return filename
 
-    def files(self, ext=None):
+    def files(self, ext: str | None = None) -> list[str]:
         """
         List-up filenames.
 
@@ -76,7 +79,7 @@ class Filer(object):
             return [file for filenames in self._file_dict.values() for file in filenames]
         return self._file_dict.get(ext, [])
 
-    def png(self, title, **kwargs):
+    def png(self, title: str, **kwargs: Any) -> dict[str, Any]:
         """
         Create PNG filename and register it.
 
@@ -90,7 +93,7 @@ class Filer(object):
         filename = self._register(title=title, ext="png")
         return {"filename": filename, **kwargs}
 
-    def jpg(self, title, **kwargs):
+    def jpg(self, title: str, **kwargs: Any) -> dict[str, Any]:
         """
         Create JPG filename and register it.
 
@@ -104,7 +107,7 @@ class Filer(object):
         filename = self._register(title=title, ext="jpg")
         return {"filename": filename, **kwargs}
 
-    def json(self, title, **kwargs):
+    def json(self, title: str, **kwargs: Any) -> dict[str, Any]:
         """
         Create JSON filename and register it.
 
@@ -118,7 +121,7 @@ class Filer(object):
         filename = self._register(title=title, ext="json")
         return {"filename": filename, **kwargs}
 
-    def geojson(self, title, **kwargs):
+    def geojson(self, title: str, **kwargs: Any) -> dict[str, Any]:
         """
         Create GeoJSON filename and register it.
 
@@ -132,7 +135,7 @@ class Filer(object):
         filename = self._register(title=title, ext="geojson")
         return {"filename": filename, **kwargs}
 
-    def csv(self, title, **kwargs):
+    def csv(self, title: str, **kwargs: Any) -> dict[str, Any]:
         """
         Create CSV filename and register it.
 

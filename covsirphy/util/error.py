@@ -1,8 +1,13 @@
+from __future__ import annotations
 from copy import deepcopy
+from typing import Any, Callable, TypeVar, Union, Iterable
 from covsirphy.util.config import config
 
 
-def deprecate(old, new=None, version=None, ref=None):
+T = TypeVar("T")
+
+
+def deprecate(old: str, new: str | None = None, version: str | None = None, ref: str | None = None) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator to raise deprecation warning.
 
@@ -12,8 +17,8 @@ def deprecate(old, new=None, version=None, ref=None):
         version (str or None): version number, like 2.7.3-alpha
         ref (str or None): reference URL of the new method/function
     """
-    def _deprecate(func):
-        def wrapper(*args, **kwargs):
+    def _deprecate(func: Callable[..., T]) -> Callable[..., T]:
+        def wrapper(*args: Any, **kwargs: Any) -> T:
             version_str = "." if version is None else f", version >= {version}."
             message = "" if ref is None else f" Refer to {ref}."
             if new is None:
@@ -26,7 +31,7 @@ def deprecate(old, new=None, version=None, ref=None):
     return _deprecate
 
 
-def experimental(name, version):
+def experimental(name: str, version: str) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator to raise ExperimentalWarning because the method/function is experimental.
 
@@ -34,8 +39,8 @@ def experimental(name, version):
         name (str): description of the method/function
         version (str): version number, like 2.7.3-alpha
     """
-    def _experimental(func):
-        def wrapper(*args, **kwargs):
+    def _experimental(func: Callable[..., T]) -> Callable[..., T]:
+        def wrapper(*args: Any, **kwargs: Any) -> T:
             comment = f"{name} can be used from {version}, but this is experimental." \
                 "Its name and arguments may be changed later."
             config.warning(message=comment, category=ExperimentalWarning)
@@ -66,12 +71,12 @@ class _BaseException(Exception):
         log (str): description used by logger
     """
 
-    def __init__(self, message, details=None, log="exception raised"):
+    def __init__(self, message: str, details: str | None = None, log: str = "exception raised") -> None:
         config.error(log)
         self._message = str(message)
         self._details = "" if details is None else f" {details}."
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self._message}. {self._details}"
 
 
@@ -85,7 +90,7 @@ class _ValidationError(_BaseException):
         log (str): description used by logger
     """
 
-    def __init__(self, name, message, details=None):
+    def __init__(self, name: str, message: str, details: str | None = None) -> None:
         log = f"validation of {name} failed"
         super().__init__(message=message, details=details, log=log)
 
@@ -99,7 +104,7 @@ class NotIncludedError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, key_name, container_name, details=None):
+    def __init__(self, key_name: str, container_name: str, details: str | None = None) -> None:
         message = f"'{key_name}' was not included in the '{container_name}'"
         super().__init__(name=key_name, message=message, details=details)
 
@@ -113,7 +118,7 @@ class NAFoundError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, value=None, details=None):
+    def __init__(self, name: str, value: Any = None, details: str | None = None) -> None:
         message = f"'{name}' has NA(s) un-expectedly"
         if value is not None:
             message += f", '{value}'"
@@ -130,7 +135,7 @@ class NotEnoughDataError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, value, required_n, details=None):
+    def __init__(self, name: str, value: Any, required_n: int, details: str | None = None) -> None:
         message = f"We need more than {required_n} records, but '{name}' has only {len(value)} records at this time"
         super().__init__(name=name, message=message, details=details)
 
@@ -143,7 +148,7 @@ class UnExpectedNoneError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, details=None):
+    def __init__(self, name: str, details: str | None = None) -> None:
         message = f"'{name}' is None un-expectedly"
         super().__init__(name=name, message=message, details=details)
 
@@ -157,7 +162,7 @@ class NotNoneError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, value, details=None):
+    def __init__(self, name: str, value: Any, details: str | None = None) -> None:
         message = f"'{name}' must be None, but has value '{value}'"
         super().__init__(name=name, message=message, details=details)
 
@@ -171,7 +176,7 @@ class UnExecutedError(_BaseException):
         details (str or None): details of error
     """
 
-    def __init__(self, name, details=None):
+    def __init__(self, name: str, details: str | None = None) -> None:
         message = f"Please execute {name} in advance"
         log = f"{name} not executed"
         super().__init__(message=message, details=details, log=log)
@@ -194,7 +199,7 @@ class NotSubclassError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, target, parent, details=None):
+    def __init__(self, name: str, target: Any, parent: Any, details: str | None = None) -> None:
         message = f"'{name}' must be a sub-class of {parent}, but {type(target)} was applied"
         super().__init__(name=name, message=message, details=details)
 
@@ -209,7 +214,7 @@ class UnExpectedTypeError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, target, expected, details=None):
+    def __init__(self, name: str, target: Any, expected: Any, details: str | None = None) -> None:
         message = f"We could not convert '{name}' to an instance of {expected} because that of {type(target)} was applied"
         super().__init__(name=name, message=message, details=details)
 
@@ -222,7 +227,7 @@ class EmptyError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, details=None):
+    def __init__(self, name: str, details: str | None = None) -> None:
         message = f"'Empty dataframe/series was applied as {name}' un-expectedly"
         super().__init__(name=name, message=message, details=details)
 
@@ -237,7 +242,7 @@ class UnExpectedValueRangeError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, target, value_range, details=None):
+    def __init__(self, name: str, target: Any, value_range: tuple[int | float | str | None, int | float | str | None], details: str | None = None) -> None:
         _min, _max = value_range
         if _min is None:
             s = "is not in the expected value range" if _max is None else f"must be under or equal to {_max}"
@@ -258,8 +263,8 @@ class UnExpectedValueError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, value, candidates, details=None):
-        c_str = ", ".join(candidates)
+    def __init__(self, name: str, value: Any, candidates: Iterable[Any], details: str | None = None) -> None:
+        c_str = ", ".join([str(c) for c in candidates])
         message = f"'{name}' must be selected from [{c_str}], but {value} was applied"
         super().__init__(name=name, message=message, details=details)
 
@@ -275,7 +280,7 @@ class UnExpectedLengthError(_ValidationError):
         details (str or None): details of error
     """
 
-    def __init__(self, name, value, length, details=None):
+    def __init__(self, name: str, value: Any, length: int, details: str | None = None) -> None:
         message = f"The length of '{name}' must be {length}, but {len(value)} was applied"
         super().__init__(name=name, message=message, details=details)
 
@@ -294,8 +299,9 @@ class SubsetNotFoundError(_BaseException):
         details (str or None): details of error
     """
 
-    def __init__(self, geo=None, country=None, country_alias=None, province=None,
-                 start_date=None, end_date=None, date=None, details=None):
+    def __init__(self, geo: tuple[list[str] | tuple[str, ...] | str, ...] | str | None = None,
+                 country: str | None = None, country_alias: str | None = None, province: str | None = None,
+                 start_date: str | None = None, end_date: str | None = None, date: str | None = None, details: str | None = None) -> None:
         self.area = self._area(geo, country, country_alias, province)
         self.date = self._date(start_date, end_date, date)
         message = f"No records in {self.area}{self.date} were found"
@@ -303,7 +309,8 @@ class SubsetNotFoundError(_BaseException):
         super().__init__(message=message, details=details, log=log)
 
     @staticmethod
-    def _area(geo, country, country_alias, province):
+    def _area(geo: tuple[list[str] | tuple[str, ...] | str, ...] | str | None,
+              country: str | None, country_alias: str | None, province: str | None) -> str:
         """
         Error when subset was failed with specified arguments.
 
@@ -318,19 +325,29 @@ class SubsetNotFoundError(_BaseException):
         """
         if geo is None and country is None:
             return "the world"
+        geo_converted: tuple[Any, ...] | str
         if geo is not None:
             geo_converted = deepcopy(geo)
         elif province is None:
             geo_converted = (country if country_alias is None else f"{country} ({country_alias})",)
         else:
             geo_converted = (country if country_alias is None else f"{country} ({country_alias})", province)
+
+        # Helper to process info
+        def process_info(info: Any) -> str:
+            if isinstance(info, str):
+                return info
+            if info is None:
+                return "-"
+            return "_".join(list(info))
+
         names = [
-            info if isinstance(info, str) else "-" if info is None else "_".join(list(info))
+            process_info(info)
             for info in ([geo_converted] if isinstance(geo_converted, str) else geo_converted)]
         return "/".join(names[::-1])
 
     @staticmethod
-    def _date(start_date, end_date, date):
+    def _date(start_date: str | None, end_date: str | None, date: str | None) -> str:
         """
         Error when subset was failed with specified arguments.
 
@@ -354,7 +371,7 @@ class ScenarioNotFoundError(_BaseException):
         details (str or None): details of error
     """
 
-    def __init__(self, name, details=None):
+    def __init__(self, name: str, details: str | None = None) -> None:
         message = f"{name} scenario is not registered"
         log = "scenario selection failed"
         super().__init__(message=message, details=details, log=log)

@@ -1,5 +1,6 @@
 import contextlib
 import warnings
+from typing import Any, cast
 import pandas as pd
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
@@ -23,11 +24,11 @@ class _LayerAdjuster(Term):
     # Internal term
     _ID = "Location_ID"
 
-    def __init__(self, layers=None, country="ISO3", date="Date"):
+    def __init__(self, layers: list[str] | None = None, country: str | None = "ISO3", date: str = "Date") -> None:
         # Countries will be specified with ISO3 codes and this requires conversion
         self._country = None if country is None else str(country)
         # Layers of location information
-        self._layers = Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence()
+        self._layers = cast(list[str], Validator(layers or [self._country, self.PROVINCE, self.CITY], "layers").sequence())
         if len(set(self._layers)) != len(self._layers):
             raise ValueError(f"@layer has duplicates, {self._layers}")
         # Date column
@@ -37,9 +38,9 @@ class _LayerAdjuster(Term):
         # All available data
         self._rec_df = pd.DataFrame(columns=[self._ID, self._date])
         # Citations
-        self._citation_dict = {}
+        self._citation_dict: dict[str, list[str]] = {}
 
-    def all(self, variables=None):
+    def all(self, variables: list[str] | None = None) -> pd.DataFrame:
         """Return all available data.
 
         Args:
@@ -57,14 +58,20 @@ class _LayerAdjuster(Term):
         identifiers = [*self._layers, self._date]
         df = self._loc_df.merge(self._rec_df, how="right", on=self._ID).drop(self._ID, axis=1)
         df = df.sort_values(identifiers, ignore_index=True)
-        df = df.loc[:, [*identifiers, *sorted(set(df.columns) - set(identifiers), key=df.columns.tolist().index)]]
+        # Sorting columns by keeping identifiers first, then alphabetical others
+        # df.columns.tolist().index is a bit weird if new columns are not in df.columns?
+        # But here all columns are from df.
+        cols = [*identifiers, *sorted(set(df.columns) - set(identifiers), key=df.columns.tolist().index)]
+        df = df.loc[:, cols]
+
         if variables is None:
             return df
         all_variables = df.columns.tolist()
-        sel_variables = Validator(variables, "variables").sequence(candidates=set(all_variables) - set(identifiers))
+        # Validator returns list[Any], need cast
+        sel_variables = cast(list[str], Validator(variables, "variables").sequence(candidates=set(all_variables) - set(identifiers)))
         return df.loc[:, [*self._layers, self._date, *sel_variables]]
 
-    def citations(self, variables=None):
+    def citations(self, variables: list[str] | None = None) -> list[str]:
         """
         Return citation list of the secondary data sources.
 
@@ -75,10 +82,13 @@ class _LayerAdjuster(Term):
             list[str]: citation list
         """
         all_columns = [col for col in self._rec_df.columns if col not in (self._ID, self._date)]
-        columns = Validator(variables, "variables").sequence(default=all_columns, candidates=all_columns)
-        return Validator([v for k, v in self._citation_dict.items() if k in columns]).sequence(flatten=True, unique=True)
+        # Validator returns list[Any]
+        columns = cast(list[str], Validator(variables, "variables").sequence(default=all_columns, candidates=all_columns))
+        return cast(list[str], Validator([v for k, v in self._citation_dict.items() if k in columns]).sequence(flatten=True, unique=True))
 
-    def register(self, data, layers=None, date="Date", variables=None, citations=None, convert_iso3=True, **kwargs):
+    def register(self, data: pd.DataFrame, layers: list[str] | None = None, date: str = "Date",
+                 variables: list[str] | None = None, citations: list[str] | str | None = None,
+                 convert_iso3: bool = True, **kwargs: Any) -> "_LayerAdjuster":
         """Register new data.
 
         Args:
@@ -102,7 +112,7 @@ class _LayerAdjuster(Term):
         Returns:
             covsirphy.LayerAdjuster: self
         """
-        data_layers = Validator(layers, "layers").sequence(default=self._layers)
+        data_layers = cast(list[str], Validator(layers, "layers").sequence(default=self._layers))
         if len(set(data_layers)) != len(data_layers):
             raise ValueError(f"@layer has duplicates, {data_layers}")
         df = Validator(data, "data").dataframe(columns=[*data_layers, date, *(variables or [])])
@@ -114,7 +124,9 @@ class _LayerAdjuster(Term):
         # Convert country names to ISO3 codes
         if convert_iso3 and self._country is not None and self._country in df:
             warnings.filterwarnings("ignore", category=DeprecationWarning)
-            df.loc[:, self._country] = self._to_iso3(df[self._country])
+            # _to_iso3 accepts list or str, here passing Series which behaves like list/iterable.
+            # but to ensure type safety we convert to list
+            df.loc[:, self._country] = self._to_iso3(df[self._country].tolist())
         # Prepare necessary layers and fill in None with "NA"
         if data_layers is not None and data_layers != self._layers:
             df = self._prepare_layers(df, data_layers=data_layers)
@@ -132,19 +144,19 @@ class _LayerAdjuster(Term):
         # Records
         df = df.merge(self._loc_df, how="left", on=self._layers).drop(self._layers, axis=1)
         if variables is not None:
-            columns = [self._ID, self._date, *Validator(variables, "variables").sequence()]
+            columns = [self._ID, self._date, *cast(list[str], Validator(variables, "variables").sequence())]
             df = df.loc[:, columns]
         rec_df = self._rec_df.reindex(columns=list(set(self._rec_df.columns) | set(df.columns)))
         rec_df = rec_df.set_index([self._ID, self._date]).combine_first(df.set_index([self._ID, self._date]))
         self._rec_df = rec_df.reset_index()
         # Citations
-        new_citations = Validator(
-            [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), "citations").sequence()
+        new_citations = cast(list[str], Validator(
+            [citations] if isinstance(citations, str) else (citations or ["my own dataset"]), "citations").sequence())
         citation_dict = {col: self._citation_dict.get(col, []) + new_citations for col in variables or df.columns}
         self._citation_dict.update(citation_dict)
         return self
 
-    def _prepare_layers(self, data, data_layers):
+    def _prepare_layers(self, data: pd.DataFrame, data_layers: list[str]) -> pd.DataFrame:
         """Prepare necessary layers, adding NAs and renaming layers.
 
         Args:
@@ -169,9 +181,13 @@ class _LayerAdjuster(Term):
         # Adjust layer names and records
         for (layer, data_layer) in zip(expected, actual):
             if data_layer is None:
+                # layer is not None here because expected/actual logic
+                assert layer is not None
                 df.loc[:, layer] = self.NA
                 config.info(f"\t[INFO] New layer '{layer}' was added to the data with NAs.")
             elif layer is None:
+                 # data_layer is not None here
+                assert data_layer is not None
                 if data_layer == actual[-1]:
                     df.loc[df[data_layer] != self.NA, self._layers] = self.NA
                     config.info(f"\t[INFO] Records which has actual values at '{data_layer}' layer were disabled.")
@@ -182,7 +198,7 @@ class _LayerAdjuster(Term):
                 config.info(f"\t[INFO] '{data_layer}' layer was renamed to {layer}.")
         return df.reset_index(drop=True)
 
-    def _align_layers(self, data_layers):
+    def _align_layers(self, data_layers: list[str]) -> tuple[list[str | None], list[str | None]]:
         """Perform sequence alignment of the layers of new data with the layers defined by LayerAdjuster(layers).
 
         Args:
@@ -194,7 +210,8 @@ class _LayerAdjuster(Term):
         Note:
             Example of sequence alignment: [A, B, C], [A, C] -> [A, B, C], [A, None, C]
         """
-        expected, actual = [], []
+        expected: list[str | None] = []
+        actual: list[str | None] = []
         for layer in self._layers:
             current = [data_layer for data_layer in data_layers if data_layer not in actual]
             if layer in current:

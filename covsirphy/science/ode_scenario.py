@@ -4,9 +4,10 @@ from datetime import timedelta
 import json
 from pathlib import Path
 import re
+from typing import Any, cast
 import pandas as pd
 from covsirphy.util.error import ScenarioNotFoundError, SubsetNotFoundError, UnExpectedValueRangeError
-from covsirphy.util.error import UnExpectedValueError
+from covsirphy.util.error import UnExpectedValueError, UnExpectedTypeError
 from covsirphy.util.validator import Validator
 from covsirphy.util.alias import Alias
 from covsirphy.util.term import Term
@@ -45,7 +46,7 @@ class ODEScenario(Term):
     """
     _PARAM = "param"
 
-    def __init__(self, data, location_name, complement=True):
+    def __init__(self, data: pd.DataFrame, location_name: str, complement: bool = True) -> None:
         self._location_name = str(location_name)
         self._complement = complement
         # Actual records: Date index, S/I/F/R
@@ -58,15 +59,18 @@ class ODEScenario(Term):
         engineer.register(data=df.reset_index())
         engineer.clean()
         engineer.transform()
-        self._actual_df, *_ = engineer.subset(
+        # DataEngineer.subset returns tuple (subset_df, endpoint_dict) or similar.
+        res = engineer.subset(
             geo=self._location_name, variables=[self.S, self.CI, self.R, self.F], complement=complement)
-        self._first, self._last = self._actual_df.index.min(), self._actual_df.index.max()
+        self._actual_df = res[0]
+        self._first: pd.Timestamp = cast(pd.Timestamp, self._actual_df.index.min())
+        self._last: pd.Timestamp = cast(pd.Timestamp, self._actual_df.index.max())
         # {scenario_name: {"ODE": ODEModel, "tau": int, "param": pd.DataFrame(index: Date, columns: ODE parameters)}}
         self._snr_alias = Alias(target_class=dict)
         # Aliases of variable names
         self._variable_alias = Alias.for_variables()
 
-    def to_json(self, filename):
+    def to_json(self, filename: str | Path) -> str:
         """Write a JSON file which can usable for recreating ODEScenario instance with .from_json()
 
         Args:
@@ -93,7 +97,7 @@ class ODEScenario(Term):
         return str(filename)
 
     @classmethod
-    def from_json(cls, filename):
+    def from_json(cls, filename: str | Path) -> "ODEScenario":
         """Create ODEScenario instance with a JSON file.
 
         Args:
@@ -132,7 +136,7 @@ class ODEScenario(Term):
             )
         return instance
 
-    def build_with_dynamics(self, name, dynamics):
+    def build_with_dynamics(self, name: str, dynamics: Dynamics) -> "ODEScenario":
         """Build a scenario with covsirphy.Dynamics() instance.
 
         Args:
@@ -147,7 +151,7 @@ class ODEScenario(Term):
         self._snr_alias.update(name=name, target=snl_dict)
         return self
 
-    def build_with_model(self, name, model, date_range=None, tau=None):
+    def build_with_model(self, name: str, model: type[ODEModel], date_range: tuple[str | None, str | None] | None = None, tau: int | None = None) -> "ODEScenario":
         """Build a scenario with covsirphy.Dynamics() instance created with the actual data automatically.
 
         Args:
@@ -159,7 +163,10 @@ class ODEScenario(Term):
         Return:
             covsirphy.ODEScenario: self
         """
-        Validator(model, "model").subclass(ODEModel)
+        # Ensure model is a class type of ODEModel
+        if not (isinstance(model, type) and issubclass(model, ODEModel)):
+             raise UnExpectedTypeError(name="model", target=model, expected=ODEModel)
+
         start_date, end_date = Validator(date_range, "date_range").sequence(default=(None, None), length=2)
         start = Validator(start_date, name="the first value of @date_range").date(default=self._first)
         end = Validator(
@@ -170,7 +177,7 @@ class ODEScenario(Term):
         dyn.estimate()
         return self.build_with_dynamics(name=name, dynamics=dyn)
 
-    def build_with_template(self, name, template):
+    def build_with_template(self, name: str, template: str) -> "ODEScenario":
         """Build a scenario with a template scenario.
 
         Args:
@@ -190,7 +197,7 @@ class ODEScenario(Term):
         return self
 
     @classmethod
-    def auto_build(cls, geo, model, complement=True):
+    def auto_build(cls, geo: tuple[list[str] | tuple[str, ...] | str, ...] | str | None, model: type[ODEModel], complement: bool = True) -> "ODEScenario":
         """Prepare cleaned and subset data from recommended dataset, create instance, build baseline scenario.
 
         Args:
@@ -219,8 +226,13 @@ class ODEScenario(Term):
         Note:
             Complemented (if @complement is True) data with Recovered > 0 will be analyzed.
         """
-        Validator(geo, "geo", accept_none=True).instance(expected=(str, tuple, list))
-        Validator(model, "model", accept_none=False).subclass(ODEModel)
+        # Explicit type cast for Validator to satisfy type checker
+        geo_val = cast(str | tuple[Any, ...] | list[Any], geo)
+        Validator(geo_val, "geo", accept_none=True).instance(expected=(str, tuple, list))
+        # Ensure model is a class type of ODEModel
+        if not (isinstance(model, type) and issubclass(model, ODEModel)):
+             raise UnExpectedTypeError(name="model", target=model, expected=ODEModel)
+
         # Prepare data
         engineer = DataEngineer()
         engineer.download(
@@ -239,7 +251,7 @@ class ODEScenario(Term):
         snl.build_with_model(name="Baseline", model=model)
         return snl
 
-    def delete(self, pattern, exact=False):
+    def delete(self, pattern: str, exact: bool = False) -> "ODEScenario":
         """Delete scenario(s).
 
         Args:
@@ -258,7 +270,7 @@ class ODEScenario(Term):
             self._snr_alias.delete(name=name)
         return self
 
-    def rename(self, old, new):
+    def rename(self, old: str, new: str) -> "ODEScenario":
         """Rename the given scenario names with a new one.
 
         Args:
@@ -272,7 +284,7 @@ class ODEScenario(Term):
         self.delete(pattern=old, exact=True)
         return self
 
-    def to_dynamics(self, name):
+    def to_dynamics(self, name: str) -> Dynamics:
         """Create covsirphy.Dynamics instance of the scenario.
 
         Args:
@@ -291,7 +303,7 @@ class ODEScenario(Term):
         df = self._actual_df.join(param_df, how="right")
         return Dynamics.from_data(model=model, data=df, tau=tau, name=name)
 
-    def summary(self):
+    def summary(self) -> pd.DataFrame:
         """Summarize phase information of all scenarios.
 
         Returns:
@@ -318,7 +330,7 @@ class ODEScenario(Term):
             dataframes.append(df)
         return pd.concat(dataframes, axis=0).set_index([self.SERIES, self.PHASE]).convert_dtypes()
 
-    def track(self):
+    def track(self) -> pd.DataFrame:
         """Track reproduction number, parameter value and dimensional parameter values.
 
         Returns:
@@ -338,7 +350,7 @@ class ODEScenario(Term):
             lambda x: pd.date_range(start=x[0], end=x[1], freq="D"), axis=1)
         return df.explode(self.DATE).set_index(self.DATE).drop([self.START, self.END], axis=1)
 
-    def describe(self):
+    def describe(self) -> pd.DataFrame:
         """Describe representative values.
 
         Returns:
@@ -372,7 +384,7 @@ class ODEScenario(Term):
             }
         return pd.DataFrame.from_dict(_dict, orient="index")
 
-    def simulate(self, name=None, variables=None, display=True, **kwargs):
+    def simulate(self, name: str | None = None, variables: list[str] | None = None, display: bool = True, **kwargs: Any) -> pd.DataFrame:
         """Perform simulation with phase-dependent ODE model.
 
         Args:
@@ -414,7 +426,8 @@ class ODEScenario(Term):
             line_plot(df=df, **plot_kwargs)
         return df
 
-    def compare_cases(self, variable, date_range=None, ref=None, display=True, **kwargs):
+    def compare_cases(self, variable: str, date_range: tuple[str | None, str | None] | None = None,
+                      ref: str | None = None, display: bool = True, **kwargs: Any) -> pd.DataFrame:
         """Compare the number of cases of scenarios.
 
         Args:
@@ -458,7 +471,8 @@ class ODEScenario(Term):
             line_plot(df=df, **plot_kwargs)
         return df.convert_dtypes()
 
-    def compare_param(self, param, date_range=None, ref=None, display=True, **kwargs):
+    def compare_param(self, param: str, date_range: tuple[str | None, str | None] | None = None,
+                      ref: str | None = None, display: bool = True, **kwargs: Any) -> pd.DataFrame:
         """Compare the number of cases of scenarios.
 
         Args:
@@ -492,7 +506,7 @@ class ODEScenario(Term):
             line_plot(df=df, **plot_kwargs)
         return df.convert_dtypes()
 
-    def _append(self, name, end, **kwargs):
+    def _append(self, name: str, end: pd.Timestamp | int, **kwargs: Any) -> None:
         """Append a new phase, specifying ODE parameter values.
 
         Args:
@@ -511,16 +525,29 @@ class ODEScenario(Term):
         param_df = snr_dict[self._PARAM].copy()
         last_param_dict = param_df.iloc[-1].to_dict()
         start_date = param_df.index[-1] + timedelta(days=1)
-        try:
-            int(end)
-        except (ValueError, TypeError):
-            end_date = Validator(end, "end", accept_none=False).date(value_range=(param_df.index[-1], None))
+
+        end_date: pd.Timestamp
+        if isinstance(end, int):
+             delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
+             end_date = param_df.index[-1] + delta
         else:
-            delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
-            end_date = param_df.index[-1] + delta
+             # Assume Timestamp
+             try:
+                 # Check if it behaves like a timestamp (has year, month, etc) or use Validator
+                 end_date = Validator(end, "end", accept_none=False).date(value_range=(param_df.index[-1], None))
+             except (UnExpectedTypeError, AttributeError):
+                 # Fallback if it was a string or something else that looks like int but wasn't caught
+                 try:
+                     delta = timedelta(days=Validator(end, "end", accept_none=False).int(value_range=(0, None)))
+                     end_date = param_df.index[-1] + delta
+                 except Exception:
+                     raise UnExpectedTypeError(name="end", target=end, expected=pd.Timestamp) from None
+
         new_param_dict = Validator(kwargs, "keyword arguments").dict(
             default=last_param_dict, required_keys=list(last_param_dict.keys()))
-        new_df = pd.DataFrame(new_param_dict, index=pd.date_range(start=start_date, end=end_date, freq="D"))
+        # Explicit type cast for index to satisfy type checker
+        date_index = cast(Any, pd.date_range(start=start_date, end=end_date, freq="D"))
+        new_df = pd.DataFrame(new_param_dict, index=date_index)
         snr_dict[self._PARAM] = pd.concat([param_df, new_df], axis=0)
         try:
             Dynamics.from_data(
@@ -529,16 +556,19 @@ class ODEScenario(Term):
                 tau=snr_dict[self.TAU])
         except UnExpectedValueError:
             if isinstance(end, int):
-                target, _min = end, 3
+                target, _min = str(end), "3" # Convert to string for display
             else:
-                target = end.strftime(self.DATE_FORMAT)
+                target = cast(pd.Timestamp, end).strftime(self.DATE_FORMAT)
                 _min = (param_df.index[-1] + timedelta(days=3)).strftime(self.DATE_FORMAT)
-            raise UnExpectedValueRangeError(
-                name="end", target=target, value_range=(_min, None)) from None
+
+            # UnExpectedValueRangeError expects tuple[int | float | str | None, ...]
+            # Using tuple to match type definition
+            range_val: tuple[str | None, str | None] = (_min, None)
+            raise UnExpectedValueRangeError(name="end", target=target, value_range=range_val) from None
         self._snr_alias.update(name=name, target=snr_dict.copy())
         self._last = max((self._last, end_date))
 
-    def append(self, name=None, end=None, **kwargs):
+    def append(self, name: str | list[str] | None = None, end: pd.Timestamp | int | None = None, **kwargs: Any) -> "ODEScenario":
         """Append a new phase, specifying ODE parameter values.
 
         Args:
@@ -558,16 +588,20 @@ class ODEScenario(Term):
             for snl_dict in self._snr_alias.all().values():
                 end_date = snl_dict[self._PARAM].index[-1]
                 last_end = max(last_end, end_date)
+            target_end = last_end
+        else:
+            target_end = end
+
         names = [name] if isinstance(name, str) else Validator(name, "name").sequence(
             default=list(self._snr_alias.all().keys()))
         for _name in names:
             try:
-                self._append(name=_name, end=end or last_end, **kwargs)
+                self._append(name=_name, end=target_end, **kwargs)
             except UnExpectedValueRangeError as e:
                 raise e from None
         return self
 
-    def predict(self, days, name, seed=0, verbose=1, X=None, **kwargs):
+    def predict(self, days: int, name: str, seed: int | None = 0, verbose: int = 1, X: pd.DataFrame | None = None, **kwargs: Any) -> "ODEScenario":
         """Create scenarios and append a phase, performing prediction ODE parameter prediction for given days.
 
         Args:
@@ -594,8 +628,12 @@ class ODEScenario(Term):
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
-        eng = MLEngineer(seed=seed, verbose=verbose)
-        param_df = eng.forecast(Y=Y, days=days, X=X, **kwargs).reset_index()
+        eng = MLEngineer(seed=seed)
+        # autots keyword args don't include verbose as integer, but we pass config.logger_level if not provided
+        # The original code passed verbose to MLEngineer, but MLEngineer.__init__ takes seed and kwargs.
+        # MLEngineer.forecast uses _AutoTSHandler which uses verbose.
+        # Let's adjust kwargs.
+        param_df = eng.forecast(Y=Y, days=days, X=X, verbose=verbose, **kwargs).reset_index()
         # Create phases with Rt values
         param_df[self.RT] = param_df[model._PARAMETERS].apply(
             lambda x: model.from_data(data=self._actual_df.reset_index(), param_dict=x.to_dict(), tau=1440).r0(), axis=1)
@@ -609,7 +647,8 @@ class ODEScenario(Term):
                 self._append(name=name, **phase_dict)
         return self
 
-    def represent(self, q, variable, date=None, included=None, excluded=None):
+    def represent(self, q: list[float] | float, variable: str, date: str | None = None,
+                  included: list[str] | None = None, excluded: list[str] | None = None) -> list[float] | float:
         """
         Return the names of representative scenarios using quantiles of the variable on on the date.
 
@@ -640,7 +679,8 @@ class ODEScenario(Term):
         # Get simulation data of the variable of the target scenarios
         sim_dict = {name: self.simulate(name=name, display=False)[variable] for name in scenarios}
         sim_df = pd.DataFrame(sim_dict)
-        if sim_df.isna().to_numpy().sum():
+        if bool(sim_df.isna().to_numpy().sum()):
+             # Cast to bool for type checking
             raise ValueError(
                 "The end dates of the last phases must be aligned. Scenario.adjust_end() method may fix this issue.")
         # Find representative scenario

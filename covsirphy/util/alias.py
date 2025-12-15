@@ -12,7 +12,7 @@ class Alias(Term):
     """
 
     def __init__(self, target_class: Any = None) -> None:
-        self._dict = {}
+        self._dict: dict[str, Any] = {}
         self._target_class = target_class or object
 
     @classmethod
@@ -35,7 +35,7 @@ class Alias(Term):
 
         Args:
             name: alias name
-            targets: target to link with the name
+            target: target to link with the name
 
         Return:
             updated Alias instance

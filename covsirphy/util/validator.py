@@ -2,10 +2,12 @@ from __future__ import annotations
 from inspect import signature
 import math
 import pandas as pd
-from typing import Callable, Iterable
-from typing_extensions import Any
+from typing import Callable, Iterable, TYPE_CHECKING, Any
 from covsirphy.util.error import NAFoundError, NotIncludedError, NotSubclassError, UnExpectedTypeError, EmptyError
 from covsirphy.util.error import UnExpectedValueRangeError, UnExpectedValueError, UnExpectedLengthError, UnExpectedNoneError
+
+if TYPE_CHECKING:
+    from pandas._libs.tslibs.timestamps import Timestamp
 
 
 class Validator(object):
@@ -29,7 +31,7 @@ class Validator(object):
         if target is None and not accept_none:
             raise UnExpectedNoneError(self._name)
 
-    def subclass(self, parent: Any) -> Any:
+    def subclass(self, parent: type | Iterable[type]) -> Any:
         """Ensure the target is a subclass of the parent class.
 
         Args:
@@ -41,11 +43,14 @@ class Validator(object):
         Returns:
             the target itself
         """
-        if issubclass(self._target, parent):
+        # Convert iterable to tuple for issubclass
+        parent_tuple = tuple(parent) if isinstance(parent, Iterable) and not isinstance(parent, type) else parent
+
+        if issubclass(self._target, parent_tuple):
             return self._target
         raise NotSubclassError(self._name, self._target, parent)
 
-    def instance(self, expected: Any) -> Any:
+    def instance(self, expected: type | Iterable[type]) -> Any:
         """Ensure that the target is an instance of a specified class.
 
         Args:
@@ -57,7 +62,10 @@ class Validator(object):
         Returns:
             the target itself
         """
-        if isinstance(self._target, expected):
+        # Convert iterable to tuple for isinstance
+        expected_tuple = tuple(expected) if isinstance(expected, Iterable) and not isinstance(expected, type) else expected
+
+        if isinstance(self._target, expected_tuple):
             return self._target
         raise UnExpectedTypeError(self._name, self._target, expected)
 
@@ -94,7 +102,7 @@ class Validator(object):
                     details=f"The dataframe has {', '.join(df.columns.tolist())} as columns")
         return df
 
-    def float(self, value_range: tuple[int | None, int | None] = (0, None), default: float | None = None, digits: int | None = None) -> float:
+    def float(self, value_range: tuple[float | None, float | None] = (0, None), default: float | None = None, digits: int | None = None) -> float:
         """Convert a value to a float value.
 
         Args:
@@ -116,7 +124,7 @@ class Validator(object):
             value = float(self._target)
         except ValueError:
             raise UnExpectedTypeError(self._name, self._target, float) from None
-        if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
+        if (value_range[0] is not None and value < value_range[0]) or (value_range[1] is not None and value > value_range[1]):
             raise UnExpectedValueRangeError(self._name, value, value_range)
         if digits is None or value == 0:
             return value
@@ -147,7 +155,7 @@ class Validator(object):
         if value != self._target and not round_ok:
             raise UnExpectedTypeError(
                 self._name, self._target, int, details=f"This is because we cannot ignore round-off error, | {self._target} - {value} | > 0")
-        if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
+        if (value_range[0] is not None and value < value_range[0]) or (value_range[1] is not None and value > value_range[1]):
             raise UnExpectedValueRangeError(self._name, value, value_range)
         return value
 
@@ -174,7 +182,7 @@ class Validator(object):
             self._name, value, divisors,
             details="Tau value [min], a divisor of 1440 [min], is a parameter used to convert actual time to time steps (without units)")
 
-    def date(self, value_range: tuple[pd.Timestamp | None, pd.Timestamp | None] = (None, None), default: pd.Timestamp | None = None) -> pd.Timestamp:
+    def date(self, value_range: tuple[Timestamp | None, Timestamp | None] = (None, None), default: Timestamp | None = None) -> pd.Timestamp:
         """Convert a value to a date object.
 
         Args:
@@ -198,9 +206,16 @@ class Validator(object):
                 value = pd.to_datetime(self._target).replace(hour=0, minute=0, second=0, microsecond=0)
             except ValueError:
                 raise UnExpectedTypeError(self._name, self._target, pd.Timestamp) from None
-        if (value < (value_range[0] or value)) or (value > (value_range[1] or value)):
+        # Convert values in value_range to string for UnExpectedValueRangeError
+        # This fixes type error where list comprehension result was list[str | None] but expected tuple[...].
+        # However UnExpectedValueRangeError expects tuple[int | float | str | None, ...] as value_range.
+        # We need to construct the error message carefully.
+        if (value_range[0] is not None and value < value_range[0]) or (value_range[1] is not None and value > value_range[1]):
+            # Cast to satisfy type checker for UnExpectedValueRangeError
+            range_str_list: list[str | None] = [None if v is None else v.strftime("%Y-%m-%d") for v in value_range]
+            range_str_tuple = (range_str_list[0], range_str_list[1])
             raise UnExpectedValueRangeError(
-                self._name, value.strftime("%Y-%m-%d"), [None if value is None else value.strftime("%Y-%m-%d") for value in value_range])
+                self._name, value.strftime("%Y-%m-%d"), range_str_tuple)
         return value
 
     def sequence(self, default: Iterable[Any] | None = None, flatten: bool = False, unique: bool = False, candidates: Iterable[Any] | None = None, length: int | None = None) -> list[Any]:
@@ -226,6 +241,8 @@ class Validator(object):
         if not isinstance(self._target, (list, tuple)):
             raise UnExpectedTypeError(
                 self._name, self._target, list, details="A tuple can be used, but it will be converted to a list")
+
+        targets: list[Any]
         if flatten:
             try:
                 targets = sum(self._target, [])
@@ -233,6 +250,8 @@ class Validator(object):
                 for value in [value for value in self._target if not isinstance(value, list)]:
                     raise UnExpectedTypeError(
                         f"A value of {self._name}", value, list, details="This is required to flatten the sequence") from None
+                raise UnExpectedTypeError(
+                     self._name, self._target, list, details="Failed to flatten the sequence") from None
         else:
             targets = list(self._target)
         if unique:
@@ -243,6 +262,7 @@ class Validator(object):
             return targets
         for value in (set(targets) - set(candidates)):
             raise UnExpectedValueError(self._name, value, [str(c) for c in candidates])
+        return targets
 
     def dict(self, default: dict[str, Any] | None = None, required_keys: list[Any] | None = None, errors: str = "coerce") -> dict[str, Any]:
         """Ensure the target is a dictionary.

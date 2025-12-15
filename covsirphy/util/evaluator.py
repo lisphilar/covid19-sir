@@ -1,5 +1,7 @@
 import warnings
+from typing import Any, Iterable, Callable
 import numpy as np
+from numpy.typing import NDArray
 import pandas as pd
 from covsirphy.util.error import UnExpectedValueError, NAFoundError
 from covsirphy.util.validator import Validator
@@ -22,7 +24,7 @@ class Evaluator(object):
     _A = "_actual"
     _P = "_predicted"
     # Metrics: {name: (function(x1, x2), whether smaller is better or not)}
-    _METRICS_DICT = {
+    _METRICS_DICT: dict[str, tuple[Callable[[NDArray[np.float64], NDArray[np.float64]], float | np.float64], bool]] = {
         "ME": (lambda x1, x2: np.max(np.abs(x2 - x1)), True),
         "MAE": (lambda x1, x2: np.mean(np.abs(x2 - x1)), True),
         "MSE": (lambda x1, x2: np.mean(np.square(x2 - x1)), True),
@@ -33,11 +35,13 @@ class Evaluator(object):
         "R2": (lambda x1, x2: np.corrcoef(x1, x2)[0, 1]**2, False),
     }
 
-    def __init__(self, y_true, y_pred, how="inner", on=None):
+    def __init__(self, y_true: pd.DataFrame | pd.Series | list[Any] | tuple[Any, ...],
+                 y_pred: pd.DataFrame | pd.Series | list[Any] | tuple[Any, ...],
+                 how: str = "inner", on: str | list[str] | None = None) -> None:
         # Check types
         for (y, name) in zip([y_true, y_pred], ["y_true", "y_pred"]):
             Validator(y, name, accept_none=False).instance(expected=(pd.DataFrame, pd.Series, list, tuple))
-            if pd.DataFrame(y).isna().any().any():
+            if bool(pd.DataFrame(y).isna().any().any()):
                 raise NAFoundError(name, y)
         # Join dataframes
         true_df, pred_df = pd.DataFrame(y_true), pd.DataFrame(y_pred)
@@ -52,7 +56,7 @@ class Evaluator(object):
         self._true = all_df.loc[:, [f"{col}{self._A}" for col in true_df.columns]]
         self._pred = all_df.loc[:, [f"{col}{self._P}" for col in pred_df.columns]]
 
-    def score(self, metric="RMSLE"):
+    def score(self, metric: str = "RMSLE") -> float:
         """
         Calculate score with specified metric.
 
@@ -89,7 +93,7 @@ class Evaluator(object):
             return float(np.average(outputs))
 
     @classmethod
-    def metrics(cls):
+    def metrics(cls) -> list[str]:
         """
         Return the list of metric names.
 
@@ -99,7 +103,7 @@ class Evaluator(object):
         return list(cls._METRICS_DICT.keys())
 
     @classmethod
-    def smaller_is_better(cls, metric="RMSLE"):
+    def smaller_is_better(cls, metric: str = "RMSLE") -> bool:
         """
         Whether smaller value of the metric is better or not.
 
@@ -114,7 +118,7 @@ class Evaluator(object):
         return cls._METRICS_DICT[metric.upper()][1]
 
     @classmethod
-    def best_one(cls, candidate_dict, **kwargs):
+    def best_one(cls, candidate_dict: dict[object, float], **kwargs: Any) -> tuple[object, float]:
         """
         Select the best one with scores.
 

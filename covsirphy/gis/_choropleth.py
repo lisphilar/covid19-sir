@@ -1,7 +1,10 @@
+from __future__ import annotations
 from pathlib import Path
 import warnings
+from typing import Any
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from covsirphy.util.validator import Validator
 from covsirphy.visualization.vbase import VisualizeBase
@@ -15,17 +18,17 @@ class _ChoroplethMap(VisualizeBase):
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
-    def __init__(self, filename=None, **kwargs):
+    def __init__(self, filename: str | None = None, **kwargs: Any) -> None:
         super().__init__(filename=filename, **kwargs)
         self._geo_dirpath = Path("input")
 
-    def __enter__(self):
+    def __enter__(self) -> "_ChoroplethMap":
         return super().__enter__()
 
-    def __exit__(self, *exc_info):
+    def __exit__(self, *exc_info: Any) -> None:
         return super().__exit__(*exc_info)
 
-    def plot(self, data, logscale, **kwargs):
+    def plot(self, data: gpd.GeoDataFrame, logscale: bool, **kwargs: Any) -> None:
         """Set geopandas.GeoDataFrame to create a choropleth map.
 
         Args:
@@ -47,7 +50,7 @@ class _ChoroplethMap(VisualizeBase):
         divider = make_axes_locatable(self._ax)
         cax = divider.append_axes("bottom", size="5%", pad=0.1)
         # Arguments of plotting with GeoPandas
-        plot_kwargs = {
+        plot_kwargs: dict[str, Any] = {
             "legend": True,
             "cmap": "coolwarm",
             "ax": self._ax,
@@ -65,7 +68,7 @@ class _ChoroplethMap(VisualizeBase):
             gdf["Variable"] = np.log10(gdf["Variable"] + 1)
             plot_kwargs["legend_kwds"]["label"] = "in log10 scale"
         # Plotting
-        if not gdf["Variable"].isna().sum():
+        if not bool(gdf["Variable"].isna().sum()):
             # Missing values are not included
             plot_kwargs.pop("missing_kwds")
         gdf.plot(column="Variable", **plot_kwargs)

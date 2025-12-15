@@ -1,5 +1,7 @@
 import contextlib
 from copy import deepcopy
+from typing import Any, cast
+import pandas as pd
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 
@@ -12,10 +14,10 @@ class _SubsetManager(Term):
         layers (list[str]): names of administration layers with the order (upper layers precede, e.g. ["Country", "Province"])
     """
 
-    def __init__(self, layers):
+    def __init__(self, layers: list[str]) -> None:
         self._layers = Validator(layers, "layers").sequence(candidates=None)
 
-    def layer(self, data, geo=None):
+    def layer(self, data: pd.DataFrame, geo: tuple[list[str] | tuple[str, ...] | str | None, ...] | list[str] | tuple[str, ...] | str | None = None) -> pd.DataFrame:
         """Return the data at the selected layer.
 
         Args:
@@ -56,7 +58,7 @@ class _SubsetManager(Term):
         if geo is not None and not isinstance(geo, (list, tuple, str)):
             raise TypeError(
                 f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
-        geo_converted = (geo,) if (geo is None or isinstance(geo, str)) else deepcopy(geo)
+        geo_converted: tuple[Any, ...] = (geo,) if (geo is None or isinstance(geo, str)) else cast(tuple[Any, ...], deepcopy(geo))
         df = Validator(data, "data").dataframe(columns=self._layers, empty_ok=False)
         df[self._layers] = df[self._layers].fillna(self.NA)
         df = df.loc[df[self._layers[0]] != self.NA]
@@ -70,14 +72,18 @@ class _SubsetManager(Term):
                 raise TypeError(f"@geo must be a tuple(list[str] or tuple(str) or str) or None, but {geo} was applied.")
             if i >= len(self._layers):
                 raise ValueError(f"The length of @geo must be smaller than that of layers, but {geo} was applied.")
-            df = df.loc[df[self._layers[i]].isin([sel] if isinstance(sel, str) else sel)]
+
+            # Cast to satisfy type checker for isin
+            sel_list = [sel] if isinstance(sel, str) else sel
+            df = df.loc[df[self._layers[i]].isin(sel_list)]
+
             if i == len(geo_converted) - 1 and i < len(self._layers) - 1:
                 df = df.loc[df[self._layers[i + 1]] != self.NA]
                 with contextlib.suppress(IndexError):
                     df = df.loc[df[self._layers[i + 2]] == self.NA]
         return df.reset_index(drop=True)
 
-    def filter(self, data, geo=None):
+    def filter(self, data: pd.DataFrame, geo: tuple[Any, ...] | list[str] | tuple[str, ...] | str | None = None) -> pd.DataFrame:
         """Filter the data with geography information.
 
         Args:
@@ -126,11 +132,13 @@ class _SubsetManager(Term):
         if not isinstance(geo, (list, tuple, str)):
             raise TypeError(
                 f"@geo must be a tuple(list[str] or tuple(str) or str) or str or None, but {geo} was applied.")
-        geo_converted = (geo,) if isinstance(geo, str) else deepcopy(geo)
+        geo_converted: tuple[Any, ...] = (geo,) if isinstance(geo, str) else cast(tuple[Any, ...], deepcopy(geo))
         if len(geo_converted) > len(self._layers):
             raise ValueError(f"The length of @geo cannot be larger than that of layers, but {geo} was applied.")
         *geo_formers, geo_last = geo_converted
-        df = self.layer(data=data, geo=geo_formers or None)
+        # geo_formers is list, tuple expects tuple.
+        # Also need to cast to satisfy type checker if necessary, but tuple(list) is fine.
+        df = self.layer(data=data, geo=tuple(geo_formers) or None)
         if not isinstance(geo_last, (str, list, tuple)):
             raise TypeError(
                 f"The last value of @geo must be a list[str] or tuple(str) or str, but {geo_last} was applied.")

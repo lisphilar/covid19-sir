@@ -1,24 +1,27 @@
 import sys
 import warnings
+from typing import TextIO, Union, cast
+from os import PathLike
 from loguru import logger as loguru_logger
 
+PathLikeStr = Union[str, PathLike]
 
 class _Config(object):
     """Class for configuration of logger.
     """
     _LEVEL_DICT = {0: "ERROR", 1: "WARNING", 2: "INFO", 3: "DEBUG"}
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._logger = loguru_logger
         self._logger_level = 2
 
     @property
-    def logger_level(self):
+    def logger_level(self) -> int:
         """int: integer to indicate the logging level
         """
         return self._logger_level
 
-    def logger(self, level):
+    def logger(self, level: int) -> None:
         """Update configuration of logger.
 
         Args:
@@ -32,15 +35,15 @@ class _Config(object):
         )
         self._logger_level = level
 
-    def error(self, message):
+    def error(self, message: str) -> None:
         """Logging raised exception.
 
         Args:
             message (str): message to show
         """
-        self._logger.error(message, exec_info=True)
+        self._logger.error(message)
 
-    def warning(self, message, category=None):
+    def warning(self, message: str, category: type[Warning] | None = None) -> None:
         """Raise warning.
 
         Args:
@@ -50,7 +53,7 @@ class _Config(object):
         self._logger.warning(message)
         warnings.warn("deprecated callable was used", category, stacklevel=2)
 
-    def info(self, message):
+    def info(self, message: str) -> None:
         """Show information.
 
         Args:
@@ -58,7 +61,7 @@ class _Config(object):
         """
         self._logger.info(message)
 
-    def debug(self, message):
+    def debug(self, message: str) -> None:
         """Show debug message.
 
         Args:
