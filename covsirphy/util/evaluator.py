@@ -24,7 +24,7 @@ class Evaluator(object):
     _A = "_actual"
     _P = "_predicted"
     # Metrics: {name: (function(x1, x2), whether smaller is better or not)}
-    _METRICS_DICT: dict[str, tuple[Callable[[NDArray[np.float64], NDArray[np.float64]], float | np.float64], bool]] = {
+    _METRICS_DICT: dict[str, tuple[Callable[[NDArray[np.float64], NDArray[np.float64]], Any], bool]] = {
         "ME": (lambda x1, x2: np.max(np.abs(x2 - x1)), True),
         "MAE": (lambda x1, x2: np.mean(np.abs(x2 - x1)), True),
         "MSE": (lambda x1, x2: np.mean(np.square(x2 - x1)), True),
