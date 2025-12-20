@@ -728,11 +728,7 @@ class ODEScenario(Term):
         model = self._snr_alias.find(name=name)[self.ODE]
         Y = self.to_dynamics(name=name).track().loc[:, model._PARAMETERS]
         # Parameter prediction
-        eng = MLEngineer(seed=seed)
-        # autots keyword args don't include verbose as integer, but we pass config.logger_level if not provided
-        # The original code passed verbose to MLEngineer, but MLEngineer.__init__ takes seed and kwargs.
-        # MLEngineer.forecast uses _AutoTSHandler which uses verbose.
-        # Let's adjust kwargs.
+        eng = MLEngineer(seed=seed, verbose=verbose)
         param_df = eng.forecast(
             Y=Y,
             days=days,

@@ -1,4 +1,6 @@
-from covsirphy.util.config import config
+from typing import Any
+import pandas as pd
+from covsirphy.util.config import config, _Config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
 from covsirphy.science._autots import _AutoTSHandler
@@ -12,10 +14,11 @@ class MLEngineer(Term):
         seed (int or None): random seed
     """
 
-    def __init__(self, seed=0, **kwargs):
+    def __init__(self, seed: int | None = 0, **kwargs: Any) -> None:
         self._seed = Validator(seed, name="seed").int()
 
-    def pca(self, X, n_components=0.95):
+    def pca(self, X: pd.DataFrame, n_components: float |
+            int = 0.95) -> dict[str, Any]:
         """Perform PCA (principal component analysis) after standardization (Z-score normalization) with pca package.
 
         Args:
@@ -68,14 +71,16 @@ class MLEngineer(Term):
             accept_none=False).dataframe(
             time_index=True,
             empty_ok=False)
+        verbose = _Config._LEVEL_DICT.get(config.logger_level, "INFO").lower()
         model = pca(
             n_components=n_components,
             normalize=True,
             random_state=self._seed,
-            verbose=config.logger_level)
+            verbose=verbose)
         return {**model.fit_transform(X), "model": model}
 
-    def forecast(self, Y, days, X=None, **kwargs):
+    def forecast(self, Y: pd.DataFrame, days: int, X: pd.DataFrame |
+                 None = None, **kwargs: Any) -> pd.DataFrame:
         """Forecast Y for given days with/without indicators (X).
 
         Args:

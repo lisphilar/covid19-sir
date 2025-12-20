@@ -1,7 +1,11 @@
 import warnings
+import contextlib
+import os
+from typing import Any
 from covsirphy.util.config import config
 from covsirphy.util.validator import Validator
 from covsirphy.util.term import Term
+import pandas as pd
 
 
 class _AutoTSHandler(Term):
@@ -21,7 +25,8 @@ class _AutoTSHandler(Term):
         AutoTS package is developed at https://github.com/winedarksea/AutoTS
     """
 
-    def __init__(self, Y, days, seed, **kwargs):
+    def __init__(self, Y: pd.DataFrame, days: int,
+                 seed: int | None, **kwargs: Any) -> None:
         warnings.simplefilter("ignore", SyntaxWarning)
         from autots import AutoTS  # https://github.com/lisphilar/covid19-sir/issues/1265
         self._Y = Validator(Y, "Y").dataframe(time_index=True, empty_ok=False)
@@ -42,9 +47,9 @@ class _AutoTSHandler(Term):
             **kwargs,
         }
         self._autots = AutoTS(**autots_kwargs)
-        self._regressor_forecast = None
+        self._regressor_forecast: pd.DataFrame | None = None
 
-    def fit(self, X=None):
+    def fit(self, X: pd.DataFrame | None = None) -> "_AutoTSHandler":
         """Fit the model with/without other information.
 
         Args:
@@ -59,6 +64,7 @@ class _AutoTSHandler(Term):
         """
         # https://github.com/lisphilar/covid19-sir/issues/1265
         from autots.tools.regressor import fake_regressor
+        regressor_train = None
         if X is not None:
             regressor_train, self._regressor_forecast = fake_regressor(
                 self._Y,
@@ -69,12 +75,18 @@ class _AutoTSHandler(Term):
                 verbose=self._autots.verbose,
             )
         warnings.filterwarnings("ignore", category=FutureWarning)
-        self._autots.fit(
-            self._Y,
-            future_regressor=None if X is None else regressor_train)
+
+        if self._autots.verbose > 0:
+            self._autots.fit(
+                self._Y, future_regressor=None if X is None else regressor_train)
+        else:
+            with open(os.devnull, "w") as f, contextlib.redirect_stdout(f), contextlib.redirect_stderr(f):
+                self._autots.fit(
+                    self._Y, future_regressor=None if X is None else regressor_train)
+
         return self
 
-    def predict(self):
+    def predict(self) -> pd.DataFrame:
         """Return the predicted values with the observed values.
 
         Returns:
