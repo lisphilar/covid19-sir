@@ -189,7 +189,7 @@ class ODEModel(Term):
         if tau is None:
             return series
         Validator(tau, "tau", accept_none=False).tau()
-        converted = (series - series.min()) / pd.Timedelta(minutes=tau)
+        converted = (series - series.min()) / np.timedelta64(tau, "m")
         return converted.rename(None).astype("Int64")
 
     @classmethod
