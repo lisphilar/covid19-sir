@@ -1,5 +1,8 @@
 # flake8: noqa
 
+import warnings
+warnings.filterwarnings("ignore", message="The 'generic' unit for NumPy timedelta is deprecated", category=DeprecationWarning)
+
 # version
 from covsirphy.__version__ import __version__
 from covsirphy.__citation__ import __citation__
